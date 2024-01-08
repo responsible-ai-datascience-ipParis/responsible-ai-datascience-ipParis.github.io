@@ -17,12 +17,12 @@ enableEmoji = true
     identifier = "about"
     name = "About"
     url = "/about/"
-    weight = "-110"
+    weight = -110
   [[menu.main]]
     identifier = "articles"
     name = "Articles"
     url = "/articles/"
-    weight = "-110"
+    weight = -110
   [[menu.main]]
     identifier = "posts"
     name = "Post"
