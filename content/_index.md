@@ -9,7 +9,7 @@ Artificial intelligence, as a transversal discipline, plays a central role in ou
 
 ## Coordinators of the course 
 For questions or specific inquiries related to this course, please get in touch with 
-**Florence d'Alché-Buc** and **Charlotte Laclau**. 
+**Florence d'Alché-Buc** and **Charlotte Laclau**
 
 ## Organisation of the course
 
@@ -23,5 +23,6 @@ For questions or specific inquiries related to this course, please get in touch 
 ## Student Requirements
 
 TBC
+
 
 <hr/>
