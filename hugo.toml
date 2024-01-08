@@ -1,0 +1,7 @@
+baseURL = 'https://responsible-ai-datascience-ipParis.github.io/'
+languageCode = 'en-us'
+title = 'Bloggin on Responsible AI'
+theme = "maverick"
+enableEmoji = true
+author = "Students from M2 Data Science IP Paris"
+description = "Bloggin on Responsible AI"
