@@ -3,7 +3,6 @@ languageCode = 'en-us'
 title = 'Bloggin on Responsible AI'
 theme = "maverick"
 enableEmoji = true
-profilePicture = "static/images/logo-ip.png"
 
 [params]
   logo = '/assets/favicon.ico'
