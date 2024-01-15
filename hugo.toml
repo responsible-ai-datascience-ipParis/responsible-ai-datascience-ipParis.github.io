@@ -28,6 +28,11 @@ enableEmoji = true
     name = "Post"
     url = "/posts/"
     weight = -200
+  [[menu.main]]
+    identifier = "tutorial"
+    name = "Tutorial"
+    url = "/tutorial/"
+    weight = -200
 
 [markup]
   [markup.goldmark.renderer]
