@@ -30,7 +30,7 @@ Please add your name in the following [file](https://docs.google.com/spreadsheet
 
 ## Fairness 
 * R. Vogel, A. Bellet and S. Clémençon. *Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints.* International Conference on Artificial Intelligence and Statistics (AISTATS), 2021. [[link to pdf]](http://researchers.lille.inria.fr/abellet/papers/aistats21.pdf), [[link to supplementary]](http://researchers.lille.inria.fr/abellet/papers/aistats21_supp.pdf).
-* Preethi Lahoti et al. *Fairness without Demographics through Adversarially Reweighted Learning*.  Advances in Neural Information Processing Systems (2020). [link to pdf](https://proceedings.neurips.cc/paper/2020/file/07fc15c9d169ee48573edd749d25945d-Paper.pdf), [[link to pdf]](https://github.com/lucweytingh/ARL-UvA).
+* Preethi Lahoti et al. *Fairness without Demographics through Adversarially Reweighted Learning*.  Advances in Neural Information Processing Systems (2020). [[link to pdf]](https://proceedings.neurips.cc/paper/2020/file/07fc15c9d169ee48573edd749d25945d-Paper.pdf), [[link to github]](https://github.com/lucweytingh/ARL-UvA).
 
 ## Privacy 
 * John C. Duchi, Michael I. Jordan, and Martin Wainwright.  Privacy Aware Learning. Advances in Neural Information Processing Systems (2012). [[link to pdf]](https://web.stanford.edu/~jduchi/projects/DuchiJoWa12.html).
