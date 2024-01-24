@@ -13,7 +13,7 @@ Please add your name in the following [file](https://docs.google.com/spreadsheet
 <hr/>
 
 ## Interpretable AI 
-*
+* Jayneel Parekh, Pavlo Mozharovskyi, Florence d'Alché-Buc, A Framework to Learn with Interpretation. Advances in Neural Information Processing Systems (2021)[[link to pdf]](https://proceedings.neurips.cc/paper/2021/file/cbb6a3b884f4f88b3a8e3d44c636cbd8-Paper.pdf) 
 *
 *
 
