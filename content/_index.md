@@ -22,7 +22,12 @@ For questions or specific inquiries related to this course, please get in touch 
 
 ## Student Requirements
 
-TBC
+For this course, you will have to write a blog post on a scientific article assigned to you (to pick from the list presented [here](articles/). This work can be done in teams (max 2 students). All posts will be published on this website. 
+We also provide a [tutorial](tutorial/) that explain how to work and publish your final article.
+
+* Examples of scientific blogposts can be found here: https://iclr-blogposts.github.io/2023/about
+
+* In addition, you are requested to run and try to reproduce at least one of the experiments of the paper to write a reproducibility section, highlighting potential difficulties or missing information in your post. 
 
 
 <hr/>
