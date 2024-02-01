@@ -1,5 +1,5 @@
 +++
-title = 'Statistical_Minimax_Rates_Under_Privacy'
+title = 'Statistical Minimax Rates Under Privacy'
 date = 2024-01-31T17:22:02+01:00
 draft = false
 +++
@@ -8,8 +8,78 @@ draft = false
 
 # Table of Contents
 
+- [Incentives](#section-0)
 - [Introduction](#section-1)
-- [Overview](#section-2)
+- [Definition](#section-2)
+
+## Why do we care about privacy ? {#section-0}
+
+Imagine, you're quietly at home when the doorbell rings. You open the door and a government official appears: population census. Even though he shows you his official badge and you'd like to help him in the public interest, you find it hard to answer his questions as you go along. Indeed, the first questions about the date of your move are easy and public. On the other hand, when he asks about the number of children, marital status or your salary and what you do with it, you struggle. Not because you don't know the answer, but because you're faced with an ethical dilemma: transparency towards the state versus protection of personal data. In short, his work goes against your privacy. 
+
+This stress has major consequences: as you doubt what could happen to you with this data, but you still want to answer it, you underestimate your answers. On a wider scale, this leads to a suffrage bias and therefore a lack of knowledge of the real situation of your population. Warner [1], the first to tackle this problem from a statistical angle talks of an evasive bias and says: "for reasons of modesty, fear of being thought bigoted, or merely a reluctance to confide secrets to strangers,respondents to surveys might prefer to be able to answer certain questions non-truthfully, or at least without the interviewer knowing their true response"
+
+This situation presented a trusted agent, in that he wasn't trying to harm you directly. Now imagine that you agree to give him your personal data, but that on the way home, this agent of the state is mugged and someone steals his documents. Not only is this an attack on his person, it's also an attack on yours: as the guarantor of your data, it's now at the mercy of the attacker. The problem here is not to have protected yourself against a malicious agent. 
+
+Admittedly, these situations are rare, but with the densification of data, their analogies are omnipresent: cookies on the Internet, cyber-attacks, datacenter crashes...One area for improvement is quite simply to better certify usage by means of cyber protection labels and leads to such a norm to achieve trust:
+![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Umbrella.png)
+
+In this blog, we propose to tackle this problem from a completely different angle: how to both enable the agent to take global measures and prevent it and any subsequent malicious agents from being able to re-identify my personal data. We'll also use minimax bounds to answer the question: for a given privacy criterion, what's the loss in terms of estimation? (fundamental trade-offs between privacy and convergence rate)
+
+## Scientific introduction {#section-1}
+<a name="test"></a>
+
+Our blog will follow the same plan as the article that inspired it (John C. Duchi [2]),i.e. to show that response randomization achieves optimal convergence in the case of multinomial estimation, and then that this process can be generalized to any nonparametric distribution estimation. To this end, we will introduce the notion of local differential privacy as well as the minimax theory for obtaining optimal limits. All this will shed light on the trade-off between privacy and estimation rates. We will also explain algorithms to implement these optimal strategies. Finally, we will propose some experimental results.
+
+## Some key definitions {#section-2}
+
+Let assume that you want to make private `X1, . . . , Xn ∈ X` random variable and, as the statistician, you only observe `Z1, . . . , Zn ∈ Z`. The paper assumes that there exist a markov kernel that links the true ramdom variables and the observed ones as follow: `Qi(Zi | Xi = x)`.
+
+The privacy mechanism is to be said non interactive if each `Zi` is obtained only conditionnaly on `Xi` (and not on the others). This represents the fact that the privacy mechanism is memory less. If not, the mechnism is said to be interactive. 
+
+In the following, we will work only with non-interactive privacy mechanism but in the conlusion we will claim that newer studies showed that it is not enough for some larger problems.
+
+&alpha;
+
+
+---
+
+## Experiment: Estimating Privacy Using Differential Privacy
+
+### Overview {#section-111}
+<a href="#test" style="background-color: yellow; padding: 2px 5px; border-radius: 3px;">Go to test</a>
+This is the introduction section. experiment, we focus on utilizing the concept of differential privacy to estimate the privacy level of a dataset. Differential privacy offers a rigorous framework for quantifying the impact of an individual's data on the overall privacy of a dataset, providing a mechanism to balance data utility and privacy protection.
+
+### Methodology
+
+1. **Data Preparation**: We begin by preprocessing the dataset to ensure it adheres to the requirements of differential privacy. This may involve techniques such as data anonymization or perturbation.
+
+2. **Privacy Metric Calculation**: Next, we compute the privacy metric using differential privacy algorithms. This metric quantifies the level of privacy protection afforded to individuals within the dataset.
+
+3. **Evaluation**: We evaluate the effectiveness of our privacy estimation by comparing the computed privacy metric against established thresholds or benchmarks. This step provides insights into the adequacy of privacy protection measures employed.
+
+### Results
+
+Our experiment yielded promising results, demonstrating the feasibility of using differential privacy for privacy estimation in data science. The calculated privacy metric indicated a high level of privacy protection, exceeding industry standards in several instances. However, further analysis is warranted to explore the robustness of our approach across diverse datasets and scenarios.
+
+<script>
+function highlight(text) {
+  var inputText = document.getElementById("markdown-content");
+  var innerHTML = inputText.innerHTML;
+  var index = innerHTML.indexOf(text);
+  if (index >= 0) { 
+    innerHTML = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
+    inputText.innerHTML = innerHTML;
+  }
+}
+highlight("Estimating Privacy in Data Science");
+
+</script>
+
+[Read more about our experiment methodology](##Experiment:-Estimating-Privacy-Using-Differential-Privacy)
+
+### Conclusion
+
+We have linked minimax analysis from statistical decision theory with differential privacy, bringing some of their respective foundational principles into close contact. In this paper particularly, we showed how to apply our divergence bounds to obtain sharp bounds on the convergence rate for certain nonparametric problems in addition to standard finite-dimensional settings. By providing sharp convergence rates for many standard statistical inference procedures under local differential privacy, we have developed and explored some tools that may be used to better understand privacy-preserving statistical inference and estimation procedures. We have identified a fundamental continuum along which privacy may be traded for utility in the form of accurate statistical estimates, providing a way to adjust statistical procedures to meet the privacy or utility needs of the statistician and the population being sampled. Formally identifying this trade-off in other statistical problems should allow us to better understand the costs and benefits of privacy; we believe we have laid some of the groundwork to do so.
 
 # Interactive Markdown Example
 
@@ -111,60 +181,6 @@ Please fill out the quiz form below:
     });
 </script>
 
-
-## Introduction {#section-1}
-<a name="test"></a>
-
-The original motivation for providing privacy in statistical problems, first discussed by Warner [23], was that “for reasons of modesty, fear of being thought bigoted, or merely a reluctance to confide secrets to strangers,” respondents to surveys might prefer to be able to answer certain questions non-truthfully, or at least without the interviewer knowing their true response. With this motivation, Warner considered the problem of estimating the fractions of the population belonging to certain strata, which can be viewed as probability estimation within a multinomial model. In this paper, we revisit Warner’s probability estimation problem, doing so within a theoretical framework that allows us to characterize optimal estimation under constraints on privacy. We also apply our theoretical tools to a further probability estimation problem—that of nonparametric density estimation.
-
-In the large body of research on privacy and statistical inference [e.g., 23, 14, 10, 15], a major focus has been on the problem of reducing disclosure risk: the probability that a member of a dataset can be identified given released statistics of the dataset. The literature has stopped short, however, of providing a formal treatment of disclosure risk that would permit decision-theoretic tools to be used in characterizing trade-offs between the utility of achieving privacy and the utility associated with an inferential goal. Recently, a formal treatment of disclosure risk known as “differential privacy” has been proposed and studied in the cryptography, database and theoretical computer science literatures [11, 1]. Differential privacy has strong semantic privacy guarantees that make it a good candidate for declaring a statistical procedure or data collection mechanism private, and it has been the focus of a growing body of recent work [13, 16, 24, 21, 6, 18, 8, 5, 9].
-
-In this paper, we bring together the formal treatment of disclosure risk provided by differential privacy with the tools of minimax decision theory to provide a theoretical treatment of probability estimation under privacy constraints. Just as in classical minimax theory, we are able to provide lower bounds on the convergence rates of any estimator, in our case under a restriction to estimators that guarantee privacy. We complement these results with matching upper bounds that are achievable using computationally efficient algorithms. We thus bring classical notions of privacy, as introduced by Warner [23], into contact with differential privacy and statistical decision theory, obtaining quantitative trade-offs between privacy and statistical efficiency.
-
-[![Data Privacy](https://example.com/privacy-image.png)](##Experiment:-Estimating-Privacy-Using-Differential-Privacy)
-
-**Click the image above to jump to the experiment section.**
-
----
-
-## Experiment: Estimating Privacy Using Differential Privacy
-
-### Overview {#section-2}
-<a href="#test" style="background-color: yellow; padding: 2px 5px; border-radius: 3px;">Go to test</a>
-This is the introduction section. experiment, we focus on utilizing the concept of differential privacy to estimate the privacy level of a dataset. Differential privacy offers a rigorous framework for quantifying the impact of an individual's data on the overall privacy of a dataset, providing a mechanism to balance data utility and privacy protection.
-
-### Methodology
-
-1. **Data Preparation**: We begin by preprocessing the dataset to ensure it adheres to the requirements of differential privacy. This may involve techniques such as data anonymization or perturbation.
-
-2. **Privacy Metric Calculation**: Next, we compute the privacy metric using differential privacy algorithms. This metric quantifies the level of privacy protection afforded to individuals within the dataset.
-
-3. **Evaluation**: We evaluate the effectiveness of our privacy estimation by comparing the computed privacy metric against established thresholds or benchmarks. This step provides insights into the adequacy of privacy protection measures employed.
-
-### Results
-
-Our experiment yielded promising results, demonstrating the feasibility of using differential privacy for privacy estimation in data science. The calculated privacy metric indicated a high level of privacy protection, exceeding industry standards in several instances. However, further analysis is warranted to explore the robustness of our approach across diverse datasets and scenarios.
-
-<script>
-function highlight(text) {
-  var inputText = document.getElementById("markdown-content");
-  var innerHTML = inputText.innerHTML;
-  var index = innerHTML.indexOf(text);
-  if (index >= 0) { 
-    innerHTML = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
-    inputText.innerHTML = innerHTML;
-  }
-}
-highlight("Estimating Privacy in Data Science");
-
-</script>
-
-[Read more about our experiment methodology](##Experiment:-Estimating-Privacy-Using-Differential-Privacy)
-
-### Conclusion
-
-We have linked minimax analysis from statistical decision theory with differential privacy, bringing some of their respective foundational principles into close contact. In this paper particularly, we showed how to apply our divergence bounds to obtain sharp bounds on the convergence rate for certain nonparametric problems in addition to standard finite-dimensional settings. By providing sharp convergence rates for many standard statistical inference procedures under local differential privacy, we have developed and explored some tools that may be used to better understand privacy-preserving statistical inference and estimation procedures. We have identified a fundamental continuum along which privacy may be traded for utility in the form of accurate statistical estimates, providing a way to adjust statistical procedures to meet the privacy or utility needs of the statistician and the population being sampled. Formally identifying this trade-off in other statistical problems should allow us to better understand the costs and benefits of privacy; we believe we have laid some of the groundwork to do so.
-
 ---
 
 By leveraging the principles of differential privacy, data scientists can gain valuable insights into the privacy implications of their analyses and foster a culture of responsible data stewardship. Stay tuned for more updates and explorations into the fascinating realm of privacy-aware data science.
@@ -182,8 +198,11 @@ By leveraging the principles of differential privacy, data scientists can gain v
 
 ### References
 
-1. Dwork, C., & Roth, A. (2014). The algorithmic foundations of differential privacy. Foundations and Trends® in Theoretical Computer Science, 9(3-4), 211-407.
-2. Narayanan, A., & Shmatikov, V. (2008). Robust de-anonymization of large sparse datasets. In Security and Privacy, 2008. SP 2008. IEEE Symposium on (pp. 111-125). IEEE.
+1. Warner SL. Randomized response: a survey technique for eliminating evasive answer bias. J Am Stat Assoc. 1965 Mar;60(309):63-6. PMID: 12261830.
+2. John C. Duchi, Michael I. Jordan, and Martin Wainwright. Local Privacy and Minimax Bounds: Sharp Rates for Probability Estimation. Advances in Neural Information Processing Systems (2013)
+111. Dwork, C., & Roth, A. (2014). The algorithmic foundations of differential privacy. Foundations and Trends® in Theoretical Computer Science, 9(3-4), 211-407.
+222. Narayanan, A., & Shmatikov, V. (2008). Robust de-anonymization of large sparse datasets. In Security and Privacy, 2008. SP 2008. IEEE Symposium on (pp. 111-125). IEEE.
+
 
 ---
 
