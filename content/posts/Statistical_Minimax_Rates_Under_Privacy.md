@@ -11,6 +11,7 @@ draft = false
 - [Incentives](#section-0)
 - [Introduction](#section-1)
 - [Definition](#section-2)
+- [Theory](#section-3)
 
 ## Why do we care about privacy ? {#section-0}
 
@@ -38,7 +39,40 @@ The privacy mechanism is to be said non interactive if each `Zi` is obtained onl
 
 In the following, we will work only with non-interactive privacy mechanism but in the conlusion we will claim that newer studies showed that it is not enough for some larger problems.
 
+`Zi`is said to be α-local-differentially private for the original data `Xi` if `sup {Q(Z | Xi = x)/Q(Z | Xi = x')} | x, x' ∈ X} ≤ exp(α)`. An intuitive way of understanding this definition is to see that the smaller &alpha; is (the more private it is), the more difficult it is to distinguish the distribution of Z conditional on two different X data. 
+
 &alpha;
+
+## Theoretical results {#section-3}
+
+### The case of multinomial estimation
+
+#### Theorem
+
+In this section, we return back to the problem of the private survey. For the statistician view, estimating a survey is estimating the parameter &theta; from the Bernouilli distribution `B(θ)`. 
+This problem is a special case of multinomial estimation, where `θ` is now a multidimensional parameter that is amenable to simplex probability. `∆d := {θ ∈ ℝ⁺ | d, θ ≥ 0, ∑θⱼ = 1}.
+
+Theorem : Given α-local-differentially private `Zi`, there exists some arbitrary constants `C1`, `C2` such that for all &alpha; ∈ [0,1]:
+`C1 min {1, 1 / √(nα²), d / (nα²)} ≤ E[(θ̂_hat - θ)^2] ≤ C2 min {1, d / (nα²)}` and 
+`C1 min {1, 1 / √(nα²))} ≤ E[||θ̂_hat - θ||_1] ≤ C2 min {1, d / √nα²}`.
+
+Recall from standard statistics: For non private independant `Zi` with finite variance, , there exists some arbitrary constants `C3` such that:
+`E[(θ̂_hat - θ)^2] ≤ C3/n}`
+
+In others term, providing α-local-differentially privacy causes a reduction in the effective sample size of a factor `α^2/d` for best situations. It thus means that the asymptotically rate of convergences remains unchanged which s a really good news !
+
+#### Practical strategies
+
+The paper deals with the 2 standard methods to implement such a strategy that obtains the minimax rates:
+- [Randomized responses](#section-10)
+- [Laplace Noise](#section-11)
+
+##### Randomized responses {#section-10}
+
+The intuition of this section is the following : to not allow me to retrieve your personnal data in case of Bernouilli distribution, you toss a coin. If it is up, you say to me your reel answer, if it is down, you say the opposite. In my point of view, as I don't know what was the result of the coin, i can't distinguish if you tell the true or not but in a large scale, i know that i will have half correct answer, half lies so that I can retrieve information. 
+
+For the multinomial estimation now, you will toss a coin for each coordinate.
+In randomized response, we construct the private vector
 
 
 ---
