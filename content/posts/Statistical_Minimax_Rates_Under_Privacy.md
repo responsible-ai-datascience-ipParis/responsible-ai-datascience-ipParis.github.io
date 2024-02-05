@@ -41,8 +41,6 @@ In the following, we will work only with non-interactive privacy mechanism but i
 
 `Zi`is said to be α-local-differentially private for the original data `Xi` if `sup {Q(Z | Xi = x)/Q(Z | Xi = x')} | x, x' ∈ X} ≤ exp(α)`. An intuitive way of understanding this definition is to see that the smaller &alpha; is (the more private it is), the more difficult it is to distinguish the distribution of Z conditional on two different X data. 
 
-&alpha;
-
 ## Theoretical results {#section-3}
 
 ### The case of multinomial estimation
@@ -65,15 +63,138 @@ In others term, providing α-local-differentially privacy causes a reduction in 
 
 The paper deals with the 2 standard methods to implement such a strategy that obtains the minimax rates:
 - [Randomized responses](#section-10)
-- [Laplace Noise](#section-11)
+- [Laplace Noise (beyond paper)](#section-11)
 
 ##### Randomized responses {#section-10}
 
-The intuition of this section is the following : to not allow me to retrieve your personnal data in case of Bernouilli distribution, you toss a coin. If it is up, you say to me your reel answer, if it is down, you say the opposite. In my point of view, as I don't know what was the result of the coin, i can't distinguish if you tell the true or not but in a large scale, i know that i will have half correct answer, half lies so that I can retrieve information. 
+The intuition of this section is the following : to not allow the statistician to retrieve your personnal data in case of Bernouilli distribution, you toss a coin. If it is heads, you say to him your reel answer, if it is tails, you say the opposite. In his point of view, as he doesn't know what was the result of the coin, he can't distinguish if you tell the true or not but in a large scale, he knows that he will have half correct answer, half lies so that he can retrieve information. 
 
-For the multinomial estimation now, you will toss a coin for each coordinate.
-In randomized response, we construct the private vector
+For the multinomial estimation now, you will generalize this procedure to the multidimensionnal setting. For each coordinate, you will tell to the statistician the reel answer with a certain probability and lies otherwise. More precisely, its leads to : 
 
+`[Z]j = xj with probability (exp(α/2) / (1 + exp(α/2)))`  
+ `1 - xj with probability (1 / (1 + exp(α/2)))`
+
+Such a mechanism achieves α-local-differentially privacy because one can show that :
+
+`Q(Z = z | x)/Q(Z = z | x') = exp(α/2)(||z - x||_1 - ||z - x'||_1) ∈ [exp(-α), exp(α)]` which is the criteria given above.
+
+With the notation as `1_d=[1, 1, 1, ..., 1]` corresponds to a d-vector with each coordinate equals 1, we can also show that :
+
+`E[Z | x] = (e^(α/2) - 1) / (e^(α/2) + 1) * x + (1 / (1 + e^(α/2)))1_d`
+
+This leads to the natural moment-estimator : 
+
+`θ_hat = (1/n) ∑_{i=1}^{n} ((Z_i - 1_d/(1 + e^(α/2))) * (e^(α/2) + 1) / (e^(α/2) - 1))`
+
+One can also show that it verifies :
+
+`E[ ||θ̂_hat- θ||_2] ≤  d/n * (e^(α/2) + 1)/(e^(α/2) - 1)^2 < C3/nα^2` which is the announced result.
+
+##### Laplace Noise (beyond paper) {#section-11}
+
+Instead of saying the truth with some probability, one may think of adding noise to the answer so that the statistician can't retrieve his real answer. This is exactly the mechanism we propose to dive in and which is not covered in the paper.
+
+Definition: A noise is said to be a Laplace noise with parameters (μ, b) if it verifies:  
+`f(x|μ, b) = (1 / (2b)) * exp(-|x - μ| / b)`
+
+A visualisation for differents parameters is given below. We can see that Laplace distribution is a shaper verson of the gaussian distribution :
+![Laplace](http://localhost:1313/images/Antoine_Klein/Laplace.png)
+
+The trick is to use such a noise. Let assume `Xi ∈ [-M,M]` and construct the private mechanism as follow:  
+`Zi = Xi + σWi` where `Wi` is drawn from a Laplace noise (0,1).
+
+One can show that :
+
+`Q(Z = z | x)/Q(Z = z | x') <= exp(1/σ * |x - x'|) <= exp(2M/σ)`
+
+Thus, with the choice of `σ = 2M/α`, it verifies α-local-differentially privacy. The proposed estimator is the following :  
+`Z_hat = X̄ + (2M/α) W̄`.
+
+One can show that it is an unbiaised estimator that achieves the optimal rates:  
+`E[Z_hat] = E[X]`  
+`V[Z_hat] = V(X)/n + 4M^2/nα^2 * V(W̄) = V(X)/n + 8M^2/nα^2` so that,  
+`E[ ||Z_hat- X||_2] ≤ C3/nα^2`.
+
+This is exactly the optimal rates, quite outstanding !
+
+### The case of density estimation
+
+One accurate question that can raise is the following : what about others distribution ? Is privacy more costly in general cases ? What is the trade-off ?
+
+To answer this question, let's precise the problem. 
+
+We want to estimate in a non-paramtric way a 1D-density function `f` belonging to one of theses classes :  
+-Hölder Class (β, l): For all `x,y ∈ R and m<= β`, `|f^(m)(x) - f^(m)(y)| <= L |x - y| ^(β-m)`  
+-Sobolev Class : `F_β[C] := { f ∈ L^2([0, 1]) | f = ∑_{j=1}^{∞} θ_jϕ_j such that ∑_{j=1}^{∞} j^2β ϕ_j^2 ≤ C^2 }`
+
+In a intuitition way, those two classes express that `f` is smooth enough to admits Lipschitz constant to its derivative so that it doesn't "vary" locally too much.
+
+#### Theorem
+
+##### Without privacy
+
+One can show that without privacy, the minimax rate achievable for estimating a Hölder Class function is:  
+`MSE(f_hat - f) <= C1 * n^(-2β/1+2β)` with the estimator  
+`f_hat(x) = 1/n * ∑_{i=1}^{n} 1/h * K(x-X_i/h)` with `h = C2 * n^(-1/2β+1)`
+
+In the case of d-multidimensionnal density `f`, the optimal rate is :  
+`MSE(f_hat - f) <= C4 * n^(-2β/d+2β)` with the estimator  
+`f_hat(x) = 1/n * ∑_{i=1}^{n} 1/h^d * K^d(x-X_i/h)` with `h = C5 * n^(-1/2β+d)`
+
+This illustrates once again the curse of dimensionnality.
+
+##### With privacy
+
+Let assume that `f` bellongs to one of the two classes with  `β` as smoothness parameter.  
+Then, the optimal α-local-differentially private optimal rate is :  
+`MSE(f_hat - f) <= C1 * (nα^2)^(-2β/(2β+2))`.
+
+One may observe two pessimistic news:  
+-The rate is affected by a factor of α^2 as for the multinomial estimation  
+-More damageable: the rate is slower in term of `n` unlike the previous problem which make privacy in this case more costly.
+
+##### Practical strategies
+
+Eventhough this rate is pessimistic and proves that privacy comes at a cost, it remains to illustrates how can we achieves this best but not great rate.
+For this end, once again, two strategies are possible.
+
+- [Randomized responses](#section-12)
+- [Laplace Noise (beyond paper)](#section-13)
+
+##### Randomized responses {#section-12}
+
+This is the strategy illustrated in the paper and consists of sampling for each coordinate according the realisation of a Bernouilli variable with the correct probability as function of `α`.
+As it is not the most comprehensive and straightforward method, we prefer to dive in depth into the second one; uncovered in the paper.
+
+##### Laplace Noise (beyond paper) {#section-13}
+
+Let assume that `Xi ∈ [0,M] almost surely`. We note `G_j = [j-1/K, j/K]` the bin of length `1/K`.
+
+We consider the histogramm estimator: 
+`f_hat(x) = K/n ∑_{j=1}^{K} ∑_{i=1}^{n} 1_Xi∈G_j * 1_x∈G_j`.
+
+We now construct the private mechanism as follow:  
+`Zi = [1_Xi∈G_1 + 2/α * W_1 , ... , 1_Xi∈G_K + 2/α * W_K]`.
+
+In an intuitive way, we add a Laplace noise realisation for each bin of length `1/K`.
+
+This guarantees α-local-differentially privacy as :  
+`Q(Z = z | x)/Q(Z = z | x') <= exp(α/2 * ∑_{j=1}^{K} |1_x∈G_j - 1_x'∈G_j |) <= exp(α/2 * 2)`.
+
+This leads to the α-local-differentially private estimator :  
+`f_private_hat = f_hat + 2K/nα ∑_{j=1}^{K} W_j`.
+
+The biais is the same as the unprivate case as :  
+`E[f_private_hat] = E[f_hat] + 0`.
+
+One may prove that if f bellongs to the β-Hölder Class:  
+`Biais(f_private_hat, f) <= C1 * K^(-β)`
+
+Meanwhile, `V[f_private_hat] <= C2/n + 4*K^2/α^2 * V[W]/n`, such that in total  :
+`MSE(f_private_hat - f) <= C1 * K^(-2β) + C2/n + C3*K^2/nα^2`.  
+Minimizing over K (hyperparameters) leads to :  
+`K = C4 * (nα^2)^(-/2β+2)` and thus to: 
+`MSE(f_private_hat - f) <= C5 * (nα^2)^(-2β/2β+2)`, which is the expected bound.
 
 ---
 
