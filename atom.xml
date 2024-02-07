@@ -1,5 +1,35 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2024, Calvin Tran</copyright><lastBuildDate>Mon, 08 Jan 2024 11:26:03 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>Another article</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/my-first-blog/</link><description>&lt;p>&lt;strong>Authors&lt;/strong> : John Smith and John Smith&lt;/p>
 &lt;hr>&lt;/hr>
-&lt;p>Start writing here !&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/my-first-blog/</guid><pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate></item><item><title>Title of the article</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/my-second-blog/</link><description>&lt;p>&lt;strong>Authors&lt;/strong> : John Smith and John Smith&lt;/p>
+&lt;style
+TYPE="text/css">
+&lt;p>code.has-jax {font:
+inherit;
+font-size:
+100%;
+background:
+inherit;
+border:
+inherit;}&lt;/p>
+&lt;p>&lt;/style>&lt;/p>
+&lt;script
+type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script>
+&lt;p>Do not forget to add the script posted on moodle to enable latex in your blogpost!
+What a beauty! $y=\theta_0 + \theta_1x_1$&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/my-first-blog/</guid><pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate></item><item><title>Title of the article</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/my-second-blog/</link><description>&lt;p>&lt;strong>Authors&lt;/strong> : John Smith and John Smith&lt;/p>
 &lt;hr>&lt;/hr>
 &lt;p>Start writing here !&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/my-second-blog/</guid><pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate></item></channel></rss>
