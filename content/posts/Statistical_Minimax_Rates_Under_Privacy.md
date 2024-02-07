@@ -12,21 +12,25 @@ draft = false
 - [Introduction](#section-1)
 - [Definition](#section-2)
 - [Theory](#section-3)
+- [The case of multinomial estimation](#section-4)
+- [The case of density estimation](#section-5)
 
 ## Why do we care about privacy ? {#section-0}
 
 $$ test \frac{1}{2} + \pi$$
 
-Imagine, you're quietly at home when the doorbell rings. You open the door and a government official appears: population census. Even though he shows you his official badge and you'd like to help him in the public interest, you find it hard to answer his questions as you go along. Indeed, the first questions about the date of your move are easy and public. On the other hand, when he asks about the number of children, marital status or your salary and what you do with it, you struggle. Not because you don't know the answer, but because you're faced with an ethical dilemma: transparency towards the state versus protection of personal data. In short, his work goes against your privacy. 
+Imagine, you're quietly at home when the doorbell rings. You open the door and a government official appears: population census. Even though he shows you his official badge and you'd like to help him in the public interest, you find it hard to answer his questions as you go along. Indeed, the first questions about the date of your move are easy and public. On the other hand, when he asks about the number of children, marital status or your salary and what you do with it, you struggle. Not because you don't know the answer, but because you're faced with an ethical dilemma: transparency towards the state versus protection of personal data.   
+$$\text{In short, transparency goes against your privacy. }$$
 
-This stress has major consequences: as you doubt what could happen to you with this data, but you still want to answer it, you underestimate your answers. On a wider scale, this leads to a suffrage bias and therefore a lack of knowledge of the real situation of your population. Warner [1], the first to tackle this problem from a statistical angle talks of an evasive bias and says: "for reasons of modesty, fear of being thought bigoted, or merely a reluctance to confide secrets to strangers,respondents to surveys might prefer to be able to answer certain questions non-truthfully, or at least without the interviewer knowing their true response"
+This stress has major consequences: as you doubt what could happen to you with this data, but you still want to answer it, you underestimate your answers. On a wider scale, this leads to a suffrage bias and therefore a lack of knowledge of the real situation of your population. Warner [1], the first to tackle this problem from a statistical angle talks of an evasive bias and says:  
+**"for reasons of modesty, fear of being thought bigoted, or merely a reluctance to confide secrets to strangers, respondents to surveys might prefer to be able to answer certain questions non-truthfully, or at least without the interviewer knowing their true response"**
 
 This situation presented a trusted agent, in that he wasn't trying to harm you directly. Now imagine that you agree to give him your personal data, but that on the way home, this agent of the state is mugged and someone steals his documents. Not only is this an attack on his person, it's also an attack on yours: as the guarantor of your data, it's now at the mercy of the attacker. The problem here is not to have protected yourself against a malicious agent. 
 
 Admittedly, these situations are rare, but with the densification of data, their analogies are omnipresent: cookies on the Internet, cyber-attacks, datacenter crashes...One area for improvement is quite simply to better certify usage by means of cyber protection labels and leads to such a norm to achieve trust:
 ![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Umbrella.png)
 
-In this blog, we propose to tackle this problem from a completely different angle: how to both enable the agent to take global measures and prevent it and any subsequent malicious agents from being able to re-identify my personal data. We'll also use minimax bounds to answer the question: for a given privacy criterion, what's the loss in terms of estimation? (fundamental trade-offs between privacy and convergence rate)
+In this blog, we propose to tackle this problem from a completely different angle: **how to both enable the agent to take global measures and prevent it and any subsequent malicious agents from being able to re-identify my personal data**. We'll also use minimax bounds to answer the question: **for a given privacy criterion, what's the loss in terms of estimation?** (fundamental trade-offs between privacy and convergence rate)
 
 ## Scientific introduction {#section-1}
 <a name="test"></a>
@@ -47,7 +51,7 @@ An intuitive way of understanding this definition is to see that the smaller &al
 
 ## Theoretical results {#section-3}
 
-### The case of multinomial estimation
+### The case of multinomial estimation {#section-4}
 
 #### Theorem
 
@@ -112,25 +116,25 @@ One can show that :
 
 $$\frac{Q(Z = z | x)}{Q(Z = z | x')} \leq e^{\frac{1}{\sigma} * |x - x'|} \leq e^{\frac{2M}{\sigma}}$$
 
-Thus, with the choice of `σ = 2M/α`, it verifies α-local-differentially privacy. The proposed estimator is the following :  
-`Z_hat = X̄ + (2M/α) W̄`.
+Thus, with the choice of $\sigma = \frac{2M}{\alpha}$, it verifies α-local-differentially privacy. The proposed estimator is the following :  
+$$\hat{Z} = \bar{X} + \frac{2M}{\alpha} \bar{W}$$
 
 One can show that it is an unbiaised estimator that achieves the optimal rates:  
-`E[Z_hat] = E[X]`  
-`V[Z_hat] = V(X)/n + 4M^2/nα^2 * V(W̄) = V(X)/n + 8M^2/nα^2` so that,  
-`E[ ||Z_hat- X||_2] ≤ C3/nα^2`.
+$$E[\hat{Z}] = E[X]$$  
+$$V[\hat{Z}] = \frac{V(X)}{n} + \frac{4M^2}{n\alpha^2} V[\bar{W}] = \frac{V(X)}{n} + \frac{8M^2}{n\alpha^2}$$
+$$E[ \|\hat{Z}- X\|^2] \leq \frac{C_3}{n\alpha^2}.$$
 
 This is exactly the optimal rates, quite outstanding !
 
-### The case of density estimation
+### The case of density estimation {#section-5}
 
 One accurate question that can raise is the following : what about others distribution ? Is privacy more costly in general cases ? What is the trade-off ?
 
 To answer this question, let's precise the problem. 
 
 We want to estimate in a non-paramtric way a 1D-density function `f` belonging to one of theses classes :  
--Hölder Class (β, l): For all `x,y ∈ R and m<= β`, `|f^(m)(x) - f^(m)(y)| <= L |x - y| ^(β-m)`  
--Sobolev Class : `F_β[C] := { f ∈ L^2([0, 1]) | f = ∑_{j=1}^{∞} θ_jϕ_j such that ∑_{j=1}^{∞} j^2β ϕ_j^2 ≤ C^2 }`
+-Hölder Class (β, L): $\text{For all }x, y \in \mathbb{R} \text{ and } m \leq \beta, \quad \left| f^{(m)}(x) - f^{(m)}(y) \right| \leq L \left| x - y \right|^{\beta - m}$  
+-Sobolev Class : $F_{\beta}[C] := \left\( f \in L^2([0, 1]) \, \middle| \, f = \sum_{j=1}^{\infty} \theta_j \phi_j \text{ such that } \sum_{j=1}^{\infty} j^{2\beta} \phi_j^2 \leq C^2 \right\)$ 
 
 In a intuitition way, those two classes express that `f` is smooth enough to admits Lipschitz constant to its derivative so that it doesn't "vary" locally too much.
 
@@ -139,12 +143,12 @@ In a intuitition way, those two classes express that `f` is smooth enough to adm
 ##### Without privacy
 
 One can show that without privacy, the minimax rate achievable for estimating a Hölder Class function is:  
-`MSE(f_hat - f) <= C1 * n^(-2β/1+2β)` with the estimator  
-`f_hat(x) = 1/n * ∑_{i=1}^{n} 1/h * K(x-X_i/h)` with `h = C2 * n^(-1/2β+1)`
+$$\text{MSE}(\hat{f} - f) \leq C_1 \cdot n^{-\frac{2\beta}{1+2\beta}}$$ with the estimator  
+$$\hat{f}(x) = \frac{1}{n} \sum_{i=1}^{n} \frac{1}{h} K\left(\frac{x - X_i}{h}\right) \text{with } h = C_2 \cdot n^{-\frac{1}{2\beta+1}}$$
 
 In the case of d-multidimensionnal density `f`, the optimal rate is :  
-`MSE(f_hat - f) <= C4 * n^(-2β/d+2β)` with the estimator  
-`f_hat(x) = 1/n * ∑_{i=1}^{n} 1/h^d * K^d(x-X_i/h)` with `h = C5 * n^(-1/2β+d)`
+$$\text{MSE}(\hat{f} - f) \leq C_4 \cdot n^{-\frac{2\beta}{d+ 2\beta}}$$ with the estimator  
+$$\hat{f}(x) = \frac{1}{n} \sum_{i=1}^{n} \frac{1}{h^d} K^d\left(\frac{x-X_i}{h}\right) \quad \text{with} \quad h = C_5 \cdot n^{-\frac{1}{2\beta + d}}$$
 
 This illustrates once again the curse of dimensionnality.
 
@@ -152,10 +156,10 @@ This illustrates once again the curse of dimensionnality.
 
 Let assume that `f` bellongs to one of the two classes with  `β` as smoothness parameter.  
 Then, the optimal α-local-differentially private optimal rate is :  
-`MSE(f_hat - f) <= C1 * (nα^2)^(-2β/(2β+2))`.
+$$\text{MSE}(\hat{f} - f) \leq C_1 \cdot (n\alpha^2)^{-\frac{2\beta}{2\beta+2}}.$$
 
 One may observe two pessimistic news:  
--The rate is affected by a factor of α^2 as for the multinomial estimation  
+-The rate is affected by a factor of $\alpha^2$ as for the multinomial estimation  
 -More damageable: the rate is slower in term of `n` unlike the previous problem which make privacy in this case more costly.
 
 ##### Practical strategies
@@ -173,33 +177,32 @@ As it is not the most comprehensive and straightforward method, we prefer to div
 
 ##### Laplace Noise (beyond paper) {#section-13}
 
-Let assume that `Xi ∈ [0,M] almost surely`. We note `G_j = [j-1/K, j/K]` the bin of length `1/K`.
+Let assume that $X_i \in [0,M]$ almost surely. We note $G_j = [\frac{j-1}{K},\quad \frac{j}{K}]$ the bin of length $\frac{1}{K}$.
 
 We consider the histogramm estimator: 
-`f_hat(x) = K/n ∑_{j=1}^{K} ∑_{i=1}^{n} 1_Xi∈G_j * 1_x∈G_j`.
+$$\hat{f}(x) = \frac{K}{n} \sum_{j=1}^{K} \sum_{i=1}^{n} 1_{X_i \in G_j} \cdot 1_{x \in G_j}.$$
 
 We now construct the private mechanism as follow:  
-`Zi = [1_Xi∈G_1 + 2/α * W_1 , ... , 1_Xi∈G_K + 2/α * W_K]`.
+$$Z_i = \left[1_{X_i \in G_1} + \frac{2}{\alpha} W_1, \ldots, 1_{X_i \in G_K} + \frac{2}{\alpha} W_K\right]$$
 
-In an intuitive way, we add a Laplace noise realisation for each bin of length `1/K`.
+In an intuitive way, we add a Laplace noise realisation for each bin.
 
-This guarantees α-local-differentially privacy as :  
-`Q(Z = z | x)/Q(Z = z | x') <= exp(α/2 * ∑_{j=1}^{K} |1_x∈G_j - 1_x'∈G_j |) <= exp(α/2 * 2)`.
+This guarantees α-local-differentially privacy as :
+$$\frac{Q(Z = z | x)}{Q(Z = z | x')} \leq \exp\left(\frac{\alpha}{2} \sum_{j=1}^{K} |1_{x \in G_j} - 1_{x' \in G_j}| \right) \leq \exp\left(\frac{\alpha}{2} \cdot 2\right).$$
 
 This leads to the α-local-differentially private estimator :  
-`f_private_hat = f_hat + 2K/nα ∑_{j=1}^{K} W_j`.
+$$f_{\text{private_estimate}} = \hat{f} + \frac{2K}{n\alpha} \sum_{j=1}^{K} W_j$$
 
 The biais is the same as the unprivate case as :  
-`E[f_private_hat] = E[f_hat] + 0`.
+$$E[f_{\text{private_estimate}}] = E[\hat{f}] + 0 .$$
 
 One may prove that if f bellongs to the β-Hölder Class:  
-`Biais(f_private_hat, f) <= C1 * K^(-β)`
+$$Biais(f_{\text{private_estimate}}, f) \leq C1 * K^{-\beta}$$
 
-Meanwhile, `V[f_private_hat] <= C2/n + 4*K^2/α^2 * V[W]/n`, such that in total  :
-`MSE(f_private_hat - f) <= C1 * K^(-2β) + C2/n + C3*K^2/nα^2`.  
-Minimizing over K (hyperparameters) leads to :  
-`K = C4 * (nα^2)^(-/2β+2)` and thus to: 
-`MSE(f_private_hat - f) <= C5 * (nα^2)^(-2β/2β+2)`, which is the expected bound.
+Meanwhile, $$V[f_{\text{private_estimate}}] \leq \frac{C_2}{n} + \frac{4K^2}{\alpha^2} \frac{V[W]}{n}$$, such that in total  :  
+$$\text{MSE}(f_{\text{private_estimate}} - f) \leq C_1 K^{-2\beta} + \frac{C_2}{n} + \frac{C_3 K^2}{n\alpha^2}.$$
+Minimizing over K (hyperparameters) leads to :  $K = C_4 \cdot (n\alpha^2)^{-\frac{1}{2\beta+2}}$ and thus to:  
+$$\text{MSE}(f_{\text{private_estimate}} - f) \leq C_5 \cdot (n\alpha^2)^{-\frac{2\beta}{2\beta + 2}}$$, which is the expected bound.
 
 ---
 
