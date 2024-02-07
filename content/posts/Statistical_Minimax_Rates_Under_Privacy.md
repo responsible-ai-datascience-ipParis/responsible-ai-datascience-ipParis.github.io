@@ -15,6 +15,8 @@ draft = false
 
 ## Why do we care about privacy ? {#section-0}
 
+$$ test \frac{1}{2} + \pi$$
+
 Imagine, you're quietly at home when the doorbell rings. You open the door and a government official appears: population census. Even though he shows you his official badge and you'd like to help him in the public interest, you find it hard to answer his questions as you go along. Indeed, the first questions about the date of your move are easy and public. On the other hand, when he asks about the number of children, marital status or your salary and what you do with it, you struggle. Not because you don't know the answer, but because you're faced with an ethical dilemma: transparency towards the state versus protection of personal data. In short, his work goes against your privacy. 
 
 This stress has major consequences: as you doubt what could happen to you with this data, but you still want to answer it, you underestimate your answers. On a wider scale, this leads to a suffrage bias and therefore a lack of knowledge of the real situation of your population. Warner [1], the first to tackle this problem from a statistical angle talks of an evasive bias and says: "for reasons of modesty, fear of being thought bigoted, or merely a reluctance to confide secrets to strangers,respondents to surveys might prefer to be able to answer certain questions non-truthfully, or at least without the interviewer knowing their true response"
@@ -33,13 +35,15 @@ Our blog will follow the same plan as the article that inspired it (John C. Duch
 
 ## Some key definitions {#section-2}
 
-Let assume that you want to make private `X1, . . . , Xn ∈ X` random variable and, as the statistician, you only observe `Z1, . . . , Zn ∈ Z`. The paper assumes that there exist a markov kernel that links the true ramdom variables and the observed ones as follow: `Qi(Zi | Xi = x)`.
+Let assume that you want to make private $X_1 , ... , X_n \in X$ random variable and, as the statistician, you only observe $Z_1, . . . , Z_n ∈ Z$. The paper assumes that there exist a markov kernel that links the true ramdom variables and the observed ones as follow: $Q_i(Z_i | X_i = x)$.
 
-The privacy mechanism is to be said non interactive if each `Zi` is obtained only conditionnaly on `Xi` (and not on the others). This represents the fact that the privacy mechanism is memory less. If not, the mechnism is said to be interactive. 
+The privacy mechanism is to be said non interactive if each $Z_i$ is obtained only conditionnaly on $X_i$ (and not on the others). This represents the fact that the privacy mechanism is memory less. If not, the mechnism is said to be interactive. 
 
 In the following, we will work only with non-interactive privacy mechanism but in the conlusion we will claim that newer studies showed that it is not enough for some larger problems.
 
-`Zi`is said to be α-local-differentially private for the original data `Xi` if `sup {Q(Z | Xi = x)/Q(Z | Xi = x')} | x, x' ∈ X} ≤ exp(α)`. An intuitive way of understanding this definition is to see that the smaller &alpha; is (the more private it is), the more difficult it is to distinguish the distribution of Z conditional on two different X data. 
+$Z_i$ is said to be α-local-differentially private for the original data $X_i$ if $$sup(\frac{Q(Z | X_i = x)}{Q(Z | X_i = x')} | x, x' ∈ X) ≤ exp(α)$$.  
+
+An intuitive way of understanding this definition is to see that the smaller &alpha; is (the more private it is), the more difficult it is to distinguish the distribution of Z conditional on two different X data. 
 
 ## Theoretical results {#section-3}
 
@@ -47,17 +51,17 @@ In the following, we will work only with non-interactive privacy mechanism but i
 
 #### Theorem
 
-In this section, we return back to the problem of the private survey. For the statistician view, estimating a survey is estimating the parameter &theta; from the Bernouilli distribution `B(θ)`. 
-This problem is a special case of multinomial estimation, where `θ` is now a multidimensional parameter that is amenable to simplex probability. `∆d := {θ ∈ ℝ⁺ | d, θ ≥ 0, ∑θⱼ = 1}.
+In this section, we return back to the problem of the private survey. For the statistician view, estimating a survey is estimating the parameter &theta; from the Bernouilli distribution $B(θ)$. 
+This problem is a special case of multinomial estimation, where `θ` is now a multidimensional parameter that is amenable to simplex probability. $∆_d := (θ ∈ ℝ_+ | d, θ ≥ 0, ∑θ_j = 1)$.
 
-Theorem : Given α-local-differentially private `Zi`, there exists some arbitrary constants `C1`, `C2` such that for all &alpha; ∈ [0,1]:
-`C1 min {1, 1 / √(nα²), d / (nα²)} ≤ E[(θ̂_hat - θ)^2] ≤ C2 min {1, d / (nα²)}` and 
-`C1 min {1, 1 / √(nα²))} ≤ E[||θ̂_hat - θ||_1] ≤ C2 min {1, d / √nα²}`.
+Theorem : Given α-local-differentially private $Z_i$, there exists some arbitrary constants $C_1$, $C_2$ such that for all $\alpha\in [0,1]$:
+$$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - θ|^2] ≤ C_2 min(1, \frac{d}{n\alpha^2})$$ and 
+$$C_1 min(1,\frac{1}{\sqrt{n\alpha^2}}) ≤ E[||θ_{hat} - θ||_1] ≤ C_2 min(1,\frac{d}{\sqrt{n\alpha^2}})$$.
 
-Recall from standard statistics: For non private independant `Zi` with finite variance, , there exists some arbitrary constants `C3` such that:
-`E[(θ̂_hat - θ)^2] ≤ C3/n}`
+Recall from standard statistics: For non private independant $Z_i$ with finite variance, , there exists some arbitrary constants $C_3$ such that:
+$$E[|θ_{hat} - θ|^2] ≤ \frac{C_3}{n}$$
 
-In others term, providing α-local-differentially privacy causes a reduction in the effective sample size of a factor `α^2/d` for best situations. It thus means that the asymptotically rate of convergences remains unchanged which s a really good news !
+In others term, providing α-local-differentially privacy causes a reduction in the effective sample size of a factor $\frac{\alpha^2}{d}$ for best situations. It thus means that the asymptotically rate of convergences remains unchanged which is a really good news !
 
 #### Practical strategies
 
@@ -71,41 +75,42 @@ The intuition of this section is the following : to not allow the statistician t
 
 For the multinomial estimation now, you will generalize this procedure to the multidimensionnal setting. For each coordinate, you will tell to the statistician the reel answer with a certain probability and lies otherwise. More precisely, its leads to : 
 
-`[Z]j = xj with probability (exp(α/2) / (1 + exp(α/2)))`  
- `1 - xj with probability (1 / (1 + exp(α/2)))`
+$$[Z]_j = x_j \text{ with probability } \frac{e^\frac{\alpha}{2}} {1 + e^\frac{\alpha}{2}}$$
+$$[Z]_j = 1 - x_j \text{ with probability } \frac{1}{1 + e^\frac{\alpha}{2}}$$
+
 
 Such a mechanism achieves α-local-differentially privacy because one can show that :
 
-`Q(Z = z | x)/Q(Z = z | x') = exp(α/2)(||z - x||_1 - ||z - x'||_1) ∈ [exp(-α), exp(α)]` which is the criteria given above.
+$$\frac{Q(Z = z | x)}{Q(Z = z | x')} = e^\frac{\alpha}{2}(||z - x||_1 - ||z - x'||_1) \in [e^{-\alpha}, e^\alpha]$$ which is the criteria given above.
 
-With the notation as `1_d=[1, 1, 1, ..., 1]` corresponds to a d-vector with each coordinate equals 1, we can also show that :
+With the notation as $1_d=[1, 1, 1, ..., 1]$ corresponds to a d-vector with each coordinate equals 1, we can also show that :
 
-`E[Z | x] = (e^(α/2) - 1) / (e^(α/2) + 1) * x + (1 / (1 + e^(α/2)))1_d`
+$$E[Z | x] = \frac{e^\frac{\alpha}{2} - 1}{e^\frac{\alpha}{2} + 1} * x + \frac{1}{1 + e^\frac{\alpha}{2}}1_d$$
 
 This leads to the natural moment-estimator : 
 
-`θ_hat = (1/n) ∑_{i=1}^{n} ((Z_i - 1_d/(1 + e^(α/2))) * (e^(α/2) + 1) / (e^(α/2) - 1))`
+$$θ_{hat} = \frac{1}{n} ∑_{i=1}^{n} \frac{Z_i - 1_d}{1 + e^\frac{\alpha}{2}} * \frac{e^\frac{\alpha}{2} + 1}{e^\frac{\alpha}{2} - 1}$$
 
 One can also show that it verifies :
 
-`E[ ||θ̂_hat- θ||_2] ≤  d/n * (e^(α/2) + 1)/(e^(α/2) - 1)^2 < C3/nα^2` which is the announced result.
+$$E[ ||θ_{hat}- θ||_2] ≤  \frac{d}{n} * \frac{(e^\frac{\alpha}{2} + 1)^2}{(e^\frac{\alpha}{2} - 1)^2} < \frac{C_3}{nα^2}$$ which is the announced result.
 
 ##### Laplace Noise (beyond paper) {#section-11}
 
 Instead of saying the truth with some probability, one may think of adding noise to the answer so that the statistician can't retrieve his real answer. This is exactly the mechanism we propose to dive in and which is not covered in the paper.
 
 Definition: A noise is said to be a Laplace noise with parameters (μ, b) if it verifies:  
-`f(x|μ, b) = (1 / (2b)) * exp(-|x - μ| / b)`
+$$f(x|μ, b) = \frac{1}{2b} * exp(\frac{-|x - μ|}{b})$$
 
 A visualisation for differents parameters is given below. We can see that Laplace distribution is a shaper verson of the gaussian distribution :
 ![Laplace](http://localhost:1313/images/Antoine_Klein/Laplace.png)
 
-The trick is to use such a noise. Let assume `Xi ∈ [-M,M]` and construct the private mechanism as follow:  
-`Zi = Xi + σWi` where `Wi` is drawn from a Laplace noise (0,1).
+The trick is to use such a noise. Let assume `Xi ∈ [-M,M]` and construct the private mechanism as follow:   
+$$Z_i = X_i + \sigma W_i$$ where $W_i$ is drawn from a Laplace noise (0,1).
 
 One can show that :
 
-`Q(Z = z | x)/Q(Z = z | x') <= exp(1/σ * |x - x'|) <= exp(2M/σ)`
+$$\frac{Q(Z = z | x)}{Q(Z = z | x')} \leq e^{\frac{1}{\sigma} * |x - x'|} \leq e^{\frac{2M}{\sigma}}$$
 
 Thus, with the choice of `σ = 2M/α`, it verifies α-local-differentially privacy. The proposed estimator is the following :  
 `Z_hat = X̄ + (2M/α) W̄`.
@@ -261,34 +266,49 @@ Please fill out the quiz form below:
 
 <form id="quiz-form" class="quiz-form">
     <div class="quiz-question">
-        <p>What is the capital of France?</p>
+        <p>What is privacy?</p>
         <div class="quiz-options">
             <label>
-                <input type="radio" name="question1" value="paris">
-                Paris
+                <input type="radio" name="question1" value="1">
+                Avoid asking questions that can raise private information
             </label>
             <label>
-                <input type="radio" name="question1" value="london">
-                London
+                <input type="radio" name="question1" value="2">
+                A mechanism that prevents other agent to retrieve personnal information in your answer
             </label>
             <label>
-                <input type="radio" name="question1" value="berlin">
-                Berlin
+                <input type="radio" name="question1" value="3">
+                An ethical-washing trend
             </label>
         </div>
-        <p>What is the capital of Germany?</p>
+        <p>Which situation is α-local-differentially privacy?</p>
         <div class="quiz-options">
             <label>
-                <input type="radio" name="question2" value="paris">
-                Paris
+                <input type="radio" name="question2" value="1">
+                sup {Q(Z | Xi = x)/Q(Z | Xi = x')} | x, x' ∈ X} >= exp(α)
             </label>
             <label>
-                <input type="radio" name="question2" value="london">
-                London
+                <input type="radio" name="question2" value="2">
+                You tell the truth half the time, you lie otherwise.
             </label>
             <label>
-                <input type="radio" name="question2" value="berlin">
-                Berlin
+                <input type="radio" name="question2" value="3">
+                Z_i = X_i + (2M/α) W_i with W_i drawn from a Laplace Noise(0,1)
+            </label>
+        </div>
+        <p>What is the privacy cost in term of optimal rate ?</p>
+        <div class="quiz-options">
+            <label>
+                <input type="radio" name="question3" value="1">
+                Multinomial estimation: A factor α^2/d 
+            </label>
+            <label>
+                <input type="radio" name="question3" value="2">
+                Density estimation: from n^(-2β/2β+2) (without privacy) to (nα^2)^(-2β/(2β+2))
+            </label>
+            <label>
+                <input type="radio" name="question3" value="3">
+                We loose nothing, that's the surprising finding of the paper
             </label>
         </div>
     </div>
@@ -302,13 +322,18 @@ Please fill out the quiz form below:
     // Define quiz questions and correct answers
     const quizQuestions = [
         {
-            question: "What is the capital of France?",
-            answer: "paris"
+            question: "What is privacy?",
+            answer: "2"
         },
         //Add more quiz questions as needed
         {
-            question: "What is the capital of Germany?",
-            answer: "berlin"
+            question: "Which situation is α-local-differentially privacy?",
+            answer: "3"
+        },
+        //Add more quiz questions as needed
+        {
+            question: "What is the privacy cost in term of optimal rate ?",
+            answer: "1"
         }
     ];
 
@@ -420,3 +445,26 @@ a[name]:hover {
         text-decoration: none; /* Optionally remove underline on hover */
 }
 </style>
+
+
+
+
+
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
