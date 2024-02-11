@@ -14,10 +14,11 @@ draft = false
 - [Theory](#section-3)
 - [The case of multinomial estimation](#section-4)
 - [The case of density estimation](#section-5)
+- [Experiment](#section-6)
+- [Conclusion](#section-7)
+- [Quizz](#section-8)
 
 ## Why do we care about privacy ? {#section-0}
-
-$$ test \frac{1}{2} + \pi$$
 
 Imagine, you're quietly at home when the doorbell rings. You open the door and a government official appears: population census. Even though he shows you his official badge and you'd like to help him in the public interest, you find it hard to answer his questions as you go along. Indeed, the first questions about the date of your move are easy and public. On the other hand, when he asks about the number of children, marital status or your salary and what you do with it, you struggle. Not because you don't know the answer, but because you're faced with an ethical dilemma: transparency towards the state versus protection of personal data.   
 $$\text{In short, transparency goes against your privacy. }$$
@@ -33,7 +34,6 @@ Admittedly, these situations are rare, but with the densification of data, their
 In this blog, we propose to tackle this problem from a completely different angle: **how to both enable the agent to take global measures and prevent it and any subsequent malicious agents from being able to re-identify my personal data**. We'll also use minimax bounds to answer the question: **for a given privacy criterion, what's the loss in terms of estimation?** (fundamental trade-offs between privacy and convergence rate)
 
 ## Scientific introduction {#section-1}
-<a name="test"></a>
 
 Our blog will follow the same plan as the article that inspired it (John C. Duchi [2]),i.e. to show that response randomization achieves optimal convergence in the case of multinomial estimation, and then that this process can be generalized to any nonparametric distribution estimation. To this end, we will introduce the notion of local differential privacy as well as the minimax theory for obtaining optimal limits. All this will shed light on the trade-off between privacy and estimation rates. We will also explain algorithms to implement these optimal strategies. Finally, we will propose some experimental results.
 
@@ -57,6 +57,8 @@ An intuitive way of understanding this definition is to see that the smaller &al
 
 In this section, we return back to the problem of the private survey. For the statistician view, estimating a survey is estimating the parameter &theta; from the Bernouilli distribution $B(θ)$. 
 This problem is a special case of multinomial estimation, where `θ` is now a multidimensional parameter that is amenable to simplex probability. $∆_d := (θ ∈ ℝ_+ | d, θ ≥ 0, ∑θ_j = 1)$.
+
+<a name="Recall"></a>
 
 Theorem : Given α-local-differentially private $Z_i$, there exists some arbitrary constants $C_1$, $C_2$ such that for all $\alpha\in [0,1]$:
 $$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - θ|^2] ≤ C_2 min(1, \frac{d}{n\alpha^2})$$ and 
@@ -206,66 +208,69 @@ $$\text{MSE}(f_{\text{private_estimate}} - f) \leq C_5 \cdot (n\alpha^2)^{-\frac
 
 ---
 
-## Experiment: Estimating Privacy Using Differential Privacy
+## Experiment: Illustration of the Minimax privacy rate {#section-6}
 
 ### Overview {#section-111}
-<a href="#test" style="background-color: yellow; padding: 2px 5px; border-radius: 3px;">Go to test</a>
-This is the introduction section. experiment, we focus on utilizing the concept of differential privacy to estimate the privacy level of a dataset. Differential privacy offers a rigorous framework for quantifying the impact of an individual's data on the overall privacy of a dataset, providing a mechanism to balance data utility and privacy protection.
+
+The aim of this section is to provide illustrations of the theoretical results set out above. Emphasis is placed on convergence results, with empirical confirmation of the latter.
+
+For the sake of reproducibility and transparency, the source code can be found in the notebook at this: [Github link](https://github.com/AntoineTSP/responsible-ai-datascience-ipParis.github.io.git).
+
 
 ### Methodology
 
-1. **Data Preparation**: We begin by preprocessing the dataset to ensure it adheres to the requirements of differential privacy. This may involve techniques such as data anonymization or perturbation.
+1. **Data Preparation**: Rather than working with real datasets, we decide to work with simulated data, as this allows us to maintain control over all aspects. 
 
-2. **Privacy Metric Calculation**: Next, we compute the privacy metric using differential privacy algorithms. This metric quantifies the level of privacy protection afforded to individuals within the dataset.
+More precisely, we give ourselves $n=1000$ samples of the normal distribution $N(100,1)$ on which we add a Laplace noise $L(0,\alpha).$  
+As for the different alpha values, we iterate through them: $[0.2, 0.3, 0.5, 0.7]$
 
-3. **Evaluation**: We evaluate the effectiveness of our privacy estimation by comparing the computed privacy metric against established thresholds or benchmarks. This step provides insights into the adequacy of privacy protection measures employed.
+2. **Privacy Metric Calculation**: We will look at the use case of estimating the mean of a distribution.
+
+3. **Evaluation**: The results will be compared in terms of Mean Square Error (MSE).
 
 ### Results
 
-Our experiment yielded promising results, demonstrating the feasibility of using differential privacy for privacy estimation in data science. The calculated privacy metric indicated a high level of privacy protection, exceeding industry standards in several instances. However, further analysis is warranted to explore the robustness of our approach across diverse datasets and scenarios.
+In terms of the observed distribution (private because subject to Laplace noise) relative to the true data, we obtain the following figure: 
 
-<script>
-function highlight(text) {
-  var inputText = document.getElementById("markdown-content");
-  var innerHTML = inputText.innerHTML;
-  var index = innerHTML.indexOf(text);
-  if (index >= 0) { 
-    innerHTML = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
-    inputText.innerHTML = innerHTML;
-  }
-}
-highlight("Estimating Privacy in Data Science");
+![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Private_distribution.png)
 
-</script>
+As expected, the greater the desired privacy (low $\alpha$), the more spread out the distribution of observed data.
 
-[Read more about our experiment methodology](##Experiment:-Estimating-Privacy-Using-Differential-Privacy)
+When it comes to estimating the true average from private data, we obtain the following figure: 
 
-### Conclusion
+![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Estimated_mean.png)
 
-We have linked minimax analysis from statistical decision theory with differential privacy, bringing some of their respective foundational principles into close contact. In this paper particularly, we showed how to apply our divergence bounds to obtain sharp bounds on the convergence rate for certain nonparametric problems in addition to standard finite-dimensional settings. By providing sharp convergence rates for many standard statistical inference procedures under local differential privacy, we have developed and explored some tools that may be used to better understand privacy-preserving statistical inference and estimation procedures. We have identified a fundamental continuum along which privacy may be traded for utility in the form of accurate statistical estimates, providing a way to adjust statistical procedures to meet the privacy or utility needs of the statistician and the population being sampled. Formally identifying this trade-off in other statistical problems should allow us to better understand the costs and benefits of privacy; we believe we have laid some of the groundwork to do so.
+This figure illustrates two major points:  
+-The first is that whatever the level of privacy, we have an **unbiased estimator** of the mean. It's a beautiful property, empirically verified !   
+-The second is that, unfortunately, the greater the privacy (low alpha), the greater the variance of this estimator. 
 
-# Interactive Markdown Example
+We recall our main theorem demonstrated above <a href="#Recall" style="background-color: yellow; padding: 2px 5px; border-radius: 3px;">Previous theorem</a> :   
+**Theorem** : Given α-local-differentially private $Z_i$, there exists some arbitrary constants $C_1$, $C_2$ such that for all $\alpha\in [0,1]$:
+$$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - θ|^2] ≤ C_2 min(1, \frac{d}{n\alpha^2})$$  
 
-This is an interactive Markdown file.
+We now want to compare the theoretical optimal rate with empirical results. To do this, we distinguish two situations:  
+-The first is with fixed alpha, and determines the MSE as a function of the number of samples n. This leads to these empirical results:  
 
-<input type="text" id="inputField" placeholder="Type something...">
-<button onclick="displayInput()">Submit</button>
-<div id="output"></div>
+![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Minimax_rate_n.png)
 
-<script>
-    function displayInput() {
-        var inputValue = document.getElementById("inputField").value;
-        document.getElementById("output").innerText = "You typed: " + inputValue;
-    }
-</script>
+The dotted line represents the regime of the theoretical bound of the form $n \rightarrow \frac{C1}{n}$ . This is the shape of the empirical curves! 
 
-This is <span style="background-color: yellow;">highlighted text</span> using inline CSS.
+-The second has a fixed n and determines the MSE as a function of alpha. This leads to these empirical results:  
 
-<span class="highlight-on-hover">Hover over this text to see it highlighted.</span>
+![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Minimax_rate_alpha.png)
 
-# Quiz or Survey Form
+The dotted line represents the regime of the theoretical bound of the form $\alpha \rightarrow \frac{C1}{\alpha^2}$ . This is once again the shape of the empirical curves quite surprisingly! 
 
-Please fill out the quiz form below:
+### Conclusion {#section-7}
+
+From a problem rooted in an ethical dilemma (privacy versus completeness and transparency), we have looked at the cost of guaranteeing one at the expense of the other, to better sketch out desirable situations.  
+This has enabled us to develop theoretical results in terms of minimax rates. There is indeed a trade-off between these criteria, which is even more costly in the case of non-parametric density estimation.  
+Finally, we have compared these theoretical limits with empirical results, which confirm the conformity of the statements.  
+The aim of all this work is to disseminate this important yet under-exploited notion: privacy. To this end, we invite the reader to take the following quiz to ensure his or her understanding.  
+
+# Quizz {#section-8}
+
+To test yourself abour privacy:  
 
 <form id="quiz-form" class="quiz-form">
     <div class="quiz-question">
@@ -366,18 +371,10 @@ Please fill out the quiz form below:
 
 ---
 
-By leveraging the principles of differential privacy, data scientists can gain valuable insights into the privacy implications of their analyses and foster a culture of responsible data stewardship. Stay tuned for more updates and explorations into the fascinating realm of privacy-aware data science.
-
 
 ---
 
 ## Annexes
-
-### Glossary of Terms
-
-- **Differential Privacy**: A mathematical framework for quantifying the privacy guarantees provided by a data analysis or processing mechanism.
-- **Privacy Metric**: A measure used to assess the level of privacy protection afforded to individuals within a dataset.
-- **Data Anonymization**: The process of removing or obfuscating identifying information from a dataset to protect the privacy of individuals.
 
 ### References
 
@@ -387,7 +384,36 @@ By leveraging the principles of differential privacy, data scientists can gain v
 222. Narayanan, A., & Shmatikov, V. (2008). Robust de-anonymization of large sparse datasets. In Security and Privacy, 2008. SP 2008. IEEE Symposium on (pp. 111-125). IEEE.
 
 
+<script>
+function highlight(text) {
+  var inputText = document.getElementById("markdown-content");
+  var innerHTML = inputText.innerHTML;
+  var index = innerHTML.indexOf(text);
+  if (index >= 0) { 
+    innerHTML = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
+    inputText.innerHTML = innerHTML;
+  }
+}
+highlight("Estimating Privacy in Data Science");
+
+</script>
+
 ---
+
+<input type="text" id="inputField" placeholder="Type something...">
+<button onclick="displayInput()">Submit</button>
+<div id="output"></div>
+
+<script>
+    function displayInput() {
+        var inputValue = document.getElementById("inputField").value;
+        document.getElementById("output").innerText = "You typed: " + inputValue;
+    }
+</script>
+
+This is <span style="background-color: yellow;">highlighted text</span> using inline CSS.
+
+<span class="highlight-on-hover">Hover over this text to see it highlighted.</span>
 
 <style>
 .highlight {
