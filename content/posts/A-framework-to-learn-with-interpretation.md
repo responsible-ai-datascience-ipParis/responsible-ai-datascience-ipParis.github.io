@@ -170,7 +170,7 @@ For local analysis, given any test sample $x_{0}$ , its local interpretation L($
 
 # 4 Numerical Experiments for FLINT
 
-In their article, the authors discuss the selection of datasets and neural network architectures for their experimental setup. Four datasets are considered: MNIST , FashionMNIST , CIFAR-10 , and a subset of the QuickDraw dataset . The experimentation involves two types of architectures for the predictor network f: a LeNet-based network for MNIST and FashionMNIST, and a ResNet18-based network for QuickDraw and CIFAR. Specific layers are selected from the last few convolutional layers to capture higher-level features effectively.
+The paper discuss the selection of datasets and neural network architectures for their experimental setup. Four datasets are considered: MNIST , FashionMNIST , CIFAR-10 , and a subset of the QuickDraw dataset . The experimentation involves two types of architectures for the predictor network f: a LeNet-based network for MNIST and FashionMNIST, and a ResNet18-based network for QuickDraw and CIFAR. Specific layers are selected from the last few convolutional layers to capture higher-level features effectively.
 
 The number of attributes J is tailored for each dataset: 
 - J=25 for MNIST and FashionMNIST 
@@ -179,7 +179,7 @@ The number of attributes J is tailored for each dataset:
 
 ## 4.1 Quantitative evaluation of FLINT
 
-The authors undertake a thorough evaluation and comparison of their model with other state-of-the-art systems, focusing on accuracy and interpretability. To gauge interpretability, they employ evaluation metrics specifically designed to assess the effectiveness of the losses proposed previously in their study.
+In the paper , the authors undertake a thorough evaluation and comparison of their model with other state-of-the-art systems, focusing on accuracy and interpretability. To gauge interpretability, they employ evaluation metrics specifically designed to assess the effectiveness of the losses proposed previously in their study.
 
 Their primary method for comparison, when applicable, is SENN, chosen for its inherent interpretability with units for interpretation aligning with FLINT. Additionally, they include PrototypeDNN as a baseline for comparing predictive performance, and LIME and VIBI for evaluating the fidelity of interpretations. 
 
@@ -198,13 +198,13 @@ Their findings indicate that training $\( f \)$ within FLINT does not lead to an
 
 ### 4.1.2 Fidelity of Interpreter
 
-The authors assess the fidelity of the interpreter, which is defined as the proportion of samples where the predictions of a model and its interpreter agree, indicating the same class label . This metric is commonly used to evaluate how well an interpreter approximates a model. To ensure that the interpreter trained with FLINT (referred to as FLINT-g) achieves a satisfactory level of agreement with FLINT-f, we conduct a benchmark against a state-of-the-art black-box explainer, VIBI , and the traditional method LIME . The results are presented in the above provided table .
+The paper assess the fidelity of the interpreter, which is defined as the proportion of samples where the predictions of a model and its interpreter agree, indicating the same class label . This metric is commonly used to evaluate how well an interpreter approximates a model. To ensure that the interpreter trained with FLINT (referred to as FLINT-g) achieves a satisfactory level of agreement with FLINT-f, we conduct a benchmark against a state-of-the-art black-box explainer, VIBI , and the traditional method LIME . The results are presented in the above provided table .
 
 FLINT-g consistently demonstrates higher fidelity compared to the benchmarked methods. Despite the inherent difference in methodology, where FLINT-g accesses intermediate layers while the other systems are black-box explainers, the results clearly indicate that FLINT-g exhibits high fidelity to FLINT-f. These findings reinforce the effectiveness of FLINT-g in faithfully representing the predictions of FLINT-f.
 
 ### 4.1.3 Conciseness of interpretations
 
-In the referenced article, the conciseness of interpretations is evaluated by measuring the average number of important attributes present in generated interpretations. This metric assesses the need for analyzing attributes and is computed for a given sample $\( x \)$ by counting the number of attributes ​$\Phi(j)$ with $\( r_{j;x} \)$ greater than a threshold $\( \frac{1}{\lambda} \)$, where $\( \lambda > 1 \)$. By varying the threshold $\( \frac{1}{\lambda} \)$, the mean conciseness $(\( \text{CNS}_g \))$ of $\( g \)$ over the test data is computed, where lower conciseness indicates a need to analyze fewer attributes on average.
+In the article, the conciseness of interpretations is evaluated by measuring the average number of important attributes present in generated interpretations. This metric assesses the need for analyzing attributes and is computed for a given sample $\( x \)$ by counting the number of attributes ​$\Phi(j)$ with $\( r_{j;x} \)$ greater than a threshold $\( \frac{1}{\lambda} \)$, where $\( \lambda > 1 \)$. By varying the threshold $\( \frac{1}{\lambda} \)$, the mean conciseness $(\( \text{CNS}_g \))$ of $\( g \)$ over the test data is computed, where lower conciseness indicates a need to analyze fewer attributes on average.
 
 To compare the conciseness of FLINT with SENN across all four datasets, the authors generate conciseness curves. As shown in the provided figure below , FLINT consistently produces interpretations that are more concise compared to SENN. Notably, SENN tends to consider a majority of concepts as relevant even for lower thresholds (higher $\( \lambda \)$), indicating less concise interpretations.
 
@@ -259,3 +259,7 @@ Descriptions were manually generated, including 40% incorrect ones to ensure inf
 FLINT's versatility extends beyond its primary goal of interpretability by design, allowing for specialization in providing post-hoc interpretations when a classifier $\( \hat{f} \)$ is already available. This post-hoc interpretation learning falls under the broader scope of Supervised Layer-wise Interpretation (SLI). It entails constructing an interpreter of $\( \hat{f} \$ by minimizing the loss function $\( L_{\text{int}}(\hat{f}, g, S) \)$ with respect to $\( g \)$, where $\( S \)$ denotes the training set.
 
 Experimental validation of this post-hoc capability is performed by interpreting fixed models trained solely for accuracy, for example the discussed BASE-$\( f \)$ models from Section 4.1. Even without fine-tuning the internal layers of $\( \hat{f} \)$, the system demonstrates the ability to generate high-fidelity and meaningful interpretations. 
+
+# 6 Final Thoughts 
+
+In conclusion, FLINT introduces a pioneering framework for training a predictor network alongside its interpreter network, incorporating specialized losses to offer both local and global interpretations based on learned attributes and concepts. However, this approach raises unresolved queries regarding the faithfulness of interpretations to the predictor. The definition of faithfulness in interpreting decision processes has yet to achieve consensus, particularly concerning post-hoc interpretability and discrepancies between the predictor and interpreter models. While generating interpretations from hidden layers of the predictor network enhances faithfulness to some extent, complete fidelity cannot be ensured due to disparities in the final portions of the predictor and interpreter. Nevertheless, if prioritizing faithfulness by design is deemed paramount, FLINT-g can serve as the ultimate decision-making network, consolidating both roles into a single entity.
