@@ -44,46 +44,48 @@ After these modifications, it is possible to run the authors' experiments on the
     </tr>
     <tr>
       <td style="padding: 8px;">resnet101</td>
-      <td style="padding: 8px;">1.7998</td>
+      <td style="padding: 8px;">1.799</td>
     </tr>
     <tr>
       <td style="padding: 8px;">densenet201</td>
-      <td style="padding: 8px;">1.4337</td>
+      <td style="padding: 8px;">1.434</td>
     </tr>
     <tr>
       <td style="padding: 8px;">densenet169</td>
-      <td style="padding: 8px;">1.1462</td>
+      <td style="padding: 8px;">1.146</td>
     </tr>
     <tr>
       <td style="padding: 8px;">resnet34</td>
-      <td style="padding: 8px;">0.7566</td>
+      <td style="padding: 8px;">0.757</td>
     </tr>
     <tr>
       <td style="padding: 8px;">resnet50</td>
-      <td style="padding: 8px;">0.7095</td>
+      <td style="padding: 8px;">0.709</td>
     </tr>
     <tr>
       <td style="padding: 8px;">densenet121</td>
-      <td style="padding: 8px;">0.6549</td>
+      <td style="padding: 8px;">0.655</td>
     </tr>
     <tr>
       <td style="padding: 8px;">mnasnet1_0</td>
-      <td style="padding: 8px;">0.0306</td>
+      <td style="padding: 8px;">0.031</td>
     </tr>
     <tr>
       <td style="padding: 8px;">googlenet</td>
-      <td style="padding: 8px;">-0.2506</td>
+      <td style="padding: 8px;">-0.251</td>
     </tr>
     <tr>
       <td style="padding: 8px;">mobilenet_v2</td>
-      <td style="padding: 8px;">-0.4440</td>
+      <td style="padding: 8px;">-0.444</td>
     </tr>
     <tr>
       <td style="padding: 8px;">inception_v3</td>
-      <td style="padding: 8px;">-0.7323</td>
+      <td style="padding: 8px;">-0.732</td>
     </tr>
   </tbody>
 </table>
+
+Then, we evaluated the transferability of the supervised pre-trained models, in terms of weighted Kendall' τ, and obtained the exact same result as the one presented in the paper: 0.843.
 
 It was not possible for us to run the experiment on the group of self-supervised pre-trained models as the authors' code included personal paths, and we were not able to find them online.
 
