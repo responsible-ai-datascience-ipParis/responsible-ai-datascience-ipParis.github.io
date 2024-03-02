@@ -8,21 +8,64 @@ draft = false
 
 This blog post discusses the paper "How Far Pre-trained Models Are from Neural Collapse on the Target Dataset Informs their Transferability" [[1]](#ref1). It provides an explanation of it so that you can understand the usefulness of measuring transferability, and a reproduction of the authors' experiment so that you can better visualize their methodology.
 
-# Transferability and Neural Collapse
+# Pre-trained models and fine-tuning
+
+Pre-trained models are currently one of the most active fields in Machine Learning. They can be found in a wide range of applications, from image recognition and natural language processing to autonomous driving and medical diagnosis. These models are "pre-trained" on massive datasets, most of the time encompassing millions of examples across diverse domains. The training process leverages Deep Learning algorithms and can take weeks or even months, utilizing powerful computing resources to iteratively adjust the model's parameters until it achieves high accuracy on the training data.
+
+The first purpose of pre-training is to enable the model to learn a broad understanding of the world, capturing intricate patterns, relationships, and features that are not easily discernible. This extensive learning phase allows the model to develop a deep amount of knowledge, which it can then apply to more specific tasks through a process known as fine-tuning.
+
+What is fine-tuning? It consists in adapting a general-purpose model to perform well on a specific task. This adaptation allows the model to fine-tune its learned features to better align with the nuances of the new task, enhancing its accuracy and performance. Whether it's identifying specific types of objects in images, understanding the subtleties of natural language in a particular context, or diagnosing medical conditions from scans, fine-tuning enables pre-trained models to become specialized tools capable of tackling a wide range of applications.
+
+Fine-tuning begins with a pre-trained model—a model that has already learned a vast array of features and patterns from a comprehensive dataset, often spanning millions of examples. This model, equipped with a deep understanding of various data representations, serves as a robust starting point. The fine-tuning process then adapts this model to a specific task by continuing the training process on a smaller, task-specific dataset. This additional training phase is typically shorter and requires significantly fewer data and computational resources than training a model from scratch, as the model already possesses a foundational knowledge base.
+
+One of the key aspects of fine-tuning is its efficiency in data utilization. Since the model has already learned general features and patterns, the fine-tuning process can achieve high performance with relatively small datasets. This characteristic is particularly valuable in domains where collecting large amounts of labeled data is challenging or expensive. 
+
+Training from scratch is the complete opposite of fine-tuned pre-trained models, as it involves starting with randomly initialized parameters and requires a substantial dataset specific to the task at hand, along with considerable computational resources and time to achieve comparable performance to a fine-tuned pre-trained model. While training from scratch can be beneficial in certain scenarios where highly specialized knowledge is required or when a suitable pre-trained model is not available, the efficiency and effectiveness of leveraging pre-trained models are nowadays undeniable.
+
+# Transferability
 
 Transferability caracterizes the ability of pre-trained models to run on downstream tasks without performing fine-tuning, but achieving comparable results. Models that exhibit high transferability are those that have learned generalizable features during pre-training—features that are not overly specific to the training data but that capture universal patterns or structures present across different datasets and domains.
 
+Beside, transferability arises as an attempt of improvement in scalable AI, as it enables researchers and practitioners to build upon existing knowledge without reinventing the wheel for every new task. This characteristic is especially crucial in our current case where data is abundant, but labeled data is scarce or expensive to obtain. Transferable models can leverage unlabeled data from similar domains, or even entirely different domains, to achieve impressive results with minimal effort.
+
+Moreover, the pursuit of enhancing transferability has led to innovations in model architecture, training strategies, and domain adaptation techniques. Few-shot learning for instance, where models learn from a very small amount of labeled data, and zero-shot learning, where models apply their knowledge to tasks they have not explicitly been trained on.
+
+The concept of transferability also intersects with ethical AI development, as it encourages the use of more generalizable models that can perform equitably across diverse datasets and demographics, reducing the risk of biased or unfair outcomes.
+
+# Neural Collapse
+
 Neural Collapse happens when training beyond 0 training error, i.e training error is at 0 while pushing training loss approaching 0 even further down. Imagine training a deep neural network on a dataset for a classification task. As the training process nears its end—particularly when the model is trained to a point of perfect or near-perfect classification accuracy on the training data. Intuitively, one would expect a highly overfitted and noisy model. Instead, a remarkable simplification occurs in the way the model represents the data, as it was shown in [[2]](#ref2). This training approach offers better generalization performance, better robustness, and better interpretability.
 
-# Measuring transferability
+Neural Collapse is characterized by three distinct proxies:
 
-Fine-tuning pre-trained models works as follows. First, you pick a downstream task, for which you have at your disposal several pre-trained models candidates. Your want to compare their performances to pick the best one on test set, with the optimal fine-tuning configuration. Pre-trained models are obtained by training on huge amounts of data, which require heavy time and computational resources. Then, you have to fine-tune each of them, which means that the model is further trained, but this time on a smaller dataset. Fine-tuning aims at adjusting weights and biases of the pre-trained model to your specific task. Even if the dataset to train on is smaller, you have to repeat it for all your models candidates, and one does not want that.
+- **Within-Class Variability Collapse:** for any given class, the feature vectors of all samples converge to a singular point or a tightly compact cluster in the high-dimensional feature space. This collapsing effect reduces the within-class variance to near zero,  meaning that all samples of a class are represented almost identically from the model's perspective ;
+- **Simplex Encoded Label Interpolation (SELI) geometry:** measures the gap between the features extracted by the pre-trained model and SELI geometry with the rank of the feature matrix. The higher the rank, the smaller the difference, the closer to Neural Collapse ;
+- **Nearest Center Classifier:** ensures that the means of the collapsed points for different classes are maximally separated in the feature space.
+
+# Why measuring transferability?
+
+Fine-tuning pre-trained models works as follows. First, you pick a downstream task, for which you have at your disposal several pre-trained models candidates. Your want to compare their performances to pick the best one on test set, with the optimal fine-tuning configuration. Then, you have to fine-tune each of them. Even if the dataset to train on is smaller, thanks to fine-tuning, you have to repeat it for all your models candidates, and one does not want that, as it can quickly become computationnally expensive.
 
 Transferability estimation arises as a solution to anticipate and avoid unnecessary fine-tuning, by ranking the performances of pre-trained models on a downstream task without any fine-tuning. Having a benchmark on the pre-trained models' transferability would allow you to pick the relevant ones for your own downstream task.
 
+This measure is also in line with frugality in AI, which means using Limited Resources at every step of the Machine Learning lifecycle, while maintaining an acceptable accuracy. This frugality is especially relevant for small and medium-sized enterprises (SMEs) or startups, which may not have the vast computational resources that larger corporations possess. Transferable models democratize access to advanced AI capabilities, enabling these smaller entities to innovate and compete effectively. Frugality in AI also speaks to the broader goal of creating models that are not only powerful but also lean and efficient. Models with high transferability can achieve excellent performance across multiple tasks using significantly less data and fewer computational resources. This efficiency reduces the carbon footprint of training models and makes AI more accessible to a wider range of users and applications.
+
+# Why choosing Neural Collapse proxies?
+
+Let's go back to imagining you have to perform a downstream task, and to do so you have to measure transferability between pre-trained models candidates. The three Neural Collapse proxies were previously defined, but we did not mention yet the three model's aspects that are crucial to evaluate when choosing one:
+
+- **Generalization:** through Within-Class Variability Collapse, we gain insight into a model's ability to generalize ;
+- **Interpretability:** the convergence toward SELI geometry not only enhances the model's interpretability but also its alignment with optimal data representation structures. This alignment signifies a model's capacity to distill and encode information in a way that mirrors the inherent structure of the data itself ;
+- **Robustness:** the Nearest Center Classifier proxy underscores a model's robustness. By ensuring that class means are well-separated, the model demonstrates resilience against noise and variability in data. 
+
+
+# The NCTI
+
+Authors have named their measure of transferability the Neural Collapse Transferability Index (NCTI).
+
 # Experiment
 
-To reproduce their main experiment, the authors' code available on a [Github](https://github.com/BUserName/NCTI/tree/main) repository was used. A first encountered issue was the required `torch` and `torchvision` versions, which are quite old, and thus not always available to install, which was the case here. Fortunately, the  most recent versions were compatible with the code. A `requirements.txt` file would have been welcome.
+To reproduce their experiment, the authors' code available on a [Github](https://github.com/BUserName/NCTI/tree/main) repository was used. A first encountered issue was the required `torch` and `torchvision` versions, which are quite old, and thus not always available to install, which was the case here. Fortunately, the  most recent versions were compatible with the code. A `requirements.txt` file would have been welcome.
 
 A second issue is that there are remaining personal paths in some scripts, which should be replaced by downloading paths to PyTorch source models. As a consequence, the loading method from `torch` should also be replaced.
 
@@ -84,6 +127,8 @@ After these modifications, it is possible to run the authors' experiments on the
     </tr>
   </tbody>
 </table>
+
+Results show that the deepest architectures offer the best NCTI scores.  The depth of a network is closely related to its ability to learn and represent complex features and patterns from the training data, which contributes to a model's superior transferability. The different performances between ResNet and DenseNet could be attributed to the way DenseNet connects each layer to every other layer in a feed-forward fashion, which, while efficient in parameter use and reducing overfitting, may not capture as complex a feature hierarchy as ResNet. Models like MnasNet, MobileNetV2, and InceptionV3, designed for efficiency and speed with a compromise on depth, understandably score lower in transferability, as reflected by their NCTI scores.
 
 Then, we evaluated the transferability of the supervised pre-trained models, in terms of weighted Kendall' τ, and obtained the exact same result as the one presented in the paper: 0.843.
 
