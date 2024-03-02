@@ -56,7 +56,7 @@ An intuitive way of understanding this definition is to see that the smaller &al
 ### The case of multinomial estimation {#section-4}
 
 In this section, we return back to the problem of the private survey. For the statistician view, estimating a survey is estimating the parameter &theta; from the Bernouilli distribution $B(θ)$. 
-This problem is a special case of multinomial estimation, where `θ` is now a multidimensional parameter that is amenable to simplex probability. $∆_d := (θ ∈ ℝ_+ | d, θ ≥ 0, ∑θ_j = 1)$.
+This problem is a special case of multinomial estimation, where `θ` is now a multidimensional parameter that is amenable to simplex probability. $∆_d := (θ ∈ ℝ_+ |∑θ_j = 1)$.
 
 <a name="Recall"></a>
 
@@ -64,7 +64,7 @@ This problem is a special case of multinomial estimation, where `θ` is now a mu
 $$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - θ|^2] ≤ C_2 min(1, \frac{d}{n\alpha^2})$$ and 
 $$C_1 min(1,\frac{1}{\sqrt{n\alpha^2}}) ≤ E[||θ_{hat} - θ||_1] ≤ C_2 min(1,\frac{d}{\sqrt{n\alpha^2}})$$.
 
-**Recall from standard statistics:** For non private independant $Z_i$ with finite variance, , there exists some arbitrary constants $C_3$ such that:
+**Recall from standard statistics:** For non private independant $Z_i$ with finite variance, there exists some arbitrary constants $C_3$ such that:
 $$E[|θ_{hat} - θ|^2] ≤ \frac{C_3}{n}$$
 
 In others term, providing α-local-differentially privacy **causes a reduction** in the effective sample size of a factor $\frac{\alpha^2}{d}$ for best situations. It thus means that the **asymptotically rate of convergences remains unchanged** which is a really good news !
@@ -134,7 +134,7 @@ One accurate question that can raise is : **what about others distribution ?** I
 
 To answer this question, let's precise the problem. 
 
-We want to estimate in a non-paramtric way a 1D-density function `f` belonging to one of theses classes :  
+We want to estimate in a non-parametric way a 1D-density function `f` belonging to one of theses classes :  
 -**Hölder Class (β, L):** $\text{For all }x, y \in \mathbb{R} \text{ and } m \leq \beta, \quad \left| f^{(m)}(x) - f^{(m)}(y) \right| \leq L \left| x - y \right|^{\beta - m}$  
 -**Sobolev Class:** $F_{\beta}[C] := \left\( f \in L^2([0, 1]) \, \middle| \, f = \sum_{j=1}^{\infty} \theta_j \phi_j \text{ such that } \sum_{j=1}^{\infty} j^{2\beta} \phi_j^2 \leq C^2 \right\)$ 
 
@@ -400,9 +400,7 @@ highlight("Estimating Privacy in Data Science");
 
 ---
 
-<input type="text" id="inputField" placeholder="Type something...">
-<button onclick="displayInput()">Submit</button>
-<div id="output"></div>
+
 
 <script>
     function displayInput() {
@@ -411,9 +409,6 @@ highlight("Estimating Privacy in Data Science");
     }
 </script>
 
-This is <span style="background-color: yellow;">highlighted text</span> using inline CSS.
-
-<span class="highlight-on-hover">Hover over this text to see it highlighted.</span>
 
 <style>
 .highlight {
