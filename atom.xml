@@ -20,7 +20,7 @@ $$\text{In short, transparency goes against your privacy. }$$&lt;/p>
 &lt;p>This situation presented a trusted agent, in that he wasn&amp;rsquo;t trying to harm you directly. Now imagine that you agree to give him your personal data, but that on the way home, this agent of the state is mugged and someone steals his documents. Not only is this an attack on his person, it&amp;rsquo;s also an attack on yours: as the guarantor of your data, it&amp;rsquo;s now at the mercy of the attacker. The problem here is &lt;strong>not to have protected yourself against a malicious agent&lt;/strong>.&lt;/p>
 &lt;p>Admittedly, these situations are rare, but with the densification of data, their analogies are omnipresent: cookies on the Internet, cyber-attacks, datacenter crashes&amp;hellip;One area for improvement is quite simply to better &lt;strong>certify usage&lt;/strong> by means of cyber protection labels and leads to such a norm to achieve trust:
 &lt;img
-src="http://localhost:1313/images/Antoine_Klein/Umbrella.png"
+src="./images/Antoine_Klein/Umbrella.png"
 alt="Data Privacy2"
 loading="lazy"
 decoding="async"
@@ -72,7 +72,7 @@ $$[Z]_j = 1 - x_j \text{ with probability } \frac{1}{1 + e^\frac{\alpha}{2}}$$&l
 $$f(x|μ, b) = \frac{1}{2b} * exp(\frac{-|x - μ|}{b})$$&lt;/p>
 &lt;p>A visualisation for differents parameters is given below. We can see that Laplace distribution is a &lt;strong>shaper verson of the gaussian distribution&lt;/strong> :
 &lt;img
-src="http://localhost:1313/images/Antoine_Klein/Laplace.png"
+src="./images/Antoine_Klein/Laplace.png"
 alt="Laplace"
 loading="lazy"
 decoding="async"
@@ -164,7 +164,7 @@ As for the different alpha values, we iterate through them: $[0.2, 0.3, 0.5, 0.7
 &lt;h3 id="results">Results&lt;/h3>
 &lt;p>In terms of the observed distribution (private because subject to Laplace noise) relative to the true data, we obtain the following figure:&lt;/p>
 &lt;p>&lt;img
-src="http://localhost:1313/images/Antoine_Klein/Private_distribution.png"
+src="./images/Antoine_Klein/Private_distribution.png"
 alt="Data Privacy2"
 loading="lazy"
 decoding="async"
@@ -174,7 +174,7 @@ class="full-width"
 &lt;p>As expected, the greater the desired privacy (low $\alpha$), &lt;strong>the more spread out&lt;/strong> the distribution of observed data.&lt;/p>
 &lt;p>When it comes to estimating the true average from private data, we obtain the following figure:&lt;/p>
 &lt;p>&lt;img
-src="http://localhost:1313/images/Antoine_Klein/Estimated_mean.png"
+src="./images/Antoine_Klein/Estimated_mean.png"
 alt="Data Privacy2"
 loading="lazy"
 decoding="async"
@@ -190,7 +190,7 @@ $$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - 
 &lt;p>We now want to &lt;strong>compare the theoretical optimal rate with empirical results&lt;/strong>. To do this, we distinguish two situations:&lt;br>
 -The first is with &lt;strong>fixed alpha&lt;/strong>, and determines the MSE as a function of the number of samples n. This leads to these empirical results:&lt;/p>
 &lt;p>&lt;img
-src="http://localhost:1313/images/Antoine_Klein/Minimax_rate_n.png"
+src="./images/Antoine_Klein/Minimax_rate_n.png"
 alt="Data Privacy2"
 loading="lazy"
 decoding="async"
@@ -200,7 +200,7 @@ class="full-width"
 &lt;p>The dotted line represents the regime of the theoretical bound of the form $n \rightarrow \frac{C1}{n}$ . This is the shape of the empirical curves!&lt;/p>
 &lt;p>-The second has a &lt;strong>fixed n&lt;/strong> and determines the MSE as a function of alpha. This leads to these empirical results:&lt;/p>
 &lt;p>&lt;img
-src="http://localhost:1313/images/Antoine_Klein/Minimax_rate_alpha.png"
+src="./images/Antoine_Klein/Minimax_rate_alpha.png"
 alt="Data Privacy2"
 loading="lazy"
 decoding="async"
