@@ -28,10 +28,10 @@ $$\text{In short, transparency goes against your privacy. }$$
 This stress has major consequences: as you doubt what could happen to you with this data, but you still want to answer it, you **underestimate** your answers. On a wider scale, this leads to a **suffrage bias** and therefore a lack of knowledge of the real situation of your population. Warner [1], the first to tackle this problem from a statistical angle talks of an evasive bias and says:  
 **"for reasons of modesty, fear of being thought bigoted, or merely a reluctance to confide secrets to strangers, respondents to surveys might prefer to be able to answer certain questions non-truthfully, or at least without the interviewer knowing their true response"**
 
-This situation presented a trusted agent, in that he wasn't trying to harm you directly. Now imagine that you agree to give him your personal data, but that on the way home, this agent of the state is mugged and someone steals his documents. Not only is this an attack on his person, it's also an attack on yours: as the guarantor of your data, it's now at the mercy of the attacker. The problem here is **not to have protected yourself against a malicious agent**. 
+This situation presented a trusted agent, in that he wasn't trying to harm you directly. Now imagine that you agree to give him your personal data, but that on the way home, this agent of the state is mugged and someone steals his documents. Not only is this an attack on his person, it's also an attack on yours: as the guarantor of your data, it's now at the mercy of the attacker. The problem here is **not to have protected yourself against a malicious agent**.
 
 Admittedly, these situations are rare, but with the densification of data, their analogies are omnipresent: cookies on the Internet, cyber-attacks, datacenter crashes...One area for improvement is quite simply to better **certify usage** by means of cyber protection labels and leads to such a norm to achieve trust:
-![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Umbrella.png)
+![Data Privacy2](/images/Antoine_Klein/Umbrella.png)
 
 In this blog, we propose to tackle this problem from a completely different angle: **how to both enable the agent to take global measures and prevent it and any subsequent malicious agents from being able to re-identify my personal data**. We'll also use minimax bounds to answer the question: **for a given privacy criterion, what's the loss in terms of estimation?** (fundamental trade-offs between privacy and convergence rate)
 
@@ -43,25 +43,25 @@ Our blog will follow the same plan as the article that inspired it (John C. Duch
 
 Let assume that you want to make private $X_1 , ... , X_n \in X$ random variable and, as the statistician, you only observe $Z_1, . . . , Z_n ∈ Z$. The paper assumes that there exist a **markov kernel** that links the true ramdom variables and the observed ones as follow: $Q_i(Z_i | X_i = x)$.
 
-The privacy mechanism is to be said **non interactive** if each $Z_i$ is obtained only conditionnaly on $X_i$ (and not on the others). This represents the fact that the privacy mechanism is **memory less**. If not, the mechnism is said to be interactive. 
+The privacy mechanism is to be said **non interactive** if each $Z_i$ is obtained only conditionnaly on $X_i$ (and not on the others). This represents the fact that the privacy mechanism is **memory less**. If not, the mechnism is said to be interactive.
 
 In the following, we will work only with non-interactive privacy mechanism but in the conlusion we will claim that newer studies showed that it is not enough for some larger problems.
 
 $Z_i$ is said to be **α-local-differentially private** for the original data $X_i$ if $$sup(\frac{Q(Z | X_i = x)}{Q(Z | X_i = x')} | x, x' ∈ X) ≤ exp(α)$$.  
 
-An intuitive way of understanding this definition is to see that the smaller &alpha; is (the more private it is), the more **difficult it is to distinguish** the distribution of Z conditional on two different X data. 
+An intuitive way of understanding this definition is to see that the smaller &alpha; is (the more private it is), the more **difficult it is to distinguish** the distribution of Z conditional on two different X data.
 
 ## Theoretical results {#section-3}
 
 ### The case of multinomial estimation {#section-4}
 
-In this section, we return back to the problem of the private survey. For the statistician view, estimating a survey is estimating the parameter &theta; from the Bernouilli distribution $B(θ)$. 
+In this section, we return back to the problem of the private survey. For the statistician view, estimating a survey is estimating the parameter &theta; from the Bernouilli distribution $B(θ)$.
 This problem is a special case of multinomial estimation, where `θ` is now a multidimensional parameter that is amenable to simplex probability. $∆_d := (θ ∈ ℝ_+ |∑θ_j = 1)$.
 
 <a name="Recall"></a>
 
 **Theorem :** Given α-local-differentially private $Z_i$, there exists some arbitrary constants $C_1$, $C_2$ such that for all $\alpha\in [0,1]$:
-$$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - θ|^2] ≤ C_2 min(1, \frac{d}{n\alpha^2})$$ and 
+$$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - θ|^2] ≤ C_2 min(1, \frac{d}{n\alpha^2})$$ and
 $$C_1 min(1,\frac{1}{\sqrt{n\alpha^2}}) ≤ E[||θ_{hat} - θ||_1] ≤ C_2 min(1,\frac{d}{\sqrt{n\alpha^2}})$$.
 
 **Recall from standard statistics:** For non private independant $Z_i$ with finite variance, there exists some arbitrary constants $C_3$ such that:
@@ -77,9 +77,9 @@ The paper deals with one of the 2 standard methods to implement such a strategy 
 
 ##### Randomized responses {#section-10}
 
-The *intuition* of this section is the following : **to not allow the statistician to retrieve your personnal data** in case of Bernouilli distribution, you toss a coin. If it is heads, you say to him your reel answer, if it is tails, you say the opposite. In his point of view, as he doesn't know what was the result of the coin, **he can't distinguish** if you tell the true or not but in a large scale, he knows that he will have half correct answer, half lies so that he can retrieve information. 
+The *intuition* of this section is the following : **to not allow the statistician to retrieve your personnal data** in case of Bernouilli distribution, you toss a coin. If it is heads, you say to him your reel answer, if it is tails, you say the opposite. In his point of view, as he doesn't know what was the result of the coin, **he can't distinguish** if you tell the true or not but in a large scale, he knows that he will have half correct answer, half lies so that he can retrieve information.
 
-For the multinomial estimation now, you will generalize this procedure to the multidimensionnal setting. For each coordinate, you will tell to the statistician the reel answer with a certain probability and lies otherwise. More precisely, its leads to : 
+For the multinomial estimation now, you will generalize this procedure to the multidimensionnal setting. For each coordinate, you will tell to the statistician the reel answer with a certain probability and lies otherwise. More precisely, its leads to :
 
 $$[Z]_j = x_j \text{ with probability } \frac{e^\frac{\alpha}{2}} {1 + e^\frac{\alpha}{2}}$$
 $$[Z]_j = 1 - x_j \text{ with probability } \frac{1}{1 + e^\frac{\alpha}{2}}$$
@@ -93,7 +93,7 @@ With the notation as $1_d=[1, 1, 1, ..., 1]$ corresponds to a d-vector with each
 
 $$E[Z | x] = \frac{e^\frac{\alpha}{2} - 1}{e^\frac{\alpha}{2} + 1} * x + \frac{1}{1 + e^\frac{\alpha}{2}}1_d$$
 
-This leads to the natural moment-estimator : 
+This leads to the natural moment-estimator :
 
 $$θ_{hat} = \frac{1}{n} ∑_{i=1}^{n} \frac{Z_i - 1_d}{1 + e^\frac{\alpha}{2}} * \frac{e^\frac{\alpha}{2} + 1}{e^\frac{\alpha}{2} - 1}$$
 
@@ -109,7 +109,7 @@ Instead of saying the truth with some probability, one may think of **adding noi
 $$f(x|μ, b) = \frac{1}{2b} * exp(\frac{-|x - μ|}{b})$$
 
 A visualisation for differents parameters is given below. We can see that Laplace distribution is a **shaper verson of the gaussian distribution** :
-![Laplace](http://localhost:1313/images/Antoine_Klein/Laplace.png)
+![Laplace](/images/Antoine_Klein/Laplace.png)
 
 The trick is to use such a noise. Let assume $X_i \in [-M,M]$ and construct the private mechanism as follow:   
 $$Z_i = X_i + \sigma W_i$$ where $W_i$ is drawn from a Laplace noise (0,1).
@@ -132,11 +132,11 @@ This is **exactly the optimal rates**, quite outstanding !
 
 One accurate question that can raise is : **what about others distribution ?** Is privacy more costly in general cases ? What is the trade-off ?
 
-To answer this question, let's precise the problem. 
+To answer this question, let's precise the problem.
 
 We want to estimate in a non-parametric way a 1D-density function `f` belonging to one of theses classes :  
 -**Hölder Class (β, L):** $\text{For all }x, y \in \mathbb{R} \text{ and } m \leq \beta, \quad \left| f^{(m)}(x) - f^{(m)}(y) \right| \leq L \left| x - y \right|^{\beta - m}$  
--**Sobolev Class:** $F_{\beta}[C] := \left\( f \in L^2([0, 1]) \, \middle| \, f = \sum_{j=1}^{\infty} \theta_j \phi_j \text{ such that } \sum_{j=1}^{\infty} j^{2\beta} \phi_j^2 \leq C^2 \right\)$ 
+-**Sobolev Class:** $F_{\beta}[C] := \left\( f \in L^2([0, 1]) \, \middle| \, f = \sum_{j=1}^{\infty} \theta_j \phi_j \text{ such that } \sum_{j=1}^{\infty} j^{2\beta} \phi_j^2 \leq C^2 \right\)$
 
 In a intuitition way, those two classes express that `f` is **smooth enough** to admits Lipschitz constant to its derivative so that it doesn't "vary" locally too much.
 
@@ -181,7 +181,7 @@ As it is not the most comprehensive and straightforward method, **we prefer to d
 
 Let assume that $X_i \in [0,M]$ almost surely. We note $G_j = [\frac{j-1}{K},\quad \frac{j}{K}]$ the bin of length $\frac{1}{K}$.
 
-We consider the histogramm estimator: 
+We consider the histogramm estimator:
 $$\hat{f}(x) = \frac{K}{n} \sum_{j=1}^{K} \sum_{i=1}^{n} 1_{X_i \in G_j} \cdot 1_{x \in G_j}.$$
 
 We now construct the private mechanism as follow:  
@@ -219,7 +219,7 @@ For the sake of **reproducibility and transparency**, the source code can be fou
 
 ### Methodology
 
-1. **Data Preparation**: Rather than working with real datasets, we decide to work with simulated data, as this allows us to maintain control over all aspects. 
+1. **Data Preparation**: Rather than working with real datasets, we decide to work with simulated data, as this allows us to maintain control over all aspects.
 
 More precisely, we give ourselves $n=1000$ samples of the normal distribution $N(100,1)$ on which we add a Laplace noise $L(0,\alpha).$  
 As for the different alpha values, we iterate through them: $[0.2, 0.3, 0.5, 0.7]$
@@ -230,19 +230,19 @@ As for the different alpha values, we iterate through them: $[0.2, 0.3, 0.5, 0.7
 
 ### Results
 
-In terms of the observed distribution (private because subject to Laplace noise) relative to the true data, we obtain the following figure: 
+In terms of the observed distribution (private because subject to Laplace noise) relative to the true data, we obtain the following figure:
 
-![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Private_distribution.png)
+![Data Privacy2](/images/Antoine_Klein/Private_distribution.png)
 
 As expected, the greater the desired privacy (low $\alpha$), **the more spread out** the distribution of observed data.
 
-When it comes to estimating the true average from private data, we obtain the following figure: 
+When it comes to estimating the true average from private data, we obtain the following figure:
 
-![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Estimated_mean.png)
+![Data Privacy2](/images/Antoine_Klein/Estimated_mean.png)
 
 This figure illustrates two major points:  
 -The first is that whatever the level of privacy, we have an **unbiased estimator** of the mean. It's a beautiful property, empirically verified !   
--The second is that, unfortunately, the greater the privacy (low alpha), **the greater the variance** of this estimator. 
+-The second is that, unfortunately, the greater the privacy (low alpha), **the greater the variance** of this estimator.
 
 We recall our main theorem demonstrated above <a href="#Recall" style="background-color: yellow; padding: 2px 5px; border-radius: 3px;">Previous theorem</a> :   
 **Theorem** : Given α-local-differentially private $Z_i$, there exists some arbitrary constants $C_1$, $C_2$ such that for all $\alpha\in [0,1]$:
@@ -251,15 +251,15 @@ $$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - 
 We now want to **compare the theoretical optimal rate with empirical results**. To do this, we distinguish two situations:  
 -The first is with **fixed alpha**, and determines the MSE as a function of the number of samples n. This leads to these empirical results:  
 
-![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Minimax_rate_n.png)
+![Data Privacy2](/images/Antoine_Klein/Minimax_rate_n.png)
 
-The dotted line represents the regime of the theoretical bound of the form $n \rightarrow \frac{C1}{n}$ . This is the shape of the empirical curves! 
+The dotted line represents the regime of the theoretical bound of the form $n \rightarrow \frac{C1}{n}$ . This is the shape of the empirical curves!
 
 -The second has a **fixed n** and determines the MSE as a function of alpha. This leads to these empirical results:  
 
-![Data Privacy2](http://localhost:1313/images/Antoine_Klein/Minimax_rate_alpha.png)
+![Data Privacy2](/images/Antoine_Klein/Minimax_rate_alpha.png)
 
-The dotted line represents the regime of the theoretical bound of the form $\alpha \rightarrow \frac{C1}{\alpha^2}$ . This is once again the shape of the empirical curves quite surprisingly! 
+The dotted line represents the regime of the theoretical bound of the form $\alpha \rightarrow \frac{C1}{\alpha^2}$ . This is once again the shape of the empirical curves quite surprisingly!
 
 ### Conclusion {#section-7}
 
@@ -308,7 +308,7 @@ To test yourself abour privacy:
         <div class="quiz-options">
             <label>
                 <input type="radio" name="question3" value="1">
-                Multinomial estimation: A factor α^2/d 
+                Multinomial estimation: A factor α^2/d
             </label>
             <label>
                 <input type="radio" name="question3" value="2">
@@ -389,7 +389,7 @@ function highlight(text) {
   var inputText = document.getElementById("markdown-content");
   var innerHTML = inputText.innerHTML;
   var index = innerHTML.indexOf(text);
-  if (index >= 0) { 
+  if (index >= 0) {
     innerHTML = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
     inputText.innerHTML = innerHTML;
   }
