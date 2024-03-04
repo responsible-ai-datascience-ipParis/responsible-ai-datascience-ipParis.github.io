@@ -1,4 +1,412 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2024, Calvin Tran</copyright><lastBuildDate>Mon, 08 Jan 2024 11:26:03 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>Another article</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/my-first-blog/</link><description>&lt;p>&lt;strong>Authors&lt;/strong> : John Smith and John Smith&lt;/p>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2024, Calvin Tran</copyright><lastBuildDate>Wed, 31 Jan 2024 17:22:02 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>Statistical Minimax Rates Under Privacy</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/statistical_minimax_rates_under_privacy/</link><description>&lt;h1 style="font-size: 36px;">Estimating Privacy in Data Science: A Comprehensive Guide&lt;/h1>
+&lt;h1 style="font-size: 24px;">Author: Antoine Klein &lt;a href="https://github.com/AntoineTSP">Github Link&lt;/a>&lt;/h1>
+&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#section-0">Incentives&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-1">Introduction&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-2">Definition&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-3">Theory&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-4">The case of multinomial estimation&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-5">The case of density estimation&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-6">Experiment&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-7">Conclusion&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-8">Quizz&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="section-0">Why do we care about privacy ?&lt;/h2>
+&lt;p>Imagine, you&amp;rsquo;re quietly at home when the doorbell rings. You open the door and a government official appears: population census. Even though he shows you his official badge and you&amp;rsquo;d like to help him in the public interest, you find it hard to answer his questions as you go along. Indeed, the first questions about the date of your move are easy and public. On the other hand, when he asks about the number of children, marital status or your salary and what you do with it, you &lt;em>struggle&lt;/em>. Not because you don&amp;rsquo;t know the answer, but because you&amp;rsquo;re faced with an &lt;strong>ethical dilemma&lt;/strong>: transparency towards the state versus protection of personal data.&lt;br>
+$$\text{In short, transparency goes against your privacy. }$$&lt;/p>
+&lt;p>This stress has major consequences: as you doubt what could happen to you with this data, but you still want to answer it, you &lt;strong>underestimate&lt;/strong> your answers. On a wider scale, this leads to a &lt;strong>suffrage bias&lt;/strong> and therefore a lack of knowledge of the real situation of your population. Warner [1], the first to tackle this problem from a statistical angle talks of an evasive bias and says:&lt;br>
+&lt;strong>&amp;ldquo;for reasons of modesty, fear of being thought bigoted, or merely a reluctance to confide secrets to strangers, respondents to surveys might prefer to be able to answer certain questions non-truthfully, or at least without the interviewer knowing their true response&amp;rdquo;&lt;/strong>&lt;/p>
+&lt;p>This situation presented a trusted agent, in that he wasn&amp;rsquo;t trying to harm you directly. Now imagine that you agree to give him your personal data, but that on the way home, this agent of the state is mugged and someone steals his documents. Not only is this an attack on his person, it&amp;rsquo;s also an attack on yours: as the guarantor of your data, it&amp;rsquo;s now at the mercy of the attacker. The problem here is &lt;strong>not to have protected yourself against a malicious agent&lt;/strong>.&lt;/p>
+&lt;p>Admittedly, these situations are rare, but with the densification of data, their analogies are omnipresent: cookies on the Internet, cyber-attacks, datacenter crashes&amp;hellip;One area for improvement is quite simply to better &lt;strong>certify usage&lt;/strong> by means of cyber protection labels and leads to such a norm to achieve trust:
+&lt;img
+src="http://localhost:1313/images/Antoine_Klein/Umbrella.png"
+alt="Data Privacy2"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>In this blog, we propose to tackle this problem from a completely different angle: &lt;strong>how to both enable the agent to take global measures and prevent it and any subsequent malicious agents from being able to re-identify my personal data&lt;/strong>. We&amp;rsquo;ll also use minimax bounds to answer the question: &lt;strong>for a given privacy criterion, what&amp;rsquo;s the loss in terms of estimation?&lt;/strong> (fundamental trade-offs between privacy and convergence rate)&lt;/p>
+&lt;h2 id="section-1">Scientific introduction&lt;/h2>
+&lt;p>Our blog will follow the same plan as the article that inspired it (John C. Duchi [2]),i.e. to show that &lt;strong>response randomization achieves optimal convergence&lt;/strong> in the case of multinomial estimation, and then that this process can be generalized to any &lt;em>nonparametric distribution estimation&lt;/em>. To this end, we will introduce the notion of &lt;strong>local differential privacy&lt;/strong> as well as the &lt;strong>minimax theory&lt;/strong> for obtaining optimal limits. All this will shed light on the &lt;strong>trade-off between privacy and estimation rates&lt;/strong>. We will also explain algorithms to implement these optimal strategies. Finally, we will propose some experimental results.&lt;/p>
+&lt;h2 id="section-2">Some key definitions&lt;/h2>
+&lt;p>Let assume that you want to make private $X_1 , &amp;hellip; , X_n \in X$ random variable and, as the statistician, you only observe $Z_1, . . . , Z_n ∈ Z$. The paper assumes that there exist a &lt;strong>markov kernel&lt;/strong> that links the true ramdom variables and the observed ones as follow: $Q_i(Z_i | X_i = x)$.&lt;/p>
+&lt;p>The privacy mechanism is to be said &lt;strong>non interactive&lt;/strong> if each $Z_i$ is obtained only conditionnaly on $X_i$ (and not on the others). This represents the fact that the privacy mechanism is &lt;strong>memory less&lt;/strong>. If not, the mechnism is said to be interactive.&lt;/p>
+&lt;p>In the following, we will work only with non-interactive privacy mechanism but in the conlusion we will claim that newer studies showed that it is not enough for some larger problems.&lt;/p>
+&lt;p>$Z_i$ is said to be &lt;strong>α-local-differentially private&lt;/strong> for the original data $X_i$ if $$sup(\frac{Q(Z | X_i = x)}{Q(Z | X_i = x&amp;rsquo;)} | x, x&amp;rsquo; ∈ X) ≤ exp(α)$$.&lt;/p>
+&lt;p>An intuitive way of understanding this definition is to see that the smaller α is (the more private it is), the more &lt;strong>difficult it is to distinguish&lt;/strong> the distribution of Z conditional on two different X data.&lt;/p>
+&lt;h2 id="section-3">Theoretical results&lt;/h2>
+&lt;h3 id="section-4">The case of multinomial estimation&lt;/h3>
+&lt;p>In this section, we return back to the problem of the private survey. For the statistician view, estimating a survey is estimating the parameter θ from the Bernouilli distribution $B(θ)$.
+This problem is a special case of multinomial estimation, where &lt;code>θ&lt;/code> is now a multidimensional parameter that is amenable to simplex probability. $∆&lt;em>d := (θ ∈ ℝ&lt;/em>+ |∑θ_j = 1)$.&lt;/p>
+&lt;p>&lt;a name="Recall">&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Theorem :&lt;/strong> Given α-local-differentially private $Z_i$, there exists some arbitrary constants $C_1$, $C_2$ such that for all $\alpha\in [0,1]$:
+$$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - θ|^2] ≤ C_2 min(1, \frac{d}{n\alpha^2})$$ and
+$$C_1 min(1,\frac{1}{\sqrt{n\alpha^2}}) ≤ E[||θ_{hat} - θ||_1] ≤ C_2 min(1,\frac{d}{\sqrt{n\alpha^2}})$$.&lt;/p>
+&lt;p>&lt;strong>Recall from standard statistics:&lt;/strong> For non private independant $Z_i$ with finite variance, there exists some arbitrary constants $C_3$ such that:
+$$E[|θ_{hat} - θ|^2] ≤ \frac{C_3}{n}$$&lt;/p>
+&lt;p>In others term, providing α-local-differentially privacy &lt;strong>causes a reduction&lt;/strong> in the effective sample size of a factor $\frac{\alpha^2}{d}$ for best situations. It thus means that the &lt;strong>asymptotically rate of convergences remains unchanged&lt;/strong> which is a really good news !&lt;/p>
+&lt;h4 id="practical-strategies">Practical strategies&lt;/h4>
+&lt;p>The paper deals with one of the 2 standard methods to implement such a strategy that obtains the minimax rates:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="#section-10">Randomized responses&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-11">Laplace Noise (beyond paper)&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h5 id="section-10">Randomized responses&lt;/h5>
+&lt;p>The &lt;em>intuition&lt;/em> of this section is the following : &lt;strong>to not allow the statistician to retrieve your personnal data&lt;/strong> in case of Bernouilli distribution, you toss a coin. If it is heads, you say to him your reel answer, if it is tails, you say the opposite. In his point of view, as he doesn&amp;rsquo;t know what was the result of the coin, &lt;strong>he can&amp;rsquo;t distinguish&lt;/strong> if you tell the true or not but in a large scale, he knows that he will have half correct answer, half lies so that he can retrieve information.&lt;/p>
+&lt;p>For the multinomial estimation now, you will generalize this procedure to the multidimensionnal setting. For each coordinate, you will tell to the statistician the reel answer with a certain probability and lies otherwise. More precisely, its leads to :&lt;/p>
+&lt;p>$$[Z]_j = x_j \text{ with probability } \frac{e^\frac{\alpha}{2}} {1 + e^\frac{\alpha}{2}}$$
+$$[Z]_j = 1 - x_j \text{ with probability } \frac{1}{1 + e^\frac{\alpha}{2}}$$&lt;/p>
+&lt;p>Such a mechanism achieves &lt;em>α-local-differentially privacy&lt;/em> because one can show that :&lt;/p>
+&lt;p>$$\frac{Q(Z = z | x)}{Q(Z = z | x&amp;rsquo;)} = e^\frac{\alpha}{2}(||z - x||_1 - ||z - x&amp;rsquo;||_1) \in [e^{-\alpha}, e^\alpha]$$ which is the criteria given above.&lt;/p>
+&lt;p>With the notation as $1_d=[1, 1, 1, &amp;hellip;, 1]$ corresponds to a d-vector with each coordinate equals 1, we can also show that :&lt;/p>
+&lt;p>$$E[Z | x] = \frac{e^\frac{\alpha}{2} - 1}{e^\frac{\alpha}{2} + 1} * x + \frac{1}{1 + e^\frac{\alpha}{2}}1_d$$&lt;/p>
+&lt;p>This leads to the natural moment-estimator :&lt;/p>
+&lt;p>$$θ_{hat} = \frac{1}{n} ∑_{i=1}^{n} \frac{Z_i - 1_d}{1 + e^\frac{\alpha}{2}} * \frac{e^\frac{\alpha}{2} + 1}{e^\frac{\alpha}{2} - 1}$$&lt;/p>
+&lt;p>One can also show that it verifies :&lt;/p>
+&lt;p>$$E[ ||θ_{hat}- θ||_2] ≤ \frac{d}{n} * \frac{(e^\frac{\alpha}{2} + 1)^2}{(e^\frac{\alpha}{2} - 1)^2} &amp;lt; \frac{C_3}{nα^2}$$ which is the announced result.&lt;/p>
+&lt;h5 id="section-11">Laplace Noise (beyond paper)&lt;/h5>
+&lt;p>Instead of saying the truth with some probability, one may think of &lt;strong>adding noise&lt;/strong> to the answer so that the statistician can&amp;rsquo;t retrieve his real answer. This is exactly the mechanism we propose to dive in and which is &lt;strong>not covered in the paper&lt;/strong>.&lt;/p>
+&lt;p>&lt;strong>Definition:&lt;/strong> A noise is said to be a Laplace noise with parameters (μ, b) if it verifies:&lt;br>
+$$f(x|μ, b) = \frac{1}{2b} * exp(\frac{-|x - μ|}{b})$$&lt;/p>
+&lt;p>A visualisation for differents parameters is given below. We can see that Laplace distribution is a &lt;strong>shaper verson of the gaussian distribution&lt;/strong> :
+&lt;img
+src="http://localhost:1313/images/Antoine_Klein/Laplace.png"
+alt="Laplace"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>The trick is to use such a noise. Let assume $X_i \in [-M,M]$ and construct the private mechanism as follow:&lt;br>
+$$Z_i = X_i + \sigma W_i$$ where $W_i$ is drawn from a Laplace noise (0,1).&lt;/p>
+&lt;p>One can show that :&lt;/p>
+&lt;p>$$\frac{Q(Z = z | x)}{Q(Z = z | x&amp;rsquo;)} \leq e^{\frac{1}{\sigma} * |x - x&amp;rsquo;|} \leq e^{\frac{2M}{\sigma}}$$&lt;/p>
+&lt;p>Thus, with the choice of $\sigma = \frac{2M}{\alpha}$, &lt;strong>it verifies α-local-differentially privacy&lt;/strong>. The proposed estimator is the following :&lt;br>
+$$\hat{Z} = \bar{X} + \frac{2M}{\alpha} \bar{W}$$&lt;/p>
+&lt;p>One can show that it is an unbiaised estimator that achieves the optimal rates:&lt;br>
+$$E[\hat{Z}] = E[X]$$&lt;br>
+$$V[\hat{Z}] = \frac{V(X)}{n} + \frac{4M^2}{n\alpha^2} V[\bar{W}] = \frac{V(X)}{n} + \frac{8M^2}{n\alpha^2}$$
+$$E[ |\hat{Z}- X|^2] \leq \frac{C_3}{n\alpha^2}.$$&lt;/p>
+&lt;p>This is &lt;strong>exactly the optimal rates&lt;/strong>, quite outstanding !&lt;/p>
+&lt;h3 id="section-5">The case of density estimation&lt;/h3>
+&lt;p>One accurate question that can raise is : &lt;strong>what about others distribution ?&lt;/strong> Is privacy more costly in general cases ? What is the trade-off ?&lt;/p>
+&lt;p>To answer this question, let&amp;rsquo;s precise the problem.&lt;/p>
+&lt;p>We want to estimate in a non-parametric way a 1D-density function &lt;code>f&lt;/code> belonging to one of theses classes :&lt;br>
+-&lt;strong>Hölder Class (β, L):&lt;/strong> $\text{For all }x, y \in \mathbb{R} \text{ and } m \leq \beta, \quad \left| f^{(m)}(x) - f^{(m)}(y) \right| \leq L \left| x - y \right|^{\beta - m}$&lt;br>
+-&lt;strong>Sobolev Class:&lt;/strong> $F_{\beta}[C] := \left( f \in L^2([0, 1]) , \middle| , f = \sum_{j=1}^{\infty} \theta_j \phi_j \text{ such that } \sum_{j=1}^{\infty} j^{2\beta} \phi_j^2 \leq C^2 \right)$&lt;/p>
+&lt;p>In a intuitition way, those two classes express that &lt;code>f&lt;/code> is &lt;strong>smooth enough&lt;/strong> to admits Lipschitz constant to its derivative so that it doesn&amp;rsquo;t &amp;ldquo;vary&amp;rdquo; locally too much.&lt;/p>
+&lt;h4 id="theorem">Theorem&lt;/h4>
+&lt;h5 id="without-privacy">Without privacy&lt;/h5>
+&lt;p>One can show that without privacy, the minimax rate achievable for estimating a Hölder Class function is:&lt;br>
+$$\text{MSE}(\hat{f} - f) \leq C_1 \cdot n^{-\frac{2\beta}{1+2\beta}}$$ with the estimator&lt;br>
+$$\hat{f}(x) = \frac{1}{n} \sum_{i=1}^{n} \frac{1}{h} K\left(\frac{x - X_i}{h}\right) \text{with } h = C_2 \cdot n^{-\frac{1}{2\beta+1}}$$&lt;/p>
+&lt;p>In the case of d-multidimensionnal density &lt;code>f&lt;/code>, the optimal rate is :&lt;br>
+$$\text{MSE}(\hat{f} - f) \leq C_4 \cdot n^{-\frac{2\beta}{d+ 2\beta}}$$ with the estimator&lt;br>
+$$\hat{f}(x) = \frac{1}{n} \sum_{i=1}^{n} \frac{1}{h^d} K^d\left(\frac{x-X_i}{h}\right) \quad \text{with} \quad h = C_5 \cdot n^{-\frac{1}{2\beta + d}}$$&lt;/p>
+&lt;p>This illustrates once again the &lt;strong>curse of dimensionnality&lt;/strong>.&lt;/p>
+&lt;h5 id="with-privacy">With privacy&lt;/h5>
+&lt;p>Let assume that &lt;code>f&lt;/code> bellongs to one of the two classes with &lt;code>β&lt;/code> as smoothness parameter.&lt;br>
+Then, the optimal α-local-differentially private optimal rate is :&lt;br>
+$$\text{MSE}(\hat{f} - f) \leq C_1 \cdot (n\alpha^2)^{-\frac{2\beta}{2\beta+2}}.$$&lt;/p>
+&lt;p>One may observe &lt;strong>two pessimistic news&lt;/strong>:&lt;br>
+-The rate is &lt;strong>affected by a factor&lt;/strong> of $\alpha^2$ as for the multinomial estimation&lt;br>
+-More damageable: the &lt;strong>rate is slower&lt;/strong> in term of &lt;code>n&lt;/code> unlike the previous problem which make privacy in this case &lt;strong>more costly&lt;/strong>.&lt;/p>
+&lt;h5 id="practical-strategies-1">Practical strategies&lt;/h5>
+&lt;p>Eventhough this rate is pessimistic and proves that &lt;strong>privacy comes at a cost&lt;/strong>, it remains to illustrates how can we achieves this best but not great rate.
+For this end, once again, two strategies are possible.&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="#section-12">Randomized responses&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-13">Laplace Noise (beyond paper)&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h5 id="section-12">Randomized responses&lt;/h5>
+&lt;p>This is the strategy illustrated in the paper and consists of sampling for each coordinate according the realisation of a Bernouilli variable with the correct probability as function of &lt;code>α&lt;/code>.
+As it is not the most comprehensive and straightforward method, &lt;strong>we prefer to dive in depth into the second one; uncovered in the paper&lt;/strong>.&lt;/p>
+&lt;h5 id="section-13">Laplace Noise (beyond paper)&lt;/h5>
+&lt;p>Let assume that $X_i \in [0,M]$ almost surely. We note $G_j = [\frac{j-1}{K},\quad \frac{j}{K}]$ the bin of length $\frac{1}{K}$.&lt;/p>
+&lt;p>We consider the histogramm estimator:
+$$\hat{f}(x) = \frac{K}{n} \sum_{j=1}^{K} \sum_{i=1}^{n} 1_{X_i \in G_j} \cdot 1_{x \in G_j}.$$&lt;/p>
+&lt;p>We now construct the private mechanism as follow:&lt;br>
+$$Z_i = \left[1_{X_i \in G_1} + \frac{2}{\alpha} W_1, \ldots, 1_{X_i \in G_K} + \frac{2}{\alpha} W_K\right]$$&lt;/p>
+&lt;p>In an intuitive way, we add a Laplace noise realisation for each bin.&lt;/p>
+&lt;p>This guarantees α-local-differentially privacy as :
+$$\frac{Q(Z = z | x)}{Q(Z = z | x&amp;rsquo;)} \leq \exp\left(\frac{\alpha}{2} \sum_{j=1}^{K} |1_{x \in G_j} - 1_{x&amp;rsquo; \in G_j}| \right) \leq \exp\left(\frac{\alpha}{2} \cdot 2\right).$$&lt;/p>
+&lt;p>This leads to the α-local-differentially private estimator :&lt;br>
+$$f_{\text{private_estimate}} = \hat{f} + \frac{2K}{n\alpha} \sum_{j=1}^{K} W_j$$&lt;/p>
+&lt;p>The biais is the same as the unprivate case as :&lt;br>
+$$E[f_{\text{private_estimate}}] = E[\hat{f}] + 0 .$$&lt;/p>
+&lt;p>One may prove that if f bellongs to the β-Hölder Class:&lt;br>
+$$Biais(f_{\text{private_estimate}}, f) \leq C_1 * K^{-\beta}$$&lt;/p>
+&lt;p>Meanwhile, $$V[f_{\text{private_estimate}}] \leq \frac{C_2}{n} + \frac{4K^2}{\alpha^2} \frac{V[W]}{n}$$, such that in total :&lt;br>
+$$\text{MSE}(f_{\text{private_estimate}} - f) \leq C_1 K^{-2\beta} + \frac{C_2}{n} + \frac{C_3 K^2}{n\alpha^2}.$$
+Minimizing over K (hyperparameters) leads to : $K = C_4 \cdot (n\alpha^2)^{-\frac{1}{2\beta+2}}$ and thus to:&lt;br>
+$$\text{MSE}(f_{\text{private_estimate}} - f) \leq C_5 \cdot (n\alpha^2)^{-\frac{2\beta}{2\beta + 2}}$$, which is the expected bound.&lt;/p>
+&lt;hr>
+&lt;h2 id="section-6">Experiment: Illustration of the Minimax privacy rate&lt;/h2>
+&lt;h3 id="section-111">Overview&lt;/h3>
+&lt;p>The aim of this section is to &lt;strong>provide illustrations of the theoretical results&lt;/strong> set out above. Emphasis is placed on convergence results, with empirical confirmation of the latter.&lt;/p>
+&lt;p>For the sake of &lt;strong>reproducibility and transparency&lt;/strong>, the source code can be found in the notebook at this: &lt;a href="https://github.com/AntoineTSP/responsible-ai-datascience-ipParis.github.io.git">Github link&lt;/a>.&lt;/p>
+&lt;h3 id="methodology">Methodology&lt;/h3>
+&lt;ol>
+&lt;li>&lt;strong>Data Preparation&lt;/strong>: Rather than working with real datasets, we decide to work with simulated data, as this allows us to maintain control over all aspects.&lt;/li>
+&lt;/ol>
+&lt;p>More precisely, we give ourselves $n=1000$ samples of the normal distribution $N(100,1)$ on which we add a Laplace noise $L(0,\alpha).$&lt;br>
+As for the different alpha values, we iterate through them: $[0.2, 0.3, 0.5, 0.7]$&lt;/p>
+&lt;ol start="2">
+&lt;li>
+&lt;p>&lt;strong>Privacy Metric Calculation&lt;/strong>: We will look at the use case of estimating the mean of a distribution.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Evaluation&lt;/strong>: The results will be compared in terms of Mean Square Error (MSE).&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="results">Results&lt;/h3>
+&lt;p>In terms of the observed distribution (private because subject to Laplace noise) relative to the true data, we obtain the following figure:&lt;/p>
+&lt;p>&lt;img
+src="http://localhost:1313/images/Antoine_Klein/Private_distribution.png"
+alt="Data Privacy2"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>As expected, the greater the desired privacy (low $\alpha$), &lt;strong>the more spread out&lt;/strong> the distribution of observed data.&lt;/p>
+&lt;p>When it comes to estimating the true average from private data, we obtain the following figure:&lt;/p>
+&lt;p>&lt;img
+src="http://localhost:1313/images/Antoine_Klein/Estimated_mean.png"
+alt="Data Privacy2"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>This figure illustrates two major points:&lt;br>
+-The first is that whatever the level of privacy, we have an &lt;strong>unbiased estimator&lt;/strong> of the mean. It&amp;rsquo;s a beautiful property, empirically verified !&lt;br>
+-The second is that, unfortunately, the greater the privacy (low alpha), &lt;strong>the greater the variance&lt;/strong> of this estimator.&lt;/p>
+&lt;p>We recall our main theorem demonstrated above &lt;a href="#Recall" style="background-color: yellow; padding: 2px 5px; border-radius: 3px;">Previous theorem&lt;/a> :&lt;br>
+&lt;strong>Theorem&lt;/strong> : Given α-local-differentially private $Z_i$, there exists some arbitrary constants $C_1$, $C_2$ such that for all $\alpha\in [0,1]$:
+$$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - θ|^2] ≤ C_2 min(1, \frac{d}{n\alpha^2})$$&lt;/p>
+&lt;p>We now want to &lt;strong>compare the theoretical optimal rate with empirical results&lt;/strong>. To do this, we distinguish two situations:&lt;br>
+-The first is with &lt;strong>fixed alpha&lt;/strong>, and determines the MSE as a function of the number of samples n. This leads to these empirical results:&lt;/p>
+&lt;p>&lt;img
+src="http://localhost:1313/images/Antoine_Klein/Minimax_rate_n.png"
+alt="Data Privacy2"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>The dotted line represents the regime of the theoretical bound of the form $n \rightarrow \frac{C1}{n}$ . This is the shape of the empirical curves!&lt;/p>
+&lt;p>-The second has a &lt;strong>fixed n&lt;/strong> and determines the MSE as a function of alpha. This leads to these empirical results:&lt;/p>
+&lt;p>&lt;img
+src="http://localhost:1313/images/Antoine_Klein/Minimax_rate_alpha.png"
+alt="Data Privacy2"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>The dotted line represents the regime of the theoretical bound of the form $\alpha \rightarrow \frac{C1}{\alpha^2}$ . This is once again the shape of the empirical curves quite surprisingly!&lt;/p>
+&lt;h3 id="section-7">Conclusion&lt;/h3>
+&lt;p>From a problem rooted in an &lt;strong>ethical dilemma&lt;/strong> (privacy versus completeness and transparency), we have looked at the &lt;strong>cost of guaranteeing&lt;/strong> one at the expense of the other, to better sketch out desirable situations.&lt;br>
+This has enabled us to develop theoretical results in terms of &lt;strong>minimax rates&lt;/strong>. There is indeed a &lt;strong>trade-off&lt;/strong> between these criteria, which is even more costly in the case of non-parametric density estimation.&lt;br>
+Finally, we have compared these theoretical limits with empirical results, which &lt;strong>confirm the conformity of the statements&lt;/strong>.&lt;br>
+The aim of all this work is to disseminate this important yet under-exploited notion: privacy. To this end, we invite the reader to take the following &lt;strong>quiz&lt;/strong> to ensure his or her understanding.&lt;/p>
+&lt;h1 id="section-8">Quizz&lt;/h1>
+&lt;p>To test yourself abour privacy:&lt;/p>
+&lt;form id="quiz-form" class="quiz-form">
+&lt;div class="quiz-question">
+&lt;p>What is privacy?&lt;/p>
+&lt;div class="quiz-options">
+&lt;label>
+&lt;input type="radio" name="question1" value="1">
+Avoid asking questions that can raise private information
+&lt;/label>
+&lt;label>
+&lt;input type="radio" name="question1" value="2">
+A mechanism that prevents other agent to retrieve personnal information in your answer
+&lt;/label>
+&lt;label>
+&lt;input type="radio" name="question1" value="3">
+An ethical-washing trend
+&lt;/label>
+&lt;/div>
+&lt;p>Which situation is α-local-differentially privacy?&lt;/p>
+&lt;div class="quiz-options">
+&lt;label>
+&lt;input type="radio" name="question2" value="1">
+sup {Q(Z | Xi = x)/Q(Z | Xi = x')} | x, x' ∈ X} >= exp(α)
+&lt;/label>
+&lt;label>
+&lt;input type="radio" name="question2" value="2">
+You tell the truth half the time, you lie otherwise.
+&lt;/label>
+&lt;label>
+&lt;input type="radio" name="question2" value="3">
+Z_i = X_i + (2M/α) W_i with W_i drawn from a Laplace Noise(0,1)
+&lt;/label>
+&lt;/div>
+&lt;p>What is the privacy cost in term of optimal rate ?&lt;/p>
+&lt;div class="quiz-options">
+&lt;label>
+&lt;input type="radio" name="question3" value="1">
+Multinomial estimation: A factor α^2/d
+&lt;/label>
+&lt;label>
+&lt;input type="radio" name="question3" value="2">
+Density estimation: from n^(-2β/2β+2) (without privacy) to (nα^2)^(-2β/(2β+2))
+&lt;/label>
+&lt;label>
+&lt;input type="radio" name="question3" value="3">
+We loose nothing, that's the surprising finding of the paper
+&lt;/label>
+&lt;/div>
+&lt;/div>
+&lt;!-- Add more quiz questions as needed -->
+&lt;button type="submit" class="quiz-submit">Submit&lt;/button>
+&lt;/form>
+&lt;div id="quiz-results" class="quiz-results">&lt;/div>
+&lt;script>
+// Define quiz questions and correct answers
+const quizQuestions = [
+{
+question: "What is privacy?",
+answer: "2"
+},
+//Add more quiz questions as needed
+{
+question: "Which situation is α-local-differentially privacy?",
+answer: "3"
+},
+//Add more quiz questions as needed
+{
+question: "What is the privacy cost in term of optimal rate ?",
+answer: "1"
+}
+];
+// Handle form submission
+document.getElementById('quiz-form').addEventListener('submit', function(event) {
+event.preventDefault();
+// Calculate quiz score
+let score = 0;
+quizQuestions.forEach(question => {
+const selectedAnswer = document.querySelector(`input[name="question${quizQuestions.indexOf(question) + 1}"]:checked`);
+if (selectedAnswer) {
+if (selectedAnswer.value.toLowerCase() === question.answer) {
+score++;
+selectedAnswer.parentElement.classList.add('correct');
+} else {
+selectedAnswer.parentElement.classList.add('incorrect');
+}
+}
+});
+// Display quiz results
+const quizResults = document.getElementById('quiz-results');
+quizResults.innerHTML = `&lt;p>You scored ${score} out of ${quizQuestions.length}.&lt;/p>`;
+});
+&lt;/script>
+&lt;hr>
+&lt;hr>
+&lt;h2 id="annexes">Annexes&lt;/h2>
+&lt;h3 id="references">References&lt;/h3>
+&lt;ol>
+&lt;li>Warner SL. Randomized response: a survey technique for eliminating evasive answer bias. J Am Stat Assoc. 1965 Mar;60(309):63-6. PMID: 12261830.&lt;/li>
+&lt;li>John C. Duchi, Michael I. Jordan, and Martin Wainwright. Local Privacy and Minimax Bounds: Sharp Rates for Probability Estimation. Advances in Neural Information Processing Systems (2013)&lt;/li>
+&lt;li>Dwork, C., &amp;amp; Roth, A. (2014). The algorithmic foundations of differential privacy. Foundations and Trends® in Theoretical Computer Science, 9(3-4), 211-407.&lt;/li>
+&lt;li>Narayanan, A., &amp;amp; Shmatikov, V. (2008). Robust de-anonymization of large sparse datasets. In Security and Privacy, 2008. SP 2008. IEEE Symposium on (pp. 111-125). IEEE.&lt;/li>
+&lt;/ol>
+&lt;script>
+function highlight(text) {
+var inputText = document.getElementById("markdown-content");
+var innerHTML = inputText.innerHTML;
+var index = innerHTML.indexOf(text);
+if (index >= 0) {
+innerHTML = innerHTML.substring(0,index) + "&lt;span class='highlight'>" + innerHTML.substring(index,index+text.length) + "&lt;/span>" + innerHTML.substring(index + text.length);
+inputText.innerHTML = innerHTML;
+}
+}
+highlight("Estimating Privacy in Data Science");
+&lt;/script>
+&lt;hr>
+&lt;script>
+function displayInput() {
+var inputValue = document.getElementById("inputField").value;
+document.getElementById("output").innerText = "You typed: " + inputValue;
+}
+&lt;/script>
+&lt;style>
+.highlight {
+background-color: red;
+}
+.highlight-on-hover:hover {
+background-color: yellow;
+}
+/* Quiz form styles */
+.quiz-form {
+max-width: 500px;
+margin: auto;
+padding: 20px;
+border: 1px solid #ccc;
+border-radius: 5px;
+background-color: #f9f9f9;
+}
+.quiz-question {
+margin-bottom: 20px;
+}
+.quiz-options label {
+display: block;
+margin-bottom: 10px;
+}
+.quiz-submit {
+background-color: #4caf50;
+color: white;
+padding: 10px 20px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+}
+.quiz-submit:hover {
+background-color: #45a049;
+}
+/* Quiz results styles */
+.quiz-results {
+margin-top: 20px;
+font-weight: bold;
+}
+.quiz-options label {
+display: block;
+margin-bottom: 10px;
+}
+.quiz-options label.correct {
+color: green;
+}
+.quiz-options label.incorrect {
+color: red;
+}
+a[name]:hover {
+background-color: yellow; /* Change to the same color as normal state to maintain yellow highlight */
+text-decoration: none; /* Optionally remove underline on hover */
+}
+&lt;/style>
+&lt;style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style>
+&lt;script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/statistical_minimax_rates_under_privacy/</guid><pubDate>Wed, 31 Jan 2024 17:22:02 +0100</pubDate></item><item><title>Another article</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/my-first-blog/</link><description>&lt;p>&lt;strong>Authors&lt;/strong> : John Smith and John Smith&lt;/p>
 &lt;hr>&lt;/hr>
 &lt;style
 TYPE="text/css">
