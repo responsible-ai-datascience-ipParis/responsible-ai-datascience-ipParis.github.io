@@ -42,6 +42,8 @@ Neural Collapse is characterized by three distinct proxies:
 - **Simplex Encoded Label Interpolation (SELI) geometry:** measures the gap between the features extracted by the pre-trained model and SELI geometry with the rank of the feature matrix. The higher the rank, the smaller the difference, the closer to Neural Collapse ;
 - **Nearest Center Classifier:** ensures that the means of the collapsed points for different classes are maximally separated in the feature space.
 
+![](static/images/ChadalMasse/neural_collapse.gif)
+
 # Why measuring transferability?
 
 Fine-tuning pre-trained models works as follows. First, you pick a downstream task, for which you have at your disposal several pre-trained models candidates. Your want to compare their performances to pick the best one on test set, with the optimal fine-tuning configuration. Then, you have to fine-tune each of them. Even if the dataset to train on is smaller, thanks to fine-tuning, you have to repeat it for all your models candidates, and one does not want that, as it can quickly become computationnally expensive.
