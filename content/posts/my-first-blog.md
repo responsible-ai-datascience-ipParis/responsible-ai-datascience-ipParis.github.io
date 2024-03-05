@@ -42,7 +42,7 @@ Neural Collapse is characterized by three distinct proxies:
 - **Simplex Encoded Label Interpolation (SELI) geometry:** measures the gap between the features extracted by the pre-trained model and SELI geometry with the rank of the feature matrix. The higher the rank, the smaller the difference, the closer to Neural Collapse ;
 - **Nearest Center Classifier:** ensures that the means of the collapsed points for different classes are maximally separated in the feature space.
 
-![](https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_collapse.gif)
+![](https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_collapse.gif =250x)
 
 # Why measuring transferability?
 
