@@ -4,38 +4,6 @@ date = 2024-02-07T15:55:14+01:00
 draft = false
 +++
 
-<style
-TYPE="text/css">
-
-code.has-jax {font:
-inherit;
-font-size:
-100%;
-background:
-inherit;
-border:
-inherit;}
-
-</style>
-<script
-type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-
-        inlineMath: [['$','$'], ['\','\']],
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
-    }
-});
-MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i = 0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-});
-</script>
-<script
-type="text/javascript"
-src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
 
 
 # To update or not to update? Neurons at equilibrium in deep models
@@ -77,8 +45,8 @@ The concept of neuronal equilibrium aims to detect when a neuron reaches a state
 
 To assess this we can evaluate  cosine similarity between all the outputs of the $i$-th neuron at time $t$ and at time $t-1$ for the whole validation set $\Xi_{val}$ as
 
-$$
-    \phi_{i}^t = \sum_{\xi\in \Xi_{val}} \sum_{n=1}^{N_i} \hat{y}_{i,n,\xi}^{t} \cdot \hat{y}_{i,n,\xi}^{t-1}
+$$ 
+\phi_{i}^t = \sum_{\xi\in \Xi_{val}} \sum_{n=1}^{N_i} \hat{y}_{i,n,\xi}^{t} \cdot \hat{y}_{i,n,\xi}^{t-1} 
 $$
 
 The neuron $i$-th reaches the equilibrium when $(\phi_{i})_t$ stops evolving. In this sense to know when the neuron has reached the equilibrium  we need to detect when :
@@ -165,3 +133,41 @@ In summary, the authors find that a neuron is at equilibrium if the velocity of 
 the authors found that the size of the validation set does not significantly impact the performance of the model. Interestingly, even with a validation set as small as a single image, the method yields good results. This is attributed to the presence of convolutional layers in the network, which, even with a small number of images, generate high-dimensional outputs in each neuron. Additionally, the homogeneity of the dataset (CIFAR-10) likely contributes to the robustness of the performance against changes in the validation set size.
 
 When examining the impact of the parameter ε, which is used to determine when a neuron is at equilibrium and hence does not need to be updated, the authors observe a drop in model performance at very high values of ε. They suggest a value of 0.001 as a good compromise for classification tasks, striking a balance between model performance and computational efficiency.
+
+
+<style
+TYPE="text/css">
+
+code.has-jax {font:
+inherit;
+font-size:
+100%;
+background:
+inherit;
+border:
+inherit;}
+
+</style>
+
+
+
+
+
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
