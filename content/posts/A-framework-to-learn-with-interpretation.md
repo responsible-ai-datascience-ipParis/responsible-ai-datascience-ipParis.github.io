@@ -53,21 +53,8 @@ type="text/javascript"
 src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
 
 # 1 Introduction
-In this blog post, we will explore FLINT, introduced by a research paper titled "A framework to learn with interpretation." The increasing adoption of complex predictive models in fields like law, healthcare, and defense has highlighted the critical need for interpretability in machine learning. Interpretability, often synonymous with explainability, refers to a model's capacity to offer human-understandable insights into its decision-making process. However, it's important to differentiate between the two terms: interpretability focuses on providing insights into the decision process, while explainability involves logical explanations or causal reasoning, which often require more sophisticated frameworks.
 
-The challenge of interpreting models, especially deep neural networks, has spurred the development of two main approaches: post-hoc methods and "interpretable by design" methods. Post-hoc approaches analyze pre-trained systems locally to interpret their decisions, while "interpretable by design" methods aim to integrate interpretability directly into the learning process. Each approach has its advantages and drawbacks, with post-hoc methods criticized for computational costs and robustness issues, and interpretable systems by design facing the challenge of maintaining performance.
-
-Introducing a fresh perspective on learning interpretable models, a new generic task in machine learning called Supervised Learning with Interpretation (SLI) is introduced. SLI involves jointly learning a pair of dedicated models: a predictive model and an interpreter model, to provide both interpretability and prediction accuracy. This approach recognizes that prediction and interpretation are distinct yet closely related tasks, each with its own criteria for assessment and hypothesis space. This leads to the introduction of FLINT (Framework to Learn With INTerpretation), a solution to SLI specifically designed for deep neural network classifiers.
-
-FLINT's Key Contributions:
-
-- FLINT presents an original interpreter network architecture based on hidden layers of the network, enabling local and global interpretability through the extraction of high-level attribute functions.
-  
-- A novel criterion based on entropy and sparsity is proposed to promote conciseness and diversity in the learnt attribute functions, enhancing interpretability.
-  
-- FLINT can be specialized for post-hoc interpretability, further extending its applicability and demonstrating promising results, as detailed in supplementary materials.
-
-In this blog post, we delve into the significance of interpretability in machine learning systems, exploring its implications, challenges, and recent advancements introduced through FLINT. We will dissect the key concepts presented in the article and examine how FLINT addresses the pressing need for interpretable models, particularly in the context of deep neural networks. Additionally, we will discuss the potential impact of FLINT on various real-world applications and its implications for the future of transparent and trustworthy AI systems.
+In this post, we’ll explore FLINT, a framework introduced in a paper titled “A framework to learn with interpretation,” addressing the crucial need for interpretability in machine learning as complex predictive models become more prevalent in fields like law, healthcare, and defense. Interpretability, synonymous with explainability, provides insights into a model’s decision-making process. Two main approaches, post-hoc methods and “interpretable by design” methods, tackle the challenge of interpreting models, each with its pros and cons. A new approach, Supervised Learning with Interpretation (SLI), jointly learns a predictive model and an interpreter model. FLINT, specifically designed for deep neural network classifiers, introduces a novel interpreter network architecture promoting local and global interpretability. It also proposes a criterion for concise and diverse attribute functions, enhancing interpretability. We’ll delve into FLINT’s significance, challenges, and implications for transparent AI systems, examining its potential impact on real-world applications.
 
 # 2 Learning a classifier and its interpreter with FLINT
 
