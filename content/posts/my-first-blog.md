@@ -75,11 +75,11 @@ Given these promising results, the authors developed a transferability estimatio
 
 Let's detail these scores :
 
-## Within-Class Variability Collapse
+### Within-Class Variability Collapse
 
-## Simplex Encoded Label Interpolation (SELI) geometry
+### Simplex Encoded Label Interpolation (SELI) geometry
 
-## Nearest Center Classifier
+### Nearest Center Classifier
 
 First, the posterior probability $P(y = c|h)$ for each class $c$ is calculated using Bayes' Rule:
 
@@ -101,7 +101,7 @@ Where:
 
 Finally, the score $S^m_{ncc}$ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c}$ and the ground truth labels $y_i$ for all samples:
 
-$$ S^{m}_{ncc}(H^m) = \frac{1}{N} \Sigma _{i=1}{N} \Sigma _{c=1}^{C} z^m_{i,c} \cdot y_{i,c} $$
+$$ S^m_{ncc}(H^m) = \frac{1}{N} \Sigma _{i=1}{N} \Sigma _{c=1}^{C} z^m_{i,c} \cdot y_{i,c} $$
 
 Where:
 - $N$ is the number of samples.
