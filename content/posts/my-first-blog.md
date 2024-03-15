@@ -32,6 +32,19 @@ Moreover, the pursuit of enhancing transferability has led to innovations in mod
 
 The concept of transferability also intersects with **ethical AI** development, as it encourages the use of more generalizable models that can perform equitably across diverse datasets and demographics, reducing the risk of biased or unfair outcomes.
 
+# Why measuring transferability?
+
+Fine-tuning pre-trained models works as follows. First, you **pick a downstream task**, for which you have at your disposal several pre-trained models candidates. You want to compare their performances to pick the best one on test set, with the **optimal fine-tuning configuration**. Then, you have to fine-tune each of them. Even if the dataset to train on is smaller, thanks to fine-tuning, you have to repeat it for all your models candidates, and one does not want that, as it can quickly become **computationnally expensive**.
+
+Transferability estimation arises as a solution to anticipate and avoid unnecessary fine-tuning, by **ranking the performances of pre-trained models** on a downstream task without any fine-tuning. Having a **benchmark on the pre-trained models' transferability** would allow you to pick the relevant ones for your own downstream task.
+
+<p align="center">
+<img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/machine-learning-file-cycle.png" width="250" height="250"/>
+</p>
+
+This measure is also in line with **frugality in AI**, which means using limited resources at every step of the Machine Learning lifecycle, while maintaining an acceptable accuracy. This frugality is especially relevant for small and medium-sized enterprises (SMEs) or startups, which may not have the vast computational resources that larger corporations possess. Transferable models democratize access to advanced AI capabilities, enabling these smaller entities to innovate and compete effectively. Frugality in AI also speaks to the broader goal of creating models that are not only powerful but also lean and efficient. Models with high transferability can achieve excellent performance across multiple tasks using significantly less data and fewer computational resources. This efficiency reduces the carbon footprint of training models and makes AI more accessible to a wider range of users and applications.
+
+
 # Neural Collapse
 
 Neural Collapse happens when training beyond 0 training error, i.e training error is at 0 while pushing training loss approaching 0 even further down. Imagine training a deep neural network on a dataset for a classification task. As the training process nears its end—particularly when the model is trained to a point of perfect or near-perfect classification accuracy on the training data. Intuitively, one would expect a highly overfitted and noisy model. Instead, a remarkable simplification occurs in the way the model represents the data, as it was shown in [[2]](#ref2). This training approach offers better **generalization** performance, better **robustness**, and better **interpretability**.
@@ -46,18 +59,6 @@ Neural Collapse is characterized by three distinct proxies:
 <img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_collapse.gif" width="250" height="250"/>
 </p>
 
-# Why measuring transferability?
-
-Fine-tuning pre-trained models works as follows. First, you **pick a downstream task**, for which you have at your disposal several pre-trained models candidates. You want to compare their performances to pick the best one on test set, with the **optimal fine-tuning configuration**. Then, you have to fine-tune each of them. Even if the dataset to train on is smaller, thanks to fine-tuning, you have to repeat it for all your models candidates, and one does not want that, as it can quickly become **computationnally expensive**.
-
-Transferability estimation arises as a solution to anticipate and avoid unnecessary fine-tuning, by **ranking the performances of pre-trained models** on a downstream task without any fine-tuning. Having a **benchmark on the pre-trained models' transferability** would allow you to pick the relevant ones for your own downstream task.
-
-<p align="center">
-<img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/machine-learning-file-cycle.png" width="250" height="250"/>
-</p>
-
-This measure is also in line with **frugality in AI**, which means using limited resources at every step of the Machine Learning lifecycle, while maintaining an acceptable accuracy. This frugality is especially relevant for small and medium-sized enterprises (SMEs) or startups, which may not have the vast computational resources that larger corporations possess. Transferable models democratize access to advanced AI capabilities, enabling these smaller entities to innovate and compete effectively. Frugality in AI also speaks to the broader goal of creating models that are not only powerful but also lean and efficient. Models with high transferability can achieve excellent performance across multiple tasks using significantly less data and fewer computational resources. This efficiency reduces the carbon footprint of training models and makes AI more accessible to a wider range of users and applications.
-
 # Why choosing Neural Collapse proxies?
 
 Let's go back to imagining you have to perform a downstream task, and to do so you have to measure transferability between pre-trained models candidates. The three Neural Collapse proxies were previously defined, but we did not mention yet the three model's aspects that are crucial to evaluate when choosing one:
@@ -70,7 +71,7 @@ Authors in [[3]](#ref3) demonstrate **both theoretically and empirically** that 
 
 # The NCTI
 
-Now, let's see how the Neural Collapse Transferability Index (NCTI) works.
+Given these promising results, the authors developed a transferability estimation metric : the Neural Collapse Transferability Index (NCTI). This metric measures the proximity between the current state of a pre-trained model and its final fine-tuning stage on target, using the three neural collapse proxies defined above : Within-Class Variability Collapse, SELI geometry and Nearest Center Classifier.
 
 # Experiment
 
