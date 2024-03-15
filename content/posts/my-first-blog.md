@@ -83,7 +83,7 @@ Let's detail these scores :
 
 First, the posterior probability $P(y = c|h)$ for each class $c$ is calculated using Bayes' Rule:
 
-$$ \log P(y = c|h) = \frac{1}{2}(h - \mu_c)^T \Sigma^{-1} (h - \mu_c) + \log P(y = c) $$
+$$ \log P(y = c|h) = \frac{1}{2}(h - \mu_c)^T \Sigma (h - \mu_c) + \log P(y = c) $$
 
 where:
 - $\mu_c$ is the mean vector for class $c$.
@@ -93,7 +93,7 @@ where:
 
 Next, the softmax function is applied to obtain the normalized posterior probability $z^m_{i,c}$ for each class $c$ of the $i$-th sample:
 
-$$ z^m_{i,c} = \frac{\exp(\log P(y = c|h^m_i))}{\sum^C_{k=1} \exp(\log P(y = k|h^m_i))} $$
+$$ z^m_{i,c} = \frac{\exp(\log P(y = c|h^m_i))}{\\Sigma ^C_{k=1} \exp(\log P(y = k|h^m_i))} $$
 
 Where:
 - $C$ is the number of classes.
@@ -101,7 +101,7 @@ Where:
 
 Finally, the score $S^{m}_{ncc}$ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c}$ and the ground truth labels $y_i$ for all samples:
 
-$$ S^{m}_{ncc}(H^m) = \frac{1}{N} \sum_{i=1}^{N} \sum_{c=1}^{C} z^m_{i,c} \cdot y_{i,c} $$
+$$ S^{m}_{ncc}(H^m) = \frac{1}{N} \Sigma _{i=1}{N} \Sigma _{c=1}^{C} z^m_{i,c} \cdot y_{i,c} $$
 
 Where:
 - $N$ is the number of samples.
