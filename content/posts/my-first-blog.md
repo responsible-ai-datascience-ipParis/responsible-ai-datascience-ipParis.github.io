@@ -81,9 +81,9 @@ Let's detail these scores :
 
 ## Nearest Center Classifier
 
-First, the posterior probability \( P(y = c|h) \) for each class \( c \) is calculated using Bayes' Rule:
+First, the posterior probability $$ P(y = c|h) $$ for each class $$ c $$ is calculated using Bayes' Rule:
 
-\[ \log P(y = c|h) = \frac{1}{2}(h - \mu_c)^T \Sigma^{-1} (h - \mu_c) + \log P(y = c) \]
+$$ \log P(y = c|h) = \frac{1}{2}(h - \mu_c)^T \Sigma^{-1} (h - \mu_c) + \log P(y = c) $$
 
 where:
 - \( \mu_c \) is the mean vector for class \( c \).
@@ -93,7 +93,7 @@ where:
 
 Next, the softmax function is applied to obtain the normalized posterior probability \( z^m_{i,c} \) for each class \( c \) of the \( i \)-th sample:
 
-\[ z^m_{i,c} = \frac{\exp(\log P(y = c|h^m_i))}{\sum_{k=1}^{C} \exp(\log P(y = k|h^m_i))} \]
+$$ z^m_{i,c} = \frac{\exp(\log P(y = c|h^m_i))}{\sum_{k=1}^{C} \exp(\log P(y = k|h^m_i))} $$
 
 Where:
 - \( C \) is the number of classes.
