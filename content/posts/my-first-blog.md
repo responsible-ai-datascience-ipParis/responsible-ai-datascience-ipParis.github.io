@@ -71,7 +71,44 @@ Authors in [[3]](#ref3) demonstrate **both theoretically and empirically** that 
 
 # The NCTI
 
-Given these promising results, the authors developed a transferability estimation metric : the Neural Collapse Transferability Index (NCTI). This metric measures the proximity between the current state of a pre-trained model and its final fine-tuning stage on target, using the three neural collapse proxies defined above : Within-Class Variability Collapse, SELI geometry and Nearest Center Classifier.
+Given these promising results, the authors developed a transferability estimation metric : the Neural Collapse Transferability Index (NCTI). This metric measures the proximity between the current state of a pre-trained model and its final fine-tuning stage on target, using the three neural collapse proxies defined above : Within-Class Variability Collapse, SELI geometry and Nearest Center Classifier. For each of them, a score is established and these three scores are then grouped together to obtain the overall score.
+
+Let's detail these scores :
+
+## Within-Class Variability Collapse
+
+## Simplex Encoded Label Interpolation (SELI) geometry
+
+## Nearest Center Classifier
+
+First, the posterior probability \( P(y = c|h) \) for each class \( c \) is calculated using Bayes' Rule:
+
+\[ \log P(y = c|h) = \frac{1}{2}(h - \mu_c)^T \Sigma^{-1} (h - \mu_c) + \log P(y = c) \]
+
+where:
+- \( \mu_c \) is the mean vector for class \( c \).
+- \( \Sigma \) is the covariance matrix.
+- \( P(y = c) \) is the prior probability of class \( c \).
+- \( h \) is the feature vector extracted by the pre-trained model.
+
+Next, the softmax function is applied to obtain the normalized posterior probability \( z^m_{i,c} \) for each class \( c \) of the \( i \)-th sample:
+
+\[ z^m_{i,c} = \frac{\exp(\log P(y = c|h^m_i))}{\sum_{k=1}^{C} \exp(\log P(y = k|h^m_i))} \]
+
+Where:
+- \( C \) is the number of classes.
+- \( h_{m,i} \) is the feature vector of the \( i \)-th sample extracted by the m-th pre-trained model.
+
+Finally, the score \( S^{m}_{ncc} \) is computed as the average of the dot product of the normalized posterior probabilities \( z^m_{i,c}  \) and the ground truth labels \( y_i \) for all samples:
+
+\[ S^{m}_{ncc}(H^m) = \frac{1}{N} \sum_{i=1}^{N} \sum_{c=1}^{C} z^m_{i,c}  \cdot y_{i,c} \]
+
+Where:
+- \( N \) is the number of samples.
+- \( y_i \) is the ground truth label of the \( i \)-th sample (in one-hot encoding).
+
+The higher the score \[ S^{m}_{ncc}(H^m)\], the smaller the deviation to the nearest optimal centroid classifier and therefore the greater the transferability to the target dataset
+
 
 # Experiment
 
