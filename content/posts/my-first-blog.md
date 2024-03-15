@@ -99,7 +99,7 @@ Where:
 - $C$ is the number of classes.
 - $h_{m,i}$ is the feature vector of the $i$-th sample extracted by the m-th pre-trained model.
 
-Finally, the score $S^{m}_{ncc}$ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c}$ and the ground truth labels $y_i$ for all samples:
+Finally, the score $S^m_{ncc}$ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c}$ and the ground truth labels $y_i$ for all samples:
 
 $$ S^{m}_{ncc}(H^m) = \frac{1}{N} \Sigma _{i=1}{N} \Sigma _{c=1}^{C} z^m_{i,c} \cdot y_{i,c} $$
 
