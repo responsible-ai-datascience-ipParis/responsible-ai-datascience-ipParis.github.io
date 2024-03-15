@@ -86,28 +86,28 @@ First, the posterior probability $P(y = c|h)$ for each class $c$ is calculated u
 $$ \log P(y = c|h) = \frac{1}{2}(h - \mu_c)^T \Sigma^{-1} (h - \mu_c) + \log P(y = c) $$
 
 where:
-- $ \mu_c $ is the mean vector for class $ c $.
-- $ \Sigma $ is the covariance matrix.
-- $ P(y = c) $ is the prior probability of class $ c $.
-- $ h $ is the feature vector extracted by the pre-trained model.
+- $\mu_c$ is the mean vector for class $ c $.
+- $\Sigma$ is the covariance matrix.
+- $P(y = c)$ is the prior probability of class $ c $.
+- $h$ is the feature vector extracted by the pre-trained model.
 
-Next, the softmax function is applied to obtain the normalized posterior probability $ z^m_{i,c} $ for each class $ c $ of the $ i $-th sample:
+Next, the softmax function is applied to obtain the normalized posterior probability $z^m_{i,c}$ for each class $ c $ of the $ i $-th sample:
 
 $$ z^m_{i,c} = \frac{\exp(\log P(y = c|h^m_i))}{\sum_{k=1}^{C} \exp(\log P(y = k|h^m_i))} $$
 
 Where:
-- $ C $ is the number of classes.
-- $ h_{m,i} $ is the feature vector of the $ i $-th sample extracted by the m-th pre-trained model.
+- $C$ is the number of classes.
+- $h_{m,i}$ is the feature vector of the $ i $-th sample extracted by the m-th pre-trained model.
 
-Finally, the score $ S^{m}_{ncc} $ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c} $ and the ground truth labels $ y_i $ for all samples:
+Finally, the score $S^{m}_{ncc}$ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c}$ and the ground truth labels $y_i$ for all samples:
 
-$$ S^{m}_{ncc}(H^m) = \frac{1}{N} \sum_{i=1}^{N} \sum_{c=1}^{C} z^m_{i,c}  \cdot y_{i,c} $$
+$$ S^{m}_{ncc}(H^m) = \frac{1}{N} \sum_{i=1}^{N} \sum_{c=1}^{C} z^m_{i,c} \cdot y_{i,c} $$
 
 Where:
 - $N$ is the number of samples.
-- $y_i$ is the ground truth label of the $ i $-th sample (in one-hot encoding).
+- $y_i$ is the ground truth label of the $i$-th sample (in one-hot encoding).
 
-The higher the score $ S^{m}_{ncc}(H^m)$, the smaller the deviation to the nearest optimal centroid classifier and therefore the greater the transferability to the target dataset
+The higher the score $S^{m}_{ncc}(H^m)$, the smaller the deviation to the nearest optimal centroid classifier and therefore the greater the transferability to the target dataset
 
 
 # Experiment
