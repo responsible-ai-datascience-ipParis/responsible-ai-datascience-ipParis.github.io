@@ -77,15 +77,25 @@ Let's detail these scores :
 
 ### Within-Class Variability Collapse
 
-### Simplex Encoded Label Interpolation (SELI) geometry
+The authors noticed that higher singular values indicate higher within-class variability. But since singular value decomposition (SVD) is computationally expensive for large matrices, the nuclear norm which calculates the sum of singular values in a less expensive way was used.
+
+Thus, the score $S_{vc}$ is calculated as follow :
+
+$$ S_{vc}(Hm) = - \sum_{c=1}^{C} ||Z^m_c||_* $$
+
+Where $Z^m_c$ denotes the logits of the $c$-th class extracted by the $m$-th model.
+
+The higher the score $S_{vc}$, the higher the within-class variability, which means that the pre-trained model is closer to the final fine-tuning stage.
+
+### SELI geometry
 
 ### Nearest Center Classifier
 
 First, the posterior probability $P(y = c|h)$ for each class $c$ is calculated using Bayes' Rule:
 
-$$ \log P(y = c|h) = \frac{1}{2}(h - \mu_c)^T \Sigma (h - \mu_c) + \log P(y = c) $$
+$$ \log P(y = c|h) = \frac{1}{2}(h_i - \mu_c)^T \Sigma (h_j - \mu_c) + \log P(y = c) $$
 
-where:
+Where:
 - $\mu_c$ is the mean vector for class $c$.
 - $\Sigma$ is the covariance matrix.
 - $P(y = c)$ is the prior probability of class $c$.
@@ -93,21 +103,24 @@ where:
 
 Next, the softmax function is applied to obtain the normalized posterior probability $z^m_{i,c}$ for each class $c$ of the $i$-th sample:
 
-$$ z^m_{i,c} = \frac{\exp(\log P(y = c|h^m_i))}{\\Sigma ^C_{k=1} \exp(\log P(y = k|h^m_i))} $$
+$$ z^m_{i,c} = \frac{\exp(\log P(y = c|h^m_i))}{\sum ^C_{k=1} \exp(\log P(y = k|h^m_i))} $$
 
 Where:
 - $C$ is the number of classes.
-- $h_{m,i}$ is the feature vector of the $i$-th sample extracted by the m-th pre-trained model.
+- $h^m_i$ is the feature vector of the $i$-th sample extracted by the m-th pre-trained model.
 
 Finally, the score $S^m_{ncc}$ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c}$ and the ground truth labels $y_i$ for all samples:
 
-$$ S^m_{ncc}(H^m) = \frac{1}{N} \Sigma _{i=1}{N} \Sigma _{c=1}^{C} z^m_{i,c} \cdot y_{i,c} $$
+$$ S^m_{ncc}(H^m) = \frac{1}{N} \sum _{i=1}{N} \sum _{c=1}^{C} z^m_{i,c} \cdot y_{i,c} $$
 
 Where:
 - $N$ is the number of samples.
 - $y_i$ is the ground truth label of the $i$-th sample (in one-hot encoding).
 
-The higher the score $S^{m}_{ncc}(H^m)$, the smaller the deviation to the nearest optimal centroid classifier and therefore the greater the transferability to the target dataset
+The higher the score $S^{m}_{ncc}(H^m)$, the smaller the deviation to the nearest optimal centroid classifier and therefore the greater the transferability to the target dataset.
+
+### Overall Score Function
+
 
 
 # Experiment
