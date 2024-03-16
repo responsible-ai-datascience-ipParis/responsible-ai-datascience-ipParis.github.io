@@ -107,12 +107,13 @@ The higher the score $S_{vc}$, the higher the within-class variability, which me
 
 SELI geometry is a concept proposed in [[6]](#ref6) as a generalized geometric structure version of the simplex equiangular tight frame (ETF). ETF is defined in the context of the phenomenon of neuronal collapse, but it is limited to balanced datasets. In contrast, SELI extends this concept to both balanced and unbalanced datasets. Difference between the two geometries is shown in the figure below :
 
-<div style="display: flex; justify-content: center;">
-    <img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/geometry.png" alt="Image 1" style="width: 50%;">
-    <img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_network.png" alt="Image 2" style="width: 50%;">
+<div style="display: flex; justify-content: center; align-items: center;">
+    <img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/geometry.png" alt="Image 1" style="width: 50%; max-width: 100%; height: auto;">
+    <img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_network.png" alt="Image 2" style="width: 50%; max-width: 100%; height: auto;">
 </div>
 Embeddings H (in blue) and Classifier W (in red) follow the SELI geometry if :
-$$ W^T W  \alpha V \Lambda V^T,  H^T H \alpha U \Lambda U^T \text{and} W^T H \alpha \hat{Z} $$
+
+$$ W^T W \alpha V \Lambda V^T,  H^T H \alpha U \Lambda U^T \text{and} W^T H \alpha \hat{Z} $$
 
 Where $\hat{Z} = V \Lambda U^T$ is the SEL matrix [[6]](#ref6). $U$ and $V$ denote the left and right singular vector matrix of $\hat{Z}$. $\Lambda$ represents the diagonal singular value matrix.
 
@@ -146,7 +147,7 @@ Where:
 
 Finally, the score $S^m_{ncc}$ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c}$ and the ground truth labels $y_i$ for all samples:
 
-$$S^m_{ncc}(H^m)$$ $$ = \frac{1}{N} \sum _{i=1}{N} \sum _{c=1}^{C} z^m_{i,c} \cdot y_{i,c}$$
+$$S^m_{ncc}(H^m) = \frac{1}{N} \sum _{i=1}{N} \sum _{c=1}^{C} z^m_{i,c} \cdot y_{i,c}$$
 
 Where:
 - $N$ is the number of samples.
