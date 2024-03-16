@@ -97,7 +97,7 @@ The authors noticed that larger singular values indicate higher within-class var
 
 Thus, the score $S_{vc}$ is calculated as follow :
 
-$$ S_{vc}(H^m) = - \sum_{c=1}^{C} ||Z^m_c||_* $$
+$$ S^m_{vc}(H^m) = - \sum_{c=1}^{C} ||Z^m_c||_* $$
 
 Where $Z^m_c$ denotes the logits of the $c$-th class extracted by the $m$-th model.
 
@@ -114,7 +114,7 @@ SELI geometry is a concept proposed in [[6]](#ref6) as a generalized geometric s
 </div>
 
 
-Embeddings $H$ (in blue) and Classifier $W$ (in red) follow the SELI geometry if :
+Embeddings $H$ (in blue) and classifiers $W$ (in red) follow the SELI geometry if :
 
 $$ W^T W \alpha V \Lambda V^T,  H^T H \alpha U \Lambda U^T \text{and} W^T H \alpha \hat{Z} $$
 
@@ -150,7 +150,7 @@ Where:
 
 Finally, the score $S^m_{ncc}$ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c}$ and the ground truth labels $y_i$ for all samples:
 
-$$ S^m_{ncc}(H^m) = \frac{1}{N} \sum_{i=1}^N z^m_i \cdot y_i $$
+$$ S^m_{ncc}(H^m) = \frac{1}{N} \Sigma _{i=1}^N z^m_i \cdot y_i $$
 Where:
 - $N$ is the number of samples.
 - $y_i$ is the ground truth label of the $i$-th sample (in one-hot encoding).
