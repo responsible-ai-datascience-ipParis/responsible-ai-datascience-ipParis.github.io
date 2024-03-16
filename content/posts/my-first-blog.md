@@ -55,9 +55,19 @@ Neural Collapse is characterized by three distinct proxies:
 - **Simplex Encoded Label Interpolation (SELI) geometry:** measures the gap between the features extracted by the pre-trained model and SELI geometry with the rank of the feature matrix. The higher the rank, the smaller the difference, the closer to Neural Collapse ;
 - **Nearest Center Classifier:** ensures that the means of the collapsed points for different classes are maximally separated in the feature space.
 
+Let's look at this visual example of neural collapse :
 <p align="center">
 <img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_collapse.gif" width="250" height="250"/>
 </p>
+
+Where :
+
+- The **Green Balls**  represent the coordinates of a simplex equiangular tight frame (ETF).
+- The **Red Lines** represent the Final Layer Classifier. The direction of the sticks indicates the orientation of its decision boundaries, while the ball-end represents the centroid in the feature space used for classification.
+- The **Blue Lines** represent the class means of the activations in the last hidden layer. The sticks show the variance around these means.
+- The **Small Blue Balls** represent the last hidden layer activations. It shows how data points from each class are distributed around the class means, forming tight clusters.
+
+Initially these elements are all scattered, but as training progresses and neuronal collapse occurs, at each epoch, they move and converged gradually as shown in the GIF.
 
 # Why choosing Neural Collapse proxies?
 
@@ -75,9 +85,11 @@ Given these promising results, the authors developed a transferability estimatio
 
 $$ S^m_{total} = S^m_{vc}(H^m) + S^m_{seli}(H^m) + S^{m}_{ncc}(H^m) $$
 
-Where $H_m$ is the feature extracted by the $m$-th pre-trained model (after ranking a set of $M$ pre-trained models)
+Where $H_m$ is the feature extracted by the $m$-th pre-trained model (after ranking a set of $M$ pre-trained models).
 
-Let's detail these scores :
+The higher the score $S^m_{total}$, the better the transferability of the model for target dataset.
+
+Let's detail the scores $S^m_{vc}$, $S^m_{seli}$ and $S^{m}_{ncc}$:
 
 ### Within-Class Variability Collapse
 
@@ -93,12 +105,22 @@ The higher the score $S_{vc}$, the higher the within-class variability, which me
 
 ### SELI geometry
 
-A method to assess the SELI geometry structure involves computing the difference between the logits $Z^m$ extracted from the pre-trained model and the optimal logits $Z^\wedge$. However, obtaining $Z^m$ directly without fine-tuning on the target dataset is time-consuming. Therefore, features $H^m$ of the model are extracted and their difference is measured to form the SELI structure. The complexity of achieving the optimal logits $Z^\wedge$ through features $H_m$ is approximated via the nuclear norm.
+SELI geometry is a concept proposed in [[6]](#ref6) as a generalized geometric structure version of the simplex equiangular tight frame (ETF). ETF is defined in the context of the phenomenon of neuronal collapse, but it is limited to balanced datasets. In contrast, SELI extends this concept to both balanced and unbalanced datasets. Difference between the two geometries is shown in the figure below :
+
+<div style="display: flex; justify-content: center;">
+    <img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/geometry.png" alt="Image 1" style="width: 50%;">
+    <img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_network.png" alt="Image 2" style="width: 50%;">
+</div>
+Embeddings H (in blue) and Classifier W (in red) follow the SELI geometry if :
+$$ W^T W  \alpha V \Lambda V^T,  H^T H \alpha U \Lambda U^T \text{and} W^T H \alpha \hat{Z} $$
+
+Where $\hat{Z} = V \Lambda U^T$ is the SEL matrix [[6]](#ref6). $U$ and $V$ denote the left and right singular vector matrix of $\hat{Z}$. $\Lambda$ represents the diagonal singular value matrix.
+
+A method to assess the SELI geometry structure involves computing the difference between the logits $Z^m$ extracted from the pre-trained model and the optimal logits $\hat{Z}$. However, obtaining $Z^m$ directly without fine-tuning on the target dataset is time-consuming. Therefore, features $H^m$ of the model are extracted and their difference is measured to form the SELI structure. The complexity of achieving the optimal logits $\hat{Z}$ through features $H_m$ is approximated via the nuclear norm.
 
 Thus, the score $S^m_{seli}$ is calculated as :
 
 $$S^m_{seli}(H^m) = ||H^m||_*$$
-
 
 The higher the score $S^m_{seli}$ the higher the rank of the feature matrix $H_m$, making $Z$ closer to a full rank matrix.
 
@@ -116,7 +138,7 @@ Where:
 
 Next, the softmax function is applied to obtain the normalized posterior probability $z^m_{i,c}$ for each class $c$ of the $i$-th sample:
 
-$$ z^m_{i,c} = \frac{\exp(\log P(y = c|h^m_i))}{\sum ^C_{k=1} \exp(\log P(y = k|h^m_i))} $$
+$$ z^m_{i,c} = \frac{\exp(\log P(y = c|h^m_i))}{\Sigma ^C_{k=1} \exp(\log P(y = k|h^m_i))} $$
 
 Where:
 - $C$ is the number of classes.
@@ -124,7 +146,7 @@ Where:
 
 Finally, the score $S^m_{ncc}$ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c}$ and the ground truth labels $y_i$ for all samples:
 
-$$ S^m_{ncc}(H^m) = \frac{1}{N} \sum _{i=1}{N} \sum _{c=1}^{C} z^m_{i,c} \cdot y_{i,c} $$
+$$S^m_{ncc}(H^m)$$ $$ = \frac{1}{N} \sum _{i=1}{N} \sum _{c=1}^{C} z^m_{i,c} \cdot y_{i,c}$$
 
 Where:
 - $N$ is the number of samples.
@@ -216,10 +238,15 @@ Through extensive testing, authors have identified that two specific attributes 
 
 <a id="ref1"></a>1. Z. Wang Y.Luo, L.Zheng, Z.Huang, M.Baktashmotlagh (2023), How far pre-trained models are from neural collapse on the target dataset informs their transferabilityWang, ICCV.
 
-<a id="ref2"></a>2. V. Papyana,1 , X. Y. Hanb,1 , and D.L. Donoho (2020), Prevalence of neural collapse during the terminal phase of deep learning training, National Academy of Sciences.
+<a id="ref2"></a>2. V. Papyan,1 , X. Y. Hanb,1 , and D.L. Donoho (2020), Prevalence of neural collapse during the terminal phase of deep learning training, National Academy of Sciences.
 
 <a id="ref3"></a>3. Galanti, T., György, A., & Hutter, M. (2021). On the role of neural collapse in transfer learning. arXiv preprint arXiv:2112.15121.
 
 <a id="ref4"></a>4. Li, X., Liu, S., Zhou, J., Lu, X., Fernandez-Granda, C., Zhu, Z., & Qu, Q. (2022). Principled and efficient transfer learning of deep models via neural collapse. arXiv preprint arXiv:2212.12206.
+
+<a id="ref5"></a>5. Vignesh Kothapalli, (2023). Neural Collapse: A Review on Modelling Principles and Generalization. arXiv preprint arXiv:2206.04041.
+
+<a id="ref6"></a>6. Christos Thrampoulidis, Ganesh R Kini, Vala Vakilian, and Tina Behnia. (2022). Imbalance trouble: Revisiting neural-collapse
+geometry. arXiv preprint arXiv:2208.05512.
 
 <hr></hr>
