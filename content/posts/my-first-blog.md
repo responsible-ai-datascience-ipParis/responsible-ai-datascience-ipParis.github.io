@@ -71,23 +71,36 @@ Authors in [[3]](#ref3) demonstrate **both theoretically and empirically** that 
 
 # The NCTI
 
-Given these promising results, the authors developed a transferability estimation metric : the Neural Collapse Transferability Index (NCTI). This metric measures the proximity between the current state of a pre-trained model and its final fine-tuning stage on target, using the three neural collapse proxies defined above : Within-Class Variability Collapse, SELI geometry and Nearest Center Classifier. For each of them, a score is established and these three scores are then grouped together to obtain the overall score.
+Given these promising results, the authors developed a transferability estimation metric : the Neural Collapse Transferability Index (NCTI). This metric measures the proximity between the current state of a pre-trained model and its final fine-tuning stage on target, using the three neural collapse proxies defined above : Within-Class Variability Collapse, SELI geometry and Nearest Center Classifier. For each of them, a score is established :  $S^m_{vc}$, $S^m_{seli}$ and $S^{m}_{ncc}$. These three scores are then grouped together using normalization to prevent one score from dominating due to different scales. The final transferability estimation metric is obtained by adding the normalized scores: 
+
+$$ S^m_{total} = S^m_{vc}(H^m) + S^m_{seli}(H^m) + S^{m}_{ncc}(H^m) $$
+
+Where $H_m$ is the feature extracted by the $m$-th pre-trained model (after ranking a set of $M$ pre-trained models)
 
 Let's detail these scores :
 
 ### Within-Class Variability Collapse
 
-The authors noticed that higher singular values indicate higher within-class variability. But since singular value decomposition (SVD) is computationally expensive for large matrices, the nuclear norm which calculates the sum of singular values in a less expensive way was used.
+The authors noticed that larger singular values indicate higher within-class variability because the features within the class exhibit significant variation from the mean, which is desirable for effective feature representation. But since singular value decomposition (SVD) is computationally expensive for large matrices, the nuclear norm which calculates the sum of singular values in a less expensive way was used. Additionally, as feature spaces are high dimensionnal, noise may appear and affect the calculation of variability. Therefore, instead of using the feature matrix $H^m_c$ directly, the classwise logits $Z^m_c$ are substituted to calculate the feature variability.
 
 Thus, the score $S_{vc}$ is calculated as follow :
 
-$$ S_{vc}(Hm) = - \sum_{c=1}^{C} ||Z^m_c||_* $$
+$$ S_{vc}(H^m) = - \sum_{c=1}^{C} ||Z^m_c||_* $$
 
 Where $Z^m_c$ denotes the logits of the $c$-th class extracted by the $m$-th model.
 
 The higher the score $S_{vc}$, the higher the within-class variability, which means that the pre-trained model is closer to the final fine-tuning stage.
 
 ### SELI geometry
+
+A method to assess the SELI geometry structure involves computing the difference between the logits $Z^m$ extracted from the pre-trained model and the optimal logits $Z^\wedge$. However, obtaining $Z^m$ directly without fine-tuning on the target dataset is time-consuming. Therefore, features $H^m$ of the model are extracted and their difference is measured to form the SELI structure. The complexity of achieving the optimal logits $Z^\wedge$ through features $H_m$ is approximated via the nuclear norm.
+
+Thus, the score $S^m_{seli}$ is calculated as :
+
+$$S^m_{seli}(H^m) = ||H^m||_*$$
+
+
+The higher the score $S^m_{seli}$ the higher the rank of the feature matrix $H_m$, making $Z$ closer to a full rank matrix.
 
 ### Nearest Center Classifier
 
@@ -118,9 +131,6 @@ Where:
 - $y_i$ is the ground truth label of the $i$-th sample (in one-hot encoding).
 
 The higher the score $S^{m}_{ncc}(H^m)$, the smaller the deviation to the nearest optimal centroid classifier and therefore the greater the transferability to the target dataset.
-
-### Overall Score Function
-
 
 
 # Experiment
