@@ -150,7 +150,8 @@ Where:
 
 Finally, the score $S^m_{ncc}$ is computed as the average of the dot product of the normalized posterior probabilities $z^m_{i,c}$ and the ground truth labels $y_i$ for all samples:
 
-$$ S^m_{ncc}(H^m) = \frac{1}{N} \Sigma _{i=1}^N z^m_i \cdot y_i $$
+$$ S^m_{ncc}(H^m) = \frac{1}{N} \Sigma ^N_{i=1} z^m_i \cdot y_i $$
+
 Where:
 - $N$ is the number of samples.
 - $y_i$ is the ground truth label of the $i$-th sample (in one-hot encoding).
