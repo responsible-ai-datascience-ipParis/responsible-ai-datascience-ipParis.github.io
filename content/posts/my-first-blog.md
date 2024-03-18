@@ -18,6 +18,10 @@ What is **fine-tuning**? It consists in adapting a general-purpose model to perf
 
 Fine-tuning begins with a pre-trained model—a model that has already learned a vast array of features and patterns from a comprehensive dataset, often spanning millions of examples. This model, equipped with a deep understanding of various data representations, serves as a robust starting point. The fine-tuning process then adapts this model to a specific task by continuing the training process on a smaller, task-specific dataset. This additional training phase is typically shorter and requires significantly fewer data and computational resources than training a model from scratch, as the model already possesses a foundational knowledge base.
 
+<p align="center">
+<img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/schema.png" width="250" height="250"/>
+</p>
+
 One of the key aspects of fine-tuning is its efficiency in data utilization. Since the model has already learned general features and patterns, the fine-tuning process can achieve high performance with relatively small datasets. This characteristic is particularly valuable in domains where collecting large amounts of labeled data is challenging or expensive. 
 
 Training from scratch is the complete opposite of fine-tuned pre-trained models, as it involves starting with randomly initialized parameters and requires a substantial dataset specific to the task at hand, along with considerable computational resources and time to achieve comparable performance to a fine-tuned pre-trained model. While training from scratch can be beneficial in certain scenarios where highly specialized knowledge is required or when a suitable pre-trained model is not available, the efficiency and effectiveness of leveraging pre-trained models are nowadays undeniable.
@@ -236,6 +240,20 @@ A Github repository with all the necessary modifications from the original code 
 Through extensive testing, authors have identified that two specific attributes related to neural collapse, observed in the source features, consistently predicted the model's performance on new tasks. These attributes were the diversity within data categories and the compactness of category representations. Remarkably, models showing higher within-category diversity and more compact category representations in their source features tended to adapt better to new tasks. On the other hand, SELI did not consistently correlate with transferability.
 
 # Takeaways
+
+Key points to remember are :
+
+- Calculating model transferability and choosing the optimal pre-trained model is important for reasons of computational cost, environmental impact, and overall performance.
+
+- The authors have developed a new metric, the Neural Collapse informed Transferability Index (NCTI), which is based on the concept of "neural collapse" and measures *the gap between the current feature geometry and the geometry at the terminal stage after hypothetical fine-tuning on the downstream task.*
+
+- The NCTI metric integrates three aspects equally: **SELI geometry**, **within-class variability**, and **nearest center classifier**.
+
+- This method is *light to compute*, enabling rapid evaluation of model transferability. And it demonstrates favorable comparison with the current state-of-the-art methods.
+
+- Empirical results demonstrate that *the ranking of model transferability has a very strong correlation with the ground truth ranking* and compares with state-of-the-art methods, highlighting its effectiveness in selecting pre-trained models for specific tasks.
+
+In summary, the development of metrics such as NCTI is crucial for optimizing the use of pre-trained models, considering both performance and associated costs in real-world applications.
 
 
 # References
