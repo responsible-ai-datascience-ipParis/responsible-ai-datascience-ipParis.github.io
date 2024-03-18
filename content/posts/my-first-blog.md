@@ -245,13 +245,13 @@ Key points to remember are :
 
 - Calculating model transferability and choosing the optimal pre-trained model is important for reasons of computational cost, environmental impact, and overall performance.
 
-- The authors have developed a new metric, the Neural Collapse informed Transferability Index (NCTI), which is based on the concept of "neural collapse" and measures *the gap between the current feature geometry and the geometry at the terminal stage after hypothetical fine-tuning on the downstream task.*
+- The authors have developed a new metric, the **Neural Collapse informed Transferability Index (NCTI)**, which is based on the concept of **neural collapse** and measures *the gap between the current feature geometry and the geometry at the terminal stage after hypothetical fine-tuning on the downstream task.*
 
 - The NCTI metric integrates three aspects equally: **SELI geometry**, **within-class variability**, and **nearest center classifier**.
 
-- This method is *light to compute*, enabling rapid evaluation of model transferability. And it demonstrates favorable comparison with the current state-of-the-art methods.
+- This method is *light to compute*, enabling rapid evaluation of model transferability.
 
-- Empirical results demonstrate that *the ranking of model transferability has a very strong correlation with the ground truth ranking* and compares with state-of-the-art methods, highlighting its effectiveness in selecting pre-trained models for specific tasks.
+- Empirical results demonstrate that *the ranking of model transferability has a very strong correlation with the ground truth ranking* and **compares with state-of-the-art methods**, highlighting its effectiveness in selecting pre-trained models for specific tasks.
 
 In summary, the development of metrics such as NCTI is crucial for optimizing the use of pre-trained models, considering both performance and associated costs in real-world applications.
 
