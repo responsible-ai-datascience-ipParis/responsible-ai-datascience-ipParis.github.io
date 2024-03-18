@@ -19,7 +19,7 @@ What is **fine-tuning**? It consists in adapting a general-purpose model to perf
 Fine-tuning begins with a pre-trained model—a model that has already learned a vast array of features and patterns from a comprehensive dataset, often spanning millions of examples. This model, equipped with a deep understanding of various data representations, serves as a robust starting point. The fine-tuning process then adapts this model to a specific task by continuing the training process on a smaller, task-specific dataset. This additional training phase is typically shorter and requires significantly fewer data and computational resources than training a model from scratch, as the model already possesses a foundational knowledge base.
 
 <p align="center">
-<img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/schema.png" width="250" height="250"/>
+<img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/schema.png" width="250"/>
 </p>
 
 One of the key aspects of fine-tuning is its efficiency in data utilization. Since the model has already learned general features and patterns, the fine-tuning process can achieve high performance with relatively small datasets. This characteristic is particularly valuable in domains where collecting large amounts of labeled data is challenging or expensive. 
