@@ -1,0 +1,231 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    
+    <title>Bloggin on Responsible AI</title>
+    <description>Bloggin on Responsible AI</description>
+    <link>http://localhost:1313/</link>
+    
+    <language>en</language>
+    <copyright>Copyright 2024, Calvin Tran</copyright>
+    <lastBuildDate>Tue, 27 Feb 2024 15:03:45 +0100</lastBuildDate>
+    <generator>Hugo - gohugo.io</generator>
+    <docs>http://cyber.harvard.edu/rss/rss.html</docs>
+    <atom:link href="http://localhost:1313//atom.xml" rel="self" type="application/atom+xml"/>
+    
+    
+    <item>
+      <title>Packed-Ensembles: Efficient Neural Network Ensembles Made Easy</title>
+      <link>http://localhost:1313/posts/packed-ensembles/</link>
+      <description>&lt;p&gt;&lt;strong&gt;Introduction:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Neural networks are powerful tools used in various tasks like image recognition, natural language processing, and time series forecasting. However, training large ensembles of neural networks can be computationally expensive and require significant memory resources. This is where Packed-Ensembles (PE) come in!&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;http://localhost:1313/static/my_images/ip-logo.png&#34;
+  alt=&#34;Neural Network&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Packed-Ensembles: A Lightweight Ensemble Approach&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Packed-Ensembles (PE) offer a compelling approach to creating &lt;strong&gt;lightweight and efficient ensembles&lt;/strong&gt; of neural networks. This technique leverages the power of &lt;strong&gt;grouped convolutions&lt;/strong&gt; within a single network, enabling the training of &lt;strong&gt;multiple subnetworks simultaneously&lt;/strong&gt;. This blog post dives into the details of Packed-Ensembles, exploring their benefits and how they can improve efficiency in neural network training.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Understanding Convolutional Layers and Grouped Convolutions:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Convolutional Layers:&lt;/strong&gt; These are the backbone of Convolutional Neural Networks (CNNs), performing filtering operations on input data using learnable filters (kernels). Mathematically, the output of a convolutional layer, denoted by &lt;strong&gt;z_(j+1)&lt;/strong&gt;, is calculated as follows:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-math&#34; data-lang=&#34;math&#34;&gt;z_(j+1)(c,:,:) = (h_j ⊗ ω_j)(c,:,:) = ∑_(k=0)^(C_(j-1)-1) ω_j(c, k,:,:) ⋆ h_j(k,:,:)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;c&lt;/strong&gt; represents the channel index&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;h_j&lt;/strong&gt; denotes the input feature map&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ω_j&lt;/strong&gt; represents the weight tensor (kernel)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;⋆&lt;/strong&gt; denotes the 2D cross-correlation operator&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img
+  src=&#34;convolutional_layer_image.jpg&#34;
+  alt=&#34;Convolutional Layer&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Grouped Convolutions:&lt;/strong&gt; This technique allows training multiple subnetworks within a single network by dividing the channels of feature maps and weight tensors into groups. Each group is processed by a separate set of filters, essentially creating &lt;strong&gt;independent subnetworks&lt;/strong&gt;. The mathematical formulation for grouped convolutions is given by:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-math&#34; data-lang=&#34;math&#34;&gt;z_(j+1)(c,:,:) = (h_j ⊗ ω_j^(γ))(c,:,:) = ⌊ c / (C_(j+1) / γ) ⌋ C^(γ)_j,:,:) ⋆ h_j(k + ⌊ c / (C_j / γ) ⌋, :, :)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;γ&lt;/strong&gt; represents the number of groups&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;C_(j+1)&lt;/strong&gt; and &lt;strong&gt;C_j&lt;/strong&gt; denote the number of output and input channels, respectively&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img
+  src=&#34;grouped_convolutions_image.jpg&#34;
+  alt=&#34;Grouped Convolutions&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Building Packed-Ensembles:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Packed-Ensembles combine the concepts of Deep Ensembles (ensembles of multiple independent DNNs) and grouped convolutions. Here&amp;rsquo;s how it works:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Subnetworks:&lt;/strong&gt; The ensemble is formed by creating &lt;strong&gt;M&lt;/strong&gt; smaller subnetworks within the main network architecture. These subnetworks share the same structure but have &lt;strong&gt;independent parameters&lt;/strong&gt; due to the use of grouped convolutions.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Hyperparameters:&lt;/strong&gt; Packed-Ensembles are defined by three hyperparameters:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;α (alpha):&lt;/strong&gt; expansion factor that scales the width of each subnetwork (compensates for the decrease in capacity due to using fewer parameters).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;M:&lt;/strong&gt; number of subnetworks in the ensemble (represents the ensemble size).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;γ (gamma):&lt;/strong&gt; number of groups for grouped convolutions within each subnetwork (introduces another level of sparsity).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img
+  src=&#34;packed_ensemble_image.jpg&#34;
+  alt=&#34;Packed-Ensemble&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Mathematical Implementation:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The output of a Packed-Ensemble layer is calculated by averaging the predictions from each subnetwork, as shown in the following equation:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-math&#34; data-lang=&#34;math&#34;&gt;ŷ = M^(-1) Σ_(m=0)^(M-1) P(y|θ_a^m, x) with θ_a^m = {ω_j^(α) ∘ mask_(jm)^j}_j
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ŷ (y-hat)&lt;/strong&gt; represents the ensemble&amp;rsquo;s predicted label&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;P(y|θ_a^m, x)&lt;/strong&gt; denotes the probability of class &lt;strong&gt;y&lt;/strong&gt; given the input &lt;strong&gt;x&lt;/strong&gt; and the parameters &lt;strong&gt;θ_a^m&lt;/strong&gt; of the &lt;strong&gt;m-th&lt;/strong&gt; subnetwork&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;θ_a^m = {ω_j^(α) ∘ mask_(jm)^j}_j&lt;/strong&gt; represents the parameters of the &lt;strong&gt;m-th&lt;/strong&gt; subnetwork, obtained by applying element-wise multiplication (&lt;strong&gt;∘&lt;/strong&gt;) between the expanded weights (&lt;strong&gt;ω_j^(α)&lt;/strong&gt;) and the group mask (&lt;strong&gt;mask_(jm)&lt;/strong&gt;) for each layer &lt;strong&gt;j&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img
+  src=&#34;mathematical_implementation_image.jpg&#34;
+  alt=&#34;Mathematical Implementation&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Benefits of Packed-Ensembles:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Packed-Ensembles offer several advantages over traditional ensemble methods:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Reduced Memory Usage and Training Time:&lt;/strong&gt; By utilizing grouped convolutions and sharing parameters between subnetworks, PE significantly reduces memory footprint and training time compared to training individual DNNs in an ensemble. This is because the subnetworks share the same base architecture and only differ in their learnable parameters, leading to a more efficient use of memory resources and computational power.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Accuracy:&lt;/strong&gt; PE can achieve accuracy levels comparable to traditional ensembles. This demonstrates their effectiveness in preserving ensemble properties like diversity despite using fewer parameters. This is crucial as reducing the number of parameters in an ensemble can potentially lead to a decrease in accuracy. Packed-Ensembles strike a balance between efficiency and accuracy, making them suitable for various applications where both aspects are important.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Calibration:&lt;/strong&gt; Packed-Ensembles are well-calibrated, meaning that their predicted probabilities accurately reflect the true probabilities. This is crucial in tasks where reliable confidence estimates are essential, such as in medical diagnosis or autonomous decision-making systems. Well-calibrated models provide a more accurate understanding of the model&amp;rsquo;s certainty in its predictions, allowing for better decision-making based on the outputs.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Out-of-distribution (OOD) detection:&lt;/strong&gt; Packed-Ensembles are good at detecting out-of-distribution (OOD) data. This refers to data that comes from a different distribution than the data that the model was trained on. Detecting OOD data is important for ensuring the model&amp;rsquo;s robustness and preventing it from making unreliable predictions on unseen data. Packed-Ensembles can effectively identify OOD data, contributing to the model&amp;rsquo;s reliability and generalizability.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Comparison to Other Ensemble Methods:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The paper comparing Packed-Ensembles to other methods, such as Deep Ensembles, BatchEnsemble, MIMO, and Masksembles, found that PE are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;More efficient&lt;/strong&gt; in terms of memory usage and training time due to their use of grouped convolutions and parameter sharing.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Able to achieve comparable accuracy&lt;/strong&gt; to most of the compared methods, demonstrating their effectiveness in maintaining ensemble properties.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Packed-Ensembles: A Promising Technique for Efficient Neural Network Ensembles&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Packed-Ensembles offer a promising approach for creating efficient and accurate neural network ensembles. Their ability to &lt;strong&gt;reduce memory usage and training time&lt;/strong&gt; while &lt;strong&gt;maintaining accuracy, calibration, and OOD detection capabilities&lt;/strong&gt; makes them a valuable tool for various applications in deep learning. As research in this area continues, Packed-Ensembles have the potential to become even more efficient and versatile, further expanding their role in advancing the field of neural networks.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Additional Notes:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;You can consider adding visuals such as diagrams or illustrations to further explain complex concepts like convolutional layers and grouped convolutions.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;visual_explanation_image.jpg&#34;
+  alt=&#34;Visual Explanation&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Include a link to the research paper on Packed-Ensembles or relevant resources for readers who want to learn more.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;link_to_paper.pdf&#34;&gt;Read the Full Paper&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Adjust the technical level of the explanations based on your target audience.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;By incorporating images, you enhance the visual appeal and understanding of the content, making it more accessible and engaging for readers. Additionally, providing links to resources allows interested readers to delve deeper into the subject. Feel free to replace the placeholder images with relevant visuals that align with the content.&lt;/p&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/packed-ensembles/</guid>
+      <pubDate>Tue, 27 Feb 2024 15:03:45 +0100</pubDate>
+    </item>
+    
+    <item>
+      <title>Another article</title>
+      <link>http://localhost:1313/posts/my-first-blog/</link>
+      <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt; : John Smith and John Smith&lt;/p&gt;
+&lt;hr&gt;&lt;/hr&gt;
+&lt;style
+TYPE=&#34;text/css&#34;&gt;
+&lt;p&gt;code.has-jax {font:
+inherit;
+font-size:
+100%;
+background:
+inherit;
+border:
+inherit;}&lt;/p&gt;
+&lt;p&gt;&lt;/style&gt;&lt;/p&gt;
+&lt;script
+type=&#34;text/x-mathjax-config&#34;&gt;
+
+MathJax.Hub.Config({
+
+    tex2jax: {
+
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+
+    }
+
+});
+
+MathJax.Hub.Queue(function() {
+
+    var all = MathJax.Hub.getAllJax(), i;
+
+    for(i = 0; i &lt; all.length; i += 1) {
+
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+
+    }
+
+});
+
+&lt;/script&gt;
+&lt;script
+type=&#34;text/javascript&#34;
+src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+&lt;p&gt;Do not forget to add the script posted on moodle to enable latex in your blogpost!
+What a beauty! $y=\theta_0 + \theta_1x_1$&lt;/p&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/my-first-blog/</guid>
+      <pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate>
+    </item>
+    
+    <item>
+      <title>Title of the article</title>
+      <link>http://localhost:1313/posts/my-second-blog/</link>
+      <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt; : John Smith and John Smith&lt;/p&gt;
+&lt;hr&gt;&lt;/hr&gt;
+&lt;p&gt;Start writing here !&lt;/p&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/my-second-blog/</guid>
+      <pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate>
+    </item>
+    
+  </channel>
+</rss>
