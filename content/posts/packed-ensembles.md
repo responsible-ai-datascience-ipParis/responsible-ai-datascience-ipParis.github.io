@@ -38,14 +38,21 @@ MathJax.Hub.Queue(function() {
 type="text/javascript"
 src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
 
+
+<div style="text-align:center;">
 <h1>Introduction</h1>
+</div>
 
 The document "Packed-Ensembles for Efficient Uncertainty Estimation" introduces a novel framework for designing and training compact, structured ensembles of neural networks, termed Packed-Ensembles (PE). It addresses the limitations of Deep Ensembles (DE) in terms of computational efficiency and hardware constraints by leveraging grouped convolutions. This technique allows for parallelizing the ensemble into a single shared backbone, improving training and inference speeds within the memory limits of standard neural networks. The paper demonstrates through extensive experiments that PEs maintain the beneficial properties of DEs, such as diversity and robustness to distribution shift, while achieving comparable accuracy, calibration, and out-of-distribution detection capabilities. The work includes implementation details, experimental results on CIFAR-10/100 and ImageNet datasets, discussions on the implications of PE's design choices, and comparisons with existing approaches. It concludes with insights on the reproducibility of results and the potential ethical considerations of deploying such models in safety-critical systems.
 
-
+<div style="text-align:center;">
 <h1>Presentation of the model</h1>
+</div>
 
 **Packed-Ensembles**
+
+![The base network and Packed-Ensembles](/images/fig1.jpg)
+<p style="text-align:center;"><i>The base network and Packed-Ensembles</i></p>
 
 Packed-Ensembles (PE) is a technique for designing and training lightweight ensembles of neural networks. It is based on the idea of using grouped convolutions to create multiple subnetworks within a single network. These subnetworks are trained independently, which helps to improve the efficiency of the ensemble.
 
@@ -65,7 +72,9 @@ Packed-Ensembles offer several benefits over traditional ensemble methods, inclu
 
 The paper compares Packed-Ensembles to several other ensemble methods, including Deep Ensembles, BatchEnsemble, MIMO, and Masksembles. The paper found that Packed-Ensembles are more efficient than all of these methods, and they achieve comparable accuracy on most tasks.
 
-**Packed-Ensembles: A Technique for Efficient Neural Network Ensembles**
+<div style="text-align:center;">
+<h1>Packed-Ensembles: A Technique for Efficient Neural Network Ensembles</h1>
+</div>
 
 Packed-Ensembles (PE) is a method for designing and training lightweight ensembles of neural networks. It aims to improve efficiency while maintaining accuracy and other desirable properties. This technique achieves this by leveraging grouped convolutions to create multiple subnetworks within a single network, enabling them to be trained independently.
 
@@ -117,9 +126,18 @@ The condition **$\text{mask}_{m}^j(k, l, :, :) = 1$** happens only if $\left\lfl
 * The final convolution is equivalent to applying the original weights element-wise multiplied by the combined mask.
 
 
-## Background on Deep Ensembles
+
+<div style="text-align:center;">
+<h1>Background on Deep Ensembles</h1>
+</div>
 
 This section delves into Deep Ensembles (DE), a technique for image classification tasks.
+
+
+<div style="text-align:center;">
+    <img src="/images/fig2.png" alt="Deep Ensembles" style="display:block; margin:auto;">
+</div>
+<p style="text-align:center;"><i>Deep Ensembles</i></p>
 
 **Setting the Scene**
 
@@ -180,10 +198,22 @@ where:
 
 **Implementation**
 
-The authors proposed a method for designing efficient ensemble convolutional layers using grouped convolutions. This approach exploits the parallelization capabilities of GPUs to accelerate training and inference. The sequential training architecture is replaced with parallel implementations, as shown in Figure 3b and 3c. Figure 3 summarizes equivalent architectures for a simple ensemble of M=3 neural networks with three convolutional layers and a final dense layer. In these implementations, feature maps are stacked on the channel dimension (denoted as rearrange operation). This results in a feature map of size M × Cj × Hj × Wj, regrouped by batches of size B × M, where B is the batch size of the ensemble. To maintain the original batch size, the batch is repeated M times after rearrangement. Grouped convolutions with M groups and γ subgroups per subnetwork are employed. Each feature map is processed independently by each subnetwork, resulting in separate outputs. Grouped convolutions are used throughout to ensure gradients remain independent between subnetworks. Other operations, like Batch Normalization, can be applied if they are groupable or act independently on each channel. Figure 4 illustrates the masks used to encode Packed Ensembles for M=2 and M=2 with γ=2. Finally, implementations (b) and (c) are equivalent. A standard convolution can replace the initial steps (rearrangement and first grouped convolution) if all subnetworks receive the same images simultaneously. 
+<div style="text-align:center;">
+    <img src="/images/fig4.png" alt="Equivalent architectures for Packed-Ensembles" style="display:block; margin:auto;">
+</div>
+<p style="text-align:center;"><i>Equivalent architectures for Packed-Ensembles</i></p>
+
+The authors proposed a method for designing efficient ensemble convolutional layers using grouped convolutions. This approach exploits the parallelization capabilities of GPUs to accelerate training and inference. The sequential training architecture is replaced with parallel implementations, as shown in the part b and c of the figure above. This figure summarizes equivalent architectures for a simple ensemble of M=3 neural networks with three convolutional layers and a final dense layer. In these implementations, feature maps are stacked on the channel dimension (denoted as rearrange operation). This results in a feature map of size M × Cj × Hj × Wj, regrouped by batches of size B × M, where B is the batch size of the ensemble. To maintain the original batch size, the batch is repeated M times after rearrangement. Grouped convolutions with M groups and γ subgroups per subnetwork are employed. Each feature map is processed independently by each subnetwork, resulting in separate outputs. Grouped convolutions are used throughout to ensure gradients remain independent between subnetworks. Other operations, like Batch Normalization, can be applied if they are groupable or act independently on each channel. The figure below illustrates the masks used to encode Packed Ensembles for M=2 and M=2 with γ=2. Finally, implementations (b) and (c) are equivalent. A standard convolution can replace the initial steps (rearrangement and first grouped convolution) if all subnetworks receive the same images simultaneously. 
 
 
-**Experiments**
+<div style="text-align:center;">
+    <img src="/images/fig5.png" alt="subnetwork mask" style="display:block; margin:auto;">
+</div>
+<p style="text-align:center;"><i>Diagram representation of a subnetwork mask: maskj, with M = 2, j an integer corresponding to a fully connected layer</i></p>
+
+<div style="text-align:center;">
+<h1>Experiments</h1>
+</div>
 
 The experiment section evaluates the Packed-Ensembles (PE) method on classification tasks. Here are the key points:
 
@@ -193,7 +223,10 @@ The experiment section evaluates the Packed-Ensembles (PE) method on classificat
 * **Implementation Details:** Softmax probabilities from all subnetworks are averaged for prediction. Maximum value of the output vector is considered the class. SVHN dataset is used for OOD detection on CIFAR-10/100. Mutual Information (MI) is used as a criterion for ensemble techniques on ImageNet-O and Texture datasets. ImageNet-R is used to evaluate robustness under distribution shift.
 * **Code:** PyTorch-Lightning framework is used for implementation.
 
-**Results**
+
+<div style="text-align:center;">
+<h1>Results</h1>
+</div>
 
 The experiment results show that Packed-Ensembles (PE) achieves similar performance to Deep Ensembles (DE) on classification tasks, but with lower memory usage. Here are the key findings:
 
@@ -206,7 +239,15 @@ The experiment results show that Packed-Ensembles (PE) achieves similar performa
 
 These results suggest that PE is a memory-efficient alternative to DE for tasks requiring good uncertainty estimation. 
 
-**Discussion**
+<div style="text-align:center;">
+    <img src="/images/fig3.png" alt="ResNet50 performance" style="display:block; margin:auto;">
+</div>
+<p style="text-align:center;"><i>Packed-Ensembles of ResNet50 performance on CIFAR-10 and CIFAR-100</i></p>
+
+
+<div style="text-align:center;">
+<h1>Discussion</h1>
+</div>
 
 The authors discusse the benefits of PE and explores some open questions about its properties.
 
@@ -222,7 +263,10 @@ The authors discusse the benefits of PE and explores some open questions about i
 
 * **Out-of-Distribution (OOD) Criteria:** The text acknowledges  the use of maximum softmax probability for OOD detection but explores other options like Mutual Information. Appendix E shows that the best criterion can vary depending on the dataset (e.g., maximum logit for CIFAR-100, Mutual Information for ImageNet). 
 
-**Ethics**
+
+<div style="text-align:center;">
+<h1>Ethics</h1>
+</div>
 
 This section emphasizes the ethical considerations of the research. Here are the key points:
 
