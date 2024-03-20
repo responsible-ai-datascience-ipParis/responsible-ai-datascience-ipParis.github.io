@@ -36,7 +36,6 @@ To tackle this challenge, the field of Explainable Artificial Intelligence (XAI)
 While much of the work on explainability focuses on supervised models, where labels are available to interpret predictions, unsupervised learning models are trained without labels. This post will focus on these unsupervised, label-free cases. It is based on recent research conducted by Crabbé and van der Schaar in 2022, which explores the explainability of unsupervised models. They have developed two new methods to explain these complex models without labels. The first method highlights important features in the data, while the second identifies training examples that have the greatest impact on the model's construction of representations.
 
 
-
 ## Experiments: Evaluation and Results {#section-5}
 
 ### Overview {#section-111}
