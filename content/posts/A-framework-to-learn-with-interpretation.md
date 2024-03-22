@@ -172,22 +172,22 @@ Their primary method for comparison, when applicable, is SENN, chosen for its in
 
 ### 4.1.1 Predictive performance of FLINT
 
-In the article, the authors aim to validate two key aspects related to the predictive performance of FLINT. Firstly, we investigate whether jointly training the predictor $\( f \)$ with the interpreter $\( g \)$ and backpropagating the loss term $\( L_{\text{int}} \)$ adversely affects performance. Secondly, we seek to determine if the achieved performance is comparable to other similarly interpretable models designed from the outset for interpretability.
+In the article, the authors aim to validate two key aspects related to the predictive performance of FLINT. Firstly, they investigate whether jointly training the predictor $f$ with the interpreter $g$ and backpropagating the loss term $L_{\text{int}}$ adversely affects performance. Secondly, we seek to determine if the achieved performance is comparable to other similarly interpretable models designed from the outset for interpretability.
 
-To address the first goal, they compare the accuracy of the predictor trained with FLINT (denoted as FLINT-$\( f \)$) with that of the same predictor architecture trained solely with the $\( L_{\text{pred}} \)$ loss (denoted as BASE-$\( f \)$). For the second goal, they compare the accuracy of FLINT-$\( f \)$ with that of SENN and PrototypeDNN , both designed for interpretability from the outset and not relying on input attribution for interpretations.
+To address the first goal, they compare the accuracy of the predictor trained with FLINT (denoted as FLINT-$f$) with that of the same predictor architecture trained solely with the $L_{\text{pred}}$ loss (denoted as BASE-$f$). For the second goal, they compare the accuracy of FLINT-$f$ with that of SENN and PrototypeDNN , both designed for interpretability from the outset and not relying on input attribution for interpretations.
 
 The accuracies obtained from these comparisons are presented in the provided table below :
 
 ![Results for accuracy (in %) and fidelity to FLINT-f on different datasets](/images/Accuracy_results.png)
 
-Their findings indicate that training $\( f \)$ within FLINT does not lead to any significant loss in accuracy across any dataset. Furthermore, FLINT demonstrates competitive performance with other interpretable models designed from the outset for interpretability.
+Their findings indicate that training $f$ within FLINT does not lead to any significant loss in accuracy across any dataset. Furthermore, FLINT demonstrates competitive performance with other interpretable models designed from the outset for interpretability.
 
 
 ### 4.1.2 Fidelity of Interpreter
 
-The paper assess the fidelity of the interpreter, which is defined as the proportion of samples where the predictions of a model and its interpreter agree, indicating the same class label . This metric is commonly used to evaluate how well an interpreter approximates a model. To ensure that the interpreter trained with FLINT (referred to as FLINT-g) achieves a satisfactory level of agreement with FLINT-f, we conduct a benchmark against a state-of-the-art black-box explainer, VIBI , and the traditional method LIME . The results are presented in the above provided table .
+The paper assess the fidelity of the interpreter, which is defined as the proportion of samples where the predictions of a model and its interpreter agree, indicating the same class label . This metric is commonly used to evaluate how well an interpreter approximates a model. To ensure that the interpreter trained with FLINT (referred to as FLINT-$g$) achieves a satisfactory level of agreement with FLINT-$f$, we conduct a benchmark against a state-of-the-art black-box explainer, VIBI , and the traditional method LIME . The results are presented in the above provided table .
 
-FLINT-g consistently demonstrates higher fidelity compared to the benchmarked methods. Despite the inherent difference in methodology, where FLINT-g accesses intermediate layers while the other systems are black-box explainers, the results clearly indicate that FLINT-g exhibits high fidelity to FLINT-f. These findings reinforce the effectiveness of FLINT-g in faithfully representing the predictions of FLINT-f.
+FLINT-$g$ consistently demonstrates higher fidelity compared to the benchmarked methods. Despite the inherent difference in methodology, where FLINT-$g$ accesses intermediate layers while the other systems are black-box explainers, the results clearly indicate that FLINT-$g$ exhibits high fidelity to FLINT-$f$. These findings reinforce the effectiveness of FLINT-$g$ in faithfully representing the predictions of FLINT-$f$.
 
 ### 4.1.3 Conciseness of interpretations
 
@@ -209,7 +209,7 @@ The findings from the figure confirm that employing entropy-based loss is more e
 
 ### 4.2.1 Global interpretation
 
-In the article, the authors explore global interpretation using the figure provided below , which illustrates the generated global relevances $\( r_{j;c} \)$ for all class-attribute pairs in both the QuickDraw and CIFAR datasets. 
+In the article, the authors explore global interpretation using the figure provided below , which illustrates the generated global relevances $\( r_{j,c} \)$ for all class-attribute pairs in both the QuickDraw and CIFAR datasets. 
 
 ![Global class-attribute relevances](/images/Global_class_attribute.png)
 
@@ -224,12 +224,12 @@ In pursuit of a comprehensive comprehension of the model and its operational dyn
 We focus on class-attribute pairs with high relevance, showcasing examples in the provided figure below . For each pair, we examine Maximum Activating Samples (MAS) alongside their corresponding Activation Maximization with Partial Initialization (AM+PI) outputs.
 
 
-MAS analysis alone provides valuable insights into the encoded concept. For instance, on QuickDRAW dataset, attribute $\( \Phi_{16} \)$  relevant for class 'Banana' activate the curve shape of the banana. However, AM+PI outputs offer deeper insights by elucidating which parts of the input activate an attribute function more clearly.AM+PI outputs are particularly important for attributes relevant to multiple classes.For example , on CIFAR10 dataset , attribute $\( \Phi_{12} \)$ activates for 'Deer' class , but the specific focus of the attribute remains ambiguous. The outputs of the AM+PI method indicate that attribute $\( \Phi_{12} \)$ predominantly highlights the area encompassing the legs and the deer horn, characterized as the most prominently enhanced regions.
+MAS analysis alone provides valuable insights into the encoded concept. For instance, on QuickDRAW dataset, attribute $\phi_{16}$  relevant for class 'Banana' activate the curve shape of the banana. However, AM+PI outputs offer deeper insights by elucidating which parts of the input activate an attribute function more clearly.AM+PI outputs are particularly important for attributes relevant to multiple classes.For example , on CIFAR10 dataset , attribute $\phi_{12}$ activates for 'Deer' class , but the specific focus of the attribute remains ambiguous. The outputs of the AM+PI method indicate that attribute $\phi_{12}$ predominantly highlights the area encompassing the legs and the deer horn, characterized as the most prominently enhanced regions.
 
 
 ### 4.2.2 Local interpretation
 
-The authors explored local interpretation through the figure provided below, which showcases visualizations for test samples. Both predictor $\( f \)$ and interpreter $\( g \)$ accurately predict the true class in all cases. For each case, they highlighted the top 3 relevant attributes to the prediction along with their relevances and corresponding AM+PI outputs.
+The authors explored local interpretation through the figure provided below, which showcases visualizations for test samples. Both predictor $f$ and interpreter $g$ accurately predict the true class in all cases. For each case, they highlighted the top 3 relevant attributes to the prediction along with their relevances and corresponding AM+PI outputs.
 
 ![Local interpretations for test samples](/images/Local_interpretations_test_samples.png) 
 
@@ -243,9 +243,9 @@ Descriptions were manually generated, including 40% incorrect ones to ensure inf
 
 # 5 Specialization of FLINT to post-hoc interpretability
 
-FLINT's versatility extends beyond its primary goal of interpretability by design, allowing for specialization in providing post-hoc interpretations when a classifier $\( \hat{f} \)$ is already available. This post-hoc interpretation learning falls under the broader scope of Supervised Layer-wise Interpretation (SLI). It entails constructing an interpreter of $\( \hat{f} \$ by minimizing the loss function $\( L_{\text{int}}(\hat{f}, g, S) \)$ with respect to $\( g \)$, where $\( S \)$ denotes the training set.
+FLINT's versatility extends beyond its primary goal of interpretability by design, allowing for specialization in providing post-hoc interpretations when a classifier $\hat{f}$ is already available. This post-hoc interpretation learning falls under the broader scope of Supervised Layer-wise Interpretation (SLI). It entails constructing an interpreter of $\hat{f}$ by minimizing the loss function $L_{\text{int}}(\hat{f}, g, S)$ with respect to $g$, where $S$ denotes the training set.
 
-Experimental validation of this post-hoc capability is performed by interpreting fixed models trained solely for accuracy, for example the discussed BASE-$\( f \)$ models from Section 4.1. Even without fine-tuning the internal layers of $\( \hat{f} \)$, the system demonstrates the ability to generate high-fidelity and meaningful interpretations. 
+Experimental validation of this post-hoc capability is performed by interpreting fixed models trained solely for accuracy, for example the discussed BASE-$f$ models from Section 4.1. Even without fine-tuning the internal layers of $\hat{f}$, the system demonstrates the ability to generate high-fidelity and meaningful interpretations. 
 
 # 6 Final Thoughts 
 
