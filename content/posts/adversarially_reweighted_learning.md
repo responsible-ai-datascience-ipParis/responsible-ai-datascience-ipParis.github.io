@@ -107,11 +107,23 @@ The authors have implemented these two networks using standard feed-forward netw
 
 ## Results analysis {#section-8}
 
-**To be done**
+This section provides a detailed examination of the results obtained from our implementation of the Adversarial Reweighted Learning (ARL) model. We replicate the experiments conducted by Lahoti et al. and present the outcomes of our implementation. Furthermore, we analyze the significance of the results through a comprehensive evaluation.
+
+### Reproducibility
+
+We first reproduce the results reported by Lahoti et al. using their TensorFlow implementation. However, due to the absence of optimal hyperparameters, we utilize default parameters for our runs. As a result, our AUC scores are lower than those reported in the original paper. For instance, the average AUC for the Adult dataset in Lahoti et al.'s work is 0.907, whereas our run yields an AUC of 0.497. Similarly, for the LSAC dataset, Lahoti et al. report an AUC of 0.823, whereas we obtain 0.518. The COMPAS dataset also exhibits a similar trend, with Lahoti et al. reporting an AUC of 0.748, compared to our result of 0.536. Subsequent experimentation with optimal parameters from TensorFlow implementation demonstrates improved performance, although AUC scores remain lower than those presented in the original paper.
+
+### Replicability
+
+We replicate the experiments using our PyTorch implementation of the ARL model with optimal hyperparameters obtained through grid-search. Comparing the AUC scores with Lahoti et al.'s results reveals close alignment for the Adult and LSAC datasets. However, a slightly larger difference is observed for the COMPAS dataset. Notably, all AUC metrics for the COMPAS dataset are lower than the baseline model presented by Lahoti et al. This discrepancy suggests potential challenges with dataset size, leading to increased variance in results. Nonetheless, our PyTorch implementation demonstrates consistency with Lahoti et al.'s findings, highlighting the robustness of the ARL model across different implementations.
+
+### Significance Evaluation
+
+We conduct significance tests to evaluate the performance improvement of our PyTorch-implemented ARL model compared to a simple baseline model. Despite observing notable improvements in fairness metrics, none of the p-values obtained are less than 0.05. Consequently, according to established significance criteria, the performance enhancement achieved by our ARL model is not statistically significant. This finding underscores the need for further investigation into the efficacy of adversarial learning methods in enhancing fairness without demographic information.
 
 ## Conclusion {#section-9}
 
-**To be done**
+In this study, we critically examined the paper "Fairness without Demographics through Adversarially Reweighted Learning" by Lahoti et al., focusing on reproducibility, replicability, and the significance of reported results. While encountering challenges in reproducing Lahoti et al.'s results due to parameter settings and dataset characteristics, we successfully replicated the experiments using our PyTorch implementation. Despite demonstrating consistency with the original findings, our significance tests indicate a lack of statistical significance in the performance improvement achieved by the ARL model. This prompts further inquiry into the suitability of adversarial learning approaches for addressing fairness concerns in machine learning without relying on demographic data.
 
 ---
 
@@ -122,7 +134,23 @@ The authors have implemented these two networks using standard feed-forward netw
 
 ### References
 
-**To be done**
+[1] Lahoti, P., Beutel, A., Chen, J., Lee, K., Prost, F., Thain, N., Wang, X., & Chi, E. H. (2020). Fairness without demographics through adversarially reweighted learning. arXiv preprint arXiv:2006.13114.
+
+[2] Veale, M., & Binns, R. (2017). Fairer machine learning in the real world: Mitigating discrimination without collecting sensitive data. Big Data & Society, 4(2), 2053951717743530.
+
+[3] Hanley, J. A., & McNeil, B. J. (1982). The meaning and use of the area under a receiver operating characteristic (ROC) curve. Radiology, 143(1), 29-36.
+
+[4] Hanley, J. A., & McNeil, B. J. (1983). A method of comparing the areas under receiver operating characteristic curves derived from the same cases. Radiology, 148(3), 839-843.
+
+[5] Dua, D., & Graff, C. (2019). UCI machine learning repository.
+
+[6] Kim, M. P., Ghorbani, A., & Zou, J. (2019). Multiaccuracy: Black-box post-processing for fairness in classification. In Proceedings of the 2019 AAAI/ACM Conference on AI, Ethics, and Society (pp. 247-254).
+
+[7] Goodfellow, I., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair, S., ... & Bengio, Y. (2014). Generative adversarial nets. Advances in neural information processing systems, 27, 2672-2680.
+
+[8] Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., ... & Chintala, S. (2019). PyTorch: An imperative style, high-performance deep learning library. In Advances in Neural Information Processing Systems 32 (pp. 8024-8035).
+
+[9] Kamishima, T., Akaho, S., & Sakuma, J. (2011). Fairness-aware learning through regularization approach. In 2011 IEEE 11th International Conference on Data Mining Workshops (pp. 643-650). IEEE.
 
 
 
