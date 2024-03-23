@@ -23,27 +23,18 @@ draft = false
 
 ## Fairness issues in ML and AI {#section-0}
 
-As Machine Learning and Artificial Intelligence algorithms are increasingly developed to aid and automate decision-making, it is crucial that they provide ethical, fair and discrimination-free results.
-However, discriminative biases are now found in many facets of AI and ML and affect many possible applications. 
+As Machine Learning and Artificial Intelligence algorithms are increasingly developed to aid and automate decision-making, it is crucial that they provide ethical, fair and discrimination-free results. However, discriminative biases are now found in many facets of AI and ML and affect many possible applications. 
 
-Such biases can be found in NLP applications, where we can see that generative AIs often associate certain genders or ethnic groups with professions.
-In computer vision, the lack of diversity in the training data also induces numerous discriminatory biases, since we can see that the algorithms' performances differ according to age, gender and ethnic group, which can lead to unfair treatments. 
+Such biases can be found in NLP applications, where we can see that generative AIs often associate certain genders or ethnic groups with professions. In computer vision, the lack of diversity in the training data also induces numerous discriminatory biases, since we can see that the algorithms' performances differ according to age, gender and ethnic group, which can lead to unfair treatments. 
 Machine Learning models, used in decision-making processes from loan approvals to job applications, can inherit historical biases present in their training data, resulting in unfair outcomes.
 
-**Images des applications à ajouter**
-![Applications](/images/Antoine_Klein/Umbrella.png)
-
-The root of these biases lies in the historical prejudices and inequalities that are inadvertently encoded into the datasets used to train AI and ML models. These datasets often reflect the societal, cultural, and institutional biases that have existed over time. As a result, when AI and ML technologies are trained on such data, they risk mirroring and amplifying these biases instead of offering neutral, objective outputs. 
-It is therefore vital to focus on AI fairness to enable the development of technologies that will benefit everyone fairly and equitably.
+The root of these biases lies in the historical prejudices and inequalities that are inadvertently encoded into the datasets used to train AI and ML models. These datasets often reflect the societal, cultural, and institutional biases that have existed over time. As a result, when AI and ML technologies are trained on such data, they risk mirroring and amplifying these biases instead of offering neutral, objective outputs. It is therefore vital to focus on AI fairness to enable the development of technologies that will benefit everyone fairly and equitably.
 
 ## The privacy of demographic’s data {#section-1}
 
-Strict regulations established by laws such as the General Data Protection Regulation (GDPR) severely restrict the collection of demographic data, including age, gender, religion and other personal attributes.
-This legal framework, designed to protect individual privacy and data rights, poses a problem for the study of discriminatory bias in algorithms, since it becomes almost impossible to measure. This situation creates a real paradox, since protecting personal data conflicts with limiting discrimination and promoting fairness for ML and iA algorithms.
+Strict regulations established by laws such as the General Data Protection Regulation (GDPR) severely restrict the collection of demographic data, including age, gender, religion and other personal attributes. This legal framework, designed to protect individual privacy and data rights, poses a problem for the study of discriminatory bias in algorithms, since it becomes almost impossible to measure. This situation creates a real paradox, since protecting personal data conflicts with limiting discrimination and promoting fairness for ML and iA algorithms.
 
-In this blog, we'll look at the paper Fairness without Demographics through Adversarially Reweighted Learning, published by Google's 2020 research team to propose a method for improving the fairness of AI models despite the lack of demographic data.
-Indeed, while much previous works have focused on improving fairness in AI and ML, most of these works assume that models have access to this protected data. Given the observations made above, the problem this paper attempts to address is as follows:
-How can we train a ML model to improve fairness when we do not have access to protected features neither at training nor inference time, i.e., we do not know protected group memberships? 
+In this blog, we'll look at the paper Fairness without Demographics through Adversarially Reweighted Learning, published by Google's 2020 research team to propose a method for improving the fairness of AI models despite the lack of demographic data. Indeed, while much previous works have focused on improving fairness in AI and ML, most of these works assume that models have access to this protected data. Given the observations made above, the problem this paper attempts to address is as follows: How can we train a ML model to improve fairness when we do not have access to protected features neither at training nor inference time, i.e., we do not know protected group memberships? 
 
 ## The Adversarial Reweighted Learning Model {#section-2}
 
@@ -61,7 +52,6 @@ This assumption therefore implies that protected groups can be computationally i
 
 Computational identifiability refers to the ability to algorithmically identify specific subgroups or patterns within a dataset based on certain criteria, using computable functions. Mathematically, this notion is defined as follows: 
 
-<a name="Recall"></a>
 For a family of binary functions $F$, we say that a subgroup $S$ is computationally-identifiable if there is a function $f : X \times Y \rightarrow \text{{0, 1}}$ in $F$ such that $f(x, y) = 1$ if and only if $(x, y) \in S$.
 
 This function typically maps input data to a binary outcome, indicating protected subgroup membership. While many previous works have used this principle of computational identifiability, the model presented in this article differs in that it does not require these subgroups to be present in the input space, but also in its objective. While most work has focused on reducing the efficiency gap between each subgroup, the ARL model aims to increase efficiency for these subgroups, while considering that this should not be at the expense of the other groups. Indeed, the authors have decided to follow the Rawlsian Max Min fairness principle, which we present below.
@@ -83,8 +73,7 @@ The aim is now to minimize the highest loss, i.e. the loss of the most disadvant
 $$J(\theta, \lambda) := min_{\theta} max_{\lambda} \sum_{s \in S} \lambda_s L_{D_s}(h)$$
 $$= min_{\theta} max_{\lambda} \sum_{i=0}^{n} \lambda_{s_i} l(h(x_i), y_i)$$
 
-With $l(.,.)$ the cross-entropy loss and lambda the weights that maximize the weighted loss of protected groups. 
-To solve this minmax problem, the authors set up a special architecture consisting of two neural networks, a learner and an adversary.
+With $l(.,.)$ the cross-entropy loss and lambda the weights that maximize the weighted loss of protected groups. To solve this minmax problem, the authors set up a special architecture consisting of two neural networks, a learner and an adversary.
 
 ### The Model Architecture {#section-7}
 
