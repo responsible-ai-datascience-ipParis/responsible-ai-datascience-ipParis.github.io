@@ -6,7 +6,11 @@ draft = false
 
 
 
-# To update or not to update? Neurons at equilibrium in deep models
+<h1 style="font-size: 36px;">To update or not to update? Neurons at equilibrium in deep models
+</h1>
+
+<h1 style="font-size: 24px;">Author: Alexis WINTER Augustin CREUSILLET</h1>
+
 
 ## Introduction
 
@@ -41,13 +45,11 @@ The significance of the lottery ticket hypothesis lies in its potential to impro
 
 The concept of neuronal equilibrium aims to detect when a neuron reaches a state of equilibrium, indicating that it has learned a particular input-output mapping. The idea is to understand when the neuron has reach a configuration in which he does not require further updates.
 
+To assess this we can evaluate  cosine similarity between all the outputs of the $i$-th neuron at time $t$ and at time $t-1$ for the whole validation set $\Xi_{val}$ as 
 
-
-To assess this we can evaluate  cosine similarity between all the outputs of the $i$-th neuron at time $t$ and at time $t-1$ for the whole validation set $\Xi_{val}$ as
-
-$$ 
-\phi_{i}^t = \sum_{\xi\in \Xi_{val}} \sum_{n=1}^{N_i} \hat{y}_{i,n,\xi}^{t} \cdot \hat{y}_{i,n,\xi}^{t-1} 
-$$
+\begin{equation}
+    \phi_{i}^t = \sum_{\xi\in \Xi_{val}} \sum_{n=1}^{N_i} \hat{y}_{i,n,\xi}^{t} \cdot \hat{y}_{i,n,\xi}^{t-1}.
+\end{equation}
 
 The neuron $i$-th reaches the equilibrium when $(\phi_{i})_t$ stops evolving. In this sense to know when the neuron has reached the equilibrium  we need to detect when :
 
@@ -56,7 +58,12 @@ The neuron $i$-th reaches the equilibrium when $(\phi_{i})_t$ stops evolving. In
 \end{equation}
 
 
-Since it is not trivial to assess this statment we prefer to work with variations of $(\phi_{i})_t$ that can be defined as : $\Delta \phi_i^t = \phi_{i}^{t} - \phi_{i}^{t-1} $
+Since it is not trivial to assess this statment we prefer to work with variations of $\phi_{i}_t$ that can be defined as : 
+\begin{equation}
+    v_{\Delta \phi_i}^t = \Delta \phi_i^t - \mu_{eq} v_{\Delta \phi_i}^{t-1},
+\end{equation}
+
+With $\mu_{eq}$ the momentum coefficient.
 
 This only lead to a reformulation of the problem has the equilibrium is reached when we have : $\Delta \phi_i^t \rightarrow 0$
 
@@ -92,6 +99,10 @@ It is important to know that this relation might not hold for all $t$ since ther
 
 The training scheme can be presented according to this scheme:
 
+
+
+![creusilet/winter](http://localhost:1313/images_Winter_Creusillet/prunedbackprop-scheme_full-1.png)
+
 At the first epoch each neuron is considered to be at non-equilibrium. After the first epoch the training scheme can be described as followed:
 
 - An epoch of training is made for all trainable neurons on the training set.
@@ -108,6 +119,10 @@ Comparing with regular training we can see two more hyper-parameters:
 
 ### SGD vs Adam
 
+![adam/sgd](http://localhost:1313/images_Winter_Creusillet/adam-vs-sgd-epochs-adam-1.png)
+![adam/sgd](http://localhost:1313/images_Winter_Creusillet/adam-vs-sgd-epochs-sgd-1.png)
+
+
 The authors conduct an experiment comparing two training methods for a ResNet-32 neural network on the CIFAR-10 dataset. The methods compared are SGD (Stochastic Gradient Descent) with momentum and Adam, which are both optimization algorithms used to update network weights iteratively.
 
 In the experiment, the authors observe the FLOPs required for a back-propagation step and the number of updated neurons during training. They note that at high learning rates, more neurons are trained and more FLOPs are required. This is attributed to the network not being at equilibrium—essentially, the network parameters are still very fluid and subject to change, thus requiring more computation.
@@ -117,6 +132,10 @@ As training progresses and the learning rate is reduced, fewer neurons need upda
 The experiment also highlights an interesting behavior at the first learning rate decay around epoch 100 for SGD. The number of updated neurons decreases and then increases, which is not observed with Adam. This difference illustrates the contrasting approaches of the two optimizers: SGD, by reducing the learning rate, encourages continued exploration, which temporarily stabilizes the network until it adjusts to the new learning rate and begins exploring again. Adam, with its adaptive learning rate for each parameter, does not exhibit this behavior because it consistently steers the network towards a stable state.
 
 ### Distribution of $\phi$ & choice of $µ_{eq}$
+
+![creusilet/winter](http://localhost:1313/images_Winter_Creusillet/mu-line-1.png)
+
+
 
 The paper also discusses the distribution of $\phi$ and the choice of a parameter called $µ_{eq}$ during the training of neural networks.
 
