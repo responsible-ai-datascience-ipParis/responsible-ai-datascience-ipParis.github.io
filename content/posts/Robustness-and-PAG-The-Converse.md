@@ -71,7 +71,7 @@ Now, as one can imagine, it is possible to compute attacking models related to t
 
 
 ### Fast Gradient Sign Method (FGSM) : 
-This method can be ***targeted*** or ***untargeted***. Let's study the targeted one. The alogirthm is the following :
+This method can be ***targeted*** or ***untargeted***. Let's study the targeted one. The algorithm is the following [3]:
 One compute the perturbation $\eta \ =\ \epsilon \ \cdotp \ sign( \ \nabla x\ L( x,\ t) \ )$ where $\epsilon$ is the perturbation size. Then, one would have $x'\ =\ x\ −\ \eta $ such that we remain espilon close from $x$ and that $f(x') = t$. 
 The perturbation has to remain small to ensure it will be undetected by human's perception. 
 
@@ -83,7 +83,7 @@ But, at this point, one question arises : how can we be sure that $x'$ is still 
 
 So, we have several ways to have a level of control over the changed features. 
 
-Now that the first intuition for attack is understood, one should take a rapid look at **PGD** (Projected Gradient Descent), which will be used for the results of this blog. Other more complex methods exist (AutoAttack), and they are taken into account by the authors but they will not be explained here. 
+Now that the first intuition for attack is understood, one should take a rapid look at **PGD** (Projected Gradient Descent) [4], which will be used for the results of this blog. Other more complex methods exist (AutoAttack), and they are taken into account by the authors but they will not be explained here. 
 
 The algorithm starts with an initial perturbation. At each iteration, the algorithm takes a step in the direction of the gradient of the loss function with respect to the input. The gradient is calculated using backpropagation, and represents the direction of steepest ascent in the loss function. However, since we're trying to reach a specific target, we actually want to move in the **opposite direction**, so we multiply the gradient by -1 (it is a maximization). The step size is proportional to the norm of the gradient, so we don't overshoot or undershoot our target. 
 After taking a step, the perturbation is *projected* back onto the allowed range, which is defined by the epsilon parameter. This is done by calculating the difference between the current input and the original input, and then scaling this difference so that it falls within the allowed range. 
@@ -187,6 +187,8 @@ At this point, we have four ways to approximate ground-truth gradients. (Three h
 ## Experiment{#section-3}
 Now, let's experiment a bit. In this article, to understand what is happening, we will play a bit with the toy dataset. A 2 dimensional synthetic dataset is built. It contains 6000 samples of 2 classes. Every sample is on the line of equation $x_2 -2x_1=0$. Finally, each class contains **three mods** (1000 samples per mode) drawn from a Gaussian distribution. The idea is to observe manifolds as decision boundaries. Background of the plan will be colored according to the predicted class. Evaluation will be made on a test set. 
 
+The code is available at this [link](https://github.com/YohannZe/responsible-ai-datascience-ipParis.github.io.git).
+
 To this prediction task, a simple 2 layers MLP with ReLU is used. Two training are made with the same seed. The first is based on the usual cross-entropy loss whereas the second is made on the explained new loss. 
 
 As expected, 100% accuracy is obtained for this very simple task for both models on the test set. However, what about predicting adversarial examples ? 
@@ -230,4 +232,9 @@ To draw a conclusion, this paper has empirically shown that **PAG lead to more r
 
 ## References {#section-6}
 1. EYKHOLT, Kevin, EVTIMOV, Ivan, FERNANDES, Earlence, et al. Robust physical-world attacks on deep learning visual classification. In : Proceedings of the IEEE conference on computer vision and pattern recognition. 2018. p. 1625-1634.
-2.Ganz, R., Kawar, B., & Elad, M. (2023, July). Do perceptually aligned gradients imply robustness?. In International Conference on Machine Learning (pp. 10628-10648). PMLR.
+
+2. Ganz, R., Kawar, B., & Elad, M. (2023, July). Do perceptually aligned gradients imply robustness?. In International Conference on Machine Learning (pp. 10628-10648). PMLR.
+
+3. Goodfellow, I. J., Shlens, J., & Szegedy, C. (2014). Explaining and harnessing adversarial examples. arXiv preprint arXiv:1412.6572.
+
+4. Madry, A., Makelov, A., Schmidt, L., Tsipras, D., & Vladu, A. (2017). Towards deep learning models resistant to adversarial attacks. arXiv preprint arXiv:1706.06083.
