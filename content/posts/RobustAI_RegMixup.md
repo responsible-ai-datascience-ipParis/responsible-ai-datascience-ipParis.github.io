@@ -167,7 +167,7 @@ Mixup is an interesting method to consider but it possesses some limitations :
 
 
 <figure id="my-fig" class="numbered">
-    <img src="http://localhost:1313/images/regmixup/fig.png" class="align-center">
+    <img src="/images/regmixup/fig.png" class="align-center">
     <p style="text-align: center;">Mixup vs RegMixup, underconfidence and space exploration.</p>
 </figure>
 
