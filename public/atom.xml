@@ -20,8 +20,12 @@
 &lt;h1 style=&#34;font-size: 18px;&#34;&gt;Authors: &lt;a href=&#34;https://github.com/Valentinahxu&#34;&gt;Valentina Hu &lt;/a&gt; and  &lt;a href=&#34;https://github.com/selmazrg&#34;&gt; Selma Zarga&lt;/a&gt;&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#section-0&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-0&#34;&gt;Incentives&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-1&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-2&#34;&gt;Feature Importance &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-3&#34;&gt;Example Importance&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#section-5&#34;&gt;Experiment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-6&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;section-0&#34;&gt;Why do we need explainability ?&lt;/h2&gt;
 &lt;p&gt;Machine learning models are becoming increasingly capable of making advanced predictions. While models like linear regression are relatively easy to understand and explain, more complex models, often called &lt;strong&gt;&amp;ldquo;black boxes&amp;rdquo;&lt;/strong&gt; due to their complexity, present challenges in explaining how they make predictions. These models can be problematic in highstakes applications such as healthcare, finance, and justice, where it&amp;rsquo;s crucial to justify decision-making. Additionally, in case of errors, it&amp;rsquo;s important to understand the origin in order to address and correct them.&lt;/p&gt;
@@ -39,13 +43,132 @@
 
 &lt;/p&gt;
 &lt;p&gt;While much of the work on explainability focuses on supervised models, where labels are available to interpret predictions, unsupervised learning models are trained without labels. This post will focus on these unsupervised, label-free cases. It is based on recent research conducted by Crabbé and van der Schaar in 2022, which explores the explainability of unsupervised models. They have developed two new methods to explain these complex models without labels. The first method highlights important features in the data, while the second identifies training examples that have the greatest impact on the model&amp;rsquo;s construction of representations.&lt;/p&gt;
+&lt;h2 id=&#34;section-1&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;The entire post is focused on the quest for explainability of unsupervised models. In these models, no labels are assigned to our data, rendering the understanding of the model even more complicated due to the absence of explicit guidance on what the model is learning. In the supervised setting, users know the meaning of the black-box output they are trying to interpret. However, this clarity is not always available in machine learning. Therefore, elucidating concepts such as feature importance and example importance provides insights into why the model makes certain decisions or identifies specific patterns in the data.&lt;/p&gt;
+&lt;p&gt;Example importance refers to the significance or weight assigned by a model to individual examples (data points) within a dataset. In some models like decision trees or gradient boosting, each example may be assigned a weight based on its relevance or contribution to the overall learning process. These weights can influence how the model learns from the data and makes predictions.&lt;/p&gt;
+&lt;p&gt;Feature importance helps in understanding which features have the most influence on the model&amp;rsquo;s predictions. For example, in a diabetes prediction scenario, it would reveal whether factors like the patient&amp;rsquo;s weight, age, or hair color exert the most influence on the prediction.&lt;/p&gt;
+&lt;p&gt;When we identify the importance of examples and features, we gain insight into why the model made certain decisions.&lt;/p&gt;
+&lt;h2 id=&#34;section-2&#34;&gt;Feature Importance&lt;/h2&gt;
+&lt;p&gt;The feature importance method aims to explain the predictions of a black-box model by assigning an importance score to each feature (or attribute) of the input. This helps understand which features have the most influence on the model&amp;rsquo;s predictions. This method is developed based on a linear reasoning that is extended to label-free settings.&lt;/p&gt;
+&lt;p&gt;To understand how the label-free feature importance method works, let&amp;rsquo;s start by looking at the labeled case:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Labelled Feature Importance&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The method proposes to combine the importance scores of different components of the model&amp;rsquo;s output by weighting them with the associated class probabilities. For each component of the model&amp;rsquo;s output, we multiply the importance score of the corresponding feature by the probability of that component.&lt;/p&gt;
+&lt;p&gt;These weighted importance scores are then combined to obtain the final importance score of each feature.&lt;/p&gt;
+&lt;p&gt;Let $ai(f_j;x)$ be the importance score of feature $x_i$ calculated with respect to the component $f_j$ of the model&amp;rsquo;s output. The method proposes to calculate the importance score $bi(f;x)$ for feature $x_i$ as follows:&lt;/p&gt;
+&lt;p&gt;$bi(f;x) = \sum_{j=1}^{d_Y} f_j(x) \times ai(f_j;x)$&lt;/p&gt;
+&lt;p&gt;Here, $f_j(x)$ represents the probability of class $j$, and $ai(f_j;x)$ is the importance score of feature $x_i$ for class $j$.&lt;/p&gt;
+&lt;p&gt;By weighting each importance score by the probability of the corresponding class, we take into account the contribution of each class to the overall importance of the feature.
+We can see that in the labeled case, the method is quite clear. Now, let&amp;rsquo;s move on to the label-free setting.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Label-Free Feature Importance&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In this context, we consider a latent space $H$ of dimension $d_H$ where a black-box model $f:X \rightarrow H$ is given. The goal is to assign an importance score to each feature of the input $x$, even if the dimensions of the latent space have no clear relations with the labels.&lt;/p&gt;
+&lt;p&gt;We use a similar weighting formula for importance scores, where the components $f_j(x)$ do not correspond to probabilities but to neuron activations. The weighted sum is considered as an inner product in the latent space.&lt;/p&gt;
+&lt;p&gt;The method is developed using linear feature importance functions, and it retains the completeness property, meaning that the sum of importance scores equals the black-box prediction up to a baseline constant.&lt;/p&gt;
+&lt;p&gt;This approach provides a systematic way to compute feature importance in both labeled and label-free contexts, by using existing feature importance methods and adapting them to the specific context.&lt;/p&gt;
+&lt;h2 id=&#34;section-3&#34;&gt;Exemple Importance&lt;/h2&gt;
+&lt;p&gt;In this section, we discuss how we adapt methods for assessing the importance of individual training examples to a label-free scenario. These methods aim to quantify the impact of removing a specific example from the training dataset on the model&amp;rsquo;s performance.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Loss-Based Example Importance:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In supervised settings, loss-based methods evaluate the effect of removing an example by observing how it influences the model&amp;rsquo;s loss on a test example. Essentially, if removing an example leads to an increase in loss, it&amp;rsquo;s considered important, and vice versa. Mathematically, this can be expressed as:&lt;/p&gt;
+&lt;p&gt;$$ c_n(f_r; x) = \frac{1}{N} \sum_{n=1}^{N} r^T \left( L(z; \theta&amp;rsquo;) - L(z_n; \theta&amp;rsquo;) \right) $$&lt;/p&gt;
+&lt;p&gt;Where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$ c_n(f_r; x) $ is the importance score for example $ x_n $.&lt;/li&gt;
+&lt;li&gt;$ f_r $ represents the relevant parameters of the model.&lt;/li&gt;
+&lt;li&gt;$ L(z; \theta&amp;rsquo;) $ is the loss function evaluated on the test example $ z $.&lt;/li&gt;
+&lt;li&gt;$ L(z_n; \theta&amp;rsquo;) $ is the loss function evaluated on the test example after removing $ x_n $.&lt;/li&gt;
+&lt;li&gt;$ r $ is the gradient of the loss function with respect to the model&amp;rsquo;s parameters.&lt;/li&gt;
+&lt;li&gt;$ N $ is the total number of examples in the training set.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Representation-Based Example Importance:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;These methods analyze the latent representations of training examples to assess their importance. In supervised settings, this involves comparing a test example&amp;rsquo;s representation with those of the training set. The affinity between them is quantified by reconstructing the test example&amp;rsquo;s representation using a weighted combination of training representations. The weights are typically determined based on the nearest neighbors in the latent space or learned through optimization.&lt;/p&gt;
+&lt;p&gt;In the label-free setting, we can directly apply representation-based methods without modification, as they only rely on the latent representations learned by the model.&lt;/p&gt;
+&lt;p&gt;Overall, these methods provide insights into which training examples have the most influence on the model&amp;rsquo;s behavior, facilitating model interpretation and understanding.&lt;/p&gt;
 &lt;h2 id=&#34;section-5&#34;&gt;Experiments: Evaluation and Results&lt;/h2&gt;
 &lt;h3 id=&#34;section-111&#34;&gt;Overview&lt;/h3&gt;
-&lt;p&gt;In this section, we provide an overview of the experiment conducted to evaluate the label-free extensions of various explanation methods for unsupervised models. The experiment is divided into two main parts: consistency checks and comparisons of representations learned from different pretext tasks.&lt;/p&gt;
+&lt;p&gt;In this section, we will retest and show you the results of the experiments presented in the report to evaluate the label-free extensions of various explanation methods for unsupervised models. The experiment is divided into two main parts: consistency checks and comparisons of representations learned from different pretext tasks. Nos test vont se concentrer sur la dataset MNIST.&lt;/p&gt;
+&lt;h2 id=&#34;section-6&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;In this post you learned about label-free explainability a new framework developped by Crabbé and van der Schaar in 2022, wich extend linear feature importance and example importance
+methods to the unsupervised setting with a focus on the MNIST dataset.&lt;/p&gt;
 &lt;h3 id=&#34;references&#34;&gt;References&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;Crabbé, J. &amp;amp; van der Schaar, M.. (2022). Label-Free Explainability for Unsupervised Models. &lt;i&gt;Proceedings of the 39th International Conference on Machine Learning&lt;/i&gt;, in &lt;i&gt;Proceedings of Machine Learning Research&lt;/i&gt; 162:4391-4420 Available from &lt;a href=&#34;https://proceedings.mlr.press/v162/crabbe22a.html&#34;&gt;https://proceedings.mlr.press/v162/crabbe22a.html&lt;/a&gt;.&lt;/li&gt;
 &lt;/ol&gt;
+&lt;style&gt;
+.highlight {
+  background-color: red;
+}
+.highlight-on-hover:hover {
+        background-color: yellow;
+    }
+/* Quiz form styles */
+.quiz-form {
+        max-width: 500px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+}
+
+.quiz-question {
+        margin-bottom: 20px;
+}
+
+.quiz-options label {
+        display: block;
+        margin-bottom: 10px;
+}
+
+.quiz-submit {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+}
+
+.quiz-submit:hover {
+        background-color: #45a049;
+}
+
+/* Quiz results styles */
+.quiz-results {
+        margin-top: 20px;
+        font-weight: bold;
+}
+.quiz-options label {
+        display: block;
+        margin-bottom: 10px;
+    }
+.quiz-options label.correct {
+        color: green;
+}
+.quiz-options label.incorrect {
+        color: red;
+}
+a[name]:hover {
+        background-color: yellow; /* Change to the same color as normal state to maintain yellow highlight */
+        text-decoration: none; /* Optionally remove underline on hover */
+}
+&lt;/style&gt;
+&lt;style TYPE=&#34;text/css&#34;&gt;
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style&gt;
+&lt;script type=&#34;text/x-mathjax-config&#34;&gt;
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i &lt; all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+    }
+});
+&lt;/script&gt;
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
       <guid>http://localhost:1313/posts/label-free-explainability/</guid>
