@@ -28,16 +28,28 @@ Today, we will be reviewing the methods presented in “Learning Fair Scoring Fu
 
 The goal of bipartite ranking is to acquire an ordering of X where positive instances are consistently ranked above negative ones with a high probability. This is done by learning an appropriate scoring function s. Such scoring functions are widely used in many critical domains such as loan granting, anomaly detection, or even in court decisions. A nice way to assess their performance is through the analysis of the Receiver Operating Characteristic (ROC) curve. It does so by plotting the true positive rate against the false positive rate at various thresholds. A curve closer to the upper-left corner represents a better-performing scoring function. To identify how close a curve is close to the uppe-left corner, we compute the Area Under the ROC Curve (AUC). 
 
-While fairness seems like a desirable goal for any ranking function, there are many different definitions of what fairness really is and thus, many different metrics to assess the fairness of an algorithm. In the case of loan grants for example, one could consider that fairness is achieved between men and women if we granted the same percentage of loans for both groups. Statistical parity, which  compares the proportion of positive outcomes between different demographic groups, is a good metric in this case.  However, this approach might overlook underlying disparities in socioeconomic status that affect loan approval rates. Another vision of fairness might ensure that individuals are all as likely to get a wrong decision, regardless of demographic factors such as gender or ethnicity. In this case, parity of mistreatment would be a good metric, as it ensures that the proportion of errors is the same for all demographic groups. However, this considers that all errors are the same, which means that one group could have a high false positive rate and another a high false negative rate. The authors thus decided to choose parity in false positive rates and/or parity in false negative rates.
+**<u> Mathematics definitions: ROC & AUC</u>**
 
-**<u> Mathematics definitions:</u>**
+**ROC** stands for **Receiver Operating Characteristic curve** and is a graph showing the performance of a classification model at all classification thresholds. This curve plots two parameters:
 
-<u> AUC:</u>
+- True Positive Rate
+- False Positive Rate
+
+![Roc_1](/images/lambert_davy/roc_easy.png)
+
+
+By varying the threshold, we can obtain different Roc Curve that are represented in the following image. The curve that is closer to the upper-left corner is the best one.
+![Roc_full](/images/lambert_davy/Roc_curve.svg.png)
 
 **AUC** stands for **Area Under the ROC Curve** and is a widely used metric in machine learning, particularly in binary classification tasks. The **Receiver Operating Characteristic (ROC)** curve is a graphical representation of the trade-off between the true positive rate (sensitivity) and false positive rate (1 - specificity) for different thresholds of a classification model. The AUC quantifies the overall performance of the model across all possible classification thresholds.
 
 That is, AUC measures the entire two-dimensional area underneath the entire ROC curve (think integral calculus) from (0,0) to (1,1). The AUC ranges in value from 0 to 1. A model whose predictions are **100% wrong has an AUC of 0.0**, one whose predictions are **100% correct has an AUC of 1.0**.
 
+![AUC](/images/lambert_davy/AUC.png)
+
+While fairness seems like a desirable goal for any ranking function, there are many different definitions of what fairness really is and thus, many different metrics to assess the fairness of an algorithm. In the case of loan grants for example, one could consider that fairness is achieved between men and women if we granted the same percentage of loans for both groups. 
+
+Statistical parity, which  compares the proportion of positive outcomes between different demographic groups, is a good metric in this case.  However, this approach might overlook underlying disparities in socioeconomic status that affect loan approval rates. Another vision of fairness might ensure that individuals are all as likely to get a wrong decision, regardless of demographic factors such as gender or ethnicity. In this case, parity of mistreatment would be a good metric, as it ensures that the proportion of errors is the same for all demographic groups. However, this considers that all errors are the same, which means that one group could have a high false positive rate and another a high false negative rate. The authors thus decided to choose parity in false positive rates and/or parity in false negative rates.
 
 # AUC-based fairness constraints {#section-3}
 
@@ -71,7 +83,7 @@ The family of fairness constraints considered is then the set of linear combinat
     \sum_{l=1}^{5} {Γ_l}{C_l}(s) = 0 
 \end{align*}
 
-Where Γ = $(Γ_1, ... Γ_5)^T$.
+Where $Γ$ = $(Γ_1, ... Γ_5)^T$.
 
 **<u> Issues of AUC-Based constraint:</u>**
 
