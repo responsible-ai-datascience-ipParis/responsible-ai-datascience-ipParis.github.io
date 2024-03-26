@@ -18,7 +18,7 @@
     <meta itemprop="name" content="Packed Ensembles">
 <meta itemprop="description" content="IntroductionThe document &#34;Packed-Ensembles for Efficient Uncertainty Estimation&#34; introduces a novel framework for designing and training compact, structured ensembles of neural networks, termed Packed-Ensembles (PE). It addresses the limitations of Deep Ensembles (DE) in terms of computational efficiency and hardware constraints by leveraging grouped convolutions. This technique allows for parallelizing the ensemble into a single shared backbone, improving training and inference speeds within the memory limits of standard neural networks."><meta itemprop="datePublished" content="2024-02-27T15:05:20+01:00" />
 <meta itemprop="dateModified" content="2024-02-27T15:05:20+01:00" />
-<meta itemprop="wordCount" content="2369">
+<meta itemprop="wordCount" content="2114">
 <meta itemprop="keywords" content="" />
     
     <link rel="canonical" href="http://localhost:1313/posts/packed-ensembles/">
@@ -80,7 +80,7 @@
       },
       "image": "http://localhost:1313/assets/favicon.ico",
       "url" : "http:\/\/localhost:1313\/posts\/packed-ensembles\/",
-      "wordCount" : "2369",
+      "wordCount" : "2114",
       "genre" : [ ],
       "keywords" : [ ]
   }
@@ -225,7 +225,7 @@ $$</p>
 <li><strong>Complete Mask and Convolution:</strong>
 <ul>
 <li>$\text{mask}^j = \sum_{m=0}^{{\gamma}-1}\text{mask}_{m}^j$ : This combines the masks for all groups ($m$) into a single $\text{mask}^j$ for layer $j$.</li>
-<li>$z^{j+1} = h^j \otimes ω^j ◦ \text{mask}^j$: This rewrites the grouped convolution operation. Here:
+<li>$z^{j+1} = h^j \otimes (ω^j ◦ \text{mask}^j)$: This rewrites the grouped convolution operation. Here:
 <ul>
 <li>$z^{j+1}$: Output feature map of the layer.</li>
 <li>$h^j$: Input feature map.</li>
@@ -340,30 +340,6 @@ $$</p>
     <img src="/images/fig3.png" alt="ResNet50 performance" style="display:block; margin:auto;">
 </div>
 <p style="text-align:center;"><i>Packed-Ensembles of ResNet50 performance on CIFAR-10 and CIFAR-100</i></p>
-<div style="text-align:center;">
-<h1>Discussion</h1>
-</div>
-<p>The authors discusse the benefits of PE and explores some open questions about its properties.</p>
-<ul>
-<li>
-<p><strong>Reduced Architecture and Cost:</strong> PE offers similar uncertainty quantification to Deep Ensembles (DE) but with a smaller and more cost-effective architecture.</p>
-</li>
-<li>
-<p><strong>Sparsity and Approximation Error:</strong> Appendix C explores how group convolutions in PE approximate DE using masks. A formula is provided to estimate the approximation error based on the mask density. This allows for theoretical control over the error by adjusting the number of subnetworks, groups, and dilation factor.</p>
-</li>
-<li>
-<p><strong>Sources of Stochasticity:</strong> Appendix F examines the diversity within PE, which is crucial for ensembles. It identifies three sources: random parameter initialization, batch shuffling, and non-deterministic backpropagation. Interestingly, the text suggests that even just non-deterministic backpropagation might be enough to generate sufficient diversity.</p>
-</li>
-<li>
-<p><strong>Ablation Study:</strong> Appendix D analyzes the impact of key parameters (number of subnetworks, groups, dilation factor) on PE performance. While no clear trends emerge, a higher number of subnetworks seems to improve OOD detection slightly.</p>
-</li>
-<li>
-<p><strong>Training Speed:</strong> PE can have fewer parameters than a single model, potentially leading to faster training. Appendix H studies training and inference speed. While using PE with specific settings doesn&rsquo;t significantly slow down the process compared to a single model, there&rsquo;s room for improvement in group convolution optimization.</p>
-</li>
-<li>
-<p><strong>Out-of-Distribution (OOD) Criteria:</strong> The text acknowledges  the use of maximum softmax probability for OOD detection but explores other options like Mutual Information. Appendix E shows that the best criterion can vary depending on the dataset (e.g., maximum logit for CIFAR-100, Mutual Information for ImageNet).</p>
-</li>
-</ul>
 <div style="text-align:center;">
 <h1>Ethics</h1>
 </div>

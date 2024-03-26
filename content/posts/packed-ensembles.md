@@ -111,7 +111,7 @@ The condition **$\text{mask}_{m}^j(k, l, :, :) = 1$** happens only if $\left\lfl
 
 * **Complete Mask and Convolution:**
     * $\text{mask}^j = \sum_{m=0}^{{\gamma}-1}\text{mask}_{m}^j$ : This combines the masks for all groups ($m$) into a single $\text{mask}^j$ for layer $j$.
-    * $z^{j+1} = h^j \otimes ω^j ◦ \text{mask}^j$: This rewrites the grouped convolution operation. Here:
+    * $z^{j+1} = h^j \otimes (ω^j ◦ \text{mask}^j)$: This rewrites the grouped convolution operation. Here:
         * $z^{j+1}$: Output feature map of the layer.
         * $h^j$: Input feature map.
         * $ω^j$: Convolution weights for layer `j`.
