@@ -11,8 +11,17 @@ draft = false
 
 <h1 style="font-size: 24px;">Author: Alexis WINTER Augustin CREUSILLET</h1>
 
+# Table of content 
 
-## Introduction
+- [Introduction](#section-0)
+- [NEq](#section-1)
+- [Experiments](#section-2)
+- [Results](#section-3)
+- [Reproducibility](#section-4)
+- [Conclusion](#section-5)
+- [References](#section-6)
+
+## Introduction {#section-0}
 
 ### Background
 
@@ -26,7 +35,7 @@ This paper try to focus on the overall behavior of neurons, leveraging the notio
 
 #### Pruning strategies
 
-Pruning strategies consist in the systematic removal of redundant or less important parameters, connections, or units within a model to improve efficiency and reduce computational complexity. These strategies are inspired by the biological concept of pruning, where unnecessary connections in neural networks are eliminated to enhance neural efficiency. Pruning can take various forms, including magnitude-based pruning, where parameters with small weights are pruned, or structured pruning, which removes entire neurons, channels, or layers based on specific criteria. Pruning strategies effectively reduce the model size leading to a more frugal and compact model.
+Pruning strategies consist in the systematic removal of redundant or less important parameters, connections, or units within a model to improve efficiency and reduce computational complexity. These strategies are inspired by the biological concept of pruning, where unnecessary connections in neural networks are eliminated to enhance neural efficiency. Pruning can take various forms, including magnitude-based pruning, where parameters with small weights are pruned, or structured pruning, which removes entire neurons, channels, or layers based on specific criteria. Pruning strategies effectively reduce the model size leading to a more frugal and compact model With the development of computational resources and the creation of more complex model, pruning strategies such as dropout are being exploited again.
 
 Despite its effectiveness in reducing model size and improving inference efficiency, pruning strategies typically do not alleviate the computational complexity associated with training neural networks. While pruning removes parameters or connections during the inference phase, the training process still requires the full model to be trained initially, often resulting in high computational demands. In fact, pruning can even increase training complexity due to the need for additional iterations to fine-tune the remaining parameters and adapt the model to compensate for the pruned components. Consequently, while pruning offers significant benefits in terms of model deployment and inference efficiency, it does not directly address the computational burden of training models.
 
@@ -39,7 +48,7 @@ The hypothesis was introduced by Jonathan Frankle and Michael Carbin in 2018. Th
 
 The significance of the lottery ticket hypothesis lies in its potential to improve the efficiency of training deep neural networks. By identifying these winning tickets and training only the sparse subnetworks, researchers can reduce computational costs associated with training while maintaining or even improving model accuracy. This concept has led to the development of pruning techniques aimed at discovering these winning tickets and accelerating the training process.
 
-## NEq
+## NEq {#section-1}
 
 ### Neuronal equilibrium
 
@@ -122,7 +131,7 @@ Comparing with regular training we can see two more hyper-parameters:
 - $\epsilon$ which determines the threshold at which a neuron is considered to be at equilibrium according to the velocity of the similarities.
 - $\mu_{eq}$ which intervenes into the calculation of the velocity of the similarities.
   
-## Experiments
+## Experiments {#section-2}
 
 ### SGD vs Adam
 
@@ -156,11 +165,53 @@ In summary, the authors find that a neuron is at equilibrium if the velocity of 
 
 ### Impact of the validation set size and ε
 
-the authors found that the size of the validation set does not significantly impact the performance of the model. Interestingly, even with a validation set as small as a single image, the method yields good results. This is attributed to the presence of convolutional layers in the network, which, even with a small number of images, generate high-dimensional outputs in each neuron. Additionally, the homogeneity of the dataset (CIFAR-10) likely contributes to the robustness of the performance against changes in the validation set size.
+The authors found that the size of the validation set does not significantly impact the performance of the model. Interestingly, even with a validation set as small as a single image, the method yields good results. This is attributed to the presence of convolutional layers in the network, which, even with a small number of images, generate high-dimensional outputs in each neuron. Additionally, the homogeneity of the dataset (CIFAR-10) likely contributes to the robustness of the performance against changes in the validation set size.
 
 When examining the impact of the parameter ε, which is used to determine when a neuron is at equilibrium and hence does not need to be updated, the authors observe a drop in model performance at very high values of ε. They suggest a value of 0.001 as a good compromise for classification tasks, striking a balance between model performance and computational efficiency.
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+## Results {#section-3}
+
+## Reproducibility {#section-4}
+
+Using the author's implementation we were able to replicate partially the results obtained using the ResNet32 model. Access to both the datasets and the code greatly facilitated the reproducibility process. However, our initial challenge stemmed from limited computational resources. Nonetheless, the method was transparently elucidated alongside its implementation, thus enabling a straightforward reproduction of the results without encountering any significant obstacles.
+
+## Conclusion {#section-5}
+
+From the inital problem of computational resources saving, we have seen that NEq differs for others works that try to focus on finding optimal sub-graph for deep neural network. By focusing on the entierty of the network and evaluating the behaviour of each neuron, NEq produces a new knowledge that is easily transposable to other experiments or any neural network model. The method results seem promising as the it produces new insight on the learning behaviour of deep neural networks and might lead to new training strategies.
+
+One possible development could be one of the limitation of the paper cited by the authors. The paper only focuses on individual neurons and evalutating the behaviour of ensemble of neurons could lead to other interesting results as some neurons might be at equilibrium only as a group at some step of the training process. This possibility could be explored further.
+
+## References {#section-6}
+
+1. Bragagnolo, A., Tartaglione, E., Grangetto, M.: To update or not to update? neurons at equilibrium in deep models. Advances in neural information processing systems, 2022.
+2. Dmitry Molchanov, Arsenii Ashukha, and Dmitry Vetrov. Variational dropout sparsifies deep neural networks. In International Conference on Machine Learning, pages 2498–2507. PMLR, 2017.
+3. J. Frankle and M. Carbin. The lottery ticket hypothesis: Finding sparse, trainable neural networks. 2019.
+
+
+
+
+
+<style
+TYPE="text/css">
+
+code.has-jax {font:
+inherit;
+font-size:
+100%;
+background:
+inherit;
+border:
+inherit;}
+
+</style>
+
+
+
+
+
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   tex2jax: {
