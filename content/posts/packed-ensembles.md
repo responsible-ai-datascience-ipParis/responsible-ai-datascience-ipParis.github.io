@@ -38,11 +38,9 @@ MathJax.Hub.Queue(function() {
 type="text/javascript"
 src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
 
-
 <div style="text-align:center;">
 <h1>Introduction</h1>
 </div>
-
 The document "Packed-Ensembles for Efficient Uncertainty Estimation" introduces a novel framework for designing and training compact, structured ensembles of neural networks, termed Packed-Ensembles (PE). It addresses the limitations of Deep Ensembles (DE) in terms of computational efficiency and hardware constraints by leveraging grouped convolutions. This technique allows for parallelizing the ensemble into a single shared backbone, improving training and inference speeds within the memory limits of standard neural networks. The paper demonstrates through extensive experiments that PEs maintain the beneficial properties of DEs, such as diversity and robustness to distribution shift, while achieving comparable accuracy, calibration, and out-of-distribution detection capabilities. The work includes implementation details, experimental results on CIFAR-10/100 and ImageNet datasets, discussions on the implications of PE's design choices, and comparisons with existing approaches. It concludes with insights on the reproducibility of results and the potential ethical considerations of deploying such models in safety-critical systems.
 
 <div style="text-align:center;">
@@ -51,7 +49,9 @@ The document "Packed-Ensembles for Efficient Uncertainty Estimation" introduces 
 
 **Packed-Ensembles**
 
-![The base network and Packed-Ensembles](/images/fig1.jpg)
+<div style="text-align:center;">
+    <img src="/images/fig1.jpg" alt="The base network and Packed-Ensembles" style="display:block; margin:auto;">
+</div>
 <p style="text-align:center;"><i>The base network and Packed-Ensembles</i></p>
 
 Packed-Ensembles (PE) is a technique for designing and training lightweight ensembles of neural networks. It is based on the idea of using grouped convolutions to create multiple subnetworks within a single network. These subnetworks are trained independently, which helps to improve the efficiency of the ensemble.
@@ -278,5 +278,52 @@ This section emphasizes the ethical considerations of the research. Here are the
     * Adversarial attacks (attempts to intentionally mislead the model)
     * Potential biases in the model
 * **Overall:** The authors advocate for responsible use of the method and emphasize the importance of further research before deploying it in safety-critical systems. 
+
+<div style="text-align:center;">
+<h1>Reproducibility: Packed-Ensemble on CIFAR-10</h1>
+</div>
+
+We attempted to reproduce the experiment outlined in the tutorial available at [https://github.com/ENSTA-U2IS-AI/torch-uncertainty](https://github.com/ENSTA-U2IS-AI/torch-uncertainty) which trains a Packed-Ensemble classifier on the CIFAR-10 dataset. The tutorial details a step-by-step approach, including:
+
+1. **Data Loading and Preprocessing:** Utilizing torchvision to load the CIFAR-10 dataset and performing normalization on the images.
+2. **Packed-Ensemble Definition:** Defining a Packed-Ensemble model with M=4 subnetworks, alpha=2, and gamma=1, built upon a standard convolutional neural network architecture.
+3. **Loss Function and Optimizer:** Employing Classification Cross-Entropy loss and SGD with momentum for optimization during training.
+4. **Training:** Training the Packed-Ensemble model on the CIFAR-10 training data.
+5. **Testing and Evaluation:** Evaluating the trained Packed-Ensemble on the CIFAR-10 test data, with a focus on uncertainty quantification and OOD (Out-of-Distribution) detection performance, as suggested by the tutorial.
+
+**Experimental Runs and Observations:**
+
+Test 1:
+
+<div style="text-align:center;">
+    <img src="/images/Result1.png" alt="First result" style="display:block; margin:auto;">
+</div>
+<p style="text-align:center;"><i>GroundTruth:  cat   ship  ship  plane</i></p>
+
+
+The predicted labels are: cat   ship  ship  ship 
+
+Test 2:
+
+<div style="text-align:center;">
+    <img src="/images/Result2.png" alt="Second result" style="display:block; margin:auto;">
+</div>
+<p style="text-align:center;"><i>GroundTruth: dog bird horse bird</i></p>
+
+The predicted labels are: dog  frog  car  dog
+
+Test 3: 
+
+<div style="text-align:center;">
+    <img src="/images/Result3.png" alt="Third result" style="display:block; margin:auto;">
+</div>
+<p style="text-align:center;"><i>GroundTruth:  dog truck plane car </i></p>
+
+The predicted labels are: dog  horse ship  truck
+
+
+**Challenges and Limitations:**
+
+A significant limitation of the tutorial is the lack of guidance on evaluating the model's performance. Without a defined evaluation metric (e.g., accuracy, precision, recall), it's challenging to determine the overall effectiveness of the trained Packed-Ensemble. While the provided test results show inconsistencies between ground truth labels and predictions, a quantitative evaluation metric is necessary to draw more concrete conclusions.
 
 
