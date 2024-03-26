@@ -114,13 +114,13 @@ $$&lt;/p&gt;
 &lt;li&gt;&lt;strong&gt;$C_{j+1}$&lt;/strong&gt; and &lt;strong&gt;$C_j$&lt;/strong&gt; denote the number of output and input channels, respectively.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;The formula states that a grouped convolution layer is mathematically equivalent to a standard convolution where the weights are selectively applied using a binary mask &lt;strong&gt;$\text{mask}_{m}^j$&lt;/strong&gt;
-&lt;strong&gt;$\in {0, 1}^{C_{j+1} \times C_j \times s_j^2}$&lt;/strong&gt; with $s_j^2$ the kernel size squared of the layer $j$. Each element in $\text{mask}_{m}^j$ is either 0 or 1.&lt;/p&gt;
+&lt;strong&gt;$\in { 0, 1 }^{C_{j+1} \times C_j \times s_j^2}$&lt;/strong&gt; with $s_j^2$ the kernel size squared of the layer $j$. Each element in $\text{mask}_{m}^j$ is either 0 or 1.&lt;/p&gt;
 &lt;p&gt;The condition &lt;strong&gt;$\text{mask}_{m}^j(k, l, :, :) = 1$&lt;/strong&gt; happens only if $\left\lfloor \frac{l}{C_{j}/\gamma} \right\rfloor = \left\lfloor \frac{k}{C_{j+1}/\gamma} \right\rfloor$ for each group $m \in [|0, \gamma - 1 |]$&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Complete Mask and Convolution:&lt;/strong&gt;
 &lt;ul&gt;
 &lt;li&gt;$\text{mask}^j = \sum_{m=0}^{{\gamma}-1}\text{mask}_{m}^j$ : This combines the masks for all groups ($m$) into a single $\text{mask}^j$ for layer $j$.&lt;/li&gt;
-&lt;li&gt;$z^{j+1} = h^j \otimes ω^j ◦ \text{mask}^j$: This rewrites the grouped convolution operation. Here:
+&lt;li&gt;$z^{j+1} = h^j \otimes (ω^j ◦ \text{mask}^j)$: This rewrites the grouped convolution operation. Here:
 &lt;ul&gt;
 &lt;li&gt;$z^{j+1}$: Output feature map of the layer.&lt;/li&gt;
 &lt;li&gt;$h^j$: Input feature map.&lt;/li&gt;

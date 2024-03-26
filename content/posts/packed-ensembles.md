@@ -105,7 +105,7 @@ where:
 * **$C_{j+1}$** and **$C_j$** denote the number of output and input channels, respectively.
 
 The formula states that a grouped convolution layer is mathematically equivalent to a standard convolution where the weights are selectively applied using a binary mask **$\text{mask}_{m}^j$** 
-**$\in \{0, 1\}^{C_{j+1} \times C_j \times s_j^2}$** with $s_j^2$ the kernel size squared of the layer $j$. Each element in $\text{mask}_{m}^j$ is either 0 or 1.
+**$\in \\{{ 0, 1 \\}}^{C_{j+1} \times C_j \times s_j^2}$** with $s_j^2$ the kernel size squared of the layer $j$. Each element in $\text{mask}_{m}^j$ is either 0 or 1.
 
 The condition **$\text{mask}_{m}^j(k, l, :, :) = 1$** happens only if $\left\lfloor \frac{l}{C_{j}/\gamma} \right\rfloor = \left\lfloor \frac{k}{C_{j+1}/\gamma} \right\rfloor$ for each group $m \in \[\|0, \gamma - 1 \|\]$
 

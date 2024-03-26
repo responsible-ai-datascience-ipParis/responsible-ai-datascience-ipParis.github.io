@@ -18,7 +18,7 @@
     <meta itemprop="name" content="Packed Ensembles">
 <meta itemprop="description" content="IntroductionThe document &#34;Packed-Ensembles for Efficient Uncertainty Estimation&#34; introduces a novel framework for designing and training compact, structured ensembles of neural networks, termed Packed-Ensembles (PE). It addresses the limitations of Deep Ensembles (DE) in terms of computational efficiency and hardware constraints by leveraging grouped convolutions. This technique allows for parallelizing the ensemble into a single shared backbone, improving training and inference speeds within the memory limits of standard neural networks."><meta itemprop="datePublished" content="2024-02-27T15:05:20+01:00" />
 <meta itemprop="dateModified" content="2024-02-27T15:05:20+01:00" />
-<meta itemprop="wordCount" content="2114">
+<meta itemprop="wordCount" content="2116">
 <meta itemprop="keywords" content="" />
     
     <link rel="canonical" href="http://localhost:1313/posts/packed-ensembles/">
@@ -80,7 +80,7 @@
       },
       "image": "http://localhost:1313/assets/favicon.ico",
       "url" : "http:\/\/localhost:1313\/posts\/packed-ensembles\/",
-      "wordCount" : "2114",
+      "wordCount" : "2116",
       "genre" : [ ],
       "keywords" : [ ]
   }
@@ -219,7 +219,7 @@ $$</p>
 <li><strong>$C_{j+1}$</strong> and <strong>$C_j$</strong> denote the number of output and input channels, respectively.</li>
 </ul>
 <p>The formula states that a grouped convolution layer is mathematically equivalent to a standard convolution where the weights are selectively applied using a binary mask <strong>$\text{mask}_{m}^j$</strong>
-<strong>$\in {0, 1}^{C_{j+1} \times C_j \times s_j^2}$</strong> with $s_j^2$ the kernel size squared of the layer $j$. Each element in $\text{mask}_{m}^j$ is either 0 or 1.</p>
+<strong>$\in \{{ 0, 1 \}}^{C_{j+1} \times C_j \times s_j^2}$</strong> with $s_j^2$ the kernel size squared of the layer $j$. Each element in $\text{mask}_{m}^j$ is either 0 or 1.</p>
 <p>The condition <strong>$\text{mask}_{m}^j(k, l, :, :) = 1$</strong> happens only if $\left\lfloor \frac{l}{C_{j}/\gamma} \right\rfloor = \left\lfloor \frac{k}{C_{j+1}/\gamma} \right\rfloor$ for each group $m \in [|0, \gamma - 1 |]$</p>
 <ul>
 <li><strong>Complete Mask and Convolution:</strong>
