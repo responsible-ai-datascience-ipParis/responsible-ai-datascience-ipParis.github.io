@@ -30,7 +30,7 @@ The goal of bipartite ranking is to acquire an ordering of X where positive inst
 
 **<u> Mathematics definitions: ROC & AUC</u>**
 
-**ROC** stands for **Receiver Operating Characteristic curve** and is a graph showing the performance of a classification model at all classification thresholds. This curve plots two parameters:
+**ROC** stands for **Receiver Operating Characteristic curve** and is a graph showing the performance of a classification model at all classification thresholds for a model. This curve plots two parameters:
 
 - True Positive Rate
 - False Positive Rate
@@ -38,10 +38,10 @@ The goal of bipartite ranking is to acquire an ordering of X where positive inst
 ![Roc_1](/images/lambert_davy/roc_easy.png)
 
 
-By varying the threshold, we can obtain different Roc Curve that are represented in the following image. The curve that is closer to the upper-left corner is the best one.
+By varying the classifier, we can obtain different ROC curves that are represented in the following image. The curve that is closer to the upper-left corner is the best one, while the curve in diagonal represents a random classifier.
 ![Roc_full](/images/lambert_davy/Roc_curve.svg.png)
 
-**AUC** stands for **Area Under the ROC Curve** and is a widely used metric in machine learning, particularly in binary classification tasks. The **Receiver Operating Characteristic (ROC)** curve is a graphical representation of the trade-off between the true positive rate (sensitivity) and false positive rate (1 - specificity) for different thresholds of a classification model. The AUC quantifies the overall performance of the model across all possible classification thresholds.
+**AUC** stands for **Area Under the ROC Curve** and is a widely used metric in machine learning, particularly in binary classification tasks. The AUC quantifies the **overall performance of the model** across all possible classification thresholds.
 
 That is, AUC measures the entire two-dimensional area underneath the entire ROC curve (think integral calculus) from (0,0) to (1,1). The AUC ranges in value from 0 to 1. A model whose predictions are **100% wrong has an AUC of 0.0**, one whose predictions are **100% correct has an AUC of 1.0**.
 
@@ -86,6 +86,10 @@ The family of fairness constraints considered is then the set of linear combinat
 Where $Γ$ = $(Γ_1, ... Γ_5)^T$.
 
 **<u> Issues of AUC-Based constraint:</u>**
+
+Fairness using AUC-based constraints defined by the equality between two AUC’s only quantify a stochastic order between distributions, not the equality between these distributions, and would lead to some unfair result, for a group or for the other group. 
+
+The authors conducted experiments with the credit-risk dataset and found that creditworthy individuals from both groups had equal chances of being ranked higher than a "bad borrower." However, employing high thresholds (which represent low probabilities of default on approved loans) would result in unfair outcomes for one group.
 
 
 # ROC-based fairness constraints {#section-4}
