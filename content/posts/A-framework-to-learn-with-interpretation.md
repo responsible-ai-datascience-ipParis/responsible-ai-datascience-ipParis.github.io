@@ -99,7 +99,7 @@ $$
 For now we take $h(x) = softmax(W^T \Phi(x))$ but $h$ can be any interpretable function (like a decsion tree for example).
  -->
 
-In FLINT, depicted in the image, both a prediction model ($f$) and an interpreter model ($g$) are used. The input to FLINT is a vector $x \in X$, where $X = \mathbb{R}^d$, and the output is a vector $y \in Y$, where $Y$ is defined as the set of of one-hot encoding vectors with binary components of size $C$ (the number of classes to predict). The prediction model $f$ is structured as a deep neural network with $l$ hidden layers, represented as $f = f_{l+1} \circ f_l \circ \ldots \circ f_1$. Each $f_k$ represents a hidden layer mapping from $R^{d_{k-1}}$ to $R^{d_k}$. To interpret the outputs of $f$, we randomly select a subset of $T$ hidden layers, indexed by $I=\\{i_1, i_2, \ldots, i_T\\}$, and concatenate their outputs to form a new vector $f_I(x) \in \mathbb{R}^D$, where $D = \sum_{t=1}^T d_{i_t}$. This vector is then fed into a neural network $\Psi$ to produce an output vector $\Phi(x) = \Psi(f_I(x)) \in \mathbb{R}^J$, representing an attribute dictionary comprising functions $\phi_j: X \rightarrow \mathbb{R}^+$, where $\phi_j(x)$ captures the activation of a high-level attributes or a "concept" over $X$. Finally, $g$ computes the composition of the attribute dictionnary with an interpretable function $h: R^J \rightarrow Y$.
+In FLINT, depicted in the image, both a prediction model ($f$) and an interpreter model ($g$) are used. The input to FLINT is a vector $x \in X$, where $X = \mathbb{R}^d$, and the output is a vector $y \in Y$, where $Y$ is defined as the set of of one-hot encoding vectors with binary components of size $C$ (the number of classes to predict). The prediction model $f$ is structured as a deep neural network with $l$ hidden layers, represented as $f = f_{l+1} \circ f_l \circ \ldots \circ f_1$. Each $f_k$ represents a hidden layer mapping from $R^{d_{k-1}}$ to $R^{d_k}$. To interpret the outputs of $f$, we randomly select a subset of $T$ hidden layers, indexed by $I=\\{i_1, i_2, \ldots, i_T\\}$, and concatenate their outputs to form a new vector $f_I(x) \in \mathbb{R}^D$, where $D = \sum_{t=1}^T d_{i_t}$. This vector is then fed into a neural network $\Psi$ to produce an output vector $\Phi(x) = \Psi(f_I(x)) = (\phi_1(x), ..., \phi_J (x)) \in \mathbb{R}^J$, representing an attribute dictionary comprising functions $\phi_j: X \rightarrow \mathbb{R}^+$, where $\phi_j(x)$ captures the activation of a high-level attributes or a "concept" over $X$. Finally, $g$ computes the composition of the attribute dictionnary with an interpretable function $h: R^J \rightarrow Y$.
 $$
 \forall x \in X, g(x) = h(\Phi(x))
 $$
@@ -126,9 +126,9 @@ Now, let's introduce the local and global interpretations the interpreter will p
 
 ## 2.3 Learning by imposing interpretability properties {#section-2.3}
 
-For learning, the paper will define certain penalties to minimize, where each one aims to enforce a certain desirable property.
+For learning, the paper defines certain penalties to minimize, where each one aims to enforce a certain desirable property.
 
-*Fidelity to output:* The output of $g(x)$ should be close to $f(x)$ for any x. This can be imposed through a cross-entropy loss:
+*Fidelity to output:* The output of $g(x)=h(\Psi(f_I(x)))$ should be close to $f(x)$ for any x. This can be imposed through a cross-entropy loss:
 $$
 L_{of}(f, g, S) = - \sum_{x \in S} h(\Psi(f_I(x)))^T \log(f(x))
 $$
@@ -152,14 +152,14 @@ $$
 L_{cd}(f, g, S) = -\mathcal{E}(\frac{1}{\lvert S \lvert} \sum_{x \in S} \Psi(f_I(x))) + \sum_{x \in S} \mathcal{E}(\Psi(f_I(x))) + \sum_{x \in S} \eta \lVert \Psi(f_I(x)) \lVert_1
 $$ -->
 
-*Conciseness and Diversity of Interpretations:* We aim for concise local interpretations, containing only essential attributes per sample, promoting clearer understanding and capturing high-level concepts. Simultaneously, we seek diverse interpretations across samples to prevent attribute functions from being class-exclusive. To achieve this, the paper proposed that we leverage entropy (defined for a vector as $\mathcal{E}(v) = - \sum_i p_i \log(p_i)$), which quantifies uncertainty in real vectors. Conciseness is fostered by minimizing the entropy of the interpreter's output, $\Psi(f_I(x))$, while diversity is encouraged by maximizing the entropy of the average $\Psi(f_I(x))$ over a mini-batch. This approach promotes sparse and varied coding of $f_I(x)$, enhancing interpretability. However, as entropy-based losses lack attribute activation constraints, leading to suboptimal optimization, we also minimize the $l_1$ norm of $\Psi(f_I(x))$ with hyperparameter $\eta$. Although $l_1$-regularization commonly encourages sparsity, the experiments done show that entropy-based methods are more effective.
+*Conciseness and Diversity of Interpretations:* We aim for concise local interpretations, containing only essential attributes per sample, promoting clearer understanding and capturing high-level concepts. Simultaneously, we seek diverse interpretations across samples to prevent attribute functions from being class-exclusive. To achieve this, the paper proposes that we leverage entropy (defined for a vector as $\mathcal{E}(v) = - \sum_i p_i \log(p_i)$), which quantifies uncertainty in real vectors. Conciseness is fostered by minimizing the entropy of the interpreter's output, $\Phi(x) = \Psi(f_I(x))$, while diversity is encouraged by maximizing the entropy of the average $\Psi(f_I(x))$ over a mini-batch. This approach promotes sparse and varied coding of $f_I(x)$, enhancing interpretability. However, as entropy-based losses lack attribute activation constraints, leading to suboptimal optimization, we also minimize the $l_1$ norm of $\Psi(f_I(x))$ with hyperparameter $\eta$. Although $l_1$-regularization commonly encourages sparsity, the experiments done show that entropy-based methods are more effective.
 $$
 L_{cd}(f, g, S) = -\mathcal{E}(\frac{1}{\lvert S \lvert} \sum_{x \in S} \Psi(f_I(x))) + \sum_{x \in S} \mathcal{E}(\Psi(f_I(x))) + \sum_{x \in S} \eta \lVert \Psi(f_I(x)) \lVert_1
 $$
 
 <!-- *Fidelity to input:* To encourage encoding high-level patterns related to input in $\Phi(x)$, we use a decoder network $d : R^J \rightarrow X$ that takes as input the dictionary of attributes $\Psi(f_I(x))$ and reconstructs $x$. -->
 
-*Fidelity to input:* In order to promote the representation of intricate patterns associated with the input within $\Phi(x)$, a decoder network $d : \mathbb{R}^J \rightarrow X$ is employed. This network is designed to take the attribute dictionary $\Psi(f_I(x))$ as input and reconstruct the original input $x$.
+*Fidelity to input:* In order to promote the representation of intricate patterns associated with the input within $\Phi(x)$, a decoder network $d : \mathbb{R}^J \rightarrow X$ is employed. This network is designed to take the attribute dictionary $\Phi(x)=\Psi(f_I(x))$ as input and reconstruct the original input $x$.
 $$
 L_{if}(f, g, d, S) = \sum_{x \in S} (d(\Psi(f_I(x))) - x)^2
 $$
@@ -215,24 +215,26 @@ In pursuit of a comprehensive understanding of the model and its operational dyn
 
 ### 5.1 Global interpretation {#section-5.1}
 
-In the article, the authors explore global interpretation using a figure similar to the one provided below which was reproduced from the notebook, and which illustrates the generated global relevances $r_{j,c}$ for all class-attribute pairs in both the QuickDraw and CIFAR datasets. 
+In the article, the authors explore global interpretation using a figure similar to the one provided below which was reproduced from the notebook, and which illustrates the generated global relevances $r_{j,c}$ for all class-attribute pairs in the QuickDraw dataset. 
 
 <!-- ![Global class-attribute relevances](/images/FLINT/Global_class_attribute_QuickDRAW.png) -->
 <div style="text-align:center;">
     <img src="/images/FLINT/Global_class_attribute_QuickDRAW.png" alt="Image" width="300" height="200">
 </div>
 
-Additionally, by running the model on the CIFAR10 and QuickDRAW dataset we got visual outputs representative of class-attribute pair analyses for both datasets. These outputs served as pivotal tools in elucidating interrelations and facilitating comparative assessments between attributes and classes. In this report, we present two figures derived from the resultant class-attribute pair analyses.
+Additionally, by running the model on the CIFAR10 and QuickDRAW dataset we got visual outputs representative of class-attribute pair analyses for both datasets. These outputs served as pivotal tools in elucidating interrelations and facilitating comparative assessments between attributes and classes. We present below two figures derived from the resultant class-attribute pair analyses for each of the 2 datasets for sample images different from those shown in the article.
 
 
 ![Class-attribute pair analysis on dataset CIFAR10](/images/FLINT/Class_attribute_pair_CIFAR10.png)
+*Caption: Class-attribute pair analysis on dataset CIFAR10*
 
 ![Class-attribute pair analysis on dataset QuickDraw](/images/FLINT/Class_attribute_pair_QuickDraw.png)
+*Caption: Class-attribute pair analysis on dataset QuickDraw*
 
-We focus on class-attribute pairs with high relevance, showcasing examples in the provided figure below . For each pair, we examine Maximum Activating Samples (MAS) alongside their corresponding Activation Maximization with Partial Initialization (AM+PI) outputs.
+We focus on class-attribute pairs with high relevance, showcasing examples in the provided figure above . For each pair, we examine Maximum Activating Samples (MAS) alongside their corresponding Activation Maximization with Partial Initialization (AM+PI) outputs.
 
 
-MAS analysis alone provides valuable insights into the encoded concept. For instance, on QuickDRAW dataset, attribute $\phi_{16}$  relevant for class 'Banana' activate the curve shape of the banana. However, AM+PI outputs offer deeper insights by elucidating which parts of the input activate an attribute function more clearly.AM+PI outputs are particularly important for attributes relevant to multiple classes.For example , on CIFAR10 dataset , attribute $\phi_{12}$ activates for 'Deer' class , but the specific focus of the attribute remains ambiguous. The outputs of the AM+PI method indicate that attribute $\phi_{12}$ predominantly highlights the area encompassing the legs and the deer horn, characterized as the most prominently enhanced regions.
+MAS analysis alone provides valuable insights into the encoded concept. For instance, on QuickDRAW dataset, attribute $\phi_{16}$  relevant for class 'Banana' activate the curve shape of the banana. However, AM+PI outputs offer deeper insights by elucidating which parts of the input activate an attribute function more clearly. AM+PI outputs are particularly important for attributes relevant to multiple classes. For example , on CIFAR10 dataset , attribute $\phi_{12}$ activates for 'Deer' class , but the specific focus of the attribute remains ambiguous. The outputs of the AM+PI method indicate that attribute $\phi_{12}$ predominantly highlights the area encompassing the legs and the deer horn, characterized as the most prominently enhanced regions.
 
 
 ### 5.2 Local interpretation {#section-5.2}
