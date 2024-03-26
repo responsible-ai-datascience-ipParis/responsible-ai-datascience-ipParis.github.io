@@ -246,25 +246,6 @@ These results suggest that PE is a memory-efficient alternative to DE for tasks 
 
 
 <div style="text-align:center;">
-<h1>Discussion</h1>
-</div>
-
-The authors discusse the benefits of PE and explores some open questions about its properties.
-
-* **Reduced Architecture and Cost:** PE offers similar uncertainty quantification to Deep Ensembles (DE) but with a smaller and more cost-effective architecture.
-
-* **Sparsity and Approximation Error:** Appendix C explores how group convolutions in PE approximate DE using masks. A formula is provided to estimate the approximation error based on the mask density. This allows for theoretical control over the error by adjusting the number of subnetworks, groups, and dilation factor.
-
-* **Sources of Stochasticity:** Appendix F examines the diversity within PE, which is crucial for ensembles. It identifies three sources: random parameter initialization, batch shuffling, and non-deterministic backpropagation. Interestingly, the text suggests that even just non-deterministic backpropagation might be enough to generate sufficient diversity.
-
-* **Ablation Study:** Appendix D analyzes the impact of key parameters (number of subnetworks, groups, dilation factor) on PE performance. While no clear trends emerge, a higher number of subnetworks seems to improve OOD detection slightly. 
-
-* **Training Speed:** PE can have fewer parameters than a single model, potentially leading to faster training. Appendix H studies training and inference speed. While using PE with specific settings doesn't significantly slow down the process compared to a single model, there's room for improvement in group convolution optimization.
-
-* **Out-of-Distribution (OOD) Criteria:** The text acknowledges  the use of maximum softmax probability for OOD detection but explores other options like Mutual Information. Appendix E shows that the best criterion can vary depending on the dataset (e.g., maximum logit for CIFAR-100, Mutual Information for ImageNet). 
-
-
-<div style="text-align:center;">
 <h1>Ethics</h1>
 </div>
 
