@@ -48,17 +48,20 @@ The concept of neuronal equilibrium aims to detect when a neuron reaches a state
 To assess this we can evaluate  cosine similarity between all the outputs of the $i$-th neuron at time $t$ and at time $t-1$ for the whole validation set $\Xi_{val}$ as 
 
 \begin{equation}
-    \phi_{i}^t = \sum_{\xi\in \Xi_{val}} \sum_{n=1}^{N_i} \hat{y}_{i,n,\xi}^{t} \cdot \hat{y}_{i,n,\xi}^{t-1}.
+    (\phi_{i}^t = \sum_{\xi\in \Xi_{val}} \sum_{n=1}^{N_i} \hat{y}_{i,n,\xi}^{t} \cdot \hat{y}_{i,n,\xi}^{t-1})
 \end{equation}
+
+![creusilet/winter](http://localhost:1313/images_Winter_Creusillet/neq_formula.png)
 
 The neuron $i$-th reaches the equilibrium when $(\phi_{i})_t$ stops evolving. In this sense to know when the neuron has reached the equilibrium  we need to detect when :
 
+$$
 \begin{equation}
     \lim_{t\rightarrow \infty} \phi_{i}^t = k,
 \end{equation}
+$$
 
-
-Since it is not trivial to assess this statment we prefer to work with variations of $\phi_{i}_t$ that can be defined as : 
+Since it is not trivial to assess this statment we prefer to work with variations of $(\phi_{i})_t$ that can be defined as : 
 \begin{equation}
     v_{\Delta \phi_i}^t = \Delta \phi_i^t - \mu_{eq} v_{\Delta \phi_i}^{t-1},
 \end{equation}
@@ -77,14 +80,18 @@ With $\mu_{eq}$ the momentum coefficient.
 
 Rewrited :
 
+$$
 \begin{equation}
     v_{\Delta \phi_i}^t = \left\{
     \begin{array}{ll}
-        \phi_i^{t} + \sum\limits_{m=1}^t (-1)^m \left[(\mu_{eq})^{m-1}+(\mu_{eq})^m\right] \phi_i^{t-m} & \mu_{eq} \neq 0\\
-        \phi_i^{t} - \phi_i^{t-1} & \mu_{eq} = 0,
+        \phi_i^{t} + \sum_{m=1}^t (-1)^m \left[(\mu_{eq})^{m-1}+(\mu_{eq})^m\right] \phi_i^{t-m} & \text{if } \mu_{eq} \neq 0 \\
+        \phi_i^{t} - \phi_i^{t-1} & \text{if } \mu_{eq} = 0
     \end{array}
-    \right .
+    \right.
 \end{equation}
+$$
+
+
 
 We need to have $$\mu_{eq} \in [0; 0.5]$$ to prevent the velocity from exploding.
 
@@ -153,40 +160,19 @@ the authors found that the size of the validation set does not significantly imp
 
 When examining the impact of the parameter ε, which is used to determine when a neuron is at equilibrium and hence does not need to be updated, the authors observe a drop in model performance at very high values of ε. They suggest a value of 0.001 as a good compromise for classification tasks, striking a balance between model performance and computational efficiency.
 
-
-<style
-TYPE="text/css">
-
-code.has-jax {font:
-inherit;
-font-size:
-100%;
-background:
-inherit;
-border:
-inherit;}
-
-</style>
-
-
-
-
-
-<style TYPE="text/css">
-code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
-</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [['$','$'], ['\\(','\\)']],
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
-    }
-});
-MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i = 0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';
-    }
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  "HTML-CSS": {
+    availableFonts: ["TeX"],
+    linebreaks: { automatic: true }
+  }
 });
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
