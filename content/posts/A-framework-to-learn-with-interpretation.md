@@ -239,11 +239,11 @@ MAS analysis alone provides valuable insights into the encoded concept. For inst
 
 ### 5.2 Local interpretation {#section-5.2}
 
-Similarly to the article, we explored local interpretation through the figure provided below which was generated in the notebook, which showcases visualizations for 2 test samples of the QuickDRAW dataset. Both predictor $f$ and interpreter $g$ accurately predict the true class in all cases. For each case, they highlighted the top 3 relevant attributes to the prediction along with their relevances and corresponding AM+PI outputs.
+Similarly to the article, we explored local interpretation through the figure provided below which was generated in the notebook, which showcases visualizations for 4 test samples of the QuickDRAW dataset. Both predictor $f$ and interpreter $g$ accurately predict the true class in all cases, for the first 2 it's "Cat" and the last 2 it's "Cat". For each case, they highlighted the top 3 relevant attributes to the prediction along with their relevances and corresponding AM+PI outputs.
 
 ![Local interpretations for test samples](/images/FLINT/Local_interpretations.jpg) 
 
-Analysis of the AM+PI outputs reveals that attribute functions generally activate for patterns corresponding to the same concept inferred during global analysis. This consistency is evident for attribute functions present in the previous figures. 
+Analysis of the AM+PI outputs reveals that attribute functions generally activate for patterns corresponding to the same concept inferred during global analysis. This consistency is evident for attribute functions present in the previous figures. Additionaly, by looking at the figure showing the relevance of class-attribute pairs for the QuickDRAW dataset we observe that the 3 most important features for each class in the local interpretations are also those having the highest relevence for these classes.
 
 ## 6 Subjective evaluation {#section-6}
 
