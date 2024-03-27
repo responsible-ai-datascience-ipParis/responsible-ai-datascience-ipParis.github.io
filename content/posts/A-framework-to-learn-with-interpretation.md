@@ -64,16 +64,12 @@ src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-
     - [Interpretation in FLINT](#section-2.2)
     - [Learning by imposing interpretability properties](#section-2.3)
 - [Understanding encoded concepts in FLINT](#section-3)
-- [Comparison of FLINT to other state-of-the art models](#section-4)
-    - [Predictive performance of FLINT](#section-4.1)
-    - [Fidelity of Interpreter](#section-4.2)
-    - [Conciseness of interpretations](#section-4.3)
-- [Reproducing the experiments](#section-5)
-    - [Global interpretation](#section-5.1)
-    - [Local interpretation](#section-5.2)
-- [Subjective evaluation](#section-6)
-- [Specialization of FLINT to post-hoc interpretability](#section-7)
-- [Final Thoughts](#section-8)
+- [Reproducing the experiments](#section-4)
+    - [Global interpretation](#section-4.1)
+    - [Local interpretation](#section-4.2)
+- [Subjective evaluation](#section-5)
+- [Specialization of FLINT to post-hoc interpretability](#section-6)
+- [Final Thoughts](#section-7)
 
 # 1 Introduction {#section-1}
 
@@ -178,42 +174,11 @@ For global interpretation visualization, the authors propose starting by selecti
 
 For local analysis, given any test sample $x_{0}$ , its local interpretation $L(x_{0},f,g)$ can be determined, representing the relevant attribute functions . To visualize a relevant attribute ​$\phi_j$, the authors suggest repeating the AM+PI procedure with initialization using a low-intensity version of $x_{0}$ to enhance the concept detected by ​$\phi_j$ in $x_{0}$ .
 
-# 4 Comparison of FLINT to other state-of-the art models {#section-4}
-
-The paper delves into the selection of datasets and neural network architectures for their experimental setup, considering four datasets: MNIST, FashionMNIST, CIFAR-10, and a subset of the QuickDraw dataset. For the predictor network f, two architectures are experimented with: a LeNet-based network for MNIST and FashionMNIST, and a ResNet18-based network for QuickDraw and CIFAR. Specific layers are chosen from the last few convolutional layers to effectively capture higher-level features. The number of attributes J is tailored for each dataset: J=25 for MNIST and FashionMNIST, J=24 for the QuickDraw subset, and J=36 for CIFAR. In the paper, the authors thoroughly evaluate and compare their model with other state-of-the-art systems, focusing on accuracy and interpretability. They employ evaluation metrics designed to assess the effectiveness of previously proposed losses for interpretability. Their primary method for comparison, when applicable, is SENN, chosen for its inherent interpretability aligning with FLINT. Additionally, they include PrototypeDNN as a baseline for comparing predictive performance, and LIME and VIBI for evaluating the fidelity of interpretations. 
-
-### 4.1 Predictive performance of FLINT {#section-4.1}
-
-In the article, the authors aim to validate two key aspects related to the predictive performance of FLINT. Firstly, they investigate whether jointly training the predictor $f$ with the interpreter $g$ and backpropagating the loss term $L_{\text{int}}$ adversely affects performance. Secondly, we seek to determine if the achieved performance is comparable to other similarly interpretable models designed from the outset for interpretability.
-
-To address the first goal, they compare the accuracy of the predictor trained with FLINT (denoted as FLINT-$f$) with that of the same predictor architecture trained solely with the $L_{\text{pred}}$ loss (denoted as BASE-$f$). For the second goal, they compare the accuracy of FLINT-$f$ with that of SENN and PrototypeDNN , both designed for interpretability from the outset and not relying on input attribution for interpretations.
-
-The accuracies obtained from these comparisons are presented in the provided table below :
-
-![Results for accuracy (in %) and fidelity to FLINT-f on different datasets](/images/FLINT/Accuracy_results.png)
-
-Their findings indicate that training $f$ within FLINT does not lead to any significant loss in accuracy across any dataset. Furthermore, FLINT demonstrates competitive performance with other interpretable models designed from the outset for interpretability.
-
-
-### 4.2 Fidelity of Interpreter {#section-4.2}
-
-The paper assess the fidelity of the interpreter, which is defined as the proportion of samples where the predictions of a model and its interpreter agree, indicating the same class label . This metric is commonly used to evaluate how well an interpreter approximates a model. To ensure that the interpreter trained with FLINT (referred to as FLINT-$g$) achieves a satisfactory level of agreement with FLINT-$f$, we conduct a benchmark against a state-of-the-art black-box explainer, VIBI , and the traditional method LIME . The results are presented in the above provided table .
-
-FLINT-$g$ consistently demonstrates higher fidelity compared to the benchmarked methods. Despite the inherent difference in methodology, where FLINT-$g$ accesses intermediate layers while the other systems are black-box explainers, the results clearly indicate that FLINT-$g$ exhibits high fidelity to FLINT-$f$. These findings reinforce the effectiveness of FLINT-$g$ in faithfully representing the predictions of FLINT-$f$.
-
-### 4.3 Conciseness of interpretations {#section-4.3}
-
-In the article, the conciseness of interpretations is evaluated by measuring the average number of important attributes present in generated interpretations. This metric assesses the need for analyzing attributes and is computed for a given sample $x$ by counting the number of attributes ​$\phi_j$ with $r_{j,x}$ greater than a threshold $\frac{1}{\tau}$, where $\tau > 1$. By varying the threshold $\frac{1}{\tau}$, the mean conciseness $\text{CNS}_g$ of $g$ over the test data is computed, where lower conciseness indicates a need to analyze fewer attributes on average.
-
-To compare the conciseness of FLINT with SENN across all four datasets, the authors generate conciseness curves. As shown in the provided figure below , FLINT consistently produces interpretations that are more concise compared to SENN. Notably, SENN tends to consider a majority of concepts as relevant even for lower thresholds (higher $\tau$), indicating less concise interpretations.
-
-![Conciseness comparison of FLINT and SENN](/images/FLINT/Conciseness_curves.png)
-
-## 5 Reproducing the experiments {#section-5}
+## 4 Reproducing the experiments {#section-4}
 
 In pursuit of a comprehensive understanding of the model and its operational dynamics across prevalent datasets, we replicated the study by cloning the project from this GitHub repository ([repo link](https://github.com/jayneelparekh/FLINT)) referenced in the article. Subsequently, we conducted model executions on GPU resources provided by Telecom Paris. Our experimentation involved the CIFAR10 and QuickDRAW datasets where we used a ResNet18-based network for both datasets and with J=24 attributes for the QuickDRAW dataset and J=36 attributes of the CIFAR10 dataset. The instructions to execute the model on the GitHub repository are clear, and it runs flawlessly. Additionally, there is a well-detailed Python notebook named "FLINT demo.ipynb" containing code for visualizations of the data, such as attribute relevance scores and local interpretations of data samples, all of which we will explore in this section.
 
-### 5.1 Global interpretation {#section-5.1}
+### 4.1 Global interpretation {#section-4.1}
 
 In the article, the authors explore global interpretation using a figure similar to the one provided below which was reproduced from the notebook, and which illustrates the generated global relevances $r_{j,c}$ for all class-attribute pairs in the QuickDraw dataset. 
 
@@ -237,7 +202,7 @@ We focus on class-attribute pairs with high relevance, showcasing examples in th
 MAS analysis alone provides valuable insights into the encoded concept. For instance, on QuickDRAW dataset, attribute $\phi_{16}$  relevant for class 'Banana' activate the curve shape of the banana. However, AM+PI outputs offer deeper insights by elucidating which parts of the input activate an attribute function more clearly. AM+PI outputs are particularly important for attributes relevant to multiple classes. For example , on CIFAR10 dataset , attribute $\phi_{12}$ activates for 'Deer' class , but the specific focus of the attribute remains ambiguous. The outputs of the AM+PI method indicate that attribute $\phi_{12}$ predominantly highlights the area encompassing the legs and the deer horn, characterized as the most prominently enhanced regions.
 
 
-### 5.2 Local interpretation {#section-5.2}
+### 4.2 Local interpretation {#section-4.2}
 
 Similarly to the article, we explored local interpretation through the figure provided below which was generated in the notebook, which showcases visualizations for 4 test samples of the QuickDRAW dataset. Both predictor $f$ and interpreter $g$ accurately predict the true class in all cases, for the first 2 it's "Cat" and the last 2 it's "Cat". For each case, they highlighted the top 3 relevant attributes to the prediction along with their relevances and corresponding AM+PI outputs.
 
@@ -245,18 +210,18 @@ Similarly to the article, we explored local interpretation through the figure pr
 
 Analysis of the AM+PI outputs reveals that attribute functions generally activate for patterns corresponding to the same concept inferred during global analysis. This consistency is evident for attribute functions present in the previous figures. Additionaly, by looking at the figure showing the relevance of class-attribute pairs for the QuickDRAW dataset we observe that the 3 most important features for each class in the local interpretations are also those having the highest relevence for these classes.
 
-## 6 Subjective evaluation {#section-6}
+## 5 Subjective evaluation {#section-5}
 
 In the article,  a subjective evaluation survey with 20 respondents using the QuickDraw dataset to assess FLINT's interpretability is conducted. The authors selected 10 attributes covering 17 class-attribute pairs and presented visualizations (3 MAS and AM+PI outputs) along with textual descriptions for each attribute to the respondents. They were asked to indicate their level of agreement with the association between the descriptions and the patterns in the visualizations using predefined choices.
 
 Descriptions were manually generated, including 40% incorrect ones to ensure informed responses. Results showed that for correct descriptions, 77.5% of respondents agreed, 10.0% were unsure, and 12.5% disagreed. For incorrect descriptions, 83.7% disagreed, 7.5% were unsure, and 8.8% agreed. These results affirm that the concepts encoded in FLINT's learned attributes are understandable to humans.
 
-# 7 Specialization of FLINT to post-hoc interpretability {#section-7}
+# 6 Specialization of FLINT to post-hoc interpretability {#section-6}
 
 FLINT's versatility extends beyond its primary goal of interpretability by design, allowing for specialization in providing post-hoc interpretations when a classifier $\hat{f}$ is already available. This post-hoc interpretation learning falls under the broader scope of Supervised Layer-wise Interpretation (SLI). It entails constructing an interpreter of $\hat{f}$ by minimizing the loss function $L_{\text{int}}(\hat{f}, g, S)$ with respect to $g$, where $S$ denotes the training set.
 
 Experimental validation of this post-hoc capability is performed by interpreting fixed models trained solely for accuracy, for example the discussed BASE-$f$ models from Section 4.1. Even without fine-tuning the internal layers of $\hat{f}$, the system demonstrates the ability to generate high-fidelity and meaningful interpretations. 
 
-# 8 Final Thoughts {#section-8}
+# 7 Final Thoughts {#section-7}
 
 In conclusion, FLINT introduces a pioneering framework for training a predictor network alongside its interpreter network, incorporating specialized losses to offer both local and global interpretations based on learned attributes and concepts. However, this approach raises unresolved queries regarding the faithfulness of interpretations to the predictor. The definition of faithfulness in interpreting decision processes has yet to achieve consensus, particularly concerning post-hoc interpretability and discrepancies between the predictor and interpreter models. While generating interpretations from hidden layers of the predictor network enhances faithfulness to some extent, complete fidelity cannot be ensured due to disparities in the final portions of the predictor and interpreter. Nevertheless, if prioritizing faithfulness by design is deemed paramount, FLINT-g can serve as the ultimate decision-making network, consolidating both roles into a single entity.
