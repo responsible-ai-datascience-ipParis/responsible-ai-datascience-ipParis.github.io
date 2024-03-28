@@ -1,5 +1,5 @@
 +++
-title = 'Creusillet_Winter'
+title = 'To update or not to update? Neurons at equilibrium in deep models'
 date = 2024-02-07T15:55:14+01:00
 draft = false
 +++
@@ -118,7 +118,6 @@ Comparing with regular training, we can see two more hyper-parameters:
 ### SGD vs Adam
 
 ![adam/sgd](http://localhost:1313/images_Winter_Creusillet/sgd_vs_adam.png)
-
 
 
 The authors conducted an experiment comparing two training methods for a ResNet-32 neural network on the CIFAR-10 dataset. The methods compared are SGD (Stochastic Gradient Descent) with momentum and Adam, which are both optimization algorithms used to update network weights iteratively.
