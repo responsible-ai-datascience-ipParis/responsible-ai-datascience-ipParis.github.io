@@ -37,20 +37,15 @@ Machine learning models are becoming increasingly capable of making advanced pre
 
 To tackle this challenge, the field of Explainable Artificial Intelligence (XAI) has emerged, offering various methods to enhance **model transparency**. **Post-Hoc explainability** methods exist, which intervene after the model has generated its results, enabling users to comprehend the reasoning behind specific decisions or predictions. These methods supplement the predictions of black box models with diverse explanations of how they arrive at their predictions.
 
-![XAI explainability](/images/explainability/blackboxpng.webp)
-
-While much of the work on explainability focuses on supervised models, where labels are available to interpret predictions, unsupervised learning models are trained without labels. This post will focus on these unsupervised, label-free cases. It is based on recent research conducted by Crabbé and van der Schaar in 2022, which explores the explainability of unsupervised models. They have developed two new methods to explain these complex models without labels. The first method highlights important features in the data, while the second identifies training examples that have the greatest impact on the model's construction of representations.
+![XAI explainability](/images/explainability/Black-Box.png)
 
 
 ## Introduction {#section-1}
 
-The entire post is focused on the quest for explainability of unsupervised models. In these models, no labels are assigned to our data, rendering the understanding of the model even more complicated due to the absence of explicit guidance on what the model is learning. In the supervised setting, users know the meaning of the black-box output they are trying to interpret. However, this clarity is not always available in machine learning. Therefore, elucidating concepts such as feature importance and example importance provides insights into why the model makes certain decisions or identifies specific patterns in the data.
+The entire post focuses on the quest for explainability of unsupervised models. In these models, no labels are assigned to the data, making understanding the model even more complicated due to the absence of explicit guidance on what the model is learning. In the supervised setting, users know the meaning of the black-box output they are trying to interpret. However, this clarity is not always available in machine learning. Therefore, elucidating concepts such as feature importance and example importance provides insights into why the model makes certain decisions or identifies specific patterns in the data.
 
-Example importance refers to the significance or weight assigned by a model to individual examples (data points) within a dataset. In some models like decision trees or gradient boosting, each example may be assigned a weight based on its relevance or contribution to the overall learning process. These weights can influence how the model learns from the data and makes predictions.
+A recent research conducted by Crabbé and van der Schaar in 2022 explores the explainability of unsupervised models. They have developed two new methods to explain these complex models without labels. The first method highlights important features in the data, while the second identifies training examples that have the biggest impact on the model's construction of representations. In this post, we will attempt to explain these two methods.
 
-Feature importance helps in understanding which features have the most influence on the model's predictions. For example, in a diabetes prediction scenario, it would reveal whether factors like the patient's weight, age, or hair color exert the most influence on the prediction.
-
-When we identify the importance of examples and features, we gain insight into why the model made certain decisions.
 
 ## Feature Importance {#section-2}
 
@@ -58,8 +53,7 @@ The feature importance method aims to explain the predictions of a black-box mod
 
 To understand how the label-free feature importance method works, let's start by looking at the labeled case:
 
-**<em>Labelled Feature Importance</em>**
-
+*Labelled Feature Importance*
 
 The method proposes to combine the importance scores of different components of the model's output by weighting them with the associated class probabilities. For each component of the model's output, we multiply the importance score of the corresponding feature by the probability of that component.
 
@@ -75,60 +69,102 @@ By weighting each importance score by the probability of the corresponding class
 We can see that in the labeled case, the method is quite clear. Now, let's move on to the label-free setting.
 
 
-**<em>Label-Free Feature Importance</em>**
+*Label-Free Feature Importance*
 
-In this context, we consider a latent space $H$ of dimension $d_H$ where a black-box model $f:X \rightarrow H$ is given. The goal is to assign an importance score to each feature of the input $x$, even if the dimensions of the latent space have no clear relations with the labels. 
+In the context of the unlabelled setting, we consider a latent space $H$ of dimension $d_H$ where a black-box model $f : X \rightarrow H$ is given. The goal is to assign an importance score to each feature of the input $x$, even if the dimensions of the latent space have no clear relations with the labels.
 
-We use a similar weighting formula for importance scores, where the components $f_j(x)$ do not correspond to probabilities but to neuron activations. The weighted sum is considered as an inner product in the latent space.
+A similar weighting formula for importance scores is used, where the components $f_j(x)$ do not correspond to probabilities but to neuron activations. The weighted sum is considered as a inner product in the latent space.
 
-The method is developed using linear feature importance functions, and it retains the completeness property, meaning that the sum of importance scores equals the black-box prediction up to a baseline constant. 
+The method is developed using linear feature importance functions, and it retains the completeness property, meaning that the sum of importance scores equals the black-box prediction up to a baseline constant.
 
-This approach provides a systematic way to compute feature importance in both labeled and label-free contexts, by using existing feature importance methods and adapting them to the specific context.
+Here is how the method operates:
 
+1. **Presentation of the Latent Space:** We consider a latent space $H$ of dimension $d_H$ where each input $x$ is mapped by the black-box model $f$ to obtain a representation $h = f(x)$.
 
+2. **Assignment of Importance Scores:** The objective is to assign an importance score $b_i(f; x)$ to each feature $x_i$ of $x$. Unlike in the previous setting, where we had probabilities associated with each component, here, we do not have a clear method to choose a particular component $f_j$ in the latent space. Therefore, we use a similar approach to the one described previously.
 
+3. **Calculation of Importance Scores:** We use a weighting method where the importance score is given by $b_i(f; x) = a_i(\sum_{j=1}^{d_H} f_j(x) \cdot f_j(x))$. The individual components $f_j(x)$ do not correspond to probabilities in this case; they generally correspond to neuron activation functions. Inactive neurons will have a corresponding component that vanishes ($f_j(x) = 0$), meaning they will not contribute to the weighted sum, while more activated neurons will contribute more.
 
+4. **Completeness:** An important property shared by many feature importance methods is completeness. This means that the sum of importance scores equals the black-box prediction up to a baseline constant. This establishes a connection between importance scores and black-box predictions.
 
-
-
-
-
-
-
-
-## Exemple Importance {#section-3}
+This method proposes an extension of linear feature importance methods to the unlabelled setting by defining an auxiliary scalar function $g_x$ that encapsulates the black-box function $f$. This extension is achieved by using a function $g_x$ that computes the inner product between the representation $f(x)$ and the representation $f(\tilde{x})$ for all $\tilde{x}$ in the input space.
 
 
-In this section, we discuss how we adapt methods for assessing the importance of individual training examples to a label-free scenario. These methods aim to quantify the impact of removing a specific example from the training dataset on the model's performance.
 
-**Loss-Based Example Importance:**
+## Example Importance {#section-3}
 
-In supervised settings, loss-based methods evaluate the effect of removing an example by observing how it influences the model's loss on a test example. Essentially, if removing an example leads to an increase in loss, it's considered important, and vice versa. Mathematically, this can be expressed as:
+In this section, we explain the approach to extending example importance methods to the label-free setting. Given that example importance methods vary significantly, they are separated into two families: loss-based and representation-based methods. The extension to the label-free setting differs for these two families, so we discuss them separately in distinct subsections.
 
-$$ c_n(f_r; x) = \frac{1}{N} \sum_{n=1}^{N} r^T \left( L(z; \theta') - L(z_n; \theta') \right) $$
 
-Where:
-- $ c_n(f_r; x) $ is the importance score for example $ x_n $.
-- $ f_r $ represents the relevant parameters of the model.
-- $ L(z; \theta') $ is the loss function evaluated on the test example $ z $.
-- $ L(z_n; \theta') $ is the loss function evaluated on the test example after removing $ x_n $.
-- $ r $ is the gradient of the loss function with respect to the model's parameters.
-- $ N $ is the total number of examples in the training set.
 
-**Representation-Based Example Importance:**
+*Loss-Based Example Importance*
 
-These methods analyze the latent representations of training examples to assess their importance. In supervised settings, this involves comparing a test example's representation with those of the training set. The affinity between them is quantified by reconstructing the test example's representation using a weighted combination of training representations. The weights are typically determined based on the nearest neighbors in the latent space or learned through optimization.
+In supervised settings, loss-based example importance methods assign a score to each training example $x_n$ by simulating the effect of their removal on the loss for a test example. Mathematically, let $z$ represent the data of an example required to evaluate the loss, typically corresponding to a pair $(x, y)$ in supervised settings. The loss function $L(z; \theta)$ is optimized over a parameter space $\Theta$ to train the model. When an example $z_n$ is removed from the training set $D_{\text{train}}$, it results in a parameter shift $\theta_n - \theta'_{-n}$, impacting the loss $L(z; \theta')$ on a test example $z$. This loss shift provides a meaningful measure of example importance. To estimate the loss shift without retraining the model, methods like the influence function and checkpoint evaluation are employed. For example, Koh \& Liang (2017) propose using the influence function:
 
-In the label-free setting, we can directly apply representation-based methods without modification, as they only rely on the latent representations learned by the model.
+\begin{equation}
+\theta_n L(z; \theta') \approx \frac{1}{N} \sum_{m=1}^{N-1} \frac{\partial L(z; \theta')}{\partial \theta} H^{-1} \frac{\partial L(z_n; \theta')}{\partial \theta}
+\end{equation}
 
-Overall, these methods provide insights into which training examples have the most influence on the model's behavior, facilitating model interpretation and understanding.
+
+*Label-Free Setting*
+
+In the label-free setting, the model is trained with a label-free loss $L: X \rightarrow \mathbb{R}$. However, directly replacing the labeled examples with input examples ($z = x$) in the expressions for loss-based example importance is insufficient. To address this, we decompose the parameter space $\Theta$ into relevant and irrelevant components. The model to interpret, denoted as $f_r$, is parametrized only by the relevant parameters $\theta_r$. We aim to isolate the part of the loss shift caused by variations in these relevant parameters. This motivates the definition of Label-Free Loss-Based Example Importance:
+
+\begin{equation}
+c_n(f_r; x) = \theta_n L(x; \theta')
+\end{equation}
+
+This definition extends any loss-based example importance method to the label-free setting, where the unsupervised loss $L$ is used to fit the model, and the gradients with respect to the parameters of the encoder are computed.
+
+*Representation-Based Example Importance*
+
+Representation-based example importance methods analyze the latent representations of examples to assign importance scores. In supervised settings, these methods quantify the affinity between a test example and the training set examples based on their latent representations. For instance, in a model $f_l \circ f_e: X \rightarrow Y$, where $f_e: X \rightarrow H$ maps inputs to latent representations and $f_l: H \rightarrow Y$ maps representations to labels, representation-based methods reconstruct the test example's latent representation using training representations. The reconstruction involves assigning weights to training representations, typically based on nearest neighbors or learned weights. For example, using a kernel function $\mathcal{K}$:
+
+\begin{equation}
+w_n(x) = \frac{1}{|KNN(x)|} \sum_{n' \in KNN(x)} \mathcal{K}(\text{fe}(x_n), \text{fe}(x))
+\end{equation}
+
+In the label-free setting, representation-based methods remain valid by replacing supervised representation maps with unsupervised ones. Hence, no additional modifications are needed.
 
 
 ## Experiments: Evaluation and Results {#section-5}
 
-### Overview {#section-111}
+### Consistency Checks {#section-111}
 
-In this section, we will retest and show you the results of the experiments presented in the report to evaluate the label-free extensions of various explanation methods for unsupervised models. The experiment is divided into two main parts: consistency checks and comparisons of representations learned from different pretext tasks. Nos test vont se concentrer sur la dataset MNIST.
+Now, we are verifying the consistency of results obtained from different methods of assessing feature and example importance using the MNIST dataset.
+
+In MNIST, important features are the pixels of the images, and various methods can be employed to evaluate their importance. To assess feature importance, we can measure the impact of selectively removing the most important pixels on the latent representation constructed by the encoder, as described in the previous example. By comparing the results of different methods of importance assessment, such as perturbing the most important pixels according to various importance measures, we can check if the same pixels are identified as important and if their removal consistently affects the latent representation.
+
+
+
+*We rerun the tests provided in the [GitHub repository](https://github.com/JonathanCrabbe/Label-Free-XAI):*
+
+
+On the MNIST dataset, we perturb the most important pixels and observe how this perturbation affects the quality or relevance of the latent representation generated by the encoder.
+Here we can see the result of the experiment : 
+
+![XAI explainability](/images/explainability/mnist_consistency_features.png)
+
+The results obtained from the representation shift curves as a function of the percentage of perturbed pixels demonstrate the effectiveness of Feature Importance methods on the MNIST dataset.
+
+We observe that Feature Importance methods such as Gradient Shap and Integrated Gradients show a significant increase in representation shift when the most important pixels are perturbed. This indicates that these methods successfully identify the most relevant pixels for constructing the latent representation. However, after perturbing approximately 20% of the most important pixels, we notice a stabilization of the representation shift, suggesting that adding additional perturbations does not necessarily lead to a significant increase in impact on the latent representation.
+
+On the other hand, the Saliency method appears to be less effective, with an almost linear representation shift curve, suggesting that it fails to selectively identify the most important pixels for the latent representation.
+
+Overall, this confirms the effectiveness of Feature Importance methods, particularly Integrated Gradients.
+
+
+Similarly, to evaluate the importance of examples in MNIST, we select training examples that have a significant influence on predicting the latent representation of test examples. By comparing the results obtained with different methods of assessing example importance, we can verify if the same examples are identified as important and if their relevance is consistent with the model's predictions.
+
+![XAI explainability](/images/explainability/example.png)
+
+
+For all example importance methods, we observe a decrease in similarity rates, with a consistent trend across all curves.
+
+This observation highlights that the similarity rate is significantly higher among the most similar examples compared to the least similar examples, confirming the effectiveness of label-free importance scores cn(fe; x) in identifying training examples related to the test example we wish to explain.
+
+In summary, these results affirm the capability of label-free importance scores in effectively selecting relevant training examples and distinguishing between similar and dissimilar examples.
+
 
 
 
