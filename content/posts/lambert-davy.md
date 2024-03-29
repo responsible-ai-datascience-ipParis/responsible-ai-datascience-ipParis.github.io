@@ -102,10 +102,11 @@ The objective function is thus defined as follows :
 where $\lambda\ge 0$ is a hyperparameter balancing ranking performance
 and fairness.
 
-The paper focuses on a special case of fairness, the **intra-group pairwise AUC fairness**. This was to be more concise. In this example, the objective function becomes :
+The paper focuses on a special case of fairness, the **intra-group pairwise AUC fairness**. This was to be more concise. In this example, the objective function becomes:
+
 
 $$
-    L_\lambda(s) = AUC_{H_s,G_s} - \lambda  | AUC_{H^{(0)}_s, G^{(0)}_s} -  AUC_{H^{(1)}_s, G^{(1)}_s } |
+    L_\lambda(s) = AUC_{H_s,G_s} - \lambda  | AUC_{H_s^{(0)}, G_s^{(0)}} -  AUC_{H_s^{(1)}, G_s^{(1)} } |
 $$
 
 **<u> Issues of AUC-Based constraint:</u>**
