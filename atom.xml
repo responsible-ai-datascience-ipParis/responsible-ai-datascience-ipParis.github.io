@@ -828,7 +828,7 @@ class="full-width"
 &lt;h3 id="neuronal-equilibrium">Neuronal equilibrium&lt;/h3>
 &lt;p>The concept of &lt;strong>neuronal equilibrium&lt;/strong> aims to detect when a neuron reaches a state of equilibrium, indicating that it has learned a particular input-output mapping. The idea is to understand when the neuron has reach a configuration in which he does not require further updates.&lt;/p>
 &lt;p>To assess this we can evaluate cosine similarity between all the outputs of the $i$-th neuron at time $t$ and at time $t-1$ for the whole validation set $\Xi_{val}$ as follows:&lt;/p>
-&lt;img src="http://localhost:1313/images_Winter_Creusillet/neq_formula.png" width="300"/>
+&lt;img src="./images/images_Winter_Creusillet/neq_formula.png" width="300"/>
 &lt;p>The neuron $i$-th reaches the equilibrium when $(\phi_{i})_t$ stops evolving. In this sense to know when the neuron has reached the equilibrium we need to detect when :&lt;/p>
 &lt;p>$$\lim_{t\rightarrow \infty} \phi_{i}^t = k,$$&lt;/p>
 &lt;p>Since it is not trivial to assess this statment we prefer to work with variations of $(\phi_{i})_t$ that can be defined as :&lt;/p>
@@ -844,7 +844,7 @@ $$&lt;/p>
 &lt;p>With $\mu_{eq}$ the momentum coefficient.&lt;/p>
 &lt;p>Rewrited:&lt;/p>
 &lt;p>&lt;img
-src="http://localhost:1313/images_Winter_Creusillet/momentum_coef.png"
+src="./images/images_Winter_Creusillet/momentum_coef.png"
 alt="creusilet/winter"
 loading="lazy"
 decoding="async"
@@ -860,7 +860,7 @@ class="full-width"
 &lt;h3 id="training-scheme">Training scheme&lt;/h3>
 &lt;p>The training scheme can be presented according to this scheme:&lt;/p>
 &lt;p>&lt;img
-src="http://localhost:1313/images_Winter_Creusillet/prunedbackprop-scheme_full-1.png"
+src="./images/images_Winter_Creusillet/prunedbackprop-scheme_full-1.png"
 alt="creusilet/winter"
 loading="lazy"
 decoding="async"
@@ -882,7 +882,7 @@ class="full-width"
 &lt;h2 id="section-2">Experiments&lt;/h2>
 &lt;h3 id="sgd-vs-adam">SGD vs Adam&lt;/h3>
 &lt;p>&lt;img
-src="http://localhost:1313/images_Winter_Creusillet/sgd_vs_adam.png"
+src="./images/images_Winter_Creusillet/sgd_vs_adam.png"
 alt="adam/sgd"
 loading="lazy"
 decoding="async"
@@ -895,7 +895,7 @@ class="full-width"
 &lt;p>The experiment also highlights an interesting behavior at the first learning rate decay around epoch 100 for SGD. The number of updated neurons decreases and then increases, which is not observed with Adam. This difference illustrates the contrasting approaches of the two optimizers: SGD, by reducing the learning rate, encourages continued exploration, which temporarily stabilizes the network until it adjusts to the new learning rate and begins exploring again. Adam, with its adaptive learning rate for each parameter, does not exhibit this behavior because it consistently steers the network towards a stable state.&lt;/p>
 &lt;h3 id="distribution-of-phi--choice-of-µ_eq">Distribution of $\phi$ &amp;amp; choice of $µ_{eq}$&lt;/h3>
 &lt;p>&lt;img
-src="http://localhost:1313/images_Winter_Creusillet/mu-line-1.png"
+src="./images/images_Winter_Creusillet/mu-line-1.png"
 alt="creusilet/winter"
 loading="lazy"
 decoding="async"
@@ -918,14 +918,14 @@ class="full-width"
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>python3 train_classification.py --amp&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span> --arch&lt;span style="color:#f92672">=&lt;/span>resnet32-cifar --batch-size&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">100&lt;/span> --dataset&lt;span style="color:#f92672">=&lt;/span>cifar10 --device&lt;span style="color:#f92672">=&lt;/span>cuda --epochs&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">250&lt;/span> --eps&lt;span style="color:#f92672">=&lt;/span>0.001 --lr&lt;span style="color:#f92672">=&lt;/span>0.1 --momentum&lt;span style="color:#f92672">=&lt;/span>0.9 --optim&lt;span style="color:#f92672">=&lt;/span>sgd --val-size&lt;span style="color:#f92672">=&lt;/span>0.01 --velocity-mu&lt;span style="color:#f92672">=&lt;/span>0.5 --weight-decay&lt;span style="color:#f92672">=&lt;/span>0.0005
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The code runs flawlessly, although we were significantly constrained by the lack of access to a powerful GPU, limiting our experiment. All the important parameters like the learning rate or the number of epochs are easily modifiable, making experimenting really easy. To obtain results for both SGD and Adam, we simply needed to change the optim parameter to the desired optimizer. The authors employ an application named &lt;strong>Weights &amp;amp; Biases (wandb)&lt;/strong> to monitor the training process. This application is useful as it not only allows for the saving of training results but also provides a lot of valuable information.&lt;/p>
 &lt;p>&lt;img
-src="http://localhost:1313/images_Winter_Creusillet/frozen_sgd_vs_adam1.png"
+src="./images/images_Winter_Creusillet/frozen_sgd_vs_adam1.png"
 alt="creusilet/winter"
 loading="lazy"
 decoding="async"
 class="full-width"
 />
 &lt;img
-src="http://localhost:1313/images_Winter_Creusillet/accuracy_sgd_vs_adam1.png"
+src="./images/images_Winter_Creusillet/accuracy_sgd_vs_adam1.png"
 alt="creusilet/winter"
 loading="lazy"
 decoding="async"
