@@ -41,7 +41,7 @@ src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-
 <div style="text-align:center;">
 <h1>Introduction</h1>
 </div>
-The document "Packed-Ensembles for Efficient Uncertainty Estimation" introduces a novel framework for designing and training compact, structured ensembles of neural networks, termed Packed-Ensembles (PE). It addresses the limitations of Deep Ensembles (DE) in terms of computational efficiency and hardware constraints by leveraging grouped convolutions. This technique allows for parallelizing the ensemble into a single shared backbone, improving training and inference speeds within the memory limits of standard neural networks. The paper demonstrates through extensive experiments that PEs maintain the beneficial properties of DEs, such as diversity and robustness to distribution shift, while achieving comparable accuracy, calibration, and out-of-distribution detection capabilities. The work includes implementation details, experimental results on CIFAR-10/100 and ImageNet datasets, discussions on the implications of PE's design choices, and comparisons with existing approaches. It concludes with insights on the reproducibility of results and the potential ethical considerations of deploying such models in safety-critical systems.
+The document "Packed-Ensembles for Efficient Uncertainty Estimation" introduces a novel framework for designing and training compact, structured ensembles of neural networks, termed Packed-Ensembles (PE). It addresses the limitations of Deep Ensembles (DE) in terms of computational efficiency and hardware constraints by leveraging grouped convolutions. This technique allows for parallelizing the ensemble into a single shared backbone, improving training and inference speeds within the memory limits of standard neural networks. The paper demonstrates through extensive experiments that PEs maintain the beneficial properties of DEs, such as diversity and robustness to distribution shift, while achieving comparable accuracy, calibration, and out-of-distribution detection capabilities. The work includes implementation details, experimental results on CIFAR-10/100 and ImageNet datasets and comparisons with existing approaches. It concludes with insights on the reproducibility of results and the potential ethical considerations of deploying such models in safety-critical systems.
 
 <div style="text-align:center;">
 <h1>Presentation of the model</h1>
@@ -264,13 +264,13 @@ This section emphasizes the ethical considerations of the research. Here are the
 <h1>Reproducibility: Packed-Ensemble on CIFAR-10</h1>
 </div>
 
-We attempted to reproduce the experiment outlined in the tutorial available at [https://github.com/ENSTA-U2IS-AI/torch-uncertainty](https://github.com/ENSTA-U2IS-AI/torch-uncertainty) which trains a Packed-Ensemble classifier on the CIFAR-10 dataset. The tutorial details a step-by-step approach, including:
+We attempted to reproduce the experiment outlined in the tutorial available at [https://torch-uncertainty.github.io/auto_tutorials/tutorial_pe_cifar10.html](https://torch-uncertainty.github.io/auto_tutorials/tutorial_pe_cifar10.html) which trains a Packed-Ensemble classifier on the CIFAR-10 dataset. The tutorial details a step-by-step approach, including:
 
 1. **Data Loading and Preprocessing:** Utilizing torchvision to load the CIFAR-10 dataset and performing normalization on the images.
 2. **Packed-Ensemble Definition:** Defining a Packed-Ensemble model with M=4 subnetworks, alpha=2, and gamma=1, built upon a standard convolutional neural network architecture.
 3. **Loss Function and Optimizer:** Employing Classification Cross-Entropy loss and SGD with momentum for optimization during training.
 4. **Training:** Training the Packed-Ensemble model on the CIFAR-10 training data.
-5. **Testing and Evaluation:** Evaluating the trained Packed-Ensemble on the CIFAR-10 test data, with a focus on uncertainty quantification and OOD (Out-of-Distribution) detection performance, as suggested by the tutorial.
+5. **Testing and Evaluation:** Evaluating the trained Packed-Ensemble on the CIFAR-10 test data, with a focus on uncertainty quantification and OOD (Out-of-Distribution) detection performance.
 
 **Experimental Runs and Observations:**
 
