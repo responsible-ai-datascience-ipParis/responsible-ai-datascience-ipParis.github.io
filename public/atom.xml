@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bloggin on Responsible AI</title>
+    <link>http://localhost:1313/</link>
+    <description>Recent content on Bloggin on Responsible AI</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 27 Feb 2024 15:05:20 +0100</lastBuildDate>
+    <atom:link href="http://localhost:1313/atom.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Packed Ensembles</title>
+      <link>http://localhost:1313/posts/packed-ensembles/</link>
+      <pubDate>Tue, 27 Feb 2024 15:05:20 +0100</pubDate>
+      <guid>http://localhost:1313/posts/packed-ensembles/</guid>
+      <description>Introduction&#xD;The document &#34;Packed-Ensembles for Efficient Uncertainty Estimation&#34; introduces a novel framework for designing and training compact, structured ensembles of neural networks, termed Packed-Ensembles (PE). It addresses the limitations of Deep Ensembles (DE) in terms of computational efficiency and hardware constraints by leveraging grouped convolutions. This technique allows for parallelizing the ensemble into a single shared backbone, improving training and inference speeds within the memory limits of standard neural networks.</description>
+    </item>
+    <item>
+      <title>Another article</title>
+      <link>http://localhost:1313/posts/my-first-blog/</link>
+      <pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate>
+      <guid>http://localhost:1313/posts/my-first-blog/</guid>
+      <description>Authors : John Smith and John Smith&#xA;Do not forget to add the script posted on moodle to enable latex in your blogpost! What a beauty! $y=\theta_0 + \theta_1x_1$</description>
+    </item>
+    <item>
+      <title>Title of the article</title>
+      <link>http://localhost:1313/posts/my-second-blog/</link>
+      <pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate>
+      <guid>http://localhost:1313/posts/my-second-blog/</guid>
+      <description>Authors : John Smith and John Smith&#xA;Start writing here !</description>
+    </item>
+    <item>
+      <title>About</title>
+      <link>http://localhost:1313/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/about/</guid>
+      <description>Some additional informations about this course.&#xA;Florence d&amp;rsquo;Alché-Buc is a full professor at Institut Polytechnique de Paris, Télécom Pari in Statistical Learning. She is the holder of the &amp;ldquo;Data Science and Artificial Intelligence for Digitalized Industry and Services&amp;rdquo; chair at Télécom Paris, and is mainly interested in learning from complex data, in particular the supervised prediction of graphs, functions and spatio-temporal signals, exploiting the structure and geometry of these objects in regularization and cost functions.</description>
+    </item>
+    <item>
+      <title>Articles</title>
+      <link>http://localhost:1313/articles/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/articles/</guid>
+      <description>Hereafter you can find the list of articles proposed for this class and the link to the pdfs.&#xA;Please add your name in the following file to pick an article and enter your github username.&#xA;Note 1: this work can be done in teams (maximum 2 students).&#xA;Note 2: an article can only be chosen by 1 team.&#xA;Interpretable AI Jayneel Parekh, Pavlo Mozharovskyi, Florence d&amp;rsquo;Alché-Buc, A Framework to Learn with Interpretation.</description>
+    </item>
+    <item>
+      <title>Tutorial</title>
+      <link>http://localhost:1313/tutorial/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tutorial/</guid>
+      <description>How to create and publish your blogpost ?&#xA;The blogpost builds upon Hugo and Markdown.&#xA;For markdown you can easily find a cheat sheet here.&#xA;Setup: you need to have a GitHub Account, a terminal and a text editor of your choice (e.g.VSCode, nano, gedit)&#xA;Install Hugo on your laptop. Hugo is available for all operating systems. You can find the installation guide here. Be careful, you need at least Hugo version 0.</description>
+    </item>
+  </channel>
+</rss>
