@@ -144,7 +144,7 @@ In practice, the objective function is slightly modified to be able to maximise 
 
 # <h1 style="font-size: 24px; text-decoration: underline;">Results</h1> {#section-5}
 
-The authors tested out their results on two datasets : **Compas** and **Adult**. Both are widely used when it comes to fairness. Indeed, they are known to be biased against race (for Compas) and gender (for both). 
+The authors tested out their results on two datasets : **Compas** and **Adult**. Both are widely used when it comes to fairness. Indeed, they are known to be biased against race (for Compas) and gender (for both). Compas is a recidivism prediction dataset, whereas Adult predicts whether income exceeds $50K/yr based on census data. The results reported in the next figure show that the ROC-based method achieves its goal of mitigating the differences between favoured and unfavoured groups with limited drop in performances (the AUC went from 0.72 to 0.70 on the Compas dataset and from 0.91 to 0.87 on the Adult dataset). Indeed, the blue ROC curve, which is the ROC curve of the unfavoured group (Afro-American people for the Compas Dataset and women for the Adult Dataset), is brought closer to the green ROC curve (the ROC curve of the favoured group).
 
 ![AUC](/images/lambert_davy/main_text_inkscape_all_rocs_no_train_new.svg)
 
