@@ -104,9 +104,9 @@ and fairness.
 
 The paper focuses on a special case of fairness, the **intra-group pairwise AUC fairness**. This was to be more concise. In this example, the objective function becomes :
 
-\begin{align}
-    L_\lambda(s) = AUC_{H_s,G_s} - \lambda |AUC_{H^{(0)}_s, G^{(0)}_s} - AUC_{H^{(1)}_s, G^{(1)}_s }|
-\end{align}
+$$
+    L_\lambda(s) = AUC_{H_s,G_s} - \lambda  | AUC_{H^{(0)}_s, G^{(0)}_s} -  AUC_{H^{(1)}_s, G^{(1)}_s } |
+$$
 
 **<u> Issues of AUC-Based constraint:</u>**
 
@@ -117,7 +117,7 @@ The authors conducted experiments with the credit-risk dataset and found that cr
 
 # <h1 style="font-size: 24px; text-decoration: underline;">ROC-based fairness constraints</h1> {#section-4}
 
-A richer approach is then to use **pointwised ROC-based fairness constraints**. Ideally, we would want to enforce the equality of all score distributions between both groups (i.e., identical ROC curves). This would satisfy all AUC-based fairness constraints previously mentioned. However, this condition is so restrictive that it will most likely lead to a significant drop in performances. As a result, the authors propose to satisfy this constraint on only a finite number of points. They were indeed able to prove that this was sufficient to ensure maximum fairness for a fixed false positive or false negative  $\alpha$.  
+A richer approach is then to use **pointwised ROC-based fairness constraints**. Ideally, we would want to enforce the equality of all score distributions between both groups (i.e., identical ROC curves). This would satisfy all AUC-based fairness constraints previously mentioned. However, this condition is so restrictive that it will most likely lead to a significant drop in performances. As a result, the authors propose to satisfy this constraint on only a **finite number of points**. They were indeed able to prove that this was sufficient to ensure maximum fairness for a fixed false positive or false negative  $\alpha$.  
 
 As a result, the objective function becomes : 
 
@@ -131,20 +131,28 @@ As a result, the objective function becomes :
 
 Where $\Delta_{H,\alpha_H^{(k)}}(s)$ and $\Delta_{G,\alpha_G^{(k)}}(s)$ represent the deviations between the positive (resp. negative) inter-group ROCs and the identity function:
 
-\begin{align*}
-    \Delta_{G, \alpha}(s) &:= ROC_{G^{(0)}_s, G^{(1)}_s}(\alpha) - \alpha, \\
-    \big( \text{resp. } \Delta_{H, \alpha}(s) & := ROC_{H^{(0)}_s,H^{(1)}_s}
-    (\alpha) - \alpha
-    \big).
-\end{align*}
+$$
+    \Delta_{G, \alpha}(s) = ROC_{G^{(0)}_s, G^{(1)}_s}(\alpha) - \alpha
+$$
+
+$$
+    \Delta_{H, \alpha}(s) = ROC_{H^{(0)}_s,H^{(1)}_s}(\alpha) - \alpha
+$$
+
+In practice, the objective function is slightly modified to be able to maximise it. The authors applied a classic smooth surrogate relaxations of the AUCs or ROCs based on a logistic function. They also removed the absolute values and, instead, relied on some parameters to ensure positive values.
 
 # <h1 style="font-size: 24px; text-decoration: underline;">Results</h1> {#section-5}
 
+The authors tested out their results on two datasets : **Compas** and **Adult**. Both are widely used when it comes to fairness. Indeed, they are known to be biased against race (for Compas) and gender (for both). 
 
+![AUC](/images/lambert_davy/main_text_inkscape_all_rocs_no_train_new.svg)
 
 # <h1 style="font-size: 24px; text-decoration: underline;">Reproducibility</h1> {#section-6}
 
-We were able to run the provided code without too much trouble on WSL2. The only modification we had to make was to change the calls for python in the sh files (python -> python3). However, as mentionned on the repository, the experiments were very long to run (several days) and we were not able to run the "generate_all_figures.sh" script fully as it actually made our computers crash. Still, we were able to get some of the figures found in the paper (see below) by launching some scripts separately. 
+We were able to run the provided code without too much trouble on WSL2. The only modification we had to make was to change the calls for python in the sh files. We replace `python` with `python3`. However, as mentionned in the cide, the experiments were very long to run (several days) and we were not able to run the `generate_all_figures.sh` script fully as it made our computers crash. Still, we were able to get some of the figures found in the paper (see below) by launching some scripts separately. 
+
+
+GODEFROY TU PEUX AJOUTER LES DEUX IMAGES QUE TU AS GENERE ICI <3
 
 # <h1 style="font-size: 24px; text-decoration: underline;">Conclusion</h1> {#section-7}
 
