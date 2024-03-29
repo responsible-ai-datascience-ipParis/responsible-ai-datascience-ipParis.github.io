@@ -56,13 +56,11 @@ Imagine you're showing a picture to a friend, asking them to guess who's in it, 
 
 As AI becomes increasingly integrated into various aspects of our lives, including critical applications like passport security systems, autonomous vehicles, traffic sign detection, and surgical assistance; the reliability, trustworthiness, and performance of these systems under all conditions became of prime importance. This has led to a growing interest in the area of Robust AI, which focuses on enhancing the safety and security of AI technologies by improving their resilience to adverse conditions and digital threats. Within this domain, the study of Attacks and Defense ways plays a pivotal role.
 
-
-
 <p align="center">
   <img src="http:/localhost:1313/images/image_optimal_transport_patch/road_scene.png" alt="Road_scene">
 </p>
 
-While these attacks might not seem like a big deal, nor dangerous in this context, the consequences can be severe in critical scenarios - take for example an autonomous vehicle failing to recognize a stop sign, hurting potentially a pedestrian. In this blog we will explore a new approach used for developping such adversarial patch attacks, based on Optimal Transport, as outlined in the paper ***OPTIMAL TRANSPORT BASED ADVERSARIAL PATCH TO LEVERAGE LARGE SCALE ATTACK TRANSFERABILITY***. We will try to follow the same structure as in the paper to make the reading easier for you, but with much more simplicity.
+While these attacks might not seem like a big deal, nor dangerous in this context, the consequences can be severe in critical scenarios - take for example an autonomous vehicle failing to recognize a stop sign, hurting potentially a pedestrian. In this blog we will explore a new approach used for developping such adversarial patch attacks, based on Optimal Transport, as outlined in the paper ***Optimal Transport Based Adversarial Patch To Leverage Large Scale Attack Transferability***. We will try to follow the same structure as in the paper to make the reading easier for you, but with much more simplicity.
 
 
 ## Understanding Adversarial Attacks {#section-1}
