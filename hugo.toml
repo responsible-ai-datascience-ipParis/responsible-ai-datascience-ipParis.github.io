@@ -3,6 +3,8 @@ languageCode = 'en-us'
 title = 'Bloggin on Responsible AI'
 theme = "maverick"
 enableEmoji = true
+relativeURLs = true
+canonifyURLs = true
 
 [params]
   logo = '/assets/favicon.ico'
