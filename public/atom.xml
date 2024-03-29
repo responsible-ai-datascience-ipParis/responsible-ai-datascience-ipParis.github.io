@@ -1,0 +1,1367 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    
+    <title>Bloggin on Responsible AI</title>
+    <description>Bloggin on Responsible AI</description>
+    <link>http://localhost:1313/</link>
+    
+    <language>en</language>
+    <copyright>Copyright 2024, Calvin Tran</copyright>
+    <lastBuildDate>Wed, 27 Mar 2024 11:37:03 +0100</lastBuildDate>
+    <generator>Hugo - gohugo.io</generator>
+    <docs>http://cyber.harvard.edu/rss/rss.html</docs>
+    <atom:link href="http://localhost:1313//atom.xml" rel="self" type="application/atom+xml"/>
+    
+    
+    <item>
+      <title>Robust or Fair</title>
+      <link>http://localhost:1313/posts/robust-or-fair/</link>
+      <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;To be Robust or to be Fair: Towards Fairness in Adversarial Training&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Authors: Maryem Hajji &amp; Cément Teulier&lt;/h1&gt;
+&lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#section-0&#34;&gt;Abstract&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-1&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-2&#34;&gt;Initial Analysis&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#section-2.1&#34;&gt;Previous Studies&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-2.2&#34;&gt;Theoretical Demonstration&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-3&#34;&gt;Model&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#section-3.1&#34;&gt;Fairness Requirements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-3.2&#34;&gt;Practical Algorithms&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-4&#34;&gt;Experimentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-5&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-6&#34;&gt;References&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;section-0&#34;&gt;Abstract&lt;/h2&gt;
+&lt;p&gt;This blog post retraces the study conducted in the paper &amp;ldquo;To be Robust or to be Fair: Towards Fairness in Adversarial Training&amp;rdquo; and written by Han Xu, Xiaorui Liu, Yaxin Li, Yaxin Li, Anil K. Jain and Jiliang Tang.&lt;/p&gt;
+&lt;p&gt;Their study is based on a simple observation: while adversarial training has been shown to improve model&amp;rsquo;s robustness, it also introduces several performances disparities among different data groups.&lt;/p&gt;
+&lt;p&gt;To address this issue, the authors present the Fair-Robust-Learning (FRL) framework that aims to reduce such unfairness.&lt;/p&gt;
+&lt;h2 id=&#34;section-1&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Nowadays, Machine Learning algorithms and Artificial Intelligence are becoming more and more omnipresent in all kinds of jobs. If many of these models are developed to replace human tasks, it is of key importance that they do not reproduce the same mistakes. In fact, human decision making can sometimes be considered &amp;ldquo;unfair&amp;rdquo;, a trait that must not be present in Machine Learning. But as we push our models to be as precise as possible, one question stands out: can we find the good balance between accuracy and equity ?&lt;/p&gt;
+&lt;p&gt;Diving into this topic, we focus our study on adversarial training algorithms.
+Indeed, it has been shown that there is a significant issue in adversarial training for deep neural networks: while such training boosts the model&amp;rsquo;s defenses against adversarial attacks, it unfortunately leads to significant differences in how well the model performs across various types of data.
+For instance, detailed observations on CIFAR-10 dataset show a non-negligeable difference in the model&amp;rsquo;s performance between &amp;ldquo;car&amp;rdquo; and &amp;ldquo;cat&amp;rdquo; classes (details of this example in our section 1.1).&lt;/p&gt;
+&lt;p&gt;This phenomenon raises concern on concrete topics like the safety of autonomous driving vehicules or facial recognition while also creating ethical problems by discriminating certain classes.
+To put a word on it, the authors have identified this issue as the &lt;strong&gt;robust-fairness&lt;/strong&gt; problem of adversarial training.&lt;/p&gt;
+&lt;h2 id=&#34;section-2&#34;&gt;1. Initial Analysis&lt;/h2&gt;
+&lt;p&gt;We recall here the previous studies conducted by the authors that allowed them to identify the existence of the robust-fairness problem.&lt;/p&gt;
+&lt;h2 id=&#34;section-2.1&#34;&gt;1.1 Previous Studies&lt;/h2&gt;
+&lt;p&gt;For their first analysis, the authors have decided to study algorithms like the PGD ( Projected Gradient Descent) adversarial training and TRADES ( Theoretically Principled Trade-off between Robustness and Accuracy for Deep Learning ) on the CIFAR-10 dataset.
+The investigation is made using a PreAct-ResNet18 model structure under specific adversarial attack constraints.
+The results they obtained are as follows:&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Hajji_Teulier/cat_car.png&#34;
+  alt=&#34;Paper Initial Results&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;As we can see, natural training maintains a consistent standard error across classes and a consistent robust error rate when faced with 8/255 PGD attacks. However, in the case of adversarial training, some huge disparities appear. Going back to our introduction&amp;rsquo;s example with &amp;ldquo;cats&amp;rdquo; and &amp;ldquo;cars&amp;rdquo;, we observe that the standard and robust errors for &amp;ldquo;car&amp;rdquo; class ( respectively 6% and 34% ) are significantly lower than those of the &amp;ldquo;cat&amp;rdquo; class ( respectively 33% and 82% ). The results on the TRADES, altough not depicted here, also show some great disparities between certain classes.&lt;/p&gt;
+&lt;p&gt;To support this graphical study, the authors also present statistical evidence of this phenomenom throughout metrics like the Standard Deviation (SD) or the Normalized SD (NSD) of class-wide error. Once again, these metrics reveal that adversarial training indeed results in greater disparities across classes in both standard and robust performance compared to natural training.&lt;/p&gt;
+&lt;h3 id=&#34;potential-causes&#34;&gt;Potential Causes&lt;/h3&gt;
+&lt;p&gt;While the authors succeeded in identifying the problem of fairness, they also aimed to understand where it was coming from. From what they observed, it seems that the fairness issue particularly disadvantages classes that are inherently more challenging to classify. Adversarial training in fact tends to increase the standard errors for &amp;ldquo;harder&amp;rdquo; classes (like &amp;ldquo;cat&amp;rdquo;) significantly more than for &amp;ldquo;easier&amp;rdquo; classes (such as &amp;ldquo;car&amp;rdquo;).&lt;/p&gt;
+&lt;h2 id=&#34;section-2.2&#34;&gt;1.2 Theoretical Demonstration&lt;/h2&gt;
+&lt;p&gt;From the experiments on the potential causes of the fairness issue, the authors made the following hypotetis: Adversarial training makes hard classes even harder to classify or classify robustly.
+In this section, we review the theoretical proof of this hypothesis.&lt;/p&gt;
+&lt;p&gt;For this analysis, we place ourselves in the case of a binary classification task, using a mixed Gaussian distribution to create two classes with distinct levels of classification difficulty. Thus, adversarial training does not notably lower the average standard error but it shifts the decision boundary in a way that favours the &amp;rsquo;easier&amp;rsquo; class at the expense of the &amp;lsquo;harder&amp;rsquo; class.&lt;/p&gt;
+&lt;h3 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The &lt;strong&gt;classification model&lt;/strong&gt;, denoted $f$, is a mapping  $f : \mathcal{X} \rightarrow \mathcal{Y}$ from input data space $\mathcal{X}$ and output labels $\mathcal{Y}$ defined as $f(x) = \text{sign}(\mathbf{w} \cdot \mathbf{x} + b)$ with parameters $\mathbf{w}$ and $b$&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;standard error&lt;/strong&gt; for a classifier $f$ generally is: $R_{\text{nat}}(f) = \Pr(f(\mathbf{x}) \neq y)$&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;robust error&lt;/strong&gt; for a classifier $f$ generally is: $R_{\text{rob}}(f) = \Pr(\exists \delta, |\delta| \leq \epsilon, \text{s.t. } f(\mathbf{x} + \delta) \neq y)$ (the probability of a perturbation existing that would cause the model to produce an incorrect prediction)&lt;/li&gt;
+&lt;li&gt;The standard error &lt;strong&gt;conditional&lt;/strong&gt; on a specific class $\{Y = y\}$ is represented by $R_{\text{nat}}(f; y)$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;theoretical-experiment&#34;&gt;Theoretical Experiment&lt;/h3&gt;
+&lt;p&gt;We generate a simple example of the binary classification task that we presented at the beginning of section 1.2.
+The data therefore comes from two classes $\mathcal{Y} = { \{-1, +1\}}$, with each class&amp;rsquo; data following a Gaussian distribution $\mathcal{D}$ centered on $-\theta$ and $\theta$ respectively.
+It is important to specify that there is a $K$-factor difference between the variance of the two classes defined as follows: $\sigma_{+1} : \sigma_{-1} = K : 1$ and $K &amp;gt; 1$.&lt;/p&gt;
+&lt;p&gt;The authors then use the theorem stating that:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Theorem:&lt;/strong&gt; In the case of a data distribution $D$ like the one above, the optimal linear classifier $f_{\text{nat}}$ which minimizes the average standard classification error is:
+$$ f_{\text{nat}} = \arg\min_f \Pr(f(\mathbf{x}) \neq y) $$.&lt;/p&gt;
+&lt;p&gt;With that theorem and after computations, the authors prove that the class &amp;ldquo;$+1$&amp;rdquo; as a larger standard error than the class &amp;ldquo;$-1$&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Overall, this result shows well that the class &amp;ldquo;$+1$&amp;rdquo;, characterized by a larger variance, tends to be more challenging to classify than the class&amp;quot;$-1$&amp;quot;; a result confirming the hypothesis initially made.&lt;/p&gt;
+&lt;h2 id=&#34;section-3&#34;&gt;2. Model&lt;/h2&gt;
+&lt;p&gt;In this section, we present the Fair Robust Learning model (FRL).&lt;/p&gt;
+&lt;h2 id=&#34;section-3.1&#34;&gt;2.1 Fairness Requirements&lt;/h2&gt;
+&lt;p&gt;The authors introduced the concepts of Equalized Accuracy and Equalized Robustness, emphasizing the importance of providing equal prediction quality and resilience against adversarial attacks across different groups.
+To achieve this balance, the authors propose a Fair Robust Learning (FRL) strategy.
+This framework addresses fairness issues in adversarial training by aiming to minimize overall robust error while ensuring fairness constraints are met. They separate robust error into standard error and boundary error, allowing independent  solving of the unfairness of both errors. [ref 7]&lt;/p&gt;
+&lt;p&gt;The training objective thus becomes minimizing the sum of standard error and boundary error while adhering to fairness constraints that ensure no significant disparities in error rates among classes. Techniques from prior research are leveraged to optimize boundary errors during training.&lt;/p&gt;
+&lt;h2 id=&#34;section-3.2&#34;&gt;2.2 Practical Algorithms&lt;/h2&gt;
+&lt;p&gt;This section explores effective methods to implement and address the challenges outlined in the training objective, such as the Reweight strategy.
+In order to implement it, Lagrange multipliers are introduced, denoted as $φ = (φ_{nat}^{\text{i}}, φ_{bndy}^{\text{i}})$ where each multiplier corresponds to a fairness constraint. These multipliers are non-negative and play a crucial role in the optimization process.&lt;/p&gt;
+&lt;p&gt;The approach involves forming a Lagrangian, represented by the function $L(f, φ)$, which combines the standard error ($R_{\text{nat}}(f)$) and boundary error ($R_{\text{bndy}}(f)$) terms along with the fairness constraints. The Lagrangian acts as a guide for the optimization process, helping to balance the trade-off between minimizing errors and satisfying fairness requirements.&lt;/p&gt;
+&lt;p&gt;$$
+\scriptsize{
+L(f, \phi) = R_{\text{nat}}(f) + R_{\text{bndy}}(f) + \sum_{i=1}^{Y} \phi_{\text{nat}}^i \left( R_{\text{nat}}(f, i) - R_{\text{nat}}(f) - \tau_1 \right)^+ + \sum_{i=1}^{Y} \phi_{\text{bndy}}^i \left( R_{\text{bndy}}(f, i) - R_{\text{bndy}}(f) - \tau_2 \right)^+
+}
+$$&lt;/p&gt;
+&lt;p&gt;The optimization problem is then framed as a max-min game between the classifier $f$ and the Lagrange multipliers $φ$. The objective is to maximize the fairness constraints while minimizing the Lagrangian function, which encapsulates both standard and boundary errors.&lt;/p&gt;
+&lt;p&gt;On the other hand, the Reweight strategy presents a limitation particularly in mitigating boundary errors for specific classes. While upweighting the cost for standard errors ($R_{\text{nat}}(f, i)$) can penalize large errors and improve performance for disadvantaged groups, solely upweighting the boundary error ($R_{\text{bndy}}(f, i)$) for a class doesn&amp;rsquo;t effectively reduce its boundary error.&lt;/p&gt;
+&lt;p&gt;To overcome this challenge, the Remargin strategy introduces an alternative approach by enlarging the perturbation margin ($\epsilon$) during adversarial training. This strategy is inspired by previous research showing that increasing the margin during adversarial training can enhance a model&amp;rsquo;s robustness against attacks under the current intensity.[ref 8]&lt;/p&gt;
+&lt;p&gt;Specifically, the Remargin strategy involves adjusting the adversarial margin for generating adversarial examples during training, focusing on specific classes where boundary errors are significant. This adjustment aims to improve the robustness of these classes and reduce their large boundary errors ($R_{\text{bndy}}(f, i)$).&lt;/p&gt;
+&lt;h2 id=&#34;section-4&#34;&gt;3. Experimentation&lt;/h2&gt;
+&lt;p&gt;In this section, we reproduce the experimental methodology and setup used to evaluate the effectiveness of the proposed Fair Robust Learning (FRL) framework in constructing robust deep neural network (DNN) models.&lt;/p&gt;
+&lt;p&gt;Firstly, we train a fairly simple model on the Fashion MNIST dataset, then we test out torchattack&amp;rsquo;s PGD on our naturally trained model, Then we will adversarially train the same architecture to see if we can identify this unfairness.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Hajji_Teulier/result1.png&#34;
+  alt=&#34;Paper Initial Results&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;As we can see above, the naturally trained model has low standard error, but high PGD error. The adversarially trained model, in contrast, has a much lower PGD error, but higher standard error, and higher disparity between the classes.&lt;/p&gt;
+&lt;p&gt;Second, we implement the FRL algorithm (Reweight strategy) which formulates the learning problem as a cost-sensitive classification that penalizes those classes which violate fairness. Essentially, we create multipliers that up or down weight the loss of classes based on how fair or unfair they are with respect to the average across all classes.&lt;/p&gt;
+&lt;p&gt;The following is the FRL Algorithm outlined in the paper:&lt;/p&gt;
+&lt;div style=&#34;text-align: center;&#34;&gt;
+  &lt;img src=&#34;./images/Hajji_Teulier/algo1.png&#34; alt=&#34;Paper Initial Results&#34; width=&#34;400&#34; /&gt;
+&lt;/div&gt;
+&lt;p&gt;We made a setup to run the process 3 times: once with equal alpha values, once with an alpha ratio that favors the natural error, and one with an alpha ratio that favors the boundary error.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Hajji_Teulier/result2.png&#34;
+  alt=&#34;Paper Initial Results&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;In accordance with the authors of the paper, we find that the alpha ratio that favors the natural error is successful in preventing the unfairness of the standard error in the model, and does help somewhat with the unfairness of the PGD error. On the other hand, we notice that the algorithm struggles to improve the worst-case boundary error, leading to disparities in robustness performance across different classes.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;In conclusion, the studied article discusses the development and implementation of Fair Robust Learning (FRL) strategies to address fairness concerns in adversarial training of deep neural networks. The objective of these strategies is to achieve both equalized accuracy and robustness across different classes.&lt;/p&gt;
+&lt;p&gt;The Reweight strategy aims to minimize overall robust error while adhering to fairness constraints by adjusting training weights based on class-wise errors while the Remargin strategy enlarges the perturbation margin during adversarial training to improve robustness and reduce boundary errors.&lt;/p&gt;
+&lt;p&gt;Finally, The FRL framework combines these strategies to mitigate fairness issues and improve model performance across various classes. These approaches represent promising steps towards achieving fairness in robust deep learning models.&lt;/p&gt;
+&lt;hr&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;p&gt;[1]  Han Xu, Xiaorui Liu, Yaxin Li, Anil K. Jain, Jiliang Tang1. To be Robust or to be Fair: Towards Fairness in Adversarial Training. 2021.&lt;/p&gt;
+&lt;p&gt;[2] Goodfellow, I. J., Shlens, J., and Szegedy, C. Explaining and harnessing adversarial examples. 2014.&lt;/p&gt;
+&lt;p&gt;[3]  Morgulis, N., Kreines, A., Mendelowitz, S., and Weisglass, Y. Fooling a real car with adversarial traffic signs. 2019.&lt;/p&gt;
+&lt;p&gt;[4]  Sharif, M., Bhagavatula, S., Bauer, L., and Reiter, M. K. Accessorize to a crime: Real and stealthy attacks on state of-the-art face recognition. In Proceedings of the 2016 acm sigsac conference on computer and communications security, pp. 1528–1540, 2016.&lt;/p&gt;
+&lt;p&gt;[5] Krizhevsky, A., Hinton, G., et al. Learning multiple layers of features from tiny images. 2009.&lt;/p&gt;
+&lt;p&gt;[6] He, H. and Garcia, E. A. Learning from imbalanced data. IEEE Transactions on knowledge and data engineering, 21(9):1263–1284. 2009.&lt;/p&gt;
+&lt;p&gt;[7] Zhang, H., Yu, Y., Jiao, J., Xing, E. P., Ghaoui, L. E., and Jordan, M. I. Theoretically principled trade-off between robustness and accuracy. 2019.&lt;/p&gt;
+&lt;p&gt;[8] Tramer, F., Behrmann, J., Carlini, N., Papernot, N., and Ja- ` cobsen, J.-H. Fundamental tradeoffs between invariance and sensitivity to adversarial perturbations. In International Conference on Machine Learning, pp. 9561–9571. PMLR. 2020.&lt;/p&gt;
+&lt;style TYPE=&#34;text/css&#34;&gt;
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style&gt;
+&lt;script type=&#34;text/x-mathjax-config&#34;&gt;
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i &lt; all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+    }
+});
+&lt;/script&gt;
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/robust-or-fair/</guid>
+      <pubDate>Wed, 27 Mar 2024 11:37:03 +0100</pubDate>
+    </item>
+    
+    <item>
+      <title>RobustAI_RegMixup</title>
+      <link>http://localhost:1313/posts/robustai_regmixup/</link>
+      <description>&lt;style
+TYPE=&#34;text/css&#34;&gt;
+
+code.has-jax {font:
+inherit;
+font-size:
+100%; 
+background: 
+inherit; 
+border: 
+inherit;}
+
+&lt;/style&gt;
+&lt;script
+type=&#34;text/x-mathjax-config&#34;&gt;
+
+MathJax.Hub.Config({
+
+    tex2jax: {
+
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+
+    }
+
+});
+
+MathJax.Hub.Queue(function() {
+
+    var all = MathJax.Hub.getAllJax(), i;
+
+    for(i = 0; i &lt; all.length; i += 1) {
+
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+
+    }
+
+});
+
+&lt;/script&gt;
+&lt;script
+type=&#34;text/javascript&#34;
+src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+&lt;head&gt;
+&lt;meta charset=&#34;UTF-8&#34;&gt;
+&lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34;&gt;
+&lt;title&gt;Styled Table&lt;/title&gt;
+&lt;style&gt;
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        padding: 8px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    tr:hover {
+        background-color: #f5f5f5;
+    }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;/html&gt;
+&lt;h1 style=&#34;font-size: 36px;&#34;&gt;RegMixup : Regularizer for robust AI&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Improve accuracy and Out-of-Distribution Robustness&lt;h1&gt;
+&lt;h1 style=&#34;font-size: 18px;&#34;&gt;Authors: Marius Ortega, Ly An CHHAY &lt;br /&gt;
+Paper : &lt;a href=&#34;https://arxiv.org/abs/2206.14502&#34;&gt;RegMixup&lt;/a&gt;  by Francesco Pinto, Harry Yang, Ser-Nam Lim, Philip H.S. Torr, Puneet K. Dokania&lt;/h1&gt;
+&lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#section-0.0&#34;&gt;Abstract&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-0.1&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-1&#34;&gt;Prerequisites&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#section-1.1&#34;&gt;Empirical Risk Minimization&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-1.2&#34;&gt;Vicinal Risk Minimization&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-1.3&#34;&gt;Mixup&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-2&#34;&gt;RegMixup in theory&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-3&#34;&gt;RegMixup in practice &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-4&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;section-0.0&#34;&gt;Abstract&lt;/h2&gt;
+&lt;p&gt;In this blog post, we will present the paper &amp;ldquo;RegMixup: Regularizer for robust AI&amp;rdquo; by Francesco Pinto, Harry Yang, Ser-Nam Lim, Philip H.S. Torr, Puneet K. Dokania. This paper introduces a new regularizer called RegMixup, which is designed to improve the accuracy and out-of-distribution robustness of deep neural networks. The authors show that RegMixup can be used to improve the performance of state-of-the-art models on various datasets, including CIFAR-10, CIFAR-100, and ImageNet. The paper also provides an extensive empirical evaluation of RegMixup, demonstrating its effectiveness in improving the robustness of deep neural networks to out-of-distribution samples.&lt;/p&gt;
+&lt;p&gt;In this blong post, we will provide an overview of the paper, explain the theoretical background of RegMixup, and finally, perform a toy example to demonstrate how to use RegMixup with the torch-uncertainty library.&lt;/p&gt;
+&lt;h2 id=&#34;section-0.1&#34;&gt;Introduction &lt;/h2&gt;
+&lt;p&gt;Most real-world machine algorithm applications are good when it comes to predicting new data following the train distribution. However, they are not robust to out-of-distribution (OOD) samples (i.e. when the test data distribution is different from the train data distribution). This is a major problem in machine learning as it can lead to catastrophic predictions.&lt;/p&gt;
+&lt;p&gt;The question is how to improve the robustness of machine learning algorithms to OOD samples ?
+Many researchers have tried such as Liu et al. (2020a, 2020b), Wen et al. (2021), Lakshminarayanan et al. (2017). Even though they have shown some improvements, their approaches use expensive ensemble methods or propose non-trivial modifications of the neural network architecture. What if we could improve the robustness of deep neural networks with respect to OOD samples while utilizing much simpler and cost-effective methods?&lt;/p&gt;
+&lt;p&gt;The first step toward the method presented in this blog is Mixup, proposed by Zang and al (2018). This method is quite good when it comes to dealing with slight perturbations in the data distribution. However, Mixup has the tendency to emphasize difference in labels from very similar samples (high predictive entropy). This is not ideal for OOD samples as the model do not differentiate ID (In-distribution) and OOD samples very well.&lt;/p&gt;
+&lt;p&gt;RegMixup adds a new layer to Mixup by using it as a regularizer. From there, we will present the theoretical background of the paper, the implementation so as to easily use it in practice.&lt;/p&gt;
+&lt;h2 id=&#34;section-1&#34;&gt;1. Prerequisites &lt;/h2&gt;
+&lt;p&gt;In order to understand the paper, we need to understand what is Empirical and Vicinal Risk Minimization (ERM and VRM) as well as Mixup.&lt;/p&gt;
+&lt;h3 id=&#34;section-1.1&#34;&gt;1.1. Empirical Risk Minimization (ERM)&lt;/h3&gt;
+&lt;p&gt;Empirical Risk Minimization is an inference principle which consists in finding the model $\hat{f}$ that minimizes the empirical risk $R_{emp}(\hat{f})$ on the training set. The empirical risk is defined as the average loss over the training set :&lt;/p&gt;
+&lt;p&gt;$$
+R_{emp}(\hat{f}) = \frac{1}{n} \sum_{i=1}^{n} L(\hat{f}(x_i), y_i) \tag{1}
+$$&lt;/p&gt;
+&lt;p&gt;where $L$ is the loss function, $x_i$ is the input, $y_i$ is the label and $n$ is the number of samples in the training set. However, ERM contains a very strong assumption which is that $\hat{f} \approx f$ where $f$ is the true (and unknown) distribution for all points of the dataset. Thereby, if the testing set distribution differs even slighly from the training set one, ERM is unable to explain or provide generalization. Vicinal Risk is a way to relax this assumption.&lt;/p&gt;
+&lt;h3 id=&#34;section-1.2&#34;&gt;1.2. Vicinal Risk Minimization (VRM)&lt;/h3&gt;
+&lt;p&gt;Vicinal Risk Minimization (VRM) is a generalization of ERM. Instead of having a single distribution estimate $\hat{f}$, VRM uses a set of distributions $\hat{f}_{x_i, y_i}$ for each training sample $(x_i, y_i)$. The goal is to minimize the average loss over the training set, but with respect to the vicinal distribution of each sample.&lt;/p&gt;
+&lt;p&gt;$$
+R_{vrm}(\hat{f}) = \frac{1}{n} \sum_{i=1}^{n} L(\hat{f}_{x_i, y_i}(x_i), y_i) \tag{2}
+$$&lt;/p&gt;
+&lt;p&gt;Consequently, each training point has its own distribution estimate. This is a way to relax the strong assumption of ERM explained above.&lt;/p&gt;
+&lt;h3 id=&#34;section-1.3&#34;&gt;1.3. Mixup&lt;/h3&gt;
+&lt;p&gt;Mixup is a data augmentation technique that generates new samples by mixing pairs of training samples. By doing so, Mixup regularizes models to favor simple linear behavior in-between training examples. Experimentally speaking, Mixup has been shown to improve the generalization of deep neural networks, increase their robustness to adversarial attacks, reduce the memorization of corrupt labels as well as stabilize the training of generative adversarial networks.&lt;/p&gt;
+&lt;p&gt;In essence, Mixup can be thought as a learning objective designed for robustness and accountability of the model. Now, let&amp;rsquo;s see how Mixup works.&lt;/p&gt;
+&lt;p&gt;First, we take two samples $(x_i, y_i)$ and $(x_j, y_j)$ from the training set. Then, we generate a new sample $(\tilde{x}, \tilde{y})$ by taking a convex combination of the two samples with a mixup coefficient $\lambda \sim \text{Beta}(\alpha, \alpha)$ :&lt;/p&gt;
+&lt;p&gt;$$
+\tilde{x} = \lambda x_i + (1 - \lambda) x_j \hspace{1cm}
+\tilde{y} = \lambda y_i + (1 - \lambda) y_j
+$$&lt;/p&gt;
+&lt;p&gt;We can then define the vicinal distribution of the mixed sample $(\tilde{x}, \tilde{y})$ as :&lt;/p&gt;
+&lt;p&gt;$$
+P_{x_i, y_i} = \mathbb{E}_\lambda[( \delta {\tilde{x}_i}(x), \delta{\tilde{y}_i}(y))] \tag{3}
+$$&lt;/p&gt;
+&lt;p&gt;Mixup is an interesting method to consider but it possesses some limitations :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Small $\alpha$ issues :&lt;/strong&gt; With our setup, $\alpha \approx 1$ encourages $\tilde{x}$ to be perceptually different from $x$. Consequently, training and testing distribution will also grow appart from each other. When $\alpha \ll 1$, the mixup convex interpolation factor λ leads to a sharp peaks of 0 and 1. Therefore, Mixup will produce samples close to the initial ones (in case λ close to 1) or in the direction of another sample (in case of λ close to 0). Look at the &lt;strong&gt;&lt;a href=&#34;#my-fig&#34;&gt;figure&lt;/a&gt;&lt;/strong&gt; below, one of the two interpolating images dominates the interpolated one. What is noticed after cross-validation of alpha is that the best values are $\alpha \approx 0.2$ which is very small. Consequently, the final sample effectively presents only a small perturbation in comparison to the original one while the vicinal distribution exploration space is much larger. We could say that Mixup does not allow to use the full potential of the vicinal distributions of the data.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Model underconfidence :&lt;/strong&gt; When a neural network is trained with Mixup, it is only exposed to interpolated samples. Consequently, the model learns to predict smoothed labels which is the very root cause of its underconfidence. This results in a high predictive entropy for both ID and OOD samples.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure id=&#34;my-fig&#34; class=&#34;numbered&#34;&gt;
+    &lt;img src=&#34;./images/regmixup/fig.png&#34; class=&#34;align-center&#34;&gt;
+    &lt;p style=&#34;text-align: center;&#34;&gt;Mixup vs RegMixup, underconfidence and space exploration.&lt;/p&gt;
+&lt;/figure&gt;
+&lt;h2 id=&#34;section-2&#34;&gt;2. RegMixup in theory&lt;/h2&gt;
+&lt;p&gt;Now that we have understood the path that led to RegMixup, we will explore its theoretical background and see how and why it is a good regularizer for robust AI.&lt;/p&gt;
+&lt;p&gt;While Mixup utilizes data points&amp;rsquo; vicinal distribution only, RegMixup uses both the vicinal and the empirical one (refering respectively to VRM and ERM). This can seem far-fetched or even counter-intuitive but produces very interesting properties.&lt;/p&gt;
+&lt;p&gt;$$
+P(x, y) = \frac{1}{n} \sum_{i=1}^n \left( \gamma \delta_{x_i}(x) \delta_{y_i}(y) + (1-\gamma) P_{x_i, y_i}(x, y) \right) \tag{4}
+$$&lt;/p&gt;
+&lt;p&gt;Here, $\gamma$ is the hyperparameter controlling the mixup between the empirical and vicinal distribution. In fact, we see that the distribution $P(x, y)$ for RegMixup is a convex combination of the empirical distribution (left term of the addition in equation 4) and the vicinal distribution defined with equations (2) and (3).&lt;/p&gt;
+&lt;p&gt;From there, we can define a new loss function $\mathcal{L}$ based on the Cross Entropy Loss ($\text{CE}$)&lt;/p&gt;
+&lt;p&gt;$$
+\mathcal{L}(\hat{y}, y) = \text{CE}(p_\theta(\hat{y} \vert x), y) + \eta \text{CE}(p_\theta(\hat{y} \vert \tilde{x}), \tilde{y}) \tag{5}
+$$&lt;/p&gt;
+&lt;p&gt;With $ \eta \in R_{+}^{\ast} $ being the hyperparameter controlling the importance of the vicinal cross entropy sub-loss and $p_\theta$ the activation function of the model parameterized by $\theta$. In the paper, the value of $\eta$ is set to 1 and its variation seem negligible. Consequently, we will not focus on it in this blog post.&lt;/p&gt;
+&lt;p&gt;Such a model (equation 4) exhibits properties that lacked in Mixup :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Values of $\alpha$ and underconfidence :&lt;/strong&gt; As we explicitly add the empirical distribution to the vicinal one, the ERM term will encourage the model to predict the true labels of the training set while the VRM term, motivated by the interpolation factor $\lambda$, will explore the vicinal distribution space in a much more thorough way than what was possible with Mixup. For instance, if λ $\approx$ 0.5, a wide variety of images containing features from both the images in the pair are obtained (look at the &lt;strong&gt;&lt;a href=&#34;#my-fig&#34;&gt;figure&lt;/a&gt;&lt;/strong&gt;). Consequently, the ERM term allows to better predict in-distribution samples while the VRM term, with a larger $\alpha$, will allow to better predict OOD samples. This is a very interesting property as it allows to have a model that is both confident and accurate.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Prediction entropy :&lt;/strong&gt; Through their experiments and observations, researchers found that a cross-validated value of $\alpha$ leads to a maximum likelihood estimation having high entropy for ODD samples only. While Mixup demonstrated high entropy for both ID and OOD samples, RegMixup is able to differentiate between the two. This is an highly desirable properties indicating us that RegMixup acts as a &lt;strong&gt;regularizer&lt;/strong&gt; in essense.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As a preliminary conclusion, RegMixup is a very powerful, cost-efficient and simple-to-implement regularizer that allows to improve the robustness and accuracy of deep neural networks for both in-distribution and out-of-distribution samples. In the next section, we will see how to use RegMixup in practice trough a toy example.&lt;/p&gt;
+&lt;h2 id=&#34;section-3&#34;&gt;3. RegMixup in practice (implementation)&lt;/h2&gt;
+&lt;p&gt;Now, our objective will be to demonstrate the effectiveness of RegMixup through a very simple example. We will use the CIFAR-10-C dataset (corrupted version of CIFAR-10) and a standard ResNet-18 model. We will compare performances of 3 models :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A baseline model trained with ERM&lt;/li&gt;
+&lt;li&gt;A model trained with Mixup&lt;/li&gt;
+&lt;li&gt;A model trained with RegMixup&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To do so, we have two possibilities :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use the official implementation of RegMixup available on &lt;a href=&#34;https://github.com/FrancescoPinto/RegMixup&#34;&gt;Francesco Pinto&#39;s GitHub&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Use the torch-uncertainty library which provides a simple and efficient way to use RegMixup. Note, the library is developed by researchers from ENSTA Paris and is available on &lt;a href=&#34;https://github.com/ENSTA-U2IS-AI/torch-uncertainty&#34;&gt;GitHub&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In this blog post, we will use the torch-uncertainty library as it is very simple to use and provides a very well-implemented version of RegMixup.&lt;/p&gt;
+&lt;h3 id=&#34;31-installation&#34;&gt;3.1. Installation&lt;/h3&gt;
+&lt;p&gt;First, we need to install the torch-uncertainty library. To do so, we can use pip :&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;pip install torch-uncertainty
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note: If you use a gpu, torch-uncertainty will automatically install a cpu version of torch and torchvision, you can compile the following lines to install the gpu version of torch and torchvision (took from &lt;a href=&#34;https://pytorch.org/get-started/locally/&#34;&gt;PyTorch website&lt;/a&gt;) :&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;pip unistall torch torchvision
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To check if the installation was successful, you can run the following code, it should return True if you have a gpu and False if you don&amp;rsquo;t have one :&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;print&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;cuda&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;is_available&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;())&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;32-training-the-models-with-torch-uncertainty&#34;&gt;3.2. Training the models with torch-uncertainty&lt;/h3&gt;
+&lt;p&gt;Now that we have installed torch-uncertainty, we can train the models. First, we need to import the necessary libraries :&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch_uncertainty&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;cli_main&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;init_args&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch_uncertainty.baselines.classification&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;ResNet&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch_uncertainty.optimization_procedures&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;optim_cifar10_resnet18&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch_uncertainty.datamodules&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;CIFAR10DataModule&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torchvision.datasets&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;CIFAR10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torchvision&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;transforms&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch.nn&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;CrossEntropyLoss&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;os&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;pathlib&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;Path&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;cli_test_helpers&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;ArgvContext&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then, we can define the 3 models we discussed earlier :&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;baseline&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;ResNet&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;num_classes&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;loss&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;CrossEntropyLoss&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;optimization_procedure&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;optim_cifar10_resnet18&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;version&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;std&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;in_channels&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;arch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;cuda&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;mixup&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;ResNet&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;num_classes&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;loss&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;CrossEntropyLoss&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;optimization_procedure&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;optim_cifar10_resnet18&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;version&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;std&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;in_channels&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;arch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;mixup&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;True&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;mixup_alpha&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.2&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;cuda&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;regmixup&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;ResNet&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;num_classes&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;loss&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;CrossEntropyLoss&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;optimization_procedure&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;optim_cifar10_resnet18&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;version&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;std&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;in_channels&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;arch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;reg_mixup&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;True&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;mixup_alpha&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;cuda&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Before training the models, we need to define important arguments such as training parameters (epochs, estimators, etc.) and the datamodule. We can do so with the following code:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;root&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;Path&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;os&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;path&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;abspath&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# We mock the arguments for the trainer&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;with&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;ArgvContext&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;file.py&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;--max_epochs&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;20&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;--enable_progress_bar&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;False&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;--num_estimators&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;8&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;init_args&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;network&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;ResNet&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;datamodule&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;CIFAR10DataModule&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;net_name&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;logs/reset18-cifar10&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# datamodule&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;root&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;str&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;root&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; &lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;data&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;dm&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;CIFAR10DataModule&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;vars&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Finally, we can train the models using the &lt;code&gt;cli_main&lt;/code&gt; function from torch-uncertainty :&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;results_baseline&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;cli_main&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;baseline&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;dm&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;root&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;net_name&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;results_mixup&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;cli_main&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;mixup&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;dm&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;root&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;net_name&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;results_regmixup&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;cli_main&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;regmixup&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;dm&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;root&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;net_name&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note: If you have a gpu, you can make a slight modification to the code to use it :&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Click on &lt;code&gt;cli_main&lt;/code&gt; and press &lt;code&gt;F12&lt;/code&gt; to go to the function definition.&lt;/li&gt;
+&lt;li&gt;Go to line 222 and replace the trainer definition by the following one :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# trainer&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;trainer&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;pl&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;Trainer&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;from_argparse_args&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;accelerator&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;gpu&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;devices&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;callbacks&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;callbacks&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;logger&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;tb_logger&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;deterministic&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;seed&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; &lt;span style=&#34;color:#00a8c8&#34;&gt;None&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;inference_mode&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;opt_temp_scaling&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;args&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;val_temp_scaling&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Save the file and you are all set.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;33-results&#34;&gt;3.3. Results&lt;/h3&gt;
+&lt;p&gt;So as to compare the performances of the 3 models, we use two corrupted versions of Cifar-10-C. The first version has a corruption severity factor of 5 (slight data corruption) and the second one has a corruption severity factor of 15 (more severe data corruption). Our study contains 5 metrics : entropy, accuracy, brier score, expected calibration error (ECE) and negative log-likelihood (NLL). In our explanation, we will focus on the accuracy and entropy to keep it simple.&lt;/p&gt;
+&lt;p&gt;With corruption severity factor of 5, we obtain the following results :&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;entropy&lt;/th&gt;
+&lt;th&gt;accuracy&lt;/th&gt;
+&lt;th&gt;brier&lt;/th&gt;
+&lt;th&gt;ece&lt;/th&gt;
+&lt;th&gt;nll&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;baseline&lt;/td&gt;
+&lt;td&gt;0.656294&lt;/td&gt;
+&lt;td&gt;0.7480&lt;/td&gt;
+&lt;td&gt;0.349862&lt;/td&gt;
+&lt;td&gt;0.032466&lt;/td&gt;
+&lt;td&gt;0.729336&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;mixup&lt;/td&gt;
+&lt;td&gt;0.640811&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;0.7578&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;0.335403&lt;/td&gt;
+&lt;td&gt;0.024429&lt;/td&gt;
+&lt;td&gt;0.703844&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;regmixup&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;0.676174&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;0.7564&lt;/td&gt;
+&lt;td&gt;0.340233&lt;/td&gt;
+&lt;td&gt;0.023135&lt;/td&gt;
+&lt;td&gt;0.711405&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;First of all, we can see that the accuracy is quite similar for the 3 models. This makes sense as the corruption severity factor is quite low, thus cifar-10-c is not very different from the original cifar-10. However, we can see that the entropy of the RegMixup model is higher than the one of the Mixup model. This is symptomatic of Mixup&amp;rsquo;s underconfidence. As stated previously, given the low corruption severity factor of cifar-10-c, the underconfidence of Mixup does not impact its performances in a visible manner.&lt;/p&gt;
+&lt;p&gt;With corruption severity factor of 15, we obtain the following results :&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;entropy&lt;/th&gt;
+&lt;th&gt;accuracy&lt;/th&gt;
+&lt;th&gt;brier&lt;/th&gt;
+&lt;th&gt;ece&lt;/th&gt;
+&lt;th&gt;nll&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;baseline&lt;/td&gt;
+&lt;td&gt;0.615607&lt;/td&gt;
+&lt;td&gt;0.7402&lt;/td&gt;
+&lt;td&gt;0.358522&lt;/td&gt;
+&lt;td&gt;0.048414&lt;/td&gt;
+&lt;td&gt;0.750933&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;mixup&lt;/td&gt;
+&lt;td&gt;0.698558&lt;/td&gt;
+&lt;td&gt;0.7558&lt;/td&gt;
+&lt;td&gt;0.338540&lt;/td&gt;
+&lt;td&gt;0.014760&lt;/td&gt;
+&lt;td&gt;0.709190&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;regmixup&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;0.702599&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;0.7614&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;0.327945&lt;/td&gt;
+&lt;td&gt;0.008439&lt;/td&gt;
+&lt;td&gt;0.687550&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Here the results are much more unequivocal. As the severity factor increases, the baseline model drops in accuracy and entropy, Mixup also drops in accuracy but increases in entropy and RegMixup increases in accuracy and entropy. Here, RegMixup has the higher entropy as the model has higher entropy for OOD samples which are more frequent at this corruption level. Mixup shows a greater delta increase in entropy due to its higher predictive entropy tendency whether or not samples are OOD or ID. Consequently, RegMixup is more confident and accurate than the Mixup model eventhough Mixup is not fully underperforming.&lt;/p&gt;
+&lt;h2 id=&#34;section-4&#34;&gt;4. Conclusion&lt;/h2&gt;
+&lt;p&gt;As a conclusion, we have seen that RegMixup is a powerful method to regularize deep neural networks. Despite being very simple and cost-effective, it is important to specify that the paper does not provide a theoretical explanation of the method. These experimental grounds are very promising but it appears important to stay cautious while utilizing RegMixup.&lt;/p&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/robustai_regmixup/</guid>
+      <pubDate>Sun, 24 Mar 2024 12:38:16 +0100</pubDate>
+    </item>
+    
+    <item>
+      <title>Adversarially Reweighted Learning</title>
+      <link>http://localhost:1313/posts/adversarially_reweighted_learning/</link>
+      <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Fairness without Demographics through Adversarially Reweighted Learning&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Authors: Pierre Fihey &amp; Guerlain Messin&lt;/h1&gt;
+&lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#section-0&#34;&gt;Fairness issues in ML and AI&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-1&#34;&gt;The privacy of demographic’s data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-2&#34;&gt;The Adversarial Reweighted Learning Model&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-3&#34;&gt;An Hypothesis: Protected Groups are Correlated with Both Features and Labels&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-4&#34;&gt;Computational identifiability of protected groups&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-5&#34;&gt;The Rawlsian Max-Min Fairness principle&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-6&#34;&gt;The ARL objective&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-7&#34;&gt;The Model Architecture&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-8&#34;&gt;Results analysis&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-9&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;section-0&#34;&gt;Fairness issues in ML and AI&lt;/h2&gt;
+&lt;p&gt;As Machine Learning and Artificial Intelligence algorithms are increasingly developed to aid and automate decision-making, it is crucial that they provide ethical, fair and discrimination-free results. However, discriminative biases are now found in many facets of AI and ML and affect many possible applications.&lt;/p&gt;
+&lt;p&gt;Such biases can be found in NLP applications, where we can see that generative AIs often associate certain genders or ethnic groups with professions. In computer vision, the lack of diversity in the training data also induces numerous discriminatory biases, since we can see that the algorithms&amp;rsquo; performances differ according to age, gender and ethnic group, which can lead to unfair treatments.
+Machine Learning models, used in decision-making processes from loan approvals to job applications, can inherit historical biases present in their training data, resulting in unfair outcomes.&lt;/p&gt;
+&lt;p&gt;The root of these biases lies in the historical prejudices and inequalities that are inadvertently encoded into the datasets used to train AI and ML models. These datasets often reflect the societal, cultural, and institutional biases that have existed over time. As a result, when AI and ML technologies are trained on such data, they risk mirroring and amplifying these biases instead of offering neutral, objective outputs. It is therefore vital to focus on AI fairness to enable the development of technologies that will benefit everyone fairly and equitably.&lt;/p&gt;
+&lt;h2 id=&#34;section-1&#34;&gt;The privacy of demographic’s data&lt;/h2&gt;
+&lt;p&gt;Strict regulations established by laws such as the General Data Protection Regulation (GDPR) severely restrict the collection of demographic data, including age, gender, religion and other personal attributes. This legal framework, designed to protect individual privacy and data rights, poses a problem for the study of discriminatory bias in algorithms, since it becomes almost impossible to measure. This situation creates a real paradox, since protecting personal data conflicts with limiting discrimination and promoting fairness for ML and iA algorithms.&lt;/p&gt;
+&lt;p&gt;In this blog, we&amp;rsquo;ll look at the paper Fairness without Demographics through Adversarially Reweighted Learning, published by Google&amp;rsquo;s 2020 research team to propose a method for improving the fairness of AI models despite the lack of demographic data. Indeed, while much previous works have focused on improving fairness in AI and ML, most of these works assume that models have access to this protected data. Given the observations made above, the problem this paper attempts to address is as follows: How can we train a ML model to improve fairness when we do not have access to protected features neither at training nor inference time, i.e., we do not know protected group memberships?&lt;/p&gt;
+&lt;h2 id=&#34;section-2&#34;&gt;The Adversarial Reweighted Learning Model&lt;/h2&gt;
+&lt;h3 id=&#34;section-3&#34;&gt;An Hypothesis: Protected Groups are Correlated with Both Features and Labels&lt;/h3&gt;
+&lt;p&gt;While access to the protected features is often impossible, the authors of this paper assume that there is a strong correlation between these variables and the observable features X as well as the class labels Y. Although these correlations are the cause of the fairness problems faced by ML algorithms, they represent a real advantage here, as they can help to identify these protected groups and thus to evaluate and correct possible discrimination biases.&lt;/p&gt;
+&lt;p&gt;The authors have shown that this hypothesis is frequently verified. For example, they were able to predict the race and gender of individuals in the Adults and LSAC Datasets with high accuracy from unprotected features and labels.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Fihey_Messin/Identifying_Groups.png&#34;
+  alt=&#34;Identifying Groups&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;This assumption therefore implies that protected groups can be computationally identifiable. It is on this notion of computational identifiability that the model proposed by Google&amp;rsquo;s research team is based to outperform previous work.&lt;/p&gt;
+&lt;h3 id=&#34;section-4&#34;&gt;Computational identifiability of protected groups&lt;/h3&gt;
+&lt;p&gt;Computational identifiability refers to the ability to algorithmically identify specific subgroups or patterns within a dataset based on certain criteria, using computable functions. Mathematically, this notion is defined as follows:&lt;/p&gt;
+&lt;p&gt;For a family of binary functions $F$, we say that a subgroup $S$ is computationally-identifiable if there is a function $f : X \times Y \rightarrow \text{{0, 1}}$ in $F$ such that $f(x, y) = 1$ if and only if $(x, y) \in S$.&lt;/p&gt;
+&lt;p&gt;This function typically maps input data to a binary outcome, indicating protected subgroup membership. While many previous works have used this principle of computational identifiability, the model presented in this article differs in that it does not require these subgroups to be present in the input space, but also in its objective. While most work has focused on reducing the efficiency gap between each subgroup, the ARL model aims to increase efficiency for these subgroups, while considering that this should not be at the expense of the other groups. Indeed, the authors have decided to follow the Rawlsian Max Min fairness principle, which we present below.&lt;/p&gt;
+&lt;h3 id=&#34;section-5&#34;&gt;The Rawlsian Max-Min Fairness principle&lt;/h3&gt;
+&lt;p&gt;In philosophy, the Rawlsian Max Min principle of distributive justice is defined by John Rawls as maximizing the welfare of the most disadvantaged member of society. In a mathematical context, this can be translated as maximizing the minimum utility U a model has across all groups s ∈ S. We adopt the following definition:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Definition (Rawslan Max-Min Fairness):&lt;/strong&gt; Suppose $H$ is a set of hypotheses, and $U_{D_s}(h)$ is the expected utility of the hypothesis $h$ for the individuals in group $s$, then a hypothesis $h^* $ is said to satisfy Rawlsian Max-Min fairness principle if it maximizes the utility of the worst-off group, i.e., the group with the lowest utility.
+$$h^* = argmax_{h \in H} min_{s \in S} U_{D_s}(h)$$&lt;/p&gt;
+&lt;p&gt;The Maxmin Rawlsian principle inherently accepts the existence of inequalities, as its core aim is not to ensure uniform outcomes across all groups but rather to maximize the overall utility, particularly focusing on enhancing the welfare of the least advantaged.  This is what will enable our model to obtain truly relevant results, and we&amp;rsquo;ll now see how it adapts this principle to define a loss function to be minimized during training.&lt;/p&gt;
+&lt;h3 id=&#34;section-6&#34;&gt;The ARL objective&lt;/h3&gt;
+&lt;p&gt;To adapt this Rawlsian principle to a Machine Learning task, the authors decided to set up a MinMax Problem. A minmax algorithm is a mathematical problem defined in game theory. Its aim is to optimize the worst possible scenario for a player, assuming that the opponent plays optimally.
+The aim is now to minimize the highest loss, i.e. the loss of the most disadvantaged protected group. This new objective function is defined as follows:&lt;/p&gt;
+&lt;p&gt;$$J(\theta, \lambda) := min_{\theta} max_{\lambda} \sum_{s \in S} \lambda_s L_{D_s}(h)$$
+$$= min_{\theta} max_{\lambda} \sum_{i=0}^{n} \lambda_{s_i} l(h(x_i), y_i)$$&lt;/p&gt;
+&lt;p&gt;With $l(.,.)$ the cross-entropy loss and lambda the weights that maximize the weighted loss of protected groups. To solve this minmax problem, the authors set up a special architecture consisting of two neural networks, a learner and an adversary.&lt;/p&gt;
+&lt;h3 id=&#34;section-7&#34;&gt;The Model Architecture&lt;/h3&gt;
+&lt;p&gt;As previously announced, the authors therefore decided to implement the Adversarial Reweighted Learning (ARL) approach, training two models alternately.&lt;/p&gt;
+&lt;p&gt;The learner optimizes for the main classification task, and aims to learn the best parameters θ that minimizes expected loss.&lt;/p&gt;
+&lt;p&gt;The adversary learns a function mapping $f_\phi : X \times Y \rightarrow [0, 1]$ to computationally-identifiable regions with high loss, and makes an adversarial assignment of weight vector $\lambda_\phi : f_\phi \rightarrow \mathbb{R}$ so as to maximize the expected loss.&lt;/p&gt;
+&lt;p&gt;The learner then adjusts itself to minimize the adversarial loss:
+$$J(\theta, \phi) = min_{\theta} max_{\phi} \sum_{i=1}^{n} \lambda_{\phi}(x_i, y_i) \cdot l_{ce}(h_\theta(x_i), y_i)$$&lt;/p&gt;
+&lt;p&gt;To ensure that the loss function is well defined, it&amp;rsquo;s crucial to introduce specific constraints on the weights used in the loss function. Ensuring these weights are non-negative, prevent zero values to include all training examples, and are normalized, addresses potential instability and promotes uniform contribution across the dataset.&lt;/p&gt;
+&lt;p&gt;$$\lambda_{\phi}(x_i, y_i) = 1 + n \cdot \frac{f_{\phi}(x_i, y_i)}{\sum_{i=1}^{n} f_{\phi}(x_i, y_i)}$$&lt;/p&gt;
+&lt;p&gt;The authors have implemented these two networks using standard feed-forward network. The learner is a fully connected two-layer feed-forward network with 64 and 32 hidden units in the hidden layers, with ReLU activation function. For small datasets, the adversary which performs the best is a linear model.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Fihey_Messin/ARL_Computational_Graph.png&#34;
+  alt=&#34;ARL Computational Graph&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;h2 id=&#34;section-8&#34;&gt;Results analysis&lt;/h2&gt;
+&lt;p&gt;This section provides a detailed examination of the results obtained from our implementation of the Adversarial Reweighted Learning (ARL) model. We replicate the experiments conducted by Lahoti et al. and present the outcomes of our implementation. Furthermore, we analyze the significance of the results through a comprehensive evaluation.&lt;/p&gt;
+&lt;h3 id=&#34;reproducibility&#34;&gt;Reproducibility&lt;/h3&gt;
+&lt;p&gt;We first reproduce the results reported by Lahoti et al. using their TensorFlow implementation. However, due to the absence of optimal hyperparameters, we utilize default parameters for our runs. As a result, our AUC scores are lower than those reported in the original paper. For instance, the average AUC for the Adult dataset in Lahoti et al.&amp;rsquo;s work is 0.907, whereas our run yields an AUC of 0.497. Similarly, for the LSAC dataset, Lahoti et al. report an AUC of 0.823, whereas we obtain 0.518. The COMPAS dataset also exhibits a similar trend, with Lahoti et al. reporting an AUC of 0.748, compared to our result of 0.536. Subsequent experimentation with optimal parameters from TensorFlow implementation demonstrates improved performance, although AUC scores remain lower than those presented in the original paper.&lt;/p&gt;
+&lt;h3 id=&#34;replicability&#34;&gt;Replicability&lt;/h3&gt;
+&lt;p&gt;We replicate the experiments using our PyTorch implementation of the ARL model with optimal hyperparameters obtained through grid-search. Comparing the AUC scores with Lahoti et al.&amp;rsquo;s results reveals close alignment for the Adult and LSAC datasets. However, a slightly larger difference is observed for the COMPAS dataset. Notably, all AUC metrics for the COMPAS dataset are lower than the baseline model presented by Lahoti et al. This discrepancy suggests potential challenges with dataset size, leading to increased variance in results. Nonetheless, our PyTorch implementation demonstrates consistency with Lahoti et al.&amp;rsquo;s findings, highlighting the robustness of the ARL model across different implementations.&lt;/p&gt;
+&lt;h3 id=&#34;significance-evaluation&#34;&gt;Significance Evaluation&lt;/h3&gt;
+&lt;p&gt;We conduct significance tests to evaluate the performance improvement of our PyTorch-implemented ARL model compared to a simple baseline model. Despite observing notable improvements in fairness metrics, none of the p-values obtained are less than 0.05. Consequently, according to established significance criteria, the performance enhancement achieved by our ARL model is not statistically significant. This finding underscores the need for further investigation into the efficacy of adversarial learning methods in enhancing fairness without demographic information.&lt;/p&gt;
+&lt;h2 id=&#34;section-9&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;In this study, we critically examined the paper &amp;ldquo;Fairness without Demographics through Adversarially Reweighted Learning&amp;rdquo; by Lahoti et al., focusing on reproducibility, replicability, and the significance of reported results. While encountering challenges in reproducing Lahoti et al.&amp;rsquo;s results due to parameter settings and dataset characteristics, we successfully replicated the experiments using our PyTorch implementation. Despite demonstrating consistency with the original findings, our significance tests indicate a lack of statistical significance in the performance improvement achieved by the ARL model. This prompts further inquiry into the suitability of adversarial learning approaches for addressing fairness concerns in machine learning without relying on demographic data.&lt;/p&gt;
+&lt;hr&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;annexes&#34;&gt;Annexes&lt;/h2&gt;
+&lt;h3 id=&#34;references&#34;&gt;References&lt;/h3&gt;
+&lt;p&gt;[1] Lahoti, P., Beutel, A., Chen, J., Lee, K., Prost, F., Thain, N., Wang, X., &amp;amp; Chi, E. H. (2020). Fairness without demographics through adversarially reweighted learning. arXiv preprint arXiv:2006.13114.&lt;/p&gt;
+&lt;p&gt;[2] Veale, M., &amp;amp; Binns, R. (2017). Fairer machine learning in the real world: Mitigating discrimination without collecting sensitive data. Big Data &amp;amp; Society, 4(2), 2053951717743530.&lt;/p&gt;
+&lt;p&gt;[3] Hanley, J. A., &amp;amp; McNeil, B. J. (1982). The meaning and use of the area under a receiver operating characteristic (ROC) curve. Radiology, 143(1), 29-36.&lt;/p&gt;
+&lt;p&gt;[4] Hanley, J. A., &amp;amp; McNeil, B. J. (1983). A method of comparing the areas under receiver operating characteristic curves derived from the same cases. Radiology, 148(3), 839-843.&lt;/p&gt;
+&lt;p&gt;[5] Dua, D., &amp;amp; Graff, C. (2019). UCI machine learning repository.&lt;/p&gt;
+&lt;p&gt;[6] Kim, M. P., Ghorbani, A., &amp;amp; Zou, J. (2019). Multiaccuracy: Black-box post-processing for fairness in classification. In Proceedings of the 2019 AAAI/ACM Conference on AI, Ethics, and Society (pp. 247-254).&lt;/p&gt;
+&lt;p&gt;[7] Goodfellow, I., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair, S., &amp;hellip; &amp;amp; Bengio, Y. (2014). Generative adversarial nets. Advances in neural information processing systems, 27, 2672-2680.&lt;/p&gt;
+&lt;p&gt;[8] Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., &amp;hellip; &amp;amp; Chintala, S. (2019). PyTorch: An imperative style, high-performance deep learning library. In Advances in Neural Information Processing Systems 32 (pp. 8024-8035).&lt;/p&gt;
+&lt;p&gt;[9] Kamishima, T., Akaho, S., &amp;amp; Sakuma, J. (2011). Fairness-aware learning through regularization approach. In 2011 IEEE 11th International Conference on Data Mining Workshops (pp. 643-650). IEEE.&lt;/p&gt;
+&lt;style TYPE=&#34;text/css&#34;&gt;
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style&gt;
+&lt;script type=&#34;text/x-mathjax-config&#34;&gt;
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i &lt; all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+    }
+});
+&lt;/script&gt;
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/adversarially_reweighted_learning/</guid>
+      <pubDate>Mon, 04 Mar 2024 18:35:12 +0100</pubDate>
+    </item>
+    
+    <item>
+      <title>Do Perceptually Aligned Gradients imply Robustness?</title>
+      <link>http://localhost:1313/posts/robustness-and-pag-the-converse/</link>
+      <description>&lt;style TYPE=&#34;text/css&#34;&gt;
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style&gt;
+&lt;script type=&#34;text/x-mathjax-config&#34;&gt;
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i &lt; all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+    }
+});
+&lt;/script&gt;
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Robustness and Perceptually Aligned Gradients : does the converse stand ?&lt;/h1&gt;
+&lt;h3 style=&#34;font-size: 24px;&#34;&gt;Author: Yohann Zerbib&lt;/h3&gt;
+&lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#section-0&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-1&#34;&gt;Adversarial Attacks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-2&#34;&gt;Perceptually Aligned Gradients&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-3&#34;&gt;Experiment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-4&#34;&gt;To go further&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-5&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-6&#34;&gt;References&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;section-0&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In the context of image recognition in Machine Learning, one could quickly realize that building &lt;em&gt;robust&lt;/em&gt; models is crucial. Having failures could potentially lead to worrying outcomes and it is part of the design to aim to implement models that would be prevented against &lt;em&gt;&lt;strong&gt;adversarials attacks&lt;/strong&gt;&lt;/em&gt;, that will be explained. At some point, when reaching models that are robust, it somehow occurs that small variations made are easily &lt;strong&gt;interpretable by humans&lt;/strong&gt;, something which is not common in current ML models such as this one. Having noticed this phenomenon, the authors of the paper would try to verify the opposite assumption. By building models that verify this idea of alignment with human perception, do we create robust models ?&lt;/p&gt;
+&lt;h2 id=&#34;section-1&#34;&gt;Adversarial attacks&lt;/h2&gt;
+&lt;p&gt;But before explaining the article, it could be relevant to explain briefly what are adversarial attacks and how it led to the design of robustness.&lt;/p&gt;
+&lt;p&gt;Adversarial attacks refer to a class of techniques in machine learning where &lt;strong&gt;intentionally crafted input data&lt;/strong&gt; is used to deceive or mislead a model, leading it to make incorrect predictions or classifications. These attacks exploit vulnerabilities in the model&amp;rsquo;s decision-making process, taking advantage of the model&amp;rsquo;s sensitivity to small changes in input data that might be &lt;strong&gt;imperceptible to humans&lt;/strong&gt;.
+They are most prominently associated with deep learning models, particularly neural networks, due to their high capacity and ability to learn complex patterns.&lt;/p&gt;
+&lt;p&gt;Concretly, in a theoretical framework, the usual example is to make a model classify an image of a cat as a dog or another animal, without any way for the human to notice it. However, consequences can be more dreadful in real life as one could consider what would happen if an autonomous vehicles missclassified a &lt;em&gt;&lt;strong&gt;stop sign as speed limit sign&lt;/strong&gt;&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Yohann_Zerbib/stop.png&#34;
+  alt=&#34;stop&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;(Eykholt et al. [1])&lt;/p&gt;
+&lt;p&gt;Now, let&amp;rsquo;s dive a bit deeper to understand how these errors happen.
+Several points can be highlighted, such as the level of linearity of Neural Networks, but one acknowledged moot point dwells on the use of Loss function in Deep Learning methods. Indeed, especially when considering datasets of pictures, there are many directions where the &lt;strong&gt;loss is steep&lt;/strong&gt;. It would mean that it can be highly delicate to propose a good minimization of the loss. Moreover, the main idea for our problem is that a &lt;strong&gt;small change&lt;/strong&gt; of the input can cause &lt;strong&gt;abrupt shifts&lt;/strong&gt; in the decision process of our model. This effect increases with the dimensionnality (quality of pictures&amp;hellip;) and therefore will still be relevant with time.&lt;/p&gt;
+&lt;p&gt;The basic modelisation of an attack would be the following. Let&amp;rsquo;s consider :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a model $f\ :\ \mathcal{X} \ \rightarrow \ \mathcal{Y}$&lt;/li&gt;
+&lt;li&gt;the input to pertub : $x \in \mathcal{X}$&lt;/li&gt;
+&lt;li&gt;a potential target label : $t \in  \mathcal{Y}$&lt;/li&gt;
+&lt;li&gt;a small perturbation : $\eta$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Then, mathematically, the attacker would try to have something that verifies $f(x + \eta) = t$ (or any other label than $f(x)$ for an untargeted attack).&lt;/p&gt;
+&lt;p&gt;Now, as one can imagine, it is possible to compute attacking models related to this framework. Let&amp;rsquo;s understand two well-knowns algorithms that follow this goal.&lt;/p&gt;
+&lt;h3 id=&#34;fast-gradient-sign-method-fgsm-&#34;&gt;Fast Gradient Sign Method (FGSM) :&lt;/h3&gt;
+&lt;p&gt;This method can be &lt;em&gt;&lt;strong&gt;targeted&lt;/strong&gt;&lt;/em&gt; or &lt;em&gt;&lt;strong&gt;untargeted&lt;/strong&gt;&lt;/em&gt;. Let&amp;rsquo;s study the targeted one. The algorithm is the following [3]:
+One compute the perturbation $\eta \ =\ \epsilon \ \cdotp \ sign( \ \nabla x\ L( x,\ t) \ )$ where $\epsilon$ is the perturbation size. Then, one would have $x&amp;rsquo;\ =\ x\ −\ \eta $ such that we remain espilon close from $x$ and that $f(x&amp;rsquo;) = t$.
+The perturbation has to remain small to ensure it will be undetected by human&amp;rsquo;s perception.&lt;/p&gt;
+&lt;p&gt;But, at this point, one question arises : how can we be sure that $x&amp;rsquo;$ is still close to $x$? How can we be sure that we have $||x\ −\ x&amp;rsquo;||_{p} \ \leq \ \epsilon $ where p is a particular norm? To answer this question, norms are introduced and two important ones, used in the article are the following.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;$L_{2 }$ norm : This norm captures the &lt;strong&gt;global quantity of changes&lt;/strong&gt;. It is the euclidean distance.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;$L_{\infty }$ : This norm captures the &lt;strong&gt;maximum change&lt;/strong&gt; in the vector.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So, we have several ways to have a level of control over the changed features.&lt;/p&gt;
+&lt;p&gt;Now that the first intuition for attack is understood, one should take a rapid look at &lt;strong&gt;PGD&lt;/strong&gt; (Projected Gradient Descent) [4], which will be used for the results of this blog. Other more complex methods exist (AutoAttack), and they are taken into account by the authors but they will not be explained here.&lt;/p&gt;
+&lt;p&gt;The algorithm starts with an initial perturbation. At each iteration, the algorithm takes a step in the direction of the gradient of the loss function with respect to the input. The gradient is calculated using backpropagation, and represents the direction of steepest ascent in the loss function. However, since we&amp;rsquo;re trying to reach a specific target, we actually want to move in the &lt;strong&gt;opposite direction&lt;/strong&gt;, so we multiply the gradient by -1 (it is a maximization). The step size is proportional to the norm of the gradient, so we don&amp;rsquo;t overshoot or undershoot our target.
+After taking a step, the perturbation is &lt;em&gt;projected&lt;/em&gt; back onto the allowed range, which is defined by the epsilon parameter. This is done by calculating the difference between the current input and the original input, and then scaling this difference so that it falls within the allowed range.
+This process is repeated for a certain number of iterations. (In this version of the algorithm, there is no control that it will truly be missclassified : one has to set an improtant enough number of iterations).&lt;/p&gt;
+&lt;p&gt;However, our role here is not to learn how to create the best attacks, but more to learn how to &lt;em&gt;&lt;strong&gt;defend&lt;/strong&gt;&lt;/em&gt; them! And suprisingly, what has been shown is that the best way to achieve this goal is to have a training that includes adversarial attacks.
+Then, it all comes down to this optimization problem :&lt;/p&gt;
+&lt;p&gt;$\min_{\theta }$ $\mathbb{E}_{(x, y)} $ [A] where&lt;/p&gt;
+&lt;p&gt;A = $(\max_{\eta \leqslant \epsilon }$ $L( f_{\theta}( x\ +\ \eta ) ,\ y))$&lt;/p&gt;
+&lt;p&gt;This is more or less an optimization problem to solve with $\theta$ the parameters to be learnt and where each training sample has a perturbation (an attack). It is linked with adversarial accuracy. We can train a model to be more robust, but chances are it will be less performant. It is up to the trainer to choose the &lt;strong&gt;best trade-off&lt;/strong&gt; on a model.&lt;/p&gt;
+&lt;h2 id=&#34;section-2&#34;&gt;Perceptually Aligned gradients&lt;/h2&gt;
+&lt;p&gt;Finally, it is possible to dive more in the subject of the article. Training models as presented before, with a particular care to robustness empirically leads to have &lt;em&gt;perceptually aligned gradients&lt;/em&gt;.
+Here, one should understand &amp;ldquo;gradient&amp;rdquo; as the mathematical concept, a vector which points to the direction of the greatest increase of its function. In other words, Perceptually Aligned Gradients correspond to a property, a byproduct of robust models, where the gradients are meaningful to humans. When the input image is slightly modified, the corresponding gradient directions reflect the changes that are &lt;strong&gt;perceptually relevant&lt;/strong&gt;. In other words, the gradients &lt;em&gt;make sense&lt;/em&gt; from a human perspective.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Yohann_Zerbib/pagdemo.png&#34;
+  alt=&#34;demopag&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;Here an example given by the author on the CIFAR dataset ([2], Ganz et al.). The intuition is that for models other than the vanilla one, the target class representative of the adversarial examples contains an information about the new class. For example, going from a bird to a frog will get the image much more green and in the shape of the frog. It looks like a &lt;em&gt;ghost&lt;/em&gt; information.&lt;/p&gt;
+&lt;p&gt;Now, is it a Bidirectional Connection ? Let&amp;rsquo;s try to have some hints about it.&lt;/p&gt;
+&lt;p&gt;The first step to tackle this issue is to create those Perceptually Aligned Gradients without adversarial training.&lt;/p&gt;
+&lt;p&gt;Then, it is shown that models with aligneds gradients can be considered as robust.&lt;/p&gt;
+&lt;p&gt;Finally, a demonstration of the improvement of robustness through the increase of gradient alignment is proposed.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1. Algorithm of the Model&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;To disentangle the creation of PAG with the usual robust training, a new method is developed. It relies on two elements.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;the classical cross-entropy loss from the usual categorization problem framework,&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;an auxiliary loss on the input-gradients, differentiable.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Then, our global loss function would look like this :&lt;/p&gt;
+&lt;p&gt;$L( x,\ y) \ =LCE\ ( f_{\theta }( x) ,\ y) \ + \lambda\sum_{y_{t} =1}^{C}L_{cos}( \nabla_{x}f_{\theta }(x)_{y_t},\ g( x,\ y_t))$&lt;/p&gt;
+&lt;p&gt;It is similar to training with a regularization part ($\lambda$ would control the power of the regularization). $L_{cos}$ is the cosine similarity loss (it gives information on the similarity of the arguments).&lt;/p&gt;
+&lt;p&gt;This does not use robust model of any sort, on the hypothesis that we have &lt;strong&gt;ground-true PAG&lt;/strong&gt; in the input. This is a &lt;strong&gt;strong hypothesis&lt;/strong&gt;, and it is crucial to choose well those grounds-truth. Indeed, a lack of rigor here could lead to a bias. If the ground-truth was obtained through adversarial training previously, then this new approach would only be an equivalent of adversarial training, and that is something that must be avoided. This hypotesis will be studied just a bit later.&lt;/p&gt;
+&lt;p&gt;After minimizing the loss, the model is tested through adversarial attacks (here, targeted PGD on the test set) to see if there is clearly PAG and if the adversarial accuracy is good.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2. Creation of Perceptually Aligned Gradients&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;As we have seen in the formula just above, it is mandatory to have a ground-truth perceptually gradient $g( x,\ y_t)$ for each training image and for each target class. However, finding those gradients are difficult and they are &lt;strong&gt;approximated&lt;/strong&gt;. Firstly, let&amp;rsquo;s consider the heuristics to understand what happens.&lt;/p&gt;
+&lt;p&gt;With this objective in mind, we follow a straightforward assumption: the gradient $g( x,\ y_t)$ ought to align with the overall direction of images belonging to the target class $y_t$. Hence, when provided with a target class representative, $r_{y_t}$, we establish the gradient to direct away from the current image and towards the representative. In other words, $g( x,\ y_t) = r_{y_t} - x$&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Yohann_Zerbib/target.png&#34;
+  alt=&#34;target&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;To implement this heuristic, three setups are provided.&lt;/p&gt;
+&lt;p&gt;$\textbf{One Image (OI):}$ Choose an arbitrary training set image with label $y_t$, and set $r_{y_t}$ to be that image as a global destination for $y_t$-targeted gradients.&lt;/p&gt;
+&lt;p&gt;$\textbf{Class Mean (CM):}$ Set $r_{y_t}$ to be the mean of all the training images with label $y_t$. This mean can be multiplied by a constant to obtain an image-like norm.&lt;/p&gt;
+&lt;p&gt;$\textbf{Nearest Neighbor (NN):}$  For each image $x$ and each target class$\ y_{t} \ \in \ {{1,\ 2\ .\ .\ .\ ,\ C}}$, we set the class representative $r_{y_t}(x)$ (now dependent on the image) to be the image&amp;rsquo;s nearest neighbor amongst a limited set of samples from class $y_t$, using L2 distance in the pixel space. More formally, we define
+$r( x,\ y_{t}) \ \ =\ \underset{ \begin{array}{l}
+\widehat{x\ } \in \ D_{y_{t}} \ s.t.\ \hat{x} =x
+\end{array}}{\arg\min} ||x\ −\ \hat{x} ||_{2}{}$&lt;/p&gt;
+&lt;p&gt;where $ D_{y_{t}}$
+is the set of sample images with class $y_t$.&lt;/p&gt;
+&lt;p&gt;Now, the more theoretical approach is provided thanks to score-based gradients. Authors have used &lt;strong&gt;Denoising Diffusion Probabilistic Models&lt;/strong&gt; (DDPMs), to generate approximations of PAG.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s consider noisy versions of an image $x$, noted as $({x_{t}})_{t=1}^{T}$ and their distribution&lt;/p&gt;
+&lt;p&gt;$(p_t({x_{t})})_{t=1}^{T}$.&lt;/p&gt;
+&lt;p&gt;An iterative process is employed for sampling, which begins from Gaussian noise and proceeds along the direction of the score function, defined as $\nabla_{x_t} \log p(x_t)$ and approximated by a neural network. It is suggested to incorporate class information into these networks, allowing them to model a class-dependent score function $\nabla_{x_t} \log p(x_t|y)$. We identify a resemblance between the class-dependent score function and classification loss gradients with respect to the input image, leading us to propose that gradients derived from DDPM can serve as an enhanced source for perceptually aligned gradients. We would have (one term disappears with the gradient w.r.t the input image) using Bayes&amp;rsquo; formula.&lt;/p&gt;
+&lt;p&gt;\begin{equation}
+\nabla_{x_t} \log p(x_t|y) = \nabla_{x_t} \log p(y|x_t) + \nabla_{x_t} \log p(x_t),
+\end{equation}&lt;/p&gt;
+&lt;p&gt;which results in&lt;/p&gt;
+&lt;p&gt;\begin{equation}
+\nabla_{x_t} \log p(y|x_t) = \nabla_{x_t} \log p(x_t|y) - \nabla_{x_t} \log p(x_t).
+\end{equation}&lt;/p&gt;
+&lt;p&gt;This formulation introduces a new application of diffusion models – a systematic approach to estimate the appropriate gradients for the expression $\log p(y|x_t)$. However, classification networks operate on noise-free images ($x$) rather than noisy ones ($x_t$). To link classifier input-gradients with DDPMs, we assume that $\log p(y|x) \approx log p(y|x_t)$, for certain noise levels $t$. Consequently, the desired estimation of &amp;ldquo;ground-truth&amp;rdquo; classifier input-gradients can be acquired by subtracting an unconditional score function from a class-conditional one. The selection of $t$ when distilling gradients through this method presents a tradeoff – excessively large values yield gradients unrelated to the input image (too noisy), while excessively small values produce perceptually insignificant ones (in low noise levels, the conditional and unconditional scores are nearly identical). Therefore, we choose $t$ to be of moderate values, generating both perceptually and image-relevant gradients. We denote this method as Score-Based Gradients (SBG).&lt;/p&gt;
+&lt;p&gt;To understand a bit more how it works, one has to consider that the variations of the noise from every $x_t$ can be controlled. Indeed, each different iteration takes the direction of the distribution $\log p(x_t)$ (with stochasticity). In other terms, it takes the direction of our score function that can be estimated thanks to Neural Networks. That&amp;rsquo;s how you obtain your set of ground-truth gradients related to the input images.&lt;/p&gt;
+&lt;p&gt;At this point, we have four ways to approximate ground-truth gradients. (Three heuristics and a more theoretical one). The experiments presented here will use the NN approach that are very intuitive. What was favoured for real datasets was the score-based approach.&lt;/p&gt;
+&lt;h2 id=&#34;section-3&#34;&gt;Experiment&lt;/h2&gt;
+&lt;p&gt;Now, let&amp;rsquo;s experiment a bit. In this article, to understand what is happening, we will play a bit with the toy dataset. A 2 dimensional synthetic dataset is built. It contains 6000 samples of 2 classes. Every sample is on the line of equation $x_2 -2x_1=0$. Finally, each class contains &lt;strong&gt;three mods&lt;/strong&gt; (1000 samples per mode) drawn from a Gaussian distribution. The idea is to observe manifolds as decision boundaries. Background of the plan will be colored according to the predicted class. Evaluation will be made on a test set.&lt;/p&gt;
+&lt;p&gt;The code is available at this &lt;a href=&#34;https://github.com/YohannZe/responsible-ai-datascience-ipParis.github.io.git&#34;&gt;link&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To this prediction task, a simple 2 layers MLP with ReLU is used. Two training are made with the same seed. The first is based on the usual cross-entropy loss whereas the second is made on the explained new loss.&lt;/p&gt;
+&lt;p&gt;As expected, 100% accuracy is obtained for this very simple task for both models on the test set. However, what about predicting adversarial examples ?&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s first try it out with a targeted $L2$ PGD. Vanilla is only correct for 35 out of 600 samples, whereas this new approach obtains 583 out of 600.
+How can this be explained ? One should observe the decision boundaries.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Yohann_Zerbib/vanilla_l2_toy.png&#34;
+  alt=&#34;vanillal2&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;This is what is obtained for the regular neural network with cross-entropy Loss.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Yohann_Zerbib/nn_l2_toy.png&#34;
+  alt=&#34;nnl2&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;Here is the result obtained for the particular neural network with the new loss.&lt;/p&gt;
+&lt;p&gt;What one should notice is the decision boundaries. The vanilla neural network provides manifolds that really &lt;em&gt;&lt;strong&gt;stick&lt;/strong&gt;&lt;/em&gt; to the data points. Going just a bit further can on the graph really can create a shift in the prediction. And that is what is happening with a targeted pgd, where there is only a small variation (semantically invisible).&lt;/p&gt;
+&lt;p&gt;However, in the case of the PAG Neural Network, one can observe that around a mode of points, there is a &lt;strong&gt;much greater margin&lt;/strong&gt; of the same class. This can be understood from the setup to create perceptually aligned gradients. Indeed, as we have seen, a target class was set based on a nearest neighbour approach, and the gradient point away from the current image and towards the class representative. Only then the cosine similarity between this gradient and the ground-truth approximated one from DDPMs.&lt;/p&gt;
+&lt;p&gt;Another possibility would be to see the impact of the size of the perturbation on the performance. Indeed, here, the given results corresponded to an epsilon value of 15. Increasing it decreases the accuracy to 75%. However, at a certain point, an augmentation of epsilon will not change anything anymore, probably because of a normalizing step in the targeted PGD algorithm.&lt;/p&gt;
+&lt;h2 id=&#34;section-4&#34;&gt;To go further&lt;/h2&gt;
+&lt;p&gt;What&amp;rsquo;s next ? Testing the hypothesis on real datasets. Among them, CIFAR-10, STL (higher resolution) and CIFAR-100 (higher number of classes). The architecture to achieve those tasks are classical (Resnet-18, ViT). Here are the main results that can be highlighted.&lt;/p&gt;
+&lt;p&gt;PAG approach is often similar and sometimes outperforms adversarially training approach. Score-based gradient seems to be the most accurate ground-truth approximation setup. It is also more notable for the ViT architecture. It also globally performs well on STL and CIFAR-100 (sometimes even better than adversarially training).&lt;/p&gt;
+&lt;p&gt;But, the question is not yet answered : &lt;em&gt;&lt;strong&gt;Do Perceptually Aligned Gradients imply Robustness?&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;And that&amp;rsquo;s where the regularization aspect of the loss is very useful. One can make variation over the hyperparameter $\lambda$ to see what brings a bigger focus on the PAG loss. The authors have done it and are summarized with this table.&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Yohann_Zerbib/regu.png&#34;
+  alt=&#34;regu&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;As one can see, the robustness increases with the increase of the regularization hyperparameter. The more the &lt;em&gt;ghost&lt;/em&gt; features of the target class are visible (even if it not always comprehensible), the more the model is robust.&lt;/p&gt;
+&lt;p&gt;So, it seems that yes, models with &lt;strong&gt;PAG would be more robust&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;section-5&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;To draw a conclusion, this paper has empirically shown that &lt;strong&gt;PAG lead to more robustness&lt;/strong&gt; in models. It was also mentionned that it could potentially be combined with Adversarially Training to gain more robustness, and there are probably some experiments and tests that could optimize that. The performance are also good and can be seen as an alternative, potentially not too costly. Sometimes it &lt;strong&gt;ouperforms Adversarially Training&lt;/strong&gt; and it would be up to the user to decide which framework to employ for creating robust models. Finally, approximating ground-truth PAG needs additionnal research and discussion as even if the results tend to favour Score-Based Gradients, it happens that heuristics function better and there are potentially other approaches that have yet to be discovered. One should shed light on the fact that the diffusion models used need to be trained, and the training time gained over adversarially training is not as significant as with other heuristics if we consider this aspect.&lt;/p&gt;
+&lt;h2 id=&#34;section-6&#34;&gt;References&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;EYKHOLT, Kevin, EVTIMOV, Ivan, FERNANDES, Earlence, et al. Robust physical-world attacks on deep learning visual classification. In : Proceedings of the IEEE conference on computer vision and pattern recognition. 2018. p. 1625-1634.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Ganz, R., Kawar, B., &amp;amp; Elad, M. (2023, July). Do perceptually aligned gradients imply robustness?. In International Conference on Machine Learning (pp. 10628-10648). PMLR.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Goodfellow, I. J., Shlens, J., &amp;amp; Szegedy, C. (2014). Explaining and harnessing adversarial examples. arXiv preprint arXiv:1412.6572.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Madry, A., Makelov, A., Schmidt, L., Tsipras, D., &amp;amp; Vladu, A. (2017). Towards deep learning models resistant to adversarial attacks. arXiv preprint arXiv:1706.06083.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/robustness-and-pag-the-converse/</guid>
+      <pubDate>Wed, 07 Feb 2024 16:06:43 +0100</pubDate>
+    </item>
+    
+    <item>
+      <title>Statistical Minimax Rates Under Privacy</title>
+      <link>http://localhost:1313/posts/statistical_minimax_rates_under_privacy/</link>
+      <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Estimating Privacy in Data Science: A Comprehensive Guide&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Author: Antoine Klein &lt;a href=&#34;https://github.com/AntoineTSP&#34;&gt;Github Link&lt;/a&gt;&lt;/h1&gt;
+&lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#section-0&#34;&gt;Incentives&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-1&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-2&#34;&gt;Definition&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-3&#34;&gt;Theory&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-4&#34;&gt;The case of multinomial estimation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-5&#34;&gt;The case of density estimation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-6&#34;&gt;Experiment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-7&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-8&#34;&gt;Quizz&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;section-0&#34;&gt;Why do we care about privacy ?&lt;/h2&gt;
+&lt;p&gt;Imagine, you&amp;rsquo;re quietly at home when the doorbell rings. You open the door and a government official appears: population census. Even though he shows you his official badge and you&amp;rsquo;d like to help him in the public interest, you find it hard to answer his questions as you go along. Indeed, the first questions about the date of your move are easy and public. On the other hand, when he asks about the number of children, marital status or your salary and what you do with it, you &lt;em&gt;struggle&lt;/em&gt;. Not because you don&amp;rsquo;t know the answer, but because you&amp;rsquo;re faced with an &lt;strong&gt;ethical dilemma&lt;/strong&gt;: transparency towards the state versus protection of personal data.&lt;br&gt;
+$$\text{In short, transparency goes against your privacy. }$$&lt;/p&gt;
+&lt;p&gt;This stress has major consequences: as you doubt what could happen to you with this data, but you still want to answer it, you &lt;strong&gt;underestimate&lt;/strong&gt; your answers. On a wider scale, this leads to a &lt;strong&gt;suffrage bias&lt;/strong&gt; and therefore a lack of knowledge of the real situation of your population. Warner [1], the first to tackle this problem from a statistical angle talks of an evasive bias and says:&lt;br&gt;
+&lt;strong&gt;&amp;ldquo;for reasons of modesty, fear of being thought bigoted, or merely a reluctance to confide secrets to strangers, respondents to surveys might prefer to be able to answer certain questions non-truthfully, or at least without the interviewer knowing their true response&amp;rdquo;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This situation presented a trusted agent, in that he wasn&amp;rsquo;t trying to harm you directly. Now imagine that you agree to give him your personal data, but that on the way home, this agent of the state is mugged and someone steals his documents. Not only is this an attack on his person, it&amp;rsquo;s also an attack on yours: as the guarantor of your data, it&amp;rsquo;s now at the mercy of the attacker. The problem here is &lt;strong&gt;not to have protected yourself against a malicious agent&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Admittedly, these situations are rare, but with the densification of data, their analogies are omnipresent: cookies on the Internet, cyber-attacks, datacenter crashes&amp;hellip;One area for improvement is quite simply to better &lt;strong&gt;certify usage&lt;/strong&gt; by means of cyber protection labels and leads to such a norm to achieve trust:
+&lt;img
+  src=&#34;./images/Antoine_Klein/Umbrella.png&#34;
+  alt=&#34;Data Privacy2&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;In this blog, we propose to tackle this problem from a completely different angle: &lt;strong&gt;how to both enable the agent to take global measures and prevent it and any subsequent malicious agents from being able to re-identify my personal data&lt;/strong&gt;. We&amp;rsquo;ll also use minimax bounds to answer the question: &lt;strong&gt;for a given privacy criterion, what&amp;rsquo;s the loss in terms of estimation?&lt;/strong&gt; (fundamental trade-offs between privacy and convergence rate)&lt;/p&gt;
+&lt;h2 id=&#34;section-1&#34;&gt;Scientific introduction&lt;/h2&gt;
+&lt;p&gt;Our blog will follow the same plan as the article that inspired it (John C. Duchi [2]),i.e. to show that &lt;strong&gt;response randomization achieves optimal convergence&lt;/strong&gt; in the case of multinomial estimation, and then that this process can be generalized to any &lt;em&gt;nonparametric distribution estimation&lt;/em&gt;. To this end, we will introduce the notion of &lt;strong&gt;local differential privacy&lt;/strong&gt; as well as the &lt;strong&gt;minimax theory&lt;/strong&gt; for obtaining optimal limits. All this will shed light on the &lt;strong&gt;trade-off between privacy and estimation rates&lt;/strong&gt;. We will also explain algorithms to implement these optimal strategies. Finally, we will propose some experimental results.&lt;/p&gt;
+&lt;h2 id=&#34;section-2&#34;&gt;Some key definitions&lt;/h2&gt;
+&lt;p&gt;Let assume that you want to make private $X_1 , &amp;hellip; , X_n \in X$ random variable and, as the statistician, you only observe $Z_1, . . . , Z_n ∈ Z$. The paper assumes that there exist a &lt;strong&gt;markov kernel&lt;/strong&gt; that links the true ramdom variables and the observed ones as follow: $Q_i(Z_i | X_i = x)$.&lt;/p&gt;
+&lt;p&gt;The privacy mechanism is to be said &lt;strong&gt;non interactive&lt;/strong&gt; if each $Z_i$ is obtained only conditionnaly on $X_i$ (and not on the others). This represents the fact that the privacy mechanism is &lt;strong&gt;memory less&lt;/strong&gt;. If not, the mechnism is said to be interactive.&lt;/p&gt;
+&lt;p&gt;In the following, we will work only with non-interactive privacy mechanism but in the conlusion we will claim that newer studies showed that it is not enough for some larger problems.&lt;/p&gt;
+&lt;p&gt;$Z_i$ is said to be &lt;strong&gt;α-local-differentially private&lt;/strong&gt; for the original data $X_i$ if $$sup(\frac{Q(Z | X_i = x)}{Q(Z | X_i = x&amp;rsquo;)} | x, x&amp;rsquo; ∈ X) ≤ exp(α)$$.&lt;/p&gt;
+&lt;p&gt;An intuitive way of understanding this definition is to see that the smaller α is (the more private it is), the more &lt;strong&gt;difficult it is to distinguish&lt;/strong&gt; the distribution of Z conditional on two different X data.&lt;/p&gt;
+&lt;h2 id=&#34;section-3&#34;&gt;Theoretical results&lt;/h2&gt;
+&lt;h3 id=&#34;section-4&#34;&gt;The case of multinomial estimation&lt;/h3&gt;
+&lt;p&gt;In this section, we return back to the problem of the private survey. For the statistician view, estimating a survey is estimating the parameter θ from the Bernouilli distribution $B(θ)$.
+This problem is a special case of multinomial estimation, where &lt;code&gt;θ&lt;/code&gt; is now a multidimensional parameter that is amenable to simplex probability. $∆&lt;em&gt;d := (θ ∈ ℝ&lt;/em&gt;+ |∑θ_j = 1)$.&lt;/p&gt;
+&lt;p&gt;&lt;a name=&#34;Recall&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Theorem :&lt;/strong&gt; Given α-local-differentially private $Z_i$, there exists some arbitrary constants $C_1$, $C_2$ such that for all $\alpha\in [0,1]$:
+$$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - θ|^2] ≤ C_2 min(1, \frac{d}{n\alpha^2})$$ and
+$$C_1 min(1,\frac{1}{\sqrt{n\alpha^2}}) ≤ E[||θ_{hat} - θ||_1] ≤ C_2 min(1,\frac{d}{\sqrt{n\alpha^2}})$$.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Recall from standard statistics:&lt;/strong&gt; For non private independant $Z_i$ with finite variance, there exists some arbitrary constants $C_3$ such that:
+$$E[|θ_{hat} - θ|^2] ≤ \frac{C_3}{n}$$&lt;/p&gt;
+&lt;p&gt;In others term, providing α-local-differentially privacy &lt;strong&gt;causes a reduction&lt;/strong&gt; in the effective sample size of a factor $\frac{\alpha^2}{d}$ for best situations. It thus means that the &lt;strong&gt;asymptotically rate of convergences remains unchanged&lt;/strong&gt; which is a really good news !&lt;/p&gt;
+&lt;h4 id=&#34;practical-strategies&#34;&gt;Practical strategies&lt;/h4&gt;
+&lt;p&gt;The paper deals with one of the 2 standard methods to implement such a strategy that obtains the minimax rates:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#section-10&#34;&gt;Randomized responses&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-11&#34;&gt;Laplace Noise (beyond paper)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;section-10&#34;&gt;Randomized responses&lt;/h5&gt;
+&lt;p&gt;The &lt;em&gt;intuition&lt;/em&gt; of this section is the following : &lt;strong&gt;to not allow the statistician to retrieve your personnal data&lt;/strong&gt; in case of Bernouilli distribution, you toss a coin. If it is heads, you say to him your reel answer, if it is tails, you say the opposite. In his point of view, as he doesn&amp;rsquo;t know what was the result of the coin, &lt;strong&gt;he can&amp;rsquo;t distinguish&lt;/strong&gt; if you tell the true or not but in a large scale, he knows that he will have half correct answer, half lies so that he can retrieve information.&lt;/p&gt;
+&lt;p&gt;For the multinomial estimation now, you will generalize this procedure to the multidimensionnal setting. For each coordinate, you will tell to the statistician the reel answer with a certain probability and lies otherwise. More precisely, its leads to :&lt;/p&gt;
+&lt;p&gt;$$[Z]_j = x_j \text{ with probability } \frac{e^\frac{\alpha}{2}} {1 + e^\frac{\alpha}{2}}$$
+$$[Z]_j = 1 - x_j \text{ with probability } \frac{1}{1 + e^\frac{\alpha}{2}}$$&lt;/p&gt;
+&lt;p&gt;Such a mechanism achieves &lt;em&gt;α-local-differentially privacy&lt;/em&gt; because one can show that :&lt;/p&gt;
+&lt;p&gt;$$\frac{Q(Z = z | x)}{Q(Z = z | x&amp;rsquo;)} = e^\frac{\alpha}{2}(||z - x||_1 - ||z - x&amp;rsquo;||_1) \in [e^{-\alpha}, e^\alpha]$$ which is the criteria given above.&lt;/p&gt;
+&lt;p&gt;With the notation as $1_d=[1, 1, 1, &amp;hellip;, 1]$ corresponds to a d-vector with each coordinate equals 1, we can also show that :&lt;/p&gt;
+&lt;p&gt;$$E[Z | x] = \frac{e^\frac{\alpha}{2} - 1}{e^\frac{\alpha}{2} + 1} * x + \frac{1}{1 + e^\frac{\alpha}{2}}1_d$$&lt;/p&gt;
+&lt;p&gt;This leads to the natural moment-estimator :&lt;/p&gt;
+&lt;p&gt;$$θ_{hat} = \frac{1}{n} ∑_{i=1}^{n} \frac{Z_i - 1_d}{1 + e^\frac{\alpha}{2}} * \frac{e^\frac{\alpha}{2} + 1}{e^\frac{\alpha}{2} - 1}$$&lt;/p&gt;
+&lt;p&gt;One can also show that it verifies :&lt;/p&gt;
+&lt;p&gt;$$E[ ||θ_{hat}- θ||_2] ≤  \frac{d}{n} * \frac{(e^\frac{\alpha}{2} + 1)^2}{(e^\frac{\alpha}{2} - 1)^2} &amp;lt; \frac{C_3}{nα^2}$$ which is the announced result.&lt;/p&gt;
+&lt;h5 id=&#34;section-11&#34;&gt;Laplace Noise (beyond paper)&lt;/h5&gt;
+&lt;p&gt;Instead of saying the truth with some probability, one may think of &lt;strong&gt;adding noise&lt;/strong&gt; to the answer so that the statistician can&amp;rsquo;t retrieve his real answer. This is exactly the mechanism we propose to dive in and which is &lt;strong&gt;not covered in the paper&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Definition:&lt;/strong&gt; A noise is said to be a Laplace noise with parameters (μ, b) if it verifies:&lt;br&gt;
+$$f(x|μ, b) = \frac{1}{2b} * exp(\frac{-|x - μ|}{b})$$&lt;/p&gt;
+&lt;p&gt;A visualisation for differents parameters is given below. We can see that Laplace distribution is a &lt;strong&gt;shaper verson of the gaussian distribution&lt;/strong&gt; :
+&lt;img
+  src=&#34;./images/Antoine_Klein/Laplace.png&#34;
+  alt=&#34;Laplace&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;The trick is to use such a noise. Let assume $X_i \in [-M,M]$ and construct the private mechanism as follow:&lt;br&gt;
+$$Z_i = X_i + \sigma W_i$$ where $W_i$ is drawn from a Laplace noise (0,1).&lt;/p&gt;
+&lt;p&gt;One can show that :&lt;/p&gt;
+&lt;p&gt;$$\frac{Q(Z = z | x)}{Q(Z = z | x&amp;rsquo;)} \leq e^{\frac{1}{\sigma} * |x - x&amp;rsquo;|} \leq e^{\frac{2M}{\sigma}}$$&lt;/p&gt;
+&lt;p&gt;Thus, with the choice of $\sigma = \frac{2M}{\alpha}$, &lt;strong&gt;it verifies α-local-differentially privacy&lt;/strong&gt;. The proposed estimator is the following :&lt;br&gt;
+$$\hat{Z} = \bar{X} + \frac{2M}{\alpha} \bar{W}$$&lt;/p&gt;
+&lt;p&gt;One can show that it is an unbiaised estimator that achieves the optimal rates:&lt;br&gt;
+$$E[\hat{Z}] = E[X]$$&lt;br&gt;
+$$V[\hat{Z}] = \frac{V(X)}{n} + \frac{4M^2}{n\alpha^2} V[\bar{W}] = \frac{V(X)}{n} + \frac{8M^2}{n\alpha^2}$$
+$$E[ |\hat{Z}- X|^2] \leq \frac{C_3}{n\alpha^2}.$$&lt;/p&gt;
+&lt;p&gt;This is &lt;strong&gt;exactly the optimal rates&lt;/strong&gt;, quite outstanding !&lt;/p&gt;
+&lt;h3 id=&#34;section-5&#34;&gt;The case of density estimation&lt;/h3&gt;
+&lt;p&gt;One accurate question that can raise is : &lt;strong&gt;what about others distribution ?&lt;/strong&gt; Is privacy more costly in general cases ? What is the trade-off ?&lt;/p&gt;
+&lt;p&gt;To answer this question, let&amp;rsquo;s precise the problem.&lt;/p&gt;
+&lt;p&gt;We want to estimate in a non-parametric way a 1D-density function &lt;code&gt;f&lt;/code&gt; belonging to one of theses classes :&lt;br&gt;
+-&lt;strong&gt;Hölder Class (β, L):&lt;/strong&gt; $\text{For all }x, y \in \mathbb{R} \text{ and } m \leq \beta, \quad \left| f^{(m)}(x) - f^{(m)}(y) \right| \leq L \left| x - y \right|^{\beta - m}$&lt;br&gt;
+-&lt;strong&gt;Sobolev Class:&lt;/strong&gt; $F_{\beta}[C] := \left( f \in L^2([0, 1]) , \middle| , f = \sum_{j=1}^{\infty} \theta_j \phi_j \text{ such that } \sum_{j=1}^{\infty} j^{2\beta} \phi_j^2 \leq C^2 \right)$&lt;/p&gt;
+&lt;p&gt;In a intuitition way, those two classes express that &lt;code&gt;f&lt;/code&gt; is &lt;strong&gt;smooth enough&lt;/strong&gt; to admits Lipschitz constant to its derivative so that it doesn&amp;rsquo;t &amp;ldquo;vary&amp;rdquo; locally too much.&lt;/p&gt;
+&lt;h4 id=&#34;theorem&#34;&gt;Theorem&lt;/h4&gt;
+&lt;h5 id=&#34;without-privacy&#34;&gt;Without privacy&lt;/h5&gt;
+&lt;p&gt;One can show that without privacy, the minimax rate achievable for estimating a Hölder Class function is:&lt;br&gt;
+$$\text{MSE}(\hat{f} - f) \leq C_1 \cdot n^{-\frac{2\beta}{1+2\beta}}$$ with the estimator&lt;br&gt;
+$$\hat{f}(x) = \frac{1}{n} \sum_{i=1}^{n} \frac{1}{h} K\left(\frac{x - X_i}{h}\right) \text{with } h = C_2 \cdot n^{-\frac{1}{2\beta+1}}$$&lt;/p&gt;
+&lt;p&gt;In the case of d-multidimensionnal density &lt;code&gt;f&lt;/code&gt;, the optimal rate is :&lt;br&gt;
+$$\text{MSE}(\hat{f} - f) \leq C_4 \cdot n^{-\frac{2\beta}{d+ 2\beta}}$$ with the estimator&lt;br&gt;
+$$\hat{f}(x) = \frac{1}{n} \sum_{i=1}^{n} \frac{1}{h^d} K^d\left(\frac{x-X_i}{h}\right) \quad \text{with} \quad h = C_5 \cdot n^{-\frac{1}{2\beta + d}}$$&lt;/p&gt;
+&lt;p&gt;This illustrates once again the &lt;strong&gt;curse of dimensionnality&lt;/strong&gt;.&lt;/p&gt;
+&lt;h5 id=&#34;with-privacy&#34;&gt;With privacy&lt;/h5&gt;
+&lt;p&gt;Let assume that &lt;code&gt;f&lt;/code&gt; bellongs to one of the two classes with  &lt;code&gt;β&lt;/code&gt; as smoothness parameter.&lt;br&gt;
+Then, the optimal α-local-differentially private optimal rate is :&lt;br&gt;
+$$\text{MSE}(\hat{f} - f) \leq C_1 \cdot (n\alpha^2)^{-\frac{2\beta}{2\beta+2}}.$$&lt;/p&gt;
+&lt;p&gt;One may observe &lt;strong&gt;two pessimistic news&lt;/strong&gt;:&lt;br&gt;
+-The rate is &lt;strong&gt;affected by a factor&lt;/strong&gt; of $\alpha^2$ as for the multinomial estimation&lt;br&gt;
+-More damageable: the &lt;strong&gt;rate is slower&lt;/strong&gt; in term of &lt;code&gt;n&lt;/code&gt; unlike the previous problem which make privacy in this case &lt;strong&gt;more costly&lt;/strong&gt;.&lt;/p&gt;
+&lt;h5 id=&#34;practical-strategies-1&#34;&gt;Practical strategies&lt;/h5&gt;
+&lt;p&gt;Eventhough this rate is pessimistic and proves that &lt;strong&gt;privacy comes at a cost&lt;/strong&gt;, it remains to illustrates how can we achieves this best but not great rate.
+For this end, once again, two strategies are possible.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#section-12&#34;&gt;Randomized responses&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#section-13&#34;&gt;Laplace Noise (beyond paper)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;section-12&#34;&gt;Randomized responses&lt;/h5&gt;
+&lt;p&gt;This is the strategy illustrated in the paper and consists of sampling for each coordinate according the realisation of a Bernouilli variable with the correct probability as function of &lt;code&gt;α&lt;/code&gt;.
+As it is not the most comprehensive and straightforward method, &lt;strong&gt;we prefer to dive in depth into the second one; uncovered in the paper&lt;/strong&gt;.&lt;/p&gt;
+&lt;h5 id=&#34;section-13&#34;&gt;Laplace Noise (beyond paper)&lt;/h5&gt;
+&lt;p&gt;Let assume that $X_i \in [0,M]$ almost surely. We note $G_j = [\frac{j-1}{K},\quad \frac{j}{K}]$ the bin of length $\frac{1}{K}$.&lt;/p&gt;
+&lt;p&gt;We consider the histogramm estimator:
+$$\hat{f}(x) = \frac{K}{n} \sum_{j=1}^{K} \sum_{i=1}^{n} 1_{X_i \in G_j} \cdot 1_{x \in G_j}.$$&lt;/p&gt;
+&lt;p&gt;We now construct the private mechanism as follow:&lt;br&gt;
+$$Z_i = \left[1_{X_i \in G_1} + \frac{2}{\alpha} W_1, \ldots, 1_{X_i \in G_K} + \frac{2}{\alpha} W_K\right]$$&lt;/p&gt;
+&lt;p&gt;In an intuitive way, we add a Laplace noise realisation for each bin.&lt;/p&gt;
+&lt;p&gt;This guarantees α-local-differentially privacy as :
+$$\frac{Q(Z = z | x)}{Q(Z = z | x&amp;rsquo;)} \leq \exp\left(\frac{\alpha}{2} \sum_{j=1}^{K} |1_{x \in G_j} - 1_{x&amp;rsquo; \in G_j}| \right) \leq \exp\left(\frac{\alpha}{2} \cdot 2\right).$$&lt;/p&gt;
+&lt;p&gt;This leads to the α-local-differentially private estimator :&lt;br&gt;
+$$f_{\text{private_estimate}} = \hat{f} + \frac{2K}{n\alpha} \sum_{j=1}^{K} W_j$$&lt;/p&gt;
+&lt;p&gt;The biais is the same as the unprivate case as :&lt;br&gt;
+$$E[f_{\text{private_estimate}}] = E[\hat{f}] + 0 .$$&lt;/p&gt;
+&lt;p&gt;One may prove that if f bellongs to the β-Hölder Class:&lt;br&gt;
+$$Biais(f_{\text{private_estimate}}, f) \leq C_1 * K^{-\beta}$$&lt;/p&gt;
+&lt;p&gt;Meanwhile, $$V[f_{\text{private_estimate}}] \leq \frac{C_2}{n} + \frac{4K^2}{\alpha^2} \frac{V[W]}{n}$$, such that in total  :&lt;br&gt;
+$$\text{MSE}(f_{\text{private_estimate}} - f) \leq C_1 K^{-2\beta} + \frac{C_2}{n} + \frac{C_3 K^2}{n\alpha^2}.$$
+Minimizing over K (hyperparameters) leads to :  $K = C_4 \cdot (n\alpha^2)^{-\frac{1}{2\beta+2}}$ and thus to:&lt;br&gt;
+$$\text{MSE}(f_{\text{private_estimate}} - f) \leq C_5 \cdot (n\alpha^2)^{-\frac{2\beta}{2\beta + 2}}$$, which is the expected bound.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;section-6&#34;&gt;Experiment: Illustration of the Minimax privacy rate&lt;/h2&gt;
+&lt;h3 id=&#34;section-111&#34;&gt;Overview&lt;/h3&gt;
+&lt;p&gt;The aim of this section is to &lt;strong&gt;provide illustrations of the theoretical results&lt;/strong&gt; set out above. Emphasis is placed on convergence results, with empirical confirmation of the latter.&lt;/p&gt;
+&lt;p&gt;For the sake of &lt;strong&gt;reproducibility and transparency&lt;/strong&gt;, the source code can be found in the notebook at this: &lt;a href=&#34;https://github.com/AntoineTSP/responsible-ai-datascience-ipParis.github.io.git&#34;&gt;Github link&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;methodology&#34;&gt;Methodology&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Data Preparation&lt;/strong&gt;: Rather than working with real datasets, we decide to work with simulated data, as this allows us to maintain control over all aspects.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;More precisely, we give ourselves $n=1000$ samples of the normal distribution $N(100,1)$ on which we add a Laplace noise $L(0,\alpha).$&lt;br&gt;
+As for the different alpha values, we iterate through them: $[0.2, 0.3, 0.5, 0.7]$&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Privacy Metric Calculation&lt;/strong&gt;: We will look at the use case of estimating the mean of a distribution.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Evaluation&lt;/strong&gt;: The results will be compared in terms of Mean Square Error (MSE).&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
+&lt;p&gt;In terms of the observed distribution (private because subject to Laplace noise) relative to the true data, we obtain the following figure:&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Antoine_Klein/Private_distribution.png&#34;
+  alt=&#34;Data Privacy2&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;As expected, the greater the desired privacy (low $\alpha$), &lt;strong&gt;the more spread out&lt;/strong&gt; the distribution of observed data.&lt;/p&gt;
+&lt;p&gt;When it comes to estimating the true average from private data, we obtain the following figure:&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Antoine_Klein/Estimated_mean.png&#34;
+  alt=&#34;Data Privacy2&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;This figure illustrates two major points:&lt;br&gt;
+-The first is that whatever the level of privacy, we have an &lt;strong&gt;unbiased estimator&lt;/strong&gt; of the mean. It&amp;rsquo;s a beautiful property, empirically verified !&lt;br&gt;
+-The second is that, unfortunately, the greater the privacy (low alpha), &lt;strong&gt;the greater the variance&lt;/strong&gt; of this estimator.&lt;/p&gt;
+&lt;p&gt;We recall our main theorem demonstrated above &lt;a href=&#34;#Recall&#34; style=&#34;background-color: yellow; padding: 2px 5px; border-radius: 3px;&#34;&gt;Previous theorem&lt;/a&gt; :&lt;br&gt;
+&lt;strong&gt;Theorem&lt;/strong&gt; : Given α-local-differentially private $Z_i$, there exists some arbitrary constants $C_1$, $C_2$ such that for all $\alpha\in [0,1]$:
+$$C_1 min(1, \frac{1}{\sqrt{n\alpha^2}}, \frac{d}{n\alpha^2}) ≤ E[|θ_{hat} - θ|^2] ≤ C_2 min(1, \frac{d}{n\alpha^2})$$&lt;/p&gt;
+&lt;p&gt;We now want to &lt;strong&gt;compare the theoretical optimal rate with empirical results&lt;/strong&gt;. To do this, we distinguish two situations:&lt;br&gt;
+-The first is with &lt;strong&gt;fixed alpha&lt;/strong&gt;, and determines the MSE as a function of the number of samples n. This leads to these empirical results:&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Antoine_Klein/Minimax_rate_n.png&#34;
+  alt=&#34;Data Privacy2&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;The dotted line represents the regime of the theoretical bound of the form $n \rightarrow \frac{C1}{n}$ . This is the shape of the empirical curves!&lt;/p&gt;
+&lt;p&gt;-The second has a &lt;strong&gt;fixed n&lt;/strong&gt; and determines the MSE as a function of alpha. This leads to these empirical results:&lt;/p&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/Antoine_Klein/Minimax_rate_alpha.png&#34;
+  alt=&#34;Data Privacy2&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+&lt;/p&gt;
+&lt;p&gt;The dotted line represents the regime of the theoretical bound of the form $\alpha \rightarrow \frac{C1}{\alpha^2}$ . This is once again the shape of the empirical curves quite surprisingly!&lt;/p&gt;
+&lt;h3 id=&#34;section-7&#34;&gt;Conclusion&lt;/h3&gt;
+&lt;p&gt;From a problem rooted in an &lt;strong&gt;ethical dilemma&lt;/strong&gt; (privacy versus completeness and transparency), we have looked at the &lt;strong&gt;cost of guaranteeing&lt;/strong&gt; one at the expense of the other, to better sketch out desirable situations.&lt;br&gt;
+This has enabled us to develop theoretical results in terms of &lt;strong&gt;minimax rates&lt;/strong&gt;. There is indeed a &lt;strong&gt;trade-off&lt;/strong&gt; between these criteria, which is even more costly in the case of non-parametric density estimation.&lt;br&gt;
+Finally, we have compared these theoretical limits with empirical results, which &lt;strong&gt;confirm the conformity of the statements&lt;/strong&gt;.&lt;br&gt;
+The aim of all this work is to disseminate this important yet under-exploited notion: privacy. To this end, we invite the reader to take the following &lt;strong&gt;quiz&lt;/strong&gt; to ensure his or her understanding.&lt;/p&gt;
+&lt;h1 id=&#34;section-8&#34;&gt;Quizz&lt;/h1&gt;
+&lt;p&gt;To test yourself abour privacy:&lt;/p&gt;
+&lt;form id=&#34;quiz-form&#34; class=&#34;quiz-form&#34;&gt;
+    &lt;div class=&#34;quiz-question&#34;&gt;
+        &lt;p&gt;What is privacy?&lt;/p&gt;
+        &lt;div class=&#34;quiz-options&#34;&gt;
+            &lt;label&gt;
+                &lt;input type=&#34;radio&#34; name=&#34;question1&#34; value=&#34;1&#34;&gt;
+                Avoid asking questions that can raise private information
+            &lt;/label&gt;
+            &lt;label&gt;
+                &lt;input type=&#34;radio&#34; name=&#34;question1&#34; value=&#34;2&#34;&gt;
+                A mechanism that prevents other agent to retrieve personnal information in your answer
+            &lt;/label&gt;
+            &lt;label&gt;
+                &lt;input type=&#34;radio&#34; name=&#34;question1&#34; value=&#34;3&#34;&gt;
+                An ethical-washing trend
+            &lt;/label&gt;
+        &lt;/div&gt;
+        &lt;p&gt;Which situation is α-local-differentially privacy?&lt;/p&gt;
+        &lt;div class=&#34;quiz-options&#34;&gt;
+            &lt;label&gt;
+                &lt;input type=&#34;radio&#34; name=&#34;question2&#34; value=&#34;1&#34;&gt;
+                sup {Q(Z | Xi = x)/Q(Z | Xi = x&#39;)} | x, x&#39; ∈ X} &gt;= exp(α)
+            &lt;/label&gt;
+            &lt;label&gt;
+                &lt;input type=&#34;radio&#34; name=&#34;question2&#34; value=&#34;2&#34;&gt;
+                You tell the truth half the time, you lie otherwise.
+            &lt;/label&gt;
+            &lt;label&gt;
+                &lt;input type=&#34;radio&#34; name=&#34;question2&#34; value=&#34;3&#34;&gt;
+                Z_i = X_i + (2M/α) W_i with W_i drawn from a Laplace Noise(0,1)
+            &lt;/label&gt;
+        &lt;/div&gt;
+        &lt;p&gt;What is the privacy cost in term of optimal rate ?&lt;/p&gt;
+        &lt;div class=&#34;quiz-options&#34;&gt;
+            &lt;label&gt;
+                &lt;input type=&#34;radio&#34; name=&#34;question3&#34; value=&#34;1&#34;&gt;
+                Multinomial estimation: A factor α^2/d
+            &lt;/label&gt;
+            &lt;label&gt;
+                &lt;input type=&#34;radio&#34; name=&#34;question3&#34; value=&#34;2&#34;&gt;
+                Density estimation: from n^(-2β/2β+2) (without privacy) to (nα^2)^(-2β/(2β+2))
+            &lt;/label&gt;
+            &lt;label&gt;
+                &lt;input type=&#34;radio&#34; name=&#34;question3&#34; value=&#34;3&#34;&gt;
+                We loose nothing, that&#39;s the surprising finding of the paper
+            &lt;/label&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;!-- Add more quiz questions as needed --&gt;
+    &lt;button type=&#34;submit&#34; class=&#34;quiz-submit&#34;&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+&lt;div id=&#34;quiz-results&#34; class=&#34;quiz-results&#34;&gt;&lt;/div&gt;
+&lt;script&gt;
+    // Define quiz questions and correct answers
+    const quizQuestions = [
+        {
+            question: &#34;What is privacy?&#34;,
+            answer: &#34;2&#34;
+        },
+        //Add more quiz questions as needed
+        {
+            question: &#34;Which situation is α-local-differentially privacy?&#34;,
+            answer: &#34;3&#34;
+        },
+        //Add more quiz questions as needed
+        {
+            question: &#34;What is the privacy cost in term of optimal rate ?&#34;,
+            answer: &#34;1&#34;
+        }
+    ];
+
+    // Handle form submission
+    document.getElementById(&#39;quiz-form&#39;).addEventListener(&#39;submit&#39;, function(event) {
+        event.preventDefault();
+
+        // Calculate quiz score
+        let score = 0;
+        quizQuestions.forEach(question =&gt; {
+            const selectedAnswer = document.querySelector(`input[name=&#34;question${quizQuestions.indexOf(question) + 1}&#34;]:checked`);
+            if (selectedAnswer) {
+                if (selectedAnswer.value.toLowerCase() === question.answer) {
+                    score++;
+                    selectedAnswer.parentElement.classList.add(&#39;correct&#39;);
+                } else {
+                    selectedAnswer.parentElement.classList.add(&#39;incorrect&#39;);
+                }
+            }
+        });
+
+        // Display quiz results
+        const quizResults = document.getElementById(&#39;quiz-results&#39;);
+        quizResults.innerHTML = `&lt;p&gt;You scored ${score} out of ${quizQuestions.length}.&lt;/p&gt;`;
+    });
+&lt;/script&gt;
+&lt;hr&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;annexes&#34;&gt;Annexes&lt;/h2&gt;
+&lt;h3 id=&#34;references&#34;&gt;References&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Warner SL. Randomized response: a survey technique for eliminating evasive answer bias. J Am Stat Assoc. 1965 Mar;60(309):63-6. PMID: 12261830.&lt;/li&gt;
+&lt;li&gt;John C. Duchi, Michael I. Jordan, and Martin Wainwright. Local Privacy and Minimax Bounds: Sharp Rates for Probability Estimation. Advances in Neural Information Processing Systems (2013)&lt;/li&gt;
+&lt;li&gt;Dwork, C., &amp;amp; Roth, A. (2014). The algorithmic foundations of differential privacy. Foundations and Trends® in Theoretical Computer Science, 9(3-4), 211-407.&lt;/li&gt;
+&lt;li&gt;Narayanan, A., &amp;amp; Shmatikov, V. (2008). Robust de-anonymization of large sparse datasets. In Security and Privacy, 2008. SP 2008. IEEE Symposium on (pp. 111-125). IEEE.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;script&gt;
+function highlight(text) {
+  var inputText = document.getElementById(&#34;markdown-content&#34;);
+  var innerHTML = inputText.innerHTML;
+  var index = innerHTML.indexOf(text);
+  if (index &gt;= 0) {
+    innerHTML = innerHTML.substring(0,index) + &#34;&lt;span class=&#39;highlight&#39;&gt;&#34; + innerHTML.substring(index,index+text.length) + &#34;&lt;/span&gt;&#34; + innerHTML.substring(index + text.length);
+    inputText.innerHTML = innerHTML;
+  }
+}
+highlight(&#34;Estimating Privacy in Data Science&#34;);
+
+&lt;/script&gt;
+&lt;hr&gt;
+&lt;script&gt;
+    function displayInput() {
+        var inputValue = document.getElementById(&#34;inputField&#34;).value;
+        document.getElementById(&#34;output&#34;).innerText = &#34;You typed: &#34; + inputValue;
+    }
+&lt;/script&gt;
+&lt;style&gt;
+.highlight {
+  background-color: red;
+}
+.highlight-on-hover:hover {
+        background-color: yellow;
+    }
+/* Quiz form styles */
+.quiz-form {
+        max-width: 500px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+}
+
+.quiz-question {
+        margin-bottom: 20px;
+}
+
+.quiz-options label {
+        display: block;
+        margin-bottom: 10px;
+}
+
+.quiz-submit {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+}
+
+.quiz-submit:hover {
+        background-color: #45a049;
+}
+
+/* Quiz results styles */
+.quiz-results {
+        margin-top: 20px;
+        font-weight: bold;
+}
+.quiz-options label {
+        display: block;
+        margin-bottom: 10px;
+    }
+.quiz-options label.correct {
+        color: green;
+}
+.quiz-options label.incorrect {
+        color: red;
+}
+a[name]:hover {
+        background-color: yellow; /* Change to the same color as normal state to maintain yellow highlight */
+        text-decoration: none; /* Optionally remove underline on hover */
+}
+&lt;/style&gt;
+&lt;style TYPE=&#34;text/css&#34;&gt;
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style&gt;
+&lt;script type=&#34;text/x-mathjax-config&#34;&gt;
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i &lt; all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+    }
+});
+&lt;/script&gt;
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/statistical_minimax_rates_under_privacy/</guid>
+      <pubDate>Wed, 31 Jan 2024 17:22:02 +0100</pubDate>
+    </item>
+    
+    <item>
+      <title>Another article</title>
+      <link>http://localhost:1313/posts/my-first-blog/</link>
+      <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt; : John Smith and John Smith&lt;/p&gt;
+&lt;hr&gt;&lt;/hr&gt;
+&lt;style
+TYPE=&#34;text/css&#34;&gt;
+&lt;p&gt;code.has-jax {font:
+inherit;
+font-size:
+100%;
+background:
+inherit;
+border:
+inherit;}&lt;/p&gt;
+&lt;p&gt;&lt;/style&gt;&lt;/p&gt;
+&lt;script
+type=&#34;text/x-mathjax-config&#34;&gt;
+
+MathJax.Hub.Config({
+
+    tex2jax: {
+
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+
+    }
+
+});
+
+MathJax.Hub.Queue(function() {
+
+    var all = MathJax.Hub.getAllJax(), i;
+
+    for(i = 0; i &lt; all.length; i += 1) {
+
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+
+    }
+
+});
+
+&lt;/script&gt;
+&lt;script
+type=&#34;text/javascript&#34;
+src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+&lt;p&gt;Do not forget to add the script posted on moodle to enable latex in your blogpost!
+What a beauty! $y=\theta_0 + \theta_1x_1$&lt;/p&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/my-first-blog/</guid>
+      <pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate>
+    </item>
+    
+    <item>
+      <title>Title of the article</title>
+      <link>http://localhost:1313/posts/my-second-blog/</link>
+      <description>&lt;p&gt;&lt;strong&gt;Authors&lt;/strong&gt; : John Smith and John Smith&lt;/p&gt;
+&lt;hr&gt;&lt;/hr&gt;
+&lt;p&gt;Start writing here !&lt;/p&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/my-second-blog/</guid>
+      <pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate>
+    </item>
+    
+  </channel>
+</rss>
