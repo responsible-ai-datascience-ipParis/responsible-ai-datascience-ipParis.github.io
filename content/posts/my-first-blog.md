@@ -163,7 +163,7 @@ Where:
 The higher the score $S^{m}_{ncc}(H^m)$, the smaller the deviation to the nearest optimal centroid classifier and therefore the greater the transferability to the target dataset.
 
 
-# Experiment
+# Numerical Experiment
 
 To reproduce their experiment, the authors' code available on a [Github](https://github.com/BUserName/NCTI/tree/main) repository was used. A first encountered issue was the required `torch` and `torchvision` versions, which are quite old, and thus not always available to install, which was the case here. Fortunately, the  most recent versions were compatible with the code. A `requirements.txt` file would have been welcome.
 
@@ -254,7 +254,6 @@ Key points to remember are :
 - Empirical results demonstrate that *the ranking of model transferability has a very strong correlation with the ground truth ranking* and **compares with state-of-the-art methods**, highlighting its effectiveness in selecting pre-trained models for specific tasks.
 
 In summary, the development of metrics such as NCTI is crucial for optimizing the use of pre-trained models, considering both performance and associated costs in real-world applications.
-
 
 # References
 
