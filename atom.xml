@@ -428,7 +428,174 @@ all[i].SourceElement().parentNode.className += ' has-jax';
 }
 });
 &lt;/script>
-&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/adversarially_reweighted_learning/</guid><pubDate>Mon, 04 Mar 2024 18:35:12 +0100</pubDate></item><item><title>Do Perceptually Aligned Gradients imply Robustness?</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/robustness-and-pag-the-converse/</link><description>&lt;style TYPE="text/css">
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/adversarially_reweighted_learning/</guid><pubDate>Mon, 04 Mar 2024 18:35:12 +0100</pubDate></item><item><title>A Framework to Learn with Interpretation</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/a-framework-to-learn-with-interpretation/</link><description>&lt;hr>&lt;/hr>
+&lt;style
+TYPE="text/css">
+&lt;p>code.has-jax {font:
+inherit;
+font-size:
+100%;
+background:
+inherit;
+border:
+inherit;}&lt;/p>
+&lt;p>&lt;/style>&lt;/p>
+&lt;script
+type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script>
+&lt;h1 style="font-size: 36px;">A Framework to Learn with Interpretation&lt;/h1>
+&lt;p>&lt;strong>Authors: Maroun ABOU BOUTROS, Mohamad EL OSMAN&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>Article: &lt;a href="https://arxiv.org/abs/2010.09345">A Framework to Learn with Interpretation&lt;/a> by Jayneel Parekh, Pavlo Mozharovskyi and Florence d’Alché-Buc&lt;/strong>&lt;/p>
+&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#section-1">Introduction&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-2">Learning a classifier and an interpreter&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#section-2.1">Design of FLINT&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-2.2">Interpretation in FLINT&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-2.3">Learning by imposing interpretability properties&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#section-3">Understanding encoded concepts in FLINT&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-4">Reproducing the experiments&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#section-4.1">Global interpretation&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-4.2">Local interpretation&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#section-5">Subjective evaluation&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-6">Specialization of FLINT to post-hoc interpretability&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-7">Conclusion&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="section-1">1 Introduction&lt;/h1>
+&lt;p>In this blog post, we’ll explore FLINT, a framework introduced in the paper titled “A Framework to Learn with Interpretation” by Jayneel Parekh, Pavlo Mozharovskyi and Florence d’Alché-Buc, available on the following &lt;a href="https://arxiv.org/abs/2010.09345">link&lt;/a>, addressing the crucial need for interpretability in machine learning as complex predictive models become more prevalent in fields like law, healthcare, and defense. Interpretability, synonymous with explainability, provides insights into a model’s decision-making process. Two main approaches, post-hoc methods and “interpretable by design” methods, tackle the challenge of interpreting models, each with its pros and cons. A new approach, Supervised Learning with Interpretation (SLI), jointly learns a predictive model and an interpreter model. FLINT, specifically designed for deep neural network classifiers, introduces a novel interpreter network architecture promoting local and global interpretability. It also proposes a criterion for concise and diverse attribute functions, enhancing interpretability. We’ll delve into the architecture of FLINT and how it works to give explainable predictions, and we will reproduce some experiments done in the experimental section of the article and evaluate their outputs to study FLINT&amp;rsquo;s performance. And finally, we will present a specialization of FLINT for post-hoc interpretability.&lt;/p>
+&lt;h1 id="section-2">2 Learning a classifier and its interpreter with FLINT&lt;/h1>
+&lt;p>The paper introduces Supervised Learning with Interpretation (SLI), a new task aimed at incorporating interpretability alongside prediction in machine learning models. In SLI, a separate model, called an interpreter, is employed to interpret the predictions made by the primary predictive model. The task involves minimizing a combined loss function consisting of prediction error and interpretability objectives. The paper focuses on addressing SLI within the context of deep neural networks for multi-class classification tasks. It proposes a framework called Framework to Learn with INTerpretation (FLINT), which utilizes a specialized architecture for the interpreter model, distinguishes between local and global interpretations, and introduces corresponding penalties in the loss function to achieve the desired interpretability.&lt;br>
+So for a dataset $S$ and a given model $f \in F$ where $F$ is a class of classifiers (here neural networks) and an interpreter model $g \in G_f$ where $G_f$ is a family of models, the SLI problem is presented by:
+$$
+\arg{\min_{f \in F, g \in G_f}{L_{pred}(f, S) + L_{int}(f, g, S)}}
+$$
+Where $L_{pred}(f, S)$ denotes a loss term related to prediction error and $L_{int}(f, g, S)$ measures the ability of $g$ to provide interpretations of predictions by $f$.&lt;/p>
+&lt;h2 id="section-2.1">2.1 Design of FLINT&lt;/h2>
+&lt;p>&lt;img
+src="./images/FLINT/FLINT_design.png"
+alt="design of FLINT"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>In FLINT, depicted in the image above, both a prediction model ($f$) and an interpreter model ($g$) are used. The input to FLINT is a vector $x \in X$, where $X = \mathbb{R}^d$, and the output is a vector $y \in Y$, where $Y$ is defined as the set of one-hot encoding vectors with binary components of size $C$ (the number of classes to predict). The prediction model $f$ is structured as a deep neural network with $l$ hidden layers, represented as $f = f_{l+1} \circ f_l \circ \ldots \circ f_1$. Each $f_k$ represents a hidden layer mapping from $R^{d_{k-1}}$ to $R^{d_k}$. To interpret the outputs of $f$, we randomly select a subset of $T$ hidden layers, indexed by $I=\{i_1, i_2, \ldots, i_T\}$, and concatenate their outputs to form a new vector $f_I(x) \in \mathbb{R}^D$, where $D = \sum_{t=1}^T d_{i_t}$. This vector is then fed into a neural network $\Psi$ to produce an output vector $\Phi(x) = \Psi(f_I(x)) = (\phi_1(x), &amp;hellip;, \phi_J (x)) \in \mathbb{R}^J$, representing an attribute dictionary comprising functions $\phi_j: X \rightarrow \mathbb{R}^+$, where $\phi_j(x)$ captures the activation of a high-level attribute or a &amp;ldquo;concept&amp;rdquo; over $X$. Finally, $g$ computes the composition of the attribute dictionnary with an interpretable function $h: R^J \rightarrow Y$.
+$$
+\forall x \in X, g(x) = h(\Phi(x))
+$$
+For now we take $h(x) = softmax(W^T \Phi(x))$ but $h$ can be any interpretable function (like a decision tree for example).&lt;/p>
+&lt;p>Note that $d$ in the image is a decoder network that takes $\Phi(x)$ and reconstructs the input $x$. This decoder is used for training and its purpose will be detailed later on in section 2.3.&lt;/p>
+&lt;h2 id="section-2.2">2.2 Interpretation in FLINT&lt;/h2>
+&lt;p>With the interpreter defined, let&amp;rsquo;s clarify its role and interpretability objectives within FLINT. Interpretation serves as an additional task alongside prediction. We&amp;rsquo;re interested in two types: global interpretation, which aids in understanding which attribute functions contribute to predicting a class, and local interpretation, which pinpoints the attribute functions involved in predicting a specific sample.&lt;/p>
+&lt;p>To interpret a local prediction $f(x)$, it&amp;rsquo;s crucial that the interpreter&amp;rsquo;s output $g(x)$ aligns with $f(x)$. Any discrepancy prompts analysis of conflicting data, potentially raising concerns about the prediction&amp;rsquo;s confidence.&lt;/p>
+&lt;p>To establish local and global interpretation, we rely on attribute relevance. Given an interpreter with parameters $\Theta_g = (\theta_\Psi, \theta_h)$ and an input $x$, an attribute $\phi_j$&amp;rsquo;s relevance is defined concerning the prediction $g(x) = f(x) = \hat{y}$. The attribute&amp;rsquo;s contribution to the unnormalized score of class $\hat{y}$ is $\alpha_{j, \hat{y}, x} = \phi_j(x) \cdot w_{j, \hat{y}}$, where $w_{j, \hat{y}}$ is the coefficient associated with this class. Relevance score $r_{j, x}$ is computed by normalizing $\alpha$ as $r_{j, x} = \frac{\alpha_{j, \hat{y}, x}}{\max_i |\alpha_{i, \hat{y}, x}|}$. An attribute $\phi_j$ is considered relevant for a local prediction if it&amp;rsquo;s both activated and effectively used in the linear model.&lt;/p>
+&lt;p>Attribute relevance extends to its overall importance in predicting any class $c$. This is achieved by averaging relevance scores from local interpretations over a random subset or the entirety of the training set $S$ where the predicted class is $c$. Thus, $r_{j, c} = \frac{1}{|S_c|} \sum_{x \in S_c} r_{j, x}$, where $S_c = \{x \in S \mid \hat{y} = c\}$.&lt;/p>
+&lt;p>Now, let&amp;rsquo;s introduce the local and global interpretations the interpreter will provide:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>Global interpretation ($G(g, f)$) identifies class-attribute pairs $(c, \phi_j)$ where the global relevance $r_{j, c}$ exceeds a threshold $\frac{1}{\tau}$.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Local interpretation ($L(x, g, f)$) for a sample $x$ includes attribute functions $\phi_j$ with local relevance $r_{j, x}$ surpassing $\frac{1}{\tau}$. These definitions don&amp;rsquo;t assess interpretation quality directly.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="section-2.3">2.3 Learning by imposing interpretability properties&lt;/h2>
+&lt;p>For learning, the paper defines certain penalties to minimize, where each one aims to enforce a certain desirable property:&lt;/p>
+&lt;p>&lt;em>&lt;strong>Fidelity to output:&lt;/strong>&lt;/em> The output of $g(x)=h(\Psi(f_I(x)))$ should be close to $f(x)$ for any x. This can be imposed through a cross-entropy loss:
+$$
+L_{of}(f, g, S) = - \sum_{x \in S} h(\Psi(f_I(x)))^T \log(f(x))
+$$&lt;/p>
+&lt;p>&lt;em>&lt;strong>Conciseness and Diversity of Interpretations:&lt;/strong>&lt;/em> We aim for concise local interpretations, containing only essential attributes per sample, promoting clearer understanding and capturing high-level concepts. Simultaneously, we seek diverse interpretations across samples to prevent attribute functions from being class-exclusive. To achieve this, the paper proposes that we leverage entropy (defined for a vector as $\mathcal{E}(v) = - \sum_i p_i \log(p_i)$), which quantifies uncertainty in real vectors. Conciseness is fostered by minimizing the entropy of the interpreter&amp;rsquo;s output, $\Phi(x) = \Psi(f_I(x))$, while diversity is encouraged by maximizing the entropy of the average $\Psi(f_I(x))$ over a mini-batch. This approach promotes sparse and varied coding of $f_I(x)$, enhancing interpretability. However, as entropy-based losses lack attribute activation constraints, leading to suboptimal optimization, we also minimize the $l_1$ norm of $\Psi(f_I(x))$ with hyperparameter $\eta$. Although $l_1$-regularization commonly encourages sparsity, the experiments done in the paper show that entropy-based methods are more effective.
+$$
+L_{cd}(f, g, S) = -\mathcal{E}(\frac{1}{\lvert S \lvert} \sum_{x \in S} \Psi(f_I(x))) + \sum_{x \in S} \mathcal{E}(\Psi(f_I(x))) + \sum_{x \in S} \eta \lVert \Psi(f_I(x)) \lVert_1
+$$&lt;/p>
+&lt;p>&lt;em>&lt;strong>Fidelity to input:&lt;/strong>&lt;/em> In order to promote the representation of intricate patterns associated with the input within $\Phi(x)$, a decoder network $d : \mathbb{R}^J \rightarrow X$ is employed. This network is designed to take the attribute dictionary $\Phi(x)=\Psi(f_I(x))$ as input and reconstruct the original input $x$.
+$$
+L_{if}(f, g, d, S) = \sum_{x \in S} (d(\Psi(f_I(x))) - x)^2
+$$&lt;/p>
+&lt;p>Given the proposed loss terms, the loss for the interpretability model writes as follows:
+$$
+L_{int}(f, g, d, S) = \beta L_{of}(f, g, S) + \gamma L_{if}(f, g, d, S) + \delta L_{cd}(f, g, S)
+$$
+Where $\beta, \gamma, \delta$ are non-negative hyperparameters. the total loss to be minimized $L = L_{pred} + L_{int}$, where the prediction loss, $L_{pred}$, is the well-know cross entropy loss (since this a classification problem).&lt;/p>
+&lt;h1 id="section-3">3 Understanding encoded concepts in FLINT&lt;/h1>
+&lt;p>Once the predictor and interpreter networks are jointly learned, interpretation can be conducted at both global and local levels . A critical aspect highlighted by the authors is understanding the concepts encoded by each individual attribute function ​$\phi_j$ . Focusing on image classification, the authors propose representing an encoded concept as a collection of visual patterns in the input space that strongly activate $\phi_j$ . They present a pipeline for generating visualizations for both global and local interpretation, adapting various existing tools .&lt;/p>
+&lt;p>For global interpretation visualization, the authors propose starting by selecting a small subset of training samples from a given class c that maximally activate ​$\phi_j$ . This subset, referred to as Maximum Activating Samples (MAS), is denoted as $MAS(c , ​\phi_j , l)$ where $l$ is the subset size (set as 3 in their experiments). However, while MAS provides some insight into the encoded concept, further analysis is required to understand the specific aspects of these samples that cause ​$\phi_j$ activation. To achieve this, the authors propose utilizing a modified version of activation maximization called Activation Maximization with Partial Initialization (AM+PI). This technique aims to synthesize input that maximally activates ​$\phi_j$ by optimizing a common activation maximization objective, initialized with a low-intensity version of the sample from MAS.&lt;/p>
+&lt;p>For local analysis, given any test sample $x_{0}$ , its local interpretation $L(x_{0},f,g)$ can be determined, representing the relevant attribute functions . To visualize a relevant attribute ​$\phi_j$, the authors suggest repeating the AM+PI procedure with initialization using a low-intensity version of $x_{0}$ to enhance the concept detected by ​$\phi_j$ in $x_{0}$ .&lt;/p>
+&lt;h2 id="section-4">4 Reproducing the experiments&lt;/h2>
+&lt;p>In the experimental section of the article, several experiments were conducted to do a quantitative evaluation of FLINT&amp;rsquo;s performance compared to other state-of-the-art models designed for interpretability, such as SENN and PrototypeDNN. Additionally, FLINT was compared to LIME and VIBI to evaluate the fidelity of its interpretations, measuring the proportion of samples where the predictions of a model and its interpreter agree. Across these tests, FLINT consistently outperformed the other models, demonstrating its reliability and effectiveness.&lt;/p>
+&lt;p>However, in this blog post we will specifically focus on reproducing the experiments in the article related to FLINT&amp;rsquo;s explainability, that aim to do a qualitative analysis of it. To achieve a thorough understanding of the model and its operational dynamics across prevalent datasets, we replicated the study by cloning the project from the GitHub repository referenced in the article (&lt;a href="https://github.com/jayneelparekh/FLINT">repo link&lt;/a>). Our experimentation involved the CIFAR10 and QuickDRAW datasets, employing a ResNet18-based network for both. For the QuickDRAW dataset, we utilized J=24 attributes, while for the CIFAR10 dataset, we used J=36 attributes.&lt;/p>
+&lt;p>The instructions provided in the GitHub repository for executing the model are clear, and the model runs flawlessly. We have the option to either train the model ourselves or download the pre-trained models. Furthermore, there is a well-detailed Python notebook named &amp;ldquo;FLINT demo.ipynb&amp;rdquo;, which contains code for visualizing data, such as attribute relevance scores for each class and local interpretations for data samples. We will execute FLINT on test images and take a look at how interpretability is done with FLINT in this section.&lt;/p>
+&lt;h3 id="section-4.1">4.1 Global interpretation&lt;/h3>
+&lt;p>In the article, the authors explore global interpretation using a figure similar to the one provided below which was reproduced from the notebook, and which illustrates the generated global relevances $r_{j,c}$ for all class-attribute pairs in the QuickDraw dataset.&lt;/p>
+&lt;!-- ![Global class-attribute relevances](/images/FLINT/Global_class_attribute_QuickDRAW.png) -->
+&lt;div style="text-align:center;">
+&lt;img src="./images/FLINT/Global_class_attribute_QuickDRAW.png" alt="Image" width="300" height="200">
+&lt;/div>
+&lt;p>Additionally, by running the model on the CIFAR10 and QuickDRAW dataset we got visual outputs representative of class-attribute pair analyses for both datasets. These outputs served as pivotal tools in elucidating interrelations and facilitating comparative assessments between attributes and classes. We present below two figures derived from the resultant class-attribute pair analyses for each of the 2 datasets. The class-attribute pairs shown are different from the examples shown in the paper.&lt;/p>
+&lt;p>&lt;img
+src="./images/FLINT/Class_attribute_pair_CIFAR10.png"
+alt="Class-attribute pair analysis on dataset CIFAR10"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;em>Caption: Class-attribute pair analysis on dataset CIFAR10&lt;/em>&lt;/p>
+&lt;p>&lt;img
+src="./images/FLINT/Class_attribute_pair_QuickDraw.png"
+alt="Class-attribute pair analysis on dataset QuickDraw"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;em>Caption: Class-attribute pair analysis on dataset QuickDraw&lt;/em>&lt;/p>
+&lt;p>We focus on class-attribute pairs with high relevance, showcasing examples in the provided figure above . For each pair, we examine Maximum Activating Samples (MAS) alongside their corresponding Activation Maximization with Partial Initialization (AM+PI) outputs.&lt;/p>
+&lt;p>MAS analysis alone provides valuable insights into the encoded concept. For instance, on QuickDRAW dataset, attribute $\phi_{16}$ relevant for class &amp;lsquo;Banana&amp;rsquo; activates the curve shape of the banana. However, AM+PI outputs offer deeper insights by elucidating which parts of the input activate an attribute function more clearly. And on CIFAR10 dataset , attribute $\phi_{12}$ activates for &amp;lsquo;Deer&amp;rsquo; class , but the specific focus of the attribute remains ambiguous. The outputs of the AM+PI method indicate that attribute $\phi_{12}$ predominantly highlights the area encompassing the legs and the horns of the deer, characterized as the most prominently enhanced regions.&lt;/p>
+&lt;h3 id="section-4.2">4.2 Local interpretation&lt;/h3>
+&lt;p>Similarly to the article, we explored local interpretation through the figure provided below which was generated in the notebook, which showcases visualizations for 4 test samples of the QuickDRAW dataset. Both predictor $f$ and interpreter $g$ accurately predict the true class in all cases, for the first 2 it&amp;rsquo;s &amp;ldquo;Cat&amp;rdquo; and the last 2 it&amp;rsquo;s &amp;ldquo;Banana&amp;rdquo;. For each case, they highlighted the top 3 relevant attributes to the prediction along with their relevances and corresponding AM+PI outputs.&lt;/p>
+&lt;p>&lt;img
+src="./images/FLINT/Local_interpretations.jpg"
+alt="Local interpretations for test samples"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>Analysis of the AM+PI outputs reveals that attribute functions generally activate for patterns corresponding to the same concept inferred during global analysis. This consistency is evident for attribute functions present in the previous figures. Additionaly, by looking at the figure showing the relevance of class-attribute pairs in section 4.1 for the QuickDRAW dataset we observe that the 3 most important features for each class in the local interpretations are also those having the highest relevence for these classes. For example for the &amp;ldquo;Banana&amp;rdquo; class, $\phi_{16}$, which activates the curve shape, is by far the most important feature for identifying this class by looking at both the local interpretations and the class-attribute relevences. While for the &amp;ldquo;Cat&amp;rdquo; class, it seems that the most important features are in order $\phi_{23}$, $\phi_1$ and $\phi_{19}$ when looking at both the local interpretations and the class-attribute relevences.&lt;/p>
+&lt;h2 id="section-5">5 Subjective evaluation&lt;/h2>
+&lt;p>In the article, a subjective evaluation survey with 20 respondents using the QuickDraw dataset to assess FLINT&amp;rsquo;s interpretability is conducted. The authors selected 10 attributes covering 17 class-attribute pairs and presented visualizations (3 MAS and AM+PI outputs) along with textual descriptions for each attribute to the respondents. They were asked to indicate their level of agreement with the association between the descriptions and the patterns in the visualizations using predefined choices.&lt;/p>
+&lt;p>Descriptions were manually generated, including 40% incorrect ones to ensure informed responses. Results showed that for correct descriptions, 77.5% of respondents agreed, 10.0% were unsure, and 12.5% disagreed. For incorrect descriptions, 83.7% disagreed, 7.5% were unsure, and 8.8% agreed. These results affirm that the concepts encoded in FLINT&amp;rsquo;s learned attributes are understandable to humans.&lt;/p>
+&lt;h1 id="section-6">6 Specialization of FLINT to post-hoc interpretability&lt;/h1>
+&lt;p>FLINT primarily aims for interpretability by design, but the authors of the article propose that it can also be adapted to provide post-hoc interpretations when a classifier $\hat{f}$ is already available. Post-hoc interpretation learning, a special case of SLI, involves building an interpreter for $\hat{f}$ by minimizing a certain objective function. Specifically, Given a classifier
+$\hat{f} \in F$ and a training set $S$, the goal is to build an interpreter of $\hat{f}$ by solving:
+$$
+\text{arg} \min_{g \in G_{f}} L_{int}(\hat{f}, g, S)
+$$
+Where $g(x)=h(\Phi(\hat{f_I} (x)))$ for a given set of $I$ hidden layers and an attribute dictionnary of size $J$. The learning is performed the same as before but we only keep the parameters $\theta_\Psi$, $\theta_h$ and $\theta_d$. We fix $\theta_\hat{f}$ and remove $L_{pred}$ from the training loss $L$.&lt;/p>
+&lt;p>There are experimental results in the article and in the supplements that are not mentionned here that demonstrate the effectiveness of post-hoc interpretation within FLINT, showing that even without fine-tuning the internal layers of the classifier, meaningful interpretations can be generated with high fidelity.&lt;/p>
+&lt;h1 id="section-7">7 Conclusion&lt;/h1>
+&lt;p>In conclusion, FLINT offers a robust framework for enhancing the interpretability of machine learning models, particularly deep neural networks, in critical domains like healthcare, law, and defense. By jointly learning predictor and interpreter models, FLINT addresses the challenge of providing both global and local interpretations of model predictions. Through carefully designed loss functions, FLINT ensures fidelity to input and output, promotes concise and diverse interpretations, and facilitates the representation of intricate patterns associated with input data. Reproducing experiments on datasets such as CIFAR10 and QuickDRAW showcases FLINT&amp;rsquo;s effectiveness in providing interpretable insights into model predictions. Subjective evaluations affirm the understandability of FLINT&amp;rsquo;s learned attributes, reinforcing its potential for real-world applications. Moreover, FLINT&amp;rsquo;s adaptability for post-hoc interpretability underscores its versatility, enabling meaningful interpretations without extensive modification of the underlying classifier. Overall, FLINT emerges as a valuable tool for fostering transparency and trust in complex machine learning models, contributing to the development of interpretable AI systems across various domains.&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/a-framework-to-learn-with-interpretation/</guid><pubDate>Tue, 13 Feb 2024 16:56:04 +0100</pubDate></item><item><title>Do Perceptually Aligned Gradients imply Robustness?</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/robustness-and-pag-the-converse/</link><description>&lt;style TYPE="text/css">
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style>
 &lt;script type="text/x-mathjax-config">
