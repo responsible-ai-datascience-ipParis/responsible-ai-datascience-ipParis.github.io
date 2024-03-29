@@ -70,3 +70,5 @@ canonifyURLs = true
   baseName = "feed"
 
 ignoreErrors = ["error-remote-getjson"]
+
+mainSections = ["posts"]
