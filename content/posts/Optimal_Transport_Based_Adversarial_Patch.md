@@ -30,7 +30,7 @@ MathJax.Hub.Queue(function() {
 * Mohammed Jawhar
 * Aymane Rahmoune
 
-### Paper : [Optimal Transpoert Based Adversarial Based Patch To Leverage Large Scale Attack Transferability](https://openreview.net/forum?id=nZP10evtkV)
+### Paper : [Optimal Transport Based Adversarial Based Patch To Leverage Large Scale Attack Transferability](https://openreview.net/forum?id=nZP10evtkV)
 
 # Table of contents :
 
@@ -47,7 +47,8 @@ MathJax.Hub.Queue(function() {
     - [Digital Experiments](#subsection-421)
     - [Hybrid Experiments](#subsection-422)
     - [Physical Experiments](#subsection-423)
-- [Conclusion](#section-5)
+- [Reproducibility](#section-5)
+- [Conclusion](#section-6)
 
 ## Introduction {#section-0}
 
@@ -58,7 +59,7 @@ As AI becomes increasingly integrated into various aspects of our lives, includi
 
 
 <p align="center">
-  <img src="http:/localhost:1313/images//image_optimal_transport_patch/road_scene.png" alt="Road_scene">
+  <img src="http:/localhost:1313/images/image_optimal_transport_patch/road_scene.png" alt="Road_scene">
 </p>
 
 While these attacks might not seem like a big deal, nor dangerous in this context, the consequences can be severe in critical scenarios - take for example an autonomous vehicle failing to recognize a stop sign, hurting potentially a pedestrian. In this blog we will explore a new approach used for developping such adversarial patch attacks, based on Optimal Transport, as outlined in the paper ***OPTIMAL TRANSPORT BASED ADVERSARIAL PATCH TO LEVERAGE LARGE SCALE ATTACK TRANSFERABILITY***. We will try to follow the same structure as in the paper to make the reading easier for you, but with much more simplicity.
@@ -107,7 +108,7 @@ Despite the fact that crafting adversarial patch attacks is mainly based around 
 You surely noticed that we mentionned the transferability term many times in the last section, showing that is an essential property for designing such attacks, but why do we focus so much to make our patch transferable through many models? Well, it is like discovering a master key for many locks : It enables bad actors to compromise and confuse an AI system using a crafted patch they made without knowing anything about that system(architecture, training,...).
 
 <p align="center">
-  <img src="..\images\image_optimal_transport_patch\transferability_diagram.png" alt="transferability_diagram">
+  <img src="http:/localhost:1313/images/image_optimal_transport_patch/transferability_diagram.png" alt="transferability_diagram">
 </p>
 
 
@@ -150,9 +151,13 @@ Where $\mu$ and $\nu$ are two propbability distributions on $\mathbb{R}^d$, $||.
 </html>
 
 
+
 <p align="center">
-  <img src="../images/image_optimal_transport_patch/Sliced_wasserstain.png" alt="Sliced Wasserstain">
+  <img src="http://localhost:1313/images/image_optimal_transport_patch/Sliced_wasserstain.png" alt="Sliced Wasserstain">
+  <br>
+  <em>This image is taken and adapted from the <a href="https://theses.hal.science/tel-03533097/document">Sliced-Wasserstein distance for large-scale machine learning: theory, methodology and extensions</a> paper.</em>
 </p>
+
 
 
 <!-- $$SW_{p}(\mu,\nu) = \int_{S^{d-1}} W_{p}(\theta_{\#}\mu, \theta_{\#}\nu) d\sigma(\theta)$$-->
@@ -165,7 +170,7 @@ To delve more into the mathematical details, let us explore how Optimal Transpor
 
 
 <p align="center">
-  <img src="../images/image_optimal_transport_patch/Optimal transport.png" alt="Optimal Transport">
+  <img src="http:/localhost:1313/images/image_optimal_transport_patch/Optimal transport.png" alt="Optimal Transport">
 </p>
 
 
@@ -238,7 +243,7 @@ The experiments are structured into three main categories:
 In this configuration, the patches efficacy was tested in a purely digital environment, using images from the ImageNet-1K dataset, which was used also for training. Patches were first designed to attack one of the source models, then tested on other target models to measure the attacking transferability. The table below summarizes for each APA method, the best transferring attack performance achieved :
 
 <p align="center">
-  <img src="../images/image_optimal_transport_patch/Digital_transferability.png" alt="Digital Transferability">
+  <img src="http:/localhost:1313/images/image_optimal_transport_patch/Digital_transferability.png" alt="Digital Transferability">
 
 </p> 
 
@@ -254,36 +259,94 @@ As expected through the novelty of $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ approa
 * Methods based on feature space optimization, including L2 and the $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ approach, demonstrate improved transferability and are less likely to overfit.
 
 ##### Robustified configuration : 
-In the second configuration of the digital experiments, the same procedures were reapplied. However this time the methods learn on Swin, and transfer to a robustified version, by Local Gradients Smoothing (LGS) - a defense mechanism smoothing salient regions in images before passing thm to the network- , of the six model categories.
+In the second configuration of the digital experiments, the same procedures were reapplied. However this time, the methods learn on Swin, and transfer to a robustified version, by Local Gradients Smoothing (LGS) - a defense mechanism smoothing salient regions in images before passing them to the network - , of the six model categories.
 
 Similarly, $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ outperforms significantly all other methods as we can see in the following table :
 
 
 <p align="center">
-  <img src="../images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
+  <img src="http:/localhost:1313/images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
 </p> 
 
 
 #### Hybrid experiments: <a name="subsection-422"></a>
-In order to simulate real-world applications more closely, the hybrid experiments conducted within this section involved printing adversarial patches trained with Swin, placing them in physical environments, capturing the images, and then digitally analyzing the results, for normal, and robustified models.
+In order to simulate real-world applications more closely, the hybrid experiments conducted within this section involved printing adversarial patches trained with Swin, placing them in physical environments, capturing the images, and then digitally analyzing the results, for simple, and robustified models.
 
-The table below shows the criticality of the $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ giving very large tsuc in comparison with the other methods, for all settings
+The table below shows the criticality of the $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ giving very large tSuc in comparison with the other methods, for all settings:
 
 <p align="center">
-  <img src="../images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
+  <img src="http:/localhost:1313/images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
 </p> 
 
 
 #### Physical experiments: <a name="subsection-423"></a>
- In this last experiments category, we get closer to the real world situations, by recording a video of some ImageNet-1K object (banana, cup , keyboard) while moving a designed patch in the set. This aims to quantify the severity of each attack, for realistic scenarios (as the example provided above about the autonomous vehicule not detecting the stop sign while driving due to an adversarial patch designed without knowing the AI system at all).
+ In this last experiments category, we get closer to the real world situations, by recording a video of some ImageNet-1K objects (banana, cup , keyboard) while moving a designed patch in the set. This aims to quantify the severity of each attack, for realistic scenarios (as the example provided above about the autonomous vehicule not detecting the stop sign while driving due to an adversarial patch designed without knowing the AI system at all).
 
- All APA methods failed to transfer properly on all architectures except for L2 with a modest tSuc(9.3%) and $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ that gave much bwtter results (23.4$ and 29.3%)
-
-
+ All APA methods failed to transfer properly on all architectures except for L2 with a modest tSuc(9.3%) and $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ that gave much better results (23.4% and 29.3%)
 
 
-## Conclusion{#section-5}
+
+## Reproducibility{#section-5}
+
+In this section, we wanted to reproduce some of the experiments conducted in the paper to validate the results and the findings. However, by exploring the code provided with the paper, and analyzing the python files, we found that it is not well documented, and the structure is not very clear, which makes it difficult to understand and reproduce the complex experiments involving transferability evaluation. Furthermore, given that the paper is based on the ImageNet dataset, which is very large and requires a lot of computational resources, we were not able to run the experiments on our local machines, as we do not have access to a powerful GPU cluster. Consequently, we opted for the CIFAR-10 dataset, which is smaller and more manageable. Despite this adjustment, we still faced some issues Specifically, the model is built from scratch without an available pre-trained, and there are missing components, notably the function required to extract feature vectors from each layer of the target models. To address these challenges and make the reproduction process easier, we decided to develop the missing feature extraction function as an enhancement, and save the obtained results into files(in the same way it was done in the code), to be able to apply the optimal transport method and craft the adversarial patches later as perspectives
+
+
+Here are the code that we developed :  
+
+```python
+import torch
+import torchvision.models as models
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+import torchvision.datasets as datasets
+
+def get_loader(dataset: str, split: str, batch_size: int) -> torch.utils.data.DataLoader:
+    """Return a DataLoader object for a given dataset and split."""
+    return torch.utils.data.DataLoader(get_dataset(dataset, split), batch_size=batch_size, shuffle=True)
+
+
+def extract_features(data_loader, list_models):
+    """
+    Extracts features from each layer of the pre-trained models provided in the list_models
+    by applying average pooling, and saves the extracted features into files.
+    """
+    for model_name in list_models:
+        model = models.__dict__[model_name](pretrained=True)
+        model.eval()
+        for layer_name, layer in model.named_children():
+            if isinstance(layer, torch.nn.Sequential):
+                layer_features = []
+                for i, (input, target) in enumerate(data_loader):
+                    with torch.no_grad():
+                        output = layer(input)
+                        output = torch.nn.functional.adaptive_avg_pool2d(output, (1, 1))
+                        output = output.view(output.size(0), -1)
+                        layer_features.append(output)
+                layer_features = torch.cat(layer_features)
+                torch.save(layer_features, f"./data/CIFAR/all_images_feature/{layer_name}/{model_name}.pt")
+
+# Apply the function extract_features to some targeted models
+list_models = ["resnet18", "vgg19", "convnext_tiny", "swin_t"]
+data_loader = get_loader("CIFAR10", "train", batch_size=64)
+extract_features(data_loader, list_models)
+```
+
+
+## Conclusion{#section-6}
 
 
 
 In conclusion, our exploration of the paper ***OPTIMAL TRANSPORT BASED ADVERSARIAL PATCH TO LEVERAGE LARGE SCALE ATTACK TRANSFERABILITY***, revealed an innovative and promizing technique that uses Optimal Transport to make adversarial patches more effectively fool different models. This method, focusing on altering image feature distributions to match a target distribution from another class, has proven to be both theoretically sound and practically successful. It significantly outperforms current state of the art methods in creating patches that can be highly transferable between models and potentially very harmful, showing great promise for both advancements in the field and potential challenges in security applications.
+
+## References:
+
+* [OPTIMAL TRANSPORT BASED ADVERSARIAL PATCH TO LEVERAGE LARGE SCALE ATTACK TRANSFERABILITY](https://openreview.net/forum?id=nZP10evtkV)
+
+* [Sliced-Wasserstein distance for large-scale machine learning : theory, methodology and extensions](https://theses.hal.science/tel-03533097/document)
+
+* [Computational Optimal Transport](https://arxiv.org/pdf/1803.00567.pdf)
+
+* [Feature Space Perturbations Yield More Transferable Adversarial Examples](https://openaccess.thecvf.com/content_CVPR_2019/papers/Inkawhich_Feature_Space_Perturbations_Yield_More_Transferable_Adversarial_Examples_CVPR_2019_paper.pdf)
+
+
+ 
