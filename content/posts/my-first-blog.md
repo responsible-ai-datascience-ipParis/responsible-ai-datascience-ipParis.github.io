@@ -239,6 +239,10 @@ A Github repository with all the necessary modifications from the original code 
 # What about source features?
 Through extensive testing, authors have identified that two specific attributes related to neural collapse, observed in the source features, consistently predicted the model's performance on new tasks. These attributes were the diversity within data categories and the compactness of category representations. Remarkably, models showing higher within-category diversity and more compact category representations in their source features tended to adapt better to new tasks. On the other hand, SELI did not consistently correlate with transferability.
 
+# Challenges
+Authors did experiments on the effectiveness of each individual component in NCTI. They used the three terms individually and removed them one at a time from the full system, and it turned out that for supervised learning, the NCTI without NCC achieved the best weighted Kendall' τ. Instead of having normalized the three NCTI components equally, it could have been interesting to tune hyperparameters.
+Moreover, the current implementation and validation of NCTI are confined to image classification tasks, suggesting its applicability may be limited to similar types of problems. Future work could extend the method's applicability to a broader range of tasks beyond classification, such as detection or segmentation​​. Pre-trained language models could also be considered to measure their transferability based on Neural Collapse. For example, the Fair Collapse (FaCe) method [[7]](#ref7) considers both Computer Vision and Natural Language Processing tasks, using different proxies of Neural Collapse than NCTI, and producing a slightly less good τ on the CIFAR-10 dataset (0.81).
+
 # Takeaways
 
 Key points to remember are :
@@ -269,5 +273,7 @@ In summary, the development of metrics such as NCTI is crucial for optimizing th
 
 <a id="ref6"></a>6. Christos Thrampoulidis, Ganesh R Kini, Vala Vakilian, and Tina Behnia. (2022). Imbalance trouble: Revisiting neural-collapse
 geometry. arXiv preprint arXiv:2208.05512.
+
+<a id="ref7"></a>7. Yuhe Ding, Bo Jiang, Lijun Sheng, Aihua Zheng, Jian Liang. (2023). Unleashing the power of neural collapse for transferability estimation. arXiv preprint arXiv:2310.05754v1.
 
 <hr></hr>
