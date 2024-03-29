@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>Tutorial | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:title" content="Tutorial" />
+<meta property="og:description" content="How to create and publish your blogpost ?
+The blogpost builds upon Hugo and Markdown.
+For markdown you can easily find a cheat sheet here.
+Setup: you need to have a GitHub Account, a terminal and a text editor of your choice (e.g.VSCode, nano, gedit)
+Install Hugo on your laptop. Hugo is available for all operating systems. You can find the installation guide here. Be careful, you need at least Hugo version 0." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/tutorial/" /><meta property="article:section" content="pages" />
+
+
+
+
+    <meta itemprop="name" content="Tutorial">
+<meta itemprop="description" content="How to create and publish your blogpost ?
+The blogpost builds upon Hugo and Markdown.
+For markdown you can easily find a cheat sheet here.
+Setup: you need to have a GitHub Account, a terminal and a text editor of your choice (e.g.VSCode, nano, gedit)
+Install Hugo on your laptop. Hugo is available for all operating systems. You can find the installation guide here. Be careful, you need at least Hugo version 0.">
+
+<meta itemprop="wordCount" content="516">
+<meta itemprop="keywords" content="" />
+    
+    <link rel="canonical" href="http://localhost:1313/tutorial/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "pages",
+      "name": "Tutorial",
+      "headline": "Tutorial",
+      "alternativeHeadline": "",
+      "description": "How to create and publish your blogpost ?\nThe blogpost builds upon Hugo and Markdown.\nFor markdown you can easily find a cheat sheet here.\nSetup: you need to have a GitHub Account, a terminal and a text editor of your choice (e.g.VSCode, nano, gedit)\nInstall Hugo on your laptop. Hugo is available for all operating systems. You can find the installation guide here. Be careful, you need at least Hugo version 0.",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/tutorial\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "0001",
+      "dateCreated": "0001-01-01T00:00:00.00Z",
+      "datePublished": "0001-01-01T00:00:00.00Z",
+      "dateModified": "0001-01-01T00:00:00.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/tutorial\/",
+      "wordCount" : "516",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="/">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="/posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="/tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="/about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="/articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">Tutorial</h2>
+      <p>How to create and publish your blogpost ?</p>
+<hr/>
+<p>The blogpost builds upon <a href="https://gohugo.io/">Hugo</a> and <a href="https://www.markdownguide.org/">Markdown</a>.</p>
+<p>For markdown you can easily find a cheat sheet <a href="https://www.markdownguide.org/cheat-sheet/">here</a>.</p>
+<ol start="0">
+<li>
+<p>Setup: you need to have a GitHub Account, a terminal and a text editor of your choice (e.g.VSCode, nano, gedit)</p>
+</li>
+<li>
+<p>Install Hugo on your laptop. Hugo is available for all operating systems. You can find the installation guide <a href="https://gohugo.io/installation/">here</a>. Be careful, you need at least Hugo version 0.120 otherwise, this will not work!
+To verify your version</p>
+</li>
+</ol>
+<pre tabindex="0"><code>hugo version
+</code></pre><p>For Ubuntu, the default version is not the correct one, please download it directly from their
+<a href="https://github.com/gohugoio/hugo/releases/tag/v0.121.2">github</a>.</p>
+<ul>
+<li>Download the <code>hugo_extended_0.121.2_linux-amd64.deb</code>.</li>
+<li>Using the terminal, go to the folder where the file is</li>
+<li>Then <code>sudo apt install ./hugo_extended_0.121.2_linux-amd64.deb</code></li>
+</ul>
+<ol start="2">
+<li>
+<p>Go to the following <a href="https://github.com/responsible-ai-datascience-ipParis/responsible-ai-datascience-ipParis.github.io">repository</a> and <code>fork</code> it.</p>
+</li>
+<li>
+<p>Open a terminal</p>
+</li>
+<li>
+<p>Clone the forked repository of the course using the following command</p>
+</li>
+</ol>
+<pre tabindex="0"><code>git clone --recurse-submodules https://....
+</code></pre><p>Replace the <code>https://</code> with your forked repository url.</p>
+<!---*Note*. **This is not a github tutorial,** but for each article please work on a separate branch to avoid breaking the whole thing. If you are not familiar with github good practices, discuss with your teammates !--->
+<ol start="5">
+<li>With the terminal, navigate in the cloned repository</li>
+</ol>
+<pre tabindex="0"><code>cd responsible-ai-datascience-ipParis.github.io
+</code></pre><!---
+5. Create a branch named adding-my-post. **Replace my-post** with some keywords related to the paper that you are working on.
+
+```
+git checkout -b adding-my-post
+```
+
+*Note*: the `-b` option is there because we assume that this branch did not exist.
+-->
+<ol start="6">
+<li>Run the hugo server command and visit <a href="http://localhost:1313">http://localhost:1313</a> in your browser.</li>
+</ol>
+<pre tabindex="0"><code>hugo server
+</code></pre><ol start="7">
+<li>Let’s create a new blog post by running the following command. Once again, please replace <code>choose-a-name</code> by a name close to your article.</li>
+</ol>
+<pre tabindex="0"><code>hugo new posts/choose-a-name.md
+</code></pre><ol start="8">
+<li>This will create a markdown file named <code>my-first-blog.md</code> in the <code>blog</code> folder underneath the <code>content</code> folder.</li>
+</ol>
+<p>If you open this file, you will see that it is not empty. Hugo automatically created some metadata. Hugo has prefilled the title field from the name of the Markdown file, the timestamp of when the file was created, and it has automatically put the file into draft mode.</p>
+<ol start="9">
+<li>
+<p>Change the draft status to false (by default it is set to true) in the newly created file.</p>
+</li>
+<li>
+<p>Write your blogpost by modifying the markdown file create during <strong>step 7</strong>.
+This step should take you long enough ! Once again, to visualise the result of your progress, simply run the hugo server command and visit <a href="http://localhost:1313">http://localhost:1313</a> in your browser.
+For illustrations or image, create your own folder to avoid filenames confusion with other groups.</p>
+</li>
+</ol>
+<p><strong>DO NOT</strong> touch anything else !</p>
+<p><em>Note</em>: regularly commit to your repository to save backups.</p>
+<!---*Note*: If you don't feel comfortable with git, we recommend not to push the work on the main branch until you are done here to avoid possible conflicts.--->
+<ol start="11">
+<li>Once you are satisfied with your blogpost you can do the final push of your work !</li>
+</ol>
+<pre tabindex="0"><code>git add .
+git commit -m &#34;i&#39;m done&#39;&#34;
+git push origin
+</code></pre><ol start="12">
+<li>Time to merge your forked repository with the original one !</li>
+</ol>
+<ul>
+<li>First, you need to update your fork by clinking on <code>Sync fork</code> button from github.</li>
+<li>Then, click on <code>Contribute</code> then <code>open pull request</code>!</li>
+</ul>
+<!---
+Go to github website
+
+   -  On the GitHub interface, click “Create & pull request”
+   -  Give your PR an informative title and summary, then click “Create pull request”
+   -  After the continuous integration test has passed, click “Merge pull request” then “Confirm merge”
+--->
+<ol start="13">
+<li>While waiting for CD/GitHub Pages to deploy the update, let’s update our local repo.</li>
+</ol>
+<pre tabindex="0"><code>git checkout main
+git pull
+</code></pre><p>After a few minutes the website is updated and you can check your blogpost in the blog page of the website.
+There is no need on your side to update the index page to list your blog post, this will be done by the supervisors of the course at the very end.</p>
+<p><em>Remark: This tutorial is a small part of the tutorial used to set up the blogpost website <a href="https://carpentries-incubator.github.io/blogging-with-hugo-and-github-pages/05-add-blog-content/index.html">link</a> for which a detailed youtube video is available.</em></p>
+
+      
+    </section>
+    
+  </div>
+</main>
+</body>
+</html>
