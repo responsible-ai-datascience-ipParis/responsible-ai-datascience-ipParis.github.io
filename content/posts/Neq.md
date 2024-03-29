@@ -11,7 +11,7 @@ draft = false
 
 <h1 style="font-size: 24px;">Author: Alexis WINTER Augustin CREUSILLET</h1>
 
-# Table of content 
+# Table of content
 
 - [Introduction](#section-0)
 - [NEq](#section-1)
@@ -56,7 +56,7 @@ The concept of **neuronal equilibrium** aims to detect when a neuron reaches a s
 
 To assess this we can evaluate cosine similarity between all the outputs of the $i$-th neuron at time $t$ and at time $t-1$ for the whole validation set $\Xi_{val}$ as follows:
 
-<img src="http://localhost:1313/images_Winter_Creusillet/neq_formula.png" width="300"/>
+<img src="/images/images_Winter_Creusillet/neq_formula.png" width="300"/>
 
 The neuron $i$-th reaches the equilibrium when $(\phi_{i})_t$ stops evolving. In this sense to know when the neuron has reached the equilibrium  we need to detect when :
 
@@ -82,7 +82,7 @@ With $\mu_{eq}$ the momentum coefficient.
 
 Rewrited:
 
-![creusilet/winter](http://localhost:1313/images_Winter_Creusillet/momentum_coef.png)
+![creusilet/winter](/images/images_Winter_Creusillet/momentum_coef.png)
 
 We need to have $$\mu_{eq} \in [0; 0.5]$$ to prevent the velocity from exploding.
 
@@ -99,7 +99,7 @@ The training scheme can be presented according to this scheme:
 
 
 
-![creusilet/winter](http://localhost:1313/images_Winter_Creusillet/prunedbackprop-scheme_full-1.png)
+![creusilet/winter](/images/images_Winter_Creusillet/prunedbackprop-scheme_full-1.png)
 
 At the first epoch each neuron is considered to be at non-equilibrium. After the first epoch the training scheme can be described as followed:
 
@@ -112,12 +112,12 @@ Comparing with regular training, we can see two more hyper-parameters:
 
 - $\epsilon$ which determines the threshold at which a neuron is considered to be at equilibrium according to the velocity of the similarities.
 - $\mu_{eq}$ which intervenes into the calculation of the velocity of the similarities.
-  
+
 ## Experiments {#section-2}
 
 ### SGD vs Adam
 
-![adam/sgd](http://localhost:1313/images_Winter_Creusillet/sgd_vs_adam.png)
+![adam/sgd](/images/images_Winter_Creusillet/sgd_vs_adam.png)
 
 
 The authors conducted an experiment comparing two training methods for a ResNet-32 neural network on the CIFAR-10 dataset. The methods compared are SGD (Stochastic Gradient Descent) with momentum and Adam, which are both optimization algorithms used to update network weights iteratively.
@@ -130,7 +130,7 @@ The experiment also highlights an interesting behavior at the first learning rat
 
 ### Distribution of $\phi$ & choice of $µ_{eq}$
 
-![creusilet/winter](http://localhost:1313/images_Winter_Creusillet/mu-line-1.png)
+![creusilet/winter](/images/images_Winter_Creusillet/mu-line-1.png)
 
 
 
@@ -167,8 +167,8 @@ python3 train_classification.py --amp=1 --arch=resnet32-cifar --batch-size=100 -
 The code runs flawlessly, although we were significantly constrained by the lack of access to a powerful GPU, limiting our experiment. All the important parameters like the learning rate or the number of epochs are easily modifiable, making experimenting really easy. To obtain results for both SGD and Adam, we simply needed to change the optim parameter to the desired optimizer. The authors employ an application named **Weights & Biases (wandb)** to monitor the training process. This application is useful as it not only allows for the saving of training results but also provides a lot of valuable information.
 
 
-![creusilet/winter](http://localhost:1313/images_Winter_Creusillet/frozen_sgd_vs_adam1.png)
-![creusilet/winter](http://localhost:1313/images_Winter_Creusillet/accuracy_sgd_vs_adam1.png)
+![creusilet/winter](/images/images_Winter_Creusillet/frozen_sgd_vs_adam1.png)
+![creusilet/winter](/images/images_Winter_Creusillet/accuracy_sgd_vs_adam1.png)
 
 As expected, as training progresses and the learning rate is reduced, more neuron are frozen and the pattern found on the plot follow the one found by the authors with Adam freezing neuron faster than SGD. We also get the same accuracy level where Adam brings the network towards this equilibrium faster than SGD, but with SGD achieving a slightly higher final accuracy.
 
