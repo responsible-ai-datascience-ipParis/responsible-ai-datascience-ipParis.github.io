@@ -153,7 +153,11 @@ The authors tested out their results on two datasets : **Compas** and **Adult**.
 We were able to run the provided code without too much trouble on WSL2. The only modification we had to make was to change the calls for python in the sh files. We replace `python` with `python3`. However, as mentionned in the cide, the experiments were very long to run (several days) and we were not able to run the `generate_all_figures.sh` script fully as it made our computers crash. Still, we were able to get some of the figures found in the paper (see below) by launching some scripts separately. 
 
 
-GODEFROY TU PEUX AJOUTER LES DEUX IMAGES QUE TU AS GENERE ICI <3
+![dist](/images/lambert_davy/dist.png)
+
+![roc_gen](/images/lambert_davy/roc.png)
+
+Here are two figure generated for the toy 1 dataset, one for the distribution of the scores and one for the ROC curve.
 
 # <h1 style="font-size: 24px; text-decoration: underline;">Conclusion</h1> {#section-7}
 
