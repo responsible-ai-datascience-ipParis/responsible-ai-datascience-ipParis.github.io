@@ -14,8 +14,9 @@ draft = false
 - [Definitions](#section-2)
 - [AUC-based fairness constraints](#section-3)
 - [ROC-based fairness constraints](#section-4)
-- [Reproducibility](#section-5)
-- [Conclusion](#section-6)
+- [Results](#section-5)
+- [Reproducibility](#section-6)
+- [Conclusion](#section-7)
 
 
 # <h1 style="font-size: 24px; text-decoration: underline;">Introduction</h1> {#section-1}
@@ -89,6 +90,24 @@ The family of fairness constraints considered is then the set of linear combinat
 
 Where $Γ$ = $(Γ_1, ... Γ_5)^T$.
 
+The objective function is thus defined as follows :
+
+\begin{align}
+\label{eq:auc_general_problem}
+    \textstyle\max_{s\in\mathcal{S}} \quad AUC_{H_s,G_s} - \lambda 
+    |\Gamma^\top
+    C
+    (s)|,
+\end{align}
+where $\lambda\ge 0$ is a hyperparameter balancing ranking performance
+and fairness.
+
+The paper focuses on a special case of fairness, the **intra-group pairwise AUC fairness**. This was to be more concise. In this example, the objective function becomes :
+
+\begin{align}
+    L_\lambda(s) = AUC_{H_s,G_s} - \lambda |AUC_{H^{(0)}_s, G^{(0)}_s} - AUC_{H^{(1)}_s, G^{(1)}_s }|
+\end{align}
+
 **<u> Issues of AUC-Based constraint:</u>**
 
 Fairness using AUC-based constraints defined by the equality between two AUC’s only quantify a stochastic order between distributions, not the equality between these distributions, and would lead to some unfair result, for a group or for the other group. 
@@ -98,9 +117,10 @@ The authors conducted experiments with the credit-risk dataset and found that cr
 
 # <h1 style="font-size: 24px; text-decoration: underline;">ROC-based fairness constraints</h1> {#section-4}
 
-A richer approach is then to use **pointwised ROC-based fairness constraints**. Ideally, we would want to enforce the equality of all score distributions between both groups (i.e., identical ROC curves). This would satisfy all AUC-based fairness constraints previously mentioned. However, this condition is so restrictive that it will most likely lead to a significant drop in performances. As a result, the authors propose to satisfy this constraint on only a finite number of points. They were indeed able to prove that this was sufficient to ensure maximum fairness for a fixed false positive or false negative rate.  
+A richer approach is then to use **pointwised ROC-based fairness constraints**. Ideally, we would want to enforce the equality of all score distributions between both groups (i.e., identical ROC curves). This would satisfy all AUC-based fairness constraints previously mentioned. However, this condition is so restrictive that it will most likely lead to a significant drop in performances. As a result, the authors propose to satisfy this constraint on only a finite number of points. They were indeed able to prove that this was sufficient to ensure maximum fairness for a fixed false positive or false negative  $\alpha$.  
 
-We can introduce the learning objective $L_\Lambda(s)$ defined as:
+As a result, the objective function becomes : 
+
 \begin{align*}
     % L_\Lambda(s) = 
     AUC_{H_s,G_s} &- 
@@ -109,12 +129,24 @@ We can introduce the learning objective $L_\Lambda(s)$ defined as:
     - \sum_{k=1}^{m_G} \lambda_G^{(k)} \big| \Delta_{G,\alpha_G^{(k)}}(s) \big|,
 \end{align*}
 
+Where $\Delta_{H,\alpha_H^{(k)}}(s)$ and $\Delta_{G,\alpha_G^{(k)}}(s)$ represent the deviations between the positive (resp. negative) inter-group ROCs and the identity function:
 
-# <h1 style="font-size: 24px; text-decoration: underline;">Reproducibility</h1> {#section-5}
+\begin{align*}
+    \Delta_{G, \alpha}(s) &:= ROC_{G^{(0)}_s, G^{(1)}_s}(\alpha) - \alpha, \\
+    \big( \text{resp. } \Delta_{H, \alpha}(s) & := ROC_{H^{(0)}_s,H^{(1)}_s}
+    (\alpha) - \alpha
+    \big).
+\end{align*}
+
+# <h1 style="font-size: 24px; text-decoration: underline;">Results</h1> {#section-5}
+
+
+
+# <h1 style="font-size: 24px; text-decoration: underline;">Reproducibility</h1> {#section-6}
 
 We were able to run the provided code without too much trouble on WSL2. The only modification we had to make was to change the calls for python in the sh files (python -> python3). However, as mentionned on the repository, the experiments were very long to run (several days) and we were not able to run the "generate_all_figures.sh" script fully as it actually made our computers crash. Still, we were able to get some of the figures found in the paper (see below) by launching some scripts separately. 
 
-# <h1 style="font-size: 24px; text-decoration: underline;">Conclusion</h1> {#section-6}
+# <h1 style="font-size: 24px; text-decoration: underline;">Conclusion</h1> {#section-7}
 
 
 The paper "Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints" underscores the growing importance of fairness in machine learning applications. It shows the limits of AUC-based fairness constraints for their inability to ensure equality between distributions, potentially leading to unfair outcomes. In contrast, ROC-based fairness constraints offer a richer approach by enforcing equality of score distributions between groups, albeit with some performance trade-offs. The paper tests the method on typical fairness datasets, but it is also possible to apply it to reel use cases. "A Probabilistic Theory of Supervised Similarity Learning for Pointwise ROC Curve Optimization", for example, explores the possibility to apply ROC-based methods for similarity learning, such as face recognition.
