@@ -59,10 +59,10 @@ git checkout -b adding-my-post
 hugo server
 ```
 
-7. Let’s create a new blog post by running the following command. Once again, please replace `my-first-blog` by a name close to your article.
+7. Let’s create a new blog post by running the following command. Once again, please replace `choose-a-name` by a name close to your article.
 
 ```
-hugo new blog/my-first-blog.md
+hugo new posts/choose-a-name.md
 ```
 
 8. This will create a markdown file named `my-first-blog.md` in the `blog` folder underneath the `content` folder.
