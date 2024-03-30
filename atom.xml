@@ -320,7 +320,164 @@ $$&lt;/p>
 &lt;/table>
 &lt;p>Here the results are much more unequivocal. As the severity factor increases, the baseline model drops in accuracy and entropy, Mixup also drops in accuracy but increases in entropy and RegMixup increases in accuracy and entropy. Here, RegMixup has the higher entropy as the model has higher entropy for OOD samples which are more frequent at this corruption level. Mixup shows a greater delta increase in entropy due to its higher predictive entropy tendency whether or not samples are OOD or ID. Consequently, RegMixup is more confident and accurate than the Mixup model eventhough Mixup is not fully underperforming.&lt;/p>
 &lt;h2 id="section-4">4. Conclusion&lt;/h2>
-&lt;p>As a conclusion, we have seen that RegMixup is a powerful method to regularize deep neural networks. Despite being very simple and cost-effective, it is important to specify that the paper does not provide a theoretical explanation of the method. These experimental grounds are very promising but it appears important to stay cautious while utilizing RegMixup.&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/robustai_regmixup/</guid><pubDate>Sun, 24 Mar 2024 12:38:16 +0100</pubDate></item><item><title>Adversarially Reweighted Learning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/adversarially_reweighted_learning/</link><description>&lt;h1 style="font-size: 36px;">Fairness without Demographics through Adversarially Reweighted Learning&lt;/h1>
+&lt;p>As a conclusion, we have seen that RegMixup is a powerful method to regularize deep neural networks. Despite being very simple and cost-effective, it is important to specify that the paper does not provide a theoretical explanation of the method. These experimental grounds are very promising but it appears important to stay cautious while utilizing RegMixup.&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/robustai_regmixup/</guid><pubDate>Sun, 24 Mar 2024 12:38:16 +0100</pubDate></item><item><title>Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/lambert-davy/</link><description>&lt;h1 style="font-size: 24px;">Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints&lt;/h1>
+&lt;h1 style="font-size: 18px;">Authors: Godefroy LAMBERT and Louise DAVY&lt;/h1>
+&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#section-1">Introduction&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-2">Definitions&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-3">AUC-based fairness constraints&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-4">ROC-based fairness constraints&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-5">Results&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-6">Reproducibility&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-7">Conclusion&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="section-1">&lt;h1 style="font-size: 24px; text-decoration: underline;">Introduction&lt;/h1>&lt;/h1>
+&lt;p>With recent advances in machine learning, applications are becoming increasingly numerous and the expectations are high. Those applications will only be able to be deployed if some important issues are addressed such as bias. There are famous datasets known for containing variables that induce a lot of bias such as Compas with racial bias and gender bias in the Adult dataset. To avoid those biases, new algorithms were created to provide more fairness in the prediction by using diverse methods.&lt;/p>
+&lt;p>Today, we will be reviewing the methods presented in “Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints”. This paper uses basic metrics such as AUC constraint and ROC constraint and shows some limitations. Since this is bipartite ranking, we will only focus on binary prediction, such as will this person recid for the COMPAS dataset or will this person get his loan for the Adult dataset.&lt;/p>
+&lt;h1 id="section-2">&lt;h1 style="font-size: 24px; text-decoration: underline;">Definitions&lt;/h1>&lt;/h1>
+&lt;p>The goal of &lt;strong>bipartite ranking&lt;/strong> is to acquire an ordering of X where positive instances are consistently ranked above negative ones with a high probability. This is done by learning an appropriate scoring function $s$. Such scoring functions are widely used in many critical domains such as &lt;strong>loan granting&lt;/strong>, &lt;strong>anomaly detection&lt;/strong>, or even in &lt;strong>court decisions&lt;/strong>. A nice way to assess their performance is through the analysis of the &lt;strong>Receiver Operating Characteristic&lt;/strong> (ROC) curve and the &lt;strong>Area Under the ROC Curve&lt;/strong> (AUC).&lt;/p>
+&lt;p>&lt;strong>ROC&lt;/strong> stands for &lt;strong>Receiver Operating Characteristic curve&lt;/strong> and is a graph showing the performance of a classification model at all classification thresholds for a model. This curve plots two parameters:&lt;/p>
+&lt;ul>
+&lt;li>True Positive Rate&lt;/li>
+&lt;li>False Positive Rate&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img
+src="./images/lambert_davy/roc_easy.png"
+alt="Roc_1"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>The formula for the True Positive Rate (TPR) is:
+$$TPR = \frac{TP}{TP + FN}$$&lt;/p>
+&lt;p>And the formula for the False Positive Rate (FPR) is:
+$$FPR = \frac{FP}{FP + TN}$$&lt;/p>
+&lt;p>With ${FP}$ = False Positive, $FN$ = False Negative, $TP$ = True Positive, $TN$ = True Negative.&lt;/p>
+&lt;p>By varying the classifier, we can obtain different ROC curves that are represented in the following image. The curve that is closer to the upper-left corner is the best one, while the curve in diagonal represents a random classifier.
+&lt;img
+src="./images/lambert_davy/Roc_curve.svg.png"
+alt="Roc_full"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>&lt;strong>AUC&lt;/strong> stands for &lt;strong>Area Under the ROC Curve&lt;/strong> and is a widely used metric in machine learning, particularly in binary classification tasks. The AUC quantifies the &lt;strong>overall performance of the model&lt;/strong> across all possible classification thresholds.&lt;/p>
+&lt;p>That is, AUC measures the entire two-dimensional area underneath the entire ROC curve (think integral calculus) from (0,0) to (1,1). The AUC ranges in value from 0 to 1. A model whose predictions are &lt;strong>100% wrong has an AUC of 0.0&lt;/strong>, one whose predictions are &lt;strong>100% correct has an AUC of 1.0&lt;/strong>.&lt;/p>
+&lt;p>&lt;img
+src="./images/lambert_davy/AUC.png"
+alt="AUC"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>While &lt;strong>fairness&lt;/strong> seems like a desirable goal for any ranking function, there are many different definitions of what fairness really is and thus, many different &lt;strong>metrics&lt;/strong> to assess the fairness of an algorithm. In the case of loan grants for example, one could consider that fairness is achieved between men and women if we granted the same percentage of loans for both groups. &lt;strong>Statistical parity&lt;/strong>, which compares the proportion of positive outcomes between different demographic groups, is a good metric in this case. However, this approach might overlook underlying disparities in socioeconomic status that affect loan approval rates. Another vision of fairness might ensure that individuals are all as likely to get a wrong decision, regardless of demographic factors such as gender or ethnicity. In this case, &lt;strong>parity of mistreatment&lt;/strong> would be a good metric, as it ensures that the proportion of errors is the same for all demographic groups. However, this considers that all errors are the same, which means that one group could have a high false positive rate and another a high false negative rate. The authors thus decided to choose &lt;strong>parity in false positive rates&lt;/strong> and/or &lt;strong>parity in false negative rates&lt;/strong>.&lt;/p>
+&lt;h1 id="section-3">&lt;h1 style="font-size: 24px; text-decoration: underline;">AUC-based fairness constraints&lt;/h1>&lt;/h1>
+&lt;p>This first approach is based on the AUC, it will help us to highlight the limitations of this metric which motivated the authors to introduce another approach based on ROC constraints.&lt;/p>
+&lt;p>Precise example of AUC based constraints presented in the paper are the intra-group pairwise AUC fairness (Beutel et al., 2019), Background Negative Subgroup Positive (BNSP) AUC fairness (Borkan et al., 2019), the inter-group pairwise AUC fairness (Kallus and Zhou, 2019). The first one require the ranking performance to be equal within groups, the second one enforces that positive instances from either group have the same probability of being ranked higher than a negative example and the last one imposes that the positives of a group can be distinguished from the negatives of the other group as effectively for both groups. Those 3 AUC based constraints are only a part of the many constraints that exist.&lt;/p>
+&lt;p>The paper introduces a new framework to generalize all relevant AUC-based constraint as a &lt;strong>linear combination of 5 relevant elementary constraints&lt;/strong> noted $C_1$ to $C_5$.&lt;/p>
+&lt;p>The value of |$ C_ {1} $(s)| (resp. |$ C_ {2} $(s)|) quantifies the &lt;strong>resemblance of the distribution&lt;/strong> of the negatives (resp. positives) between the &lt;strong>two sensitive attributes&lt;/strong>.&lt;/p>
+&lt;p>$ C_ {1} $(s) = $ AUC_ {{H_S^{(0)}} ,{H_S^{(1)}}} $ - $\frac{1}{2}$&lt;/p>
+&lt;p>$ C_ {2} $(s) = $\frac{1}{2}$ - $ AUC_ {{G_S^{(0)}} ,{G_S^{(1)}}} $&lt;/p>
+&lt;p>The values of $ C_ {3} $(s), $ C_ {4} $(s) and $ C_ {5} $(s) measure the &lt;strong>difference
+in ability of a score to discriminate&lt;/strong> between positives and negatives for any two pairs of sensitive attributes.&lt;/p>
+&lt;p>$ C_ {3} $(s) = $ AUC_ {{H_S^{(0)}} ,{G_S^{(0)}}} $ - $ AUC_ {{H_S^{(0)}} ,{G_S^{(1)}}} $&lt;/p>
+&lt;p>$ C_ {4} $(s) = $ AUC_ {{H_S^{(0)}} ,{G_S^{(1)}}} $ - $ AUC_ {{H_S^{(1)}} ,{G_S^{(0)}}} $&lt;/p>
+&lt;p>$ C_ {5} $(s) = $ AUC_ {{H_S^{(1)}} ,{G_S^{(0)}}} $ - $ AUC_ {{H_S^{(1)}} ,{G_S^{(1)}}} $&lt;/p>
+&lt;p>The family of fairness constraints considered is then the set of linear combinations of the $C_l(s)$ = 0:&lt;/p>
+&lt;p>\begin{align*}
+% $C_l(s)$ = 0
+C_Γ(s): Γ^T C(s) =
+\sum_{l=1}^{5} {Γ_l}{C_l}(s) = 0
+\end{align*}&lt;/p>
+&lt;p>Where $Γ$ = $(Γ_1, &amp;hellip; Γ_5)^T$.&lt;/p>
+&lt;p>The objective function is thus defined as follows :&lt;/p>
+&lt;p>\begin{align}
+\label{eq:auc_general_problem}
+\textstyle\max_{s\in\mathcal{S}} \quad AUC_{H_s,G_s} - \lambda
+|\Gamma^\top
+C
+(s)|,
+\end{align}
+where $\lambda\ge 0$ is a hyperparameter balancing ranking performance
+and fairness.&lt;/p>
+&lt;p>The paper focuses on a special case of fairness, the &lt;strong>intra-group pairwise AUC fairness&lt;/strong>. This was to be more concise. In this example, the objective function becomes:&lt;/p>
+&lt;p>$$
+L_\lambda(s) = AUC_{H_s,G_s} - \lambda | AUC_{H_s^{(0)}, G_s^{(0)}} - AUC_{H_s^{(1)}, G_s^{(1)} } |
+$$&lt;/p>
+&lt;p>&lt;strong>&lt;u> Issues of AUC-Based constraint:&lt;/u>&lt;/strong>&lt;/p>
+&lt;p>Fairness using AUC-based constraints defined by the equality between two AUC’s only quantify a stochastic order between distributions, not the equality between these distributions, and would lead to some unfair result, for a group or for the other group.&lt;/p>
+&lt;p>The authors conducted experiments with the credit-risk dataset and found that creditworthy individuals from both groups had equal chances of being ranked higher than a &amp;ldquo;bad borrower.&amp;rdquo; However, employing high thresholds (which represent low probabilities of default on approved loans) would result in unfair outcomes for one group.&lt;/p>
+&lt;h1 id="section-4">&lt;h1 style="font-size: 24px; text-decoration: underline;">ROC-based fairness constraints&lt;/h1>&lt;/h1>
+&lt;p>A richer approach is then to use &lt;strong>pointwised ROC-based fairness constraints&lt;/strong>. Ideally, we would want to enforce the equality of all score distributions between both groups (i.e., identical ROC curves). This would satisfy all AUC-based fairness constraints previously mentioned. However, this condition is so restrictive that it will most likely lead to a significant drop in performances. As a result, the authors propose to satisfy this constraint on only a &lt;strong>finite number of points&lt;/strong>. They were indeed able to prove that this was sufficient to ensure maximum fairness for a fixed false positive or false negative $\alpha$.&lt;/p>
+&lt;p>As a result, the objective function becomes :&lt;/p>
+&lt;p>\begin{align*}
+% L_\Lambda(s) =
+AUC_{H_s,G_s} &amp;amp;-
+\sum_{k=1}^{m_H} \lambda_H^{(k)} \big| \Delta_{H,\alpha_H^{
+(k)}}(s) \big|
+- \sum_{k=1}^{m_G} \lambda_G^{(k)} \big| \Delta_{G,\alpha_G^{(k)}}(s) \big|,
+\end{align*}&lt;/p>
+&lt;p>Where $\Delta_{H,\alpha_H^{(k)}}(s)$ and $\Delta_{G,\alpha_G^{(k)}}(s)$ represent the deviations between the positive (resp. negative) inter-group ROCs and the identity function:&lt;/p>
+&lt;p>$$
+\Delta_{G, \alpha}(s) = ROC_{G^{(0)}_s, G^{(1)}_s}(\alpha) - \alpha
+$$&lt;/p>
+&lt;p>$$
+\Delta_{H, \alpha}(s) = ROC_{H^{(0)}_s,H^{(1)}_s}(\alpha) - \alpha
+$$&lt;/p>
+&lt;p>In practice, the objective function is slightly modified to be able to maximise it. The authors applied a classic smooth surrogate relaxations of the AUCs or ROCs based on a logistic function. They also removed the absolute values and, instead, relied on some parameters to ensure positive values.&lt;/p>
+&lt;h1 id="section-5">&lt;h1 style="font-size: 24px; text-decoration: underline;">Results&lt;/h1>&lt;/h1>
+&lt;p>The authors tested out their results on two datasets : &lt;strong>Compas&lt;/strong> and &lt;strong>Adult&lt;/strong>. Both are widely used when it comes to fairness. Indeed, they are known to be biased against race (for Compas) and gender (for both). Compas is a recidivism prediction dataset, whereas Adult predicts whether income exceeds $50K/yr based on census data. The results reported in the next figure show that the ROC-based method achieves its goal of mitigating the differences between favoured and unfavoured groups with limited drop in performances (the AUC went from 0.72 to 0.70 on the Compas dataset and from 0.91 to 0.87 on the Adult dataset). Indeed, the blue ROC curve, which is the ROC curve of the unfavoured group (Afro-American people for the Compas Dataset and women for the Adult Dataset), is brought closer to the green ROC curve (the ROC curve of the favoured group).&lt;/p>
+&lt;p>&lt;img
+src="./images/lambert_davy/main_text_inkscape_all_rocs_no_train_new.svg"
+alt="AUC"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;h1 id="section-6">&lt;h1 style="font-size: 24px; text-decoration: underline;">Reproducibility&lt;/h1>&lt;/h1>
+&lt;p>We were able to run the provided code without too much trouble on WSL2. The only modification we had to make was to change the calls for python in the sh files. We replace &lt;code>python&lt;/code> with &lt;code>python3&lt;/code>. However, as mentionned in the cide, the experiments were very long to run (several days) and we were not able to run the &lt;code>generate_all_figures.sh&lt;/code> script fully as it made our computers crash. Still, we were able to get some of the figures found in the paper (see below) by launching some scripts separately.&lt;/p>
+&lt;p>&lt;img
+src="./images/lambert_davy/dist.png"
+alt="dist"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>&lt;img
+src="./images/lambert_davy/roc.png"
+alt="roc_gen"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>Here are two figure generated for the toy 1 dataset, one for the distribution of the scores and one for the ROC curve.&lt;/p>
+&lt;h1 id="section-7">&lt;h1 style="font-size: 24px; text-decoration: underline;">Conclusion&lt;/h1>&lt;/h1>
+&lt;p>The paper &amp;ldquo;Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints&amp;rdquo; underscores the growing importance of fairness in machine learning applications. It shows the limits of AUC-based fairness constraints for their inability to ensure equality between distributions, potentially leading to unfair outcomes. In contrast, ROC-based fairness constraints offer a richer approach by enforcing equality of score distributions between groups, albeit with some performance trade-offs. The paper tests the method on typical fairness datasets, but it is also possible to apply it to reel use cases. &amp;ldquo;A Probabilistic Theory of Supervised Similarity Learning for Pointwise ROC Curve Optimization&amp;rdquo;, for example, explores the possibility to apply ROC-based methods for similarity learning, such as face recognition.&lt;/p>
+&lt;style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style>
+&lt;script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/lambert-davy/</guid><pubDate>Sat, 23 Mar 2024 19:39:13 +0100</pubDate></item><item><title>Adversarially Reweighted Learning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/adversarially_reweighted_learning/</link><description>&lt;h1 style="font-size: 36px;">Fairness without Demographics through Adversarially Reweighted Learning&lt;/h1>
 &lt;h1 style="font-size: 24px;">Authors: Pierre Fihey &amp; Guerlain Messin&lt;/h1>
 &lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
 &lt;ul>
