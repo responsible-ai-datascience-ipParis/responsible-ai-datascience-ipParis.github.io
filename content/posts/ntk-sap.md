@@ -4,34 +4,14 @@ date = 2024-02-07T16:07:10+01:00
 draft = false
 +++
 
-<style TYPE="text/css">
-code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
-</style>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [['$','$'], ['\\(','\\)']],
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
-    }
-});
-MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i = 0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-});
-</script>
-<script type='text/javascript' src='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML'></script>
-
-
 **Introduction:**
 
 In a world increasingly driven by demand for data and computational resources, the narrative of artificial intelligence has been one of abundance: more data, more power, more precision. Yet, nestled within this grand tale, lies a quieter narrative - one that champions the concept of achieving more with less—Frugal AI.
 
 Imagine a craftsman from a bygone era, working in a workshop filled with natural light. Instead of an overwhelming array of tools, he possesses only a few, each worn and refined by years of careful use. With these simple instruments, he creates works of unexpected beauty, demonstrating that the value lies not in the abundance of resources, but in the skill and wisdom with which they are used.
-Frugal AI embodies this craftsman’s spirit in the digital age. It does not revel in the excesses of computational power or data. Instead, it thrives in constraint, finding clever pathways through the limitations, optimizing algorithms not just for performance, but for efficiency and accessibility. 
+Frugal AI embodies this craftsman’s spirit in the digital age. It does not revel in the excesses of computational power or data. Instead, it thrives in constraint, finding clever pathways through the limitations, optimizing algorithms not just for performance, but for efficiency and accessibility.
 
-In the quest for efficiency, neural network pruning has emerged as a foundation of Frugal AI principles. Just as craftsmen meticulously select and refine their tools, neural network pruning systematically removes redundant, non-critical components from a network, optimizing its performance without compromising its functionality. 
+In the quest for efficiency, neural network pruning has emerged as a foundation of Frugal AI principles. Just as craftsmen meticulously select and refine their tools, neural network pruning systematically removes redundant, non-critical components from a network, optimizing its performance without compromising its functionality.
 
 **Neural network pruning**
 
@@ -39,7 +19,7 @@ Neural network pruning stems from the recognition that many models, especially d
 
 **Pruning Methods:**
 
-Pruning methodologies come in various forms, each tailored to specific needs and objectives. These methodologies can be categorized into three main types: **post-hoc pruning**, **pruning during training**, and **foresight pruning**. 
+Pruning methodologies come in various forms, each tailored to specific needs and objectives. These methodologies can be categorized into three main types: **post-hoc pruning**, **pruning during training**, and **foresight pruning**.
 
 **Post-hoc Pruning:** This technique trims neural networks after training, typically requiring multiple train-prune-retrain cycles. It utilizes various metrics, like magnitude and Hessian values, to determine which weights to eliminate, primarily aiming to reduce inference time.
 
@@ -48,13 +28,13 @@ Pruning methodologies come in various forms, each tailored to specific needs and
 **Foresight Pruning:** This strategy prunes networks before training begins to prevent unnecessary computational waste. It seeks to address issues like layer collapse collapse at high sparsity levels. Recent advancements aim to overcome the limitations of early pruning methods by incorporating more informed strategies, such as meta-gradients.
 
 
-**Foresight pruning methods - saliency score:** 
+**Foresight pruning methods - saliency score:**
 
 Foresight pruning methods optimize neural network structures by identifying and removing less important connections, reducing computational complexity while maintaining performance. At the heart of these methods lies the loss function, which serves as the guiding metric for evaluating the network's performance on a given dataset and determining which connections to prune. Given the complexity of directly solving the loss function, an indirect method is employed. Each potential connection within the network is assigned a "saliency score," reflecting its influence on the loss function. This score is computed by assessing how changes in the connection impact the loss function, scaled by the initial weight value. Essentially, connections with higher saliency scores, indicating greater impact on the loss function, are retained, while those with lower scores are pruned. This systematic approach ensures that the network remains efficient while preserving its effectiveness in solving tasks.
 
 Key pruning methods such as **SNIP**, **Iterative SNIP**, **GraSP**, and **Synflow**, introduce specific saliency measures to assess the importance of connections:
 
-**1. SNIP** calculates saliency as $S_{\text{SNIP}}(m') = \left|\frac{\partial L}{\partial \theta}\odot \theta\right|$, focusing on the impact of each connection on the loss.  SNIP's saliency score is the difference in the loss function before and after pruning a connection. 
+**1. SNIP** calculates saliency as $S_{\text{SNIP}}(m') = \left|\frac{\partial L}{\partial \theta}\odot \theta\right|$, focusing on the impact of each connection on the loss.  SNIP's saliency score is the difference in the loss function before and after pruning a connection.
 
 **2. Iterative SNIP**  repeats the process of SNIP multiple times for a refined pruning.
 
@@ -77,7 +57,7 @@ In order to implement this conceptual pruning methods, there are a few considera
 
 **1. Metric Selection:**  Due to the complexity and time required to calculate the full range of eigenvalues (the eigenspectrum) of the Neural Tangent Kernel, the nuclear norm—essentially the sum of these eigenvalues—is used instead as a scalar to summarize the characteristics of the eigenspectrum.
 
-**2. Choosing the Right NTK Matrix:** 
+**2. Choosing the Right NTK Matrix:**
 
 We can distinguish between wo types of NTK matrices:
 
@@ -88,7 +68,7 @@ However, since calculating the Analytic NTK is highly resource-intensive, the re
 
 **3. Computational Efficiency:** To manage computation costs, there is a technique known as the "new-input-new-weight" (NINW) method. This approach involves changing the network's weights for each new set of input data. By doing this, they can efficiently evaluate the properties of the Neural Tangent Kernel (NTK) across different scenarios without significantly adding to the computational load.
 
-Based on these considerations, Wang and colleagues have developed an innovative approach called **Neural Tangent Kernel Spectrum-Aware Pruning (NTK-SAP)**. 
+Based on these considerations, Wang and colleagues have developed an innovative approach called **Neural Tangent Kernel Spectrum-Aware Pruning (NTK-SAP)**.
 
 NTK-SAP leverages the NTK spectrum for efficient foresight pruning by using multi-sampling to predict pruning outcomes and ensure accuracy. It also incorporates the Novel Iterative Network Weighting (NINW) technique to reduce computation costs. This method streamlines neural networks by preemptively removing less impactful parts, optimizing both the pruning process and the network's performance with minimal resource expenditure.
 
@@ -100,17 +80,17 @@ NTK-SAP follows the following implementation:
 
 **Calculation of NTK-SAP Saliency Score:**
 
-**1. Finite Approximation Approach** 
+**1. Finite Approximation Approach**
 
 The NTK-SAP method introduces a finite approximation expression to calculate a saliency score S-NTK-SA, which leverages the pruning dataset to approximate the entire training set. This foresight pruning approach identifies and prunes weights with the lowest saliency scores.
 
-Saliency score based on a fixed-weight Neural Tangent Kernel: 
+Saliency score based on a fixed-weight Neural Tangent Kernel:
 
 
 
 $$S_{\text{NTK-SAP}}(m^j) = \left| \frac{\partial}{\partial m_j} \mathbb{E}_{\Delta\theta \sim \mathcal{N}(0, \epsilon I)} \left[ \left\| f(\mathbf{X}_D; \theta_0 \odot m) - f(\mathbf{X}_D; (\theta_0 + \Delta\theta) \odot m) \right\|_2^2 \right] \right|$$
 
-**2. Multi-Sampling Approach:** 
+**2. Multi-Sampling Approach:**
 
 While a single fixed-weight-NTK provides an approximation of the analytic NTK, averaging over multiple fixed-weight-NTKs offers a closer approximation to the expected behavior of the analytic NTK. This method entails sampling several independent weight configurations and averaging their fixed-weight-NTKs to better understand the parameter space and the anticipated performance of pruned networks.
 
@@ -123,7 +103,7 @@ A stabilized version of the saliency score, S-NTK-SAP(mj) is introduced and inco
 
 **3. New-input-new-weight (NINW) trick:**
 
-To reconcile the theoretical aspirations with practical viability, NTK-SAP leverage the 'new-input-new-weight' (NINW) trick. This technique estimates the expected behavior of pruned networks by utilizing a new set of weights for each mini-batch of input data. This approach ensures that the pruning algorithm remains computationally feasible, allowing for the real-world application without prohibitive resource demands. 
+To reconcile the theoretical aspirations with practical viability, NTK-SAP leverage the 'new-input-new-weight' (NINW) trick. This technique estimates the expected behavior of pruned networks by utilizing a new set of weights for each mini-batch of input data. This approach ensures that the pruning algorithm remains computationally feasible, allowing for the real-world application without prohibitive resource demands.
 
 **4. Random Input Trick:**
 
@@ -139,9 +119,9 @@ $$S_{\text{NTK-SAP}}(m^j) = \left| \frac{\partial}{\partial m_j} \frac{1}{|D|} \
 Experiments were performed on CIFAR-10, CIFAR-100, and Tiny-ImageNet data sets to validate NTK-SAP's superiority across various sparsity levels. Particularly noteworthy is its robust performance at extreme sparsity ratios, where traditional methods falter. These results underscore the efficacy of our multi-sampling strategy and the practical utility of the NINW trick.
 
 ![performance_curves](/images/Adrien_Elia/performance_curves.png)
- 
+
 Extending the analysis to the more challenging ImageNet dataset, NTK-SAP consistently outperforms baseline pruning methods, including SNIP and GraSP, especially at high sparsity levels. This success highlights NTK-SAP's scalability and its potential to facilitate efficient neural network training on large-scale datasets.
- 
+
 ![performance_table](/images/Adrien_Elia/performance_table.png)
 
 
@@ -197,7 +177,7 @@ Train results:
 
 
 ```bash
-python main.py --dataset cifar100 --ntksap_epsilon  0.02 
+python main.py --dataset cifar100 --ntksap_epsilon  0.02
 ```
 
 
@@ -213,7 +193,7 @@ Train results:
 **3. Experiment NTK-SAP with Cifar100 dataset and a number of iterations of 3**
 
 ```bash
-python main.py --dataset cifar100 --prune-epochs 3 
+python main.py --dataset cifar100 --prune-epochs 3
 ```
 
 Train results:
@@ -263,3 +243,22 @@ While NTK-SAP represents a significant leap forward, it also unveils several ave
 In essence, NTK-SAP not only signifies a crucial stride towards more efficient and theoretically grounded neural network pruning but also sets the stage for future innovations in enhancing network frugality.
 <br><br><br>
 By Elia Lejzerowicz and Adrien Oleksiak.
+
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
