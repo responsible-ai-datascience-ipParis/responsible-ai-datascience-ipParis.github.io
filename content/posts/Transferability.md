@@ -19,10 +19,10 @@ What is **fine-tuning**? It consists in adapting a general-purpose model to perf
 Fine-tuning begins with a pre-trained model—a model that has already learned a vast array of features and patterns from a comprehensive dataset, often spanning millions of examples. This model, equipped with a deep understanding of various data representations, serves as a robust starting point. The fine-tuning process then adapts this model to a specific task by continuing the training process on a smaller, task-specific dataset. This additional training phase is typically shorter and requires significantly fewer data and computational resources than training a model from scratch, as the model already possesses a foundational knowledge base.
 
 <p align="center">
-<img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/schema.png" width="600"/>
+<img src="/images/ChadalMasse/schema.png" width="600"/>
 </p>
 
-One of the key aspects of fine-tuning is its efficiency in data utilization. Since the model has already learned general features and patterns, the fine-tuning process can achieve high performance with relatively small datasets. This characteristic is particularly valuable in domains where collecting large amounts of labeled data is challenging or expensive. 
+One of the key aspects of fine-tuning is its efficiency in data utilization. Since the model has already learned general features and patterns, the fine-tuning process can achieve high performance with relatively small datasets. This characteristic is particularly valuable in domains where collecting large amounts of labeled data is challenging or expensive.
 
 Training from scratch is the complete opposite of fine-tuned pre-trained models, as it involves starting with randomly initialized parameters and requires a substantial dataset specific to the task at hand, along with considerable computational resources and time to achieve comparable performance to a fine-tuned pre-trained model. While training from scratch can be beneficial in certain scenarios where highly specialized knowledge is required or when a suitable pre-trained model is not available, the efficiency and effectiveness of leveraging pre-trained models are nowadays undeniable.
 
@@ -43,7 +43,7 @@ Fine-tuning pre-trained models works as follows. First, you **pick a downstream 
 Transferability estimation arises as a solution to anticipate and avoid unnecessary fine-tuning, by **ranking the performances of pre-trained models** on a downstream task without any fine-tuning. Having a **benchmark on the pre-trained models' transferability** would allow you to pick the relevant ones for your own downstream task.
 
 <p align="center">
-<img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/machine-learning-file-cycle.png" width="250" height="250"/>
+<img src="/images/ChadalMasse/machine-learning-file-cycle.png" width="250" height="250"/>
 </p>
 
 This measure is also in line with **frugality in AI**, which means using limited resources at every step of the Machine Learning lifecycle, while maintaining an acceptable accuracy. This frugality is especially relevant for small and medium-sized enterprises (SMEs) or startups, which may not have the vast computational resources that larger corporations possess. Transferable models democratize access to advanced AI capabilities, enabling these smaller entities to innovate and compete effectively. Frugality in AI also speaks to the broader goal of creating models that are not only powerful but also lean and efficient. Models with high transferability can achieve excellent performance across multiple tasks using significantly less data and fewer computational resources. This efficiency reduces the carbon footprint of training models and makes AI more accessible to a wider range of users and applications.
@@ -61,7 +61,7 @@ Neural Collapse is characterized by three distinct proxies:
 
 Let's look at this visual example of neural collapse :
 <p align="center">
-<img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_collapse.gif" width="250" height="250"/>
+<img src="/images/ChadalMasse/neural_collapse.gif" width="250" height="250"/>
 </p>
 
 Where :
@@ -79,13 +79,13 @@ Let's go back to imagining you have to perform a downstream task, and to do so y
 
 - **Generalization:** through Within-Class Variability Collapse, we gain insight into a model's ability to generalize ;
 - **Interpretability:** the convergence toward SELI geometry not only enhances the model's interpretability but also its alignment with optimal data representation structures. This alignment signifies a model's capacity to distill and encode information in a way that mirrors the inherent structure of the data itself ;
-- **Robustness:** the Nearest Center Classifier proxy underscores a model's robustness. By ensuring that class means are well-separated, the model demonstrates resilience against noise and variability in data. 
+- **Robustness:** the Nearest Center Classifier proxy underscores a model's robustness. By ensuring that class means are well-separated, the model demonstrates resilience against noise and variability in data.
 
 Authors in [[3]](#ref3) demonstrate **both theoretically and empirically** that Neural Collapse not only generalizes to new samples from the same classes seen during training but also, and more crucially, to entirely new classes. Also, a more recent research [[4]](#ref4) proposes a fine-tuning method based on Neural Collapse that achieves even better performance while reducing fine-tuning parameters by at least **70%** !
 
 # The NCTI
 
-Given these promising results, the authors developed a transferability estimation metric : the Neural Collapse Transferability Index (NCTI). This metric measures the proximity between the current state of a pre-trained model and its final fine-tuning stage on target, using the three neural collapse proxies defined above : Within-Class Variability Collapse, SELI geometry and Nearest Center Classifier. For each of them, a score is established :  $S^m_{vc}$, $S^m_{seli}$ and $S^{m}_{ncc}$. These three scores are then grouped together using normalization to prevent one score from dominating due to different scales. The final transferability estimation metric is obtained by adding the normalized scores: 
+Given these promising results, the authors developed a transferability estimation metric : the Neural Collapse Transferability Index (NCTI). This metric measures the proximity between the current state of a pre-trained model and its final fine-tuning stage on target, using the three neural collapse proxies defined above : Within-Class Variability Collapse, SELI geometry and Nearest Center Classifier. For each of them, a score is established :  $S^m_{vc}$, $S^m_{seli}$ and $S^{m}_{ncc}$. These three scores are then grouped together using normalization to prevent one score from dominating due to different scales. The final transferability estimation metric is obtained by adding the normalized scores:
 
 $$ S^m_{total} = S^m_{vc}(H^m) + S^m_{seli}(H^m) + S^{m}_{ncc}(H^m) $$
 
@@ -113,8 +113,8 @@ SELI geometry is a concept proposed in [[6]](#ref6) as a generalized geometric s
 
 
 <div style="display: flex; justify-content: center; align-items: center;">
-    <img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/geometry.png" alt="Image 1" style="width: 49%; max-width: 100%; height: auto;">
-    <img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_network.png" alt="Image 2" style="width: 49%; max-width: 100%; height: auto;">
+    <img src="/images/ChadalMasse/geometry.png" alt="Image 1" style="width: 49%; max-width: 100%; height: auto;">
+    <img src="/images/ChadalMasse/neural_network.png" alt="Image 2" style="width: 49%; max-width: 100%; height: auto;">
 </div>
 
 
