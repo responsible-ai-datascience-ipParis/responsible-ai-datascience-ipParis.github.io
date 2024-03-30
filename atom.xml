@@ -47,7 +47,7 @@ code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inher
 &lt;/ul>
 &lt;p>This dual convolution approach enables XCM to maintain high accuracy while offering a better understanding of the contributions of different variables and temporal dynamics to the final decision.&lt;/p>
 &lt;p>&lt;img
-src="../images/Saint_Guerin/Architecture_XCM.png"
+src="./images/Saint_Guerin/Architecture_XCM.png"
 alt="alt text"
 loading="lazy"
 decoding="async"
@@ -549,7 +549,7 @@ $$L_{\text{Grad-CAM}}^c = \text{ReLU}\left(\sum_k \alpha_k^c A^{(k)}\right)$$&lt
 &lt;/table>
 &lt;p>We then analyzed with a graph the evolution of both accuaries with regard to the epochs. The model is thus perfoming really well as explained in the paper.&lt;/p>
 &lt;p>&lt;img
-src="../images/Saint_Guerin/Evolution_Accuracies.png"
+src="./images/Saint_Guerin/Evolution_Accuracies.png"
 alt="Evolution of accuracies during traning"
 loading="lazy"
 decoding="async"
@@ -558,7 +558,7 @@ class="full-width"
 &lt;/p>
 &lt;p>One of the main improvment of XCM is his explainalibily of the features which can be explicitly shown with layer activations features map. Here is the one we extracted from the model we trained on BasicMotions dataset.&lt;/p>
 &lt;p>&lt;img
-src="../images/Saint_Guerin/test_MTS_0_layer_2D_Activation.png"
+src="./images/Saint_Guerin/test_MTS_0_layer_2D_Activation.png"
 alt="2D_activation_layer"
 loading="lazy"
 decoding="async"
@@ -571,7 +571,7 @@ class="full-width"
 &lt;h3 id="appendix">Appendix&lt;/h3>
 &lt;p>Implementation of the XCM model with Keras&lt;/p>
 &lt;p>&lt;img
-src="../images/Saint_Guerin/code_xcm.png"
+src="./images/Saint_Guerin/code_xcm.png"
 alt="XCM"
 loading="lazy"
 decoding="async"
