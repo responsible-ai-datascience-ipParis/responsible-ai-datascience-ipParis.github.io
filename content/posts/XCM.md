@@ -74,7 +74,7 @@ By extracting features in this manner, XCM is able to detect complex patterns in
 
 This dual convolution approach enables XCM to maintain high accuracy while offering a better understanding of the contributions of different variables and temporal dynamics to the final decision.
 
-![alt text](../images/Saint_Guerin/Architecture_XCM.png)
+![alt text](/images/Saint_Guerin/Architecture_XCM.png)
 
 
 **Explainability**
@@ -243,11 +243,11 @@ Here are the results we obtained for a 5 fold training :
 
 We then analyzed with a graph the evolution of both accuaries with regard to the epochs. The model is thus perfoming really well as explained in the paper.
 
-![Evolution of accuracies during traning](../images/Saint_Guerin/Evolution_Accuracies.png)
+![Evolution of accuracies during traning](/images/Saint_Guerin/Evolution_Accuracies.png)
 
 One of the main improvment of XCM is his explainalibily of the features which can be explicitly shown with layer activations features map. Here is the one we extracted from the model we trained on BasicMotions dataset.
 
-![2D_activation_layer](../images/Saint_Guerin/test_MTS_0_layer_2D_Activation.png)
+![2D_activation_layer](/images/Saint_Guerin/test_MTS_0_layer_2D_Activation.png)
 
 
 ### 7. Conclusion
@@ -260,7 +260,7 @@ The XCM approach signifies a substantial step forward in MTS classification, ach
 
 Implementation of the XCM model with Keras
 
-![XCM](../images/Saint_Guerin/code_xcm.png)
+![XCM](/images/Saint_Guerin/code_xcm.png)
 
 ---
 
