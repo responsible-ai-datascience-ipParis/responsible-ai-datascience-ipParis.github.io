@@ -2699,7 +2699,7 @@ all[i].SourceElement().parentNode.className += ' has-jax';
 &lt;p>What is &lt;strong>fine-tuning&lt;/strong>? It consists in adapting a general-purpose model to perform well on a specific task. This adaptation allows the model to fine-tune its learned features to better align with the nuances of the new task, enhancing its accuracy and performance. Whether it&amp;rsquo;s identifying specific types of objects in images, understanding the subtleties of natural language in a particular context, or diagnosing medical conditions from scans, fine-tuning enables pre-trained models to become specialized tools capable of tackling a wide range of applications.&lt;/p>
 &lt;p>Fine-tuning begins with a pre-trained model—a model that has already learned a vast array of features and patterns from a comprehensive dataset, often spanning millions of examples. This model, equipped with a deep understanding of various data representations, serves as a robust starting point. The fine-tuning process then adapts this model to a specific task by continuing the training process on a smaller, task-specific dataset. This additional training phase is typically shorter and requires significantly fewer data and computational resources than training a model from scratch, as the model already possesses a foundational knowledge base.&lt;/p>
 &lt;p align="center">
-&lt;img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/schema.png" width="600"/>
+&lt;img src="./images/ChadalMasse/schema.png" width="600"/>
 &lt;/p>
 &lt;p>One of the key aspects of fine-tuning is its efficiency in data utilization. Since the model has already learned general features and patterns, the fine-tuning process can achieve high performance with relatively small datasets. This characteristic is particularly valuable in domains where collecting large amounts of labeled data is challenging or expensive.&lt;/p>
 &lt;p>Training from scratch is the complete opposite of fine-tuned pre-trained models, as it involves starting with randomly initialized parameters and requires a substantial dataset specific to the task at hand, along with considerable computational resources and time to achieve comparable performance to a fine-tuned pre-trained model. While training from scratch can be beneficial in certain scenarios where highly specialized knowledge is required or when a suitable pre-trained model is not available, the efficiency and effectiveness of leveraging pre-trained models are nowadays undeniable.&lt;/p>
@@ -2712,7 +2712,7 @@ all[i].SourceElement().parentNode.className += ' has-jax';
 &lt;p>Fine-tuning pre-trained models works as follows. First, you &lt;strong>pick a downstream task&lt;/strong>, for which you have at your disposal several pre-trained models candidates. You want to compare their performances to pick the best one on test set, with the &lt;strong>optimal fine-tuning configuration&lt;/strong>. Then, you have to fine-tune each of them. Even if the dataset to train on is smaller, thanks to fine-tuning, you have to repeat it for all your models candidates, and one does not want that, as it can quickly become &lt;strong>computationnally expensive&lt;/strong>.&lt;/p>
 &lt;p>Transferability estimation arises as a solution to anticipate and avoid unnecessary fine-tuning, by &lt;strong>ranking the performances of pre-trained models&lt;/strong> on a downstream task without any fine-tuning. Having a &lt;strong>benchmark on the pre-trained models&amp;rsquo; transferability&lt;/strong> would allow you to pick the relevant ones for your own downstream task.&lt;/p>
 &lt;p align="center">
-&lt;img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/machine-learning-file-cycle.png" width="250" height="250"/>
+&lt;img src="./images/ChadalMasse/machine-learning-file-cycle.png" width="250" height="250"/>
 &lt;/p>
 &lt;p>This measure is also in line with &lt;strong>frugality in AI&lt;/strong>, which means using limited resources at every step of the Machine Learning lifecycle, while maintaining an acceptable accuracy. This frugality is especially relevant for small and medium-sized enterprises (SMEs) or startups, which may not have the vast computational resources that larger corporations possess. Transferable models democratize access to advanced AI capabilities, enabling these smaller entities to innovate and compete effectively. Frugality in AI also speaks to the broader goal of creating models that are not only powerful but also lean and efficient. Models with high transferability can achieve excellent performance across multiple tasks using significantly less data and fewer computational resources. This efficiency reduces the carbon footprint of training models and makes AI more accessible to a wider range of users and applications.&lt;/p>
 &lt;h1 id="neural-collapse">Neural Collapse&lt;/h1>
@@ -2725,7 +2725,7 @@ all[i].SourceElement().parentNode.className += ' has-jax';
 &lt;/ul>
 &lt;p>Let&amp;rsquo;s look at this visual example of neural collapse :&lt;/p>
 &lt;p align="center">
-&lt;img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_collapse.gif" width="250" height="250"/>
+&lt;img src="./images/ChadalMasse/neural_collapse.gif" width="250" height="250"/>
 &lt;/p>
 &lt;p>Where :&lt;/p>
 &lt;ul>
@@ -2758,8 +2758,8 @@ all[i].SourceElement().parentNode.className += ' has-jax';
 &lt;h3 id="seli-geometry">SELI geometry&lt;/h3>
 &lt;p>SELI geometry is a concept proposed in &lt;a href="#ref6">[6]&lt;/a> as a generalized geometric structure version of the simplex equiangular tight frame (ETF). ETF is defined in the context of the phenomenon of neuronal collapse, but it is limited to balanced datasets. In contrast, SELI extends this concept to both balanced and unbalanced datasets. Difference between the two geometries is shown in the figure below :&lt;/p>
 &lt;div style="display: flex; justify-content: center; align-items: center;">
-&lt;img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/geometry.png" alt="Image 1" style="width: 49%; max-width: 100%; height: auto;">
-&lt;img src="https://github.com/marionchadal/responsible-ai-datascience-ipParis.github.io/blob/main/static/images/ChadalMasse/neural_network.png" alt="Image 2" style="width: 49%; max-width: 100%; height: auto;">
+&lt;img src="./images/ChadalMasse/geometry.png" alt="Image 1" style="width: 49%; max-width: 100%; height: auto;">
+&lt;img src="./images/ChadalMasse/neural_network.png" alt="Image 2" style="width: 49%; max-width: 100%; height: auto;">
 &lt;/div>
 &lt;p>Embeddings $H$ (in blue) and classifiers $W$ (in red) follow the SELI geometry if :&lt;/p>
 &lt;p>$$ W^T W \alpha V \Lambda V^T, H^T H \alpha U \Lambda U^T \text{and} W^T H \alpha \hat{Z} $$&lt;/p>
