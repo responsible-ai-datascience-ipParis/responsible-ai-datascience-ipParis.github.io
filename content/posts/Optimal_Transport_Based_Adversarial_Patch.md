@@ -57,7 +57,7 @@ Imagine you're showing a picture to a friend, asking them to guess who's in it, 
 As AI becomes increasingly integrated into various aspects of our lives, including critical applications like passport security systems, autonomous vehicles, traffic sign detection, and surgical assistance; the reliability, trustworthiness, and performance of these systems under all conditions became of prime importance. This has led to a growing interest in the area of Robust AI, which focuses on enhancing the safety and security of AI technologies by improving their resilience to adverse conditions and digital threats. Within this domain, the study of Attacks and Defense ways plays a pivotal role.
 
 <p align="center">
-  <img src="http:/localhost:1313/images/image_optimal_transport_patch/road_scene.png" alt="Road_scene">
+  <img src="/images/image_optimal_transport_patch/road_scene.png" alt="Road_scene">
 </p>
 
 While these attacks might not seem like a big deal, nor dangerous in this context, the consequences can be severe in critical scenarios - take for example an autonomous vehicle failing to recognize a stop sign, hurting potentially a pedestrian. In this blog we will explore a new approach used for developping such adversarial patch attacks, based on Optimal Transport, as outlined in the paper ***Optimal Transport Based Adversarial Patch To Leverage Large Scale Attack Transferability***. We will try to follow the same structure as in the paper to make the reading easier for you, but with much more simplicity.
@@ -75,14 +75,14 @@ As deep neural networks keep getting better, developers are working hard to make
 Despite the fact that crafting adversarial patch attacks is mainly based around maximizing the classification error through a gradient ascent, we can differenciate between three distinct approaches:
 
 <p align="center">
-  <img src="http:/localhost:1313/images/image_optimal_transport_patch/APA_strategies.png" alt="APA_strategies">
+  <img src="/images/image_optimal_transport_patch/APA_strategies.png" alt="APA_strategies">
 </p>
 
 * **Decision boundaries based :** <a name="subsection-11"></a> Which is the most applied approach in previous works and litterature. It focuses on pushing the image's representation in the neural network's **decision** space, across the decision boundary, making the network perceive it as belonging to a different, probability maximized class.
 
   * To simplify this approach, imagine a group of fans attempting to sneak into a VIP section at a concert by dressing in a fancy way, like known VIP guests(targeted class). The idea is to blend in so well that they are indistinguishable from actual VIPs to the security guards (the ML model). Despite the simplicity and goodness of this strategy, it has some drawbacks :
 
-    * It is highly dependant on the model on which the attack is based, which makes it not really transferable: The success of this method hinges on the security's lack of detail. If they are controlled by another security gard who is very familiar with the actual VIPs, the disguises will fail. 
+    * It is highly dependant on the model on which the attack is based, which makes it not really transferable: The success of this method hinges on the security's lack of detail. If they are controlled by another security gard who is very familiar with the actual VIPs, the disguises will fail.
 
     * The patch may push the corrupted image representations into unknown regions of the representation space: In their attempt to mimic the VIPs, there's a risk that their disguises might be so overdone that they don't resemble any actual VIPs, pushing them to have a weird unique look. Hence, they end up in a no-man's-land, not fitting in with either the regular attendees or the VIPs.
 
@@ -106,7 +106,7 @@ Despite the fact that crafting adversarial patch attacks is mainly based around 
 You surely noticed that we mentionned the transferability term many times in the last section, showing that is an essential property for designing such attacks, but why do we focus so much to make our patch transferable through many models? Well, it is like discovering a master key for many locks : It enables bad actors to compromise and confuse an AI system using a crafted patch they made without knowing anything about that system(architecture, training,...).
 
 <p align="center">
-  <img src="http:/localhost:1313/images/image_optimal_transport_patch/transferability_diagram.png" alt="transferability_diagram">
+  <img src="/images/image_optimal_transport_patch/transferability_diagram.png" alt="transferability_diagram">
 </p>
 
 
@@ -116,7 +116,7 @@ This ability to create a 'one-size-fits-all' adversarial patch allows to challen
 
 ## Diving into Optimal Transport theory {#section-3}
 
- The method introduced in this paper represents a remarkable success, as it bridges the gap between transferability studies of invisible adversarial examples and adversarial patch attacks, and provides a trade-off between an efficient non complex patch designing approach, and an exceptional transferability among many advanced state-of-the-art models. The key reason for this success lies in the inherent capabilities of **optimal transport** to measure the distance between two distributions. Particularly, the loss optimized in this method is relevant, as it can be used when the distributions do not overlap, and the theory behind it is intuitive. It is based mainly on the **Wasserstain distance** defined as : 
+ The method introduced in this paper represents a remarkable success, as it bridges the gap between transferability studies of invisible adversarial examples and adversarial patch attacks, and provides a trade-off between an efficient non complex patch designing approach, and an exceptional transferability among many advanced state-of-the-art models. The key reason for this success lies in the inherent capabilities of **optimal transport** to measure the distance between two distributions. Particularly, the loss optimized in this method is relevant, as it can be used when the distributions do not overlap, and the theory behind it is intuitive. It is based mainly on the **Wasserstain distance** defined as :
 
 $$W_{p}^p(\mu,\nu) = \inf_{\pi \in \Pi(\mu,\nu)} \int_{\mathbb{R}^d \times \mathbb{R}^d} ||x - y||^p d\pi(x, y)$$
 
@@ -151,7 +151,7 @@ Where $\mu$ and $\nu$ are two propbability distributions on $\mathbb{R}^d$, $||.
 
 
 <p align="center">
-  <img src="http://localhost:1313/images/image_optimal_transport_patch/Sliced_wasserstain.png" alt="Sliced Wasserstain">
+  <img src="/images/image_optimal_transport_patch/Sliced_wasserstain.png" alt="Sliced Wasserstain">
   <br>
   <em>This image is taken and adapted from the <a href="https://theses.hal.science/tel-03533097/document">Sliced-Wasserstein distance for large-scale machine learning: theory, methodology and extensions</a> paper.</em>
 </p>
@@ -168,7 +168,7 @@ To delve more into the mathematical details, let us explore how Optimal Transpor
 
 
 <p align="center">
-  <img src="http:/localhost:1313/images/image_optimal_transport_patch/Optimal transport.png" alt="Optimal Transport">
+  <img src="/images/image_optimal_transport_patch/Optimal transport.png" alt="Optimal Transport">
 </p>
 
 
@@ -216,7 +216,7 @@ where TV is the total variation loss discouraging high-frequency patterns.</p>
 ## Experiments {#section-4}
 
 ### Experimental setup <a name="subsection-41"></a>
- 
+
 To confirm the theoretical results and assumptions, several experiments were conducted under different conditions and settings. For the sake of simplicity, we will not delve into the exhaustive details of the experimental setup, procedures, and results. In summary:
 
 * The experiments aimed to evaluate the impact and transferability of the proposed adversarial patch - referred to as $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ - across a range of models.
@@ -227,7 +227,7 @@ To confirm the theoretical results and assumptions, several experiments were con
 
 * Tested patches were randomly placed to the side of images, in order to avoid occluding the object of interest and replicate more closely the real world conditions.
 
-* **Targeted success rate (tSuc)** metric was used for evaluating transferability. It consists of the percentage of instances where the network, when presented with an image containing the adversarial patch, incorrectly classifies the image as the attacker's intended target class, out of the total number of attempts. 
+* **Targeted success rate (tSuc)** metric was used for evaluating transferability. It consists of the percentage of instances where the network, when presented with an image containing the adversarial patch, incorrectly classifies the image as the attacker's intended target class, out of the total number of attempts.
 
 
 ### Results and Findings : <a name="subsection-42"></a>
@@ -236,35 +236,35 @@ The experiments are structured into three main categories:
 
 #### Digital experiments : <a name="subsection-421"></a>
 
-##### Simple configuration : 
+##### Simple configuration :
 
 In this configuration, the patches efficacy was tested in a purely digital environment, using images from the ImageNet-1K dataset, which was used also for training. Patches were first designed to attack one of the source models, then tested on other target models to measure the attacking transferability. The table below summarizes for each APA method, the best transferring attack performance achieved :
 
 <p align="center">
-  <img src="http:/localhost:1313/images/image_optimal_transport_patch/Digital_transferability.png" alt="Digital Transferability">
+  <img src="/images/image_optimal_transport_patch/Digital_transferability.png" alt="Digital Transferability">
 
-</p> 
+</p>
 
-As expected through the novelty of $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ approach, it shows the highest transferability capacity(mean, min and max) and outperforms all the other methods. Additionaly, we can make the following observations: 
+As expected through the novelty of $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ approach, it shows the highest transferability capacity(mean, min and max) and outperforms all the other methods. Additionaly, we can make the following observations:
 
 
 * Networks trained with older training recipes (CNNs-v1) seem more vulnerable to attacks, unlike tansformers and models trained with new training recipes (scheduler, augmenting training data like RandAug and Mixup, ...) which appear to be more robust.
 
 * For all APA methods, patches learned using Swin or CNext are more universal as they can transfer uniformly to multiple models.
 
-* In general, baseline methods tend to overfit and fail to generate patches that effectively transfer to complex architectures like CNext and Swin models, even if these patches are developed using the same category of models. 
+* In general, baseline methods tend to overfit and fail to generate patches that effectively transfer to complex architectures like CNext and Swin models, even if these patches are developed using the same category of models.
 
 * Methods based on feature space optimization, including L2 and the $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ approach, demonstrate improved transferability and are less likely to overfit.
 
-##### Robustified configuration : 
+##### Robustified configuration :
 In the second configuration of the digital experiments, the same procedures were reapplied. However this time, the methods learn on Swin, and transfer to a robustified version, by Local Gradients Smoothing (LGS) - a defense mechanism smoothing salient regions in images before passing them to the network - , of the six model categories.
 
 Similarly, $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ outperforms significantly all other methods as we can see in the following table :
 
 
 <p align="center">
-  <img src="http:/localhost:1313/images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
-</p> 
+  <img src="/images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
+</p>
 
 
 #### Hybrid experiments: <a name="subsection-422"></a>
@@ -273,8 +273,8 @@ In order to simulate real-world applications more closely, the hybrid experiment
 The table below shows the criticality of the $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ giving very large tSuc in comparison with the other methods, for all settings:
 
 <p align="center">
-  <img src="http:/localhost:1313/images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
-</p> 
+  <img src="/images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
+</p>
 
 
 #### Physical experiments: <a name="subsection-423"></a>
@@ -345,6 +345,3 @@ In conclusion, our exploration of the paper ***OPTIMAL TRANSPORT BASED ADVERSARI
 * [Computational Optimal Transport](https://arxiv.org/pdf/1803.00567.pdf)
 
 * [Feature Space Perturbations Yield More Transferable Adversarial Examples](https://openaccess.thecvf.com/content_CVPR_2019/papers/Inkawhich_Feature_Space_Perturbations_Yield_More_Transferable_Adversarial_Examples_CVPR_2019_paper.pdf)
-
-
- 
