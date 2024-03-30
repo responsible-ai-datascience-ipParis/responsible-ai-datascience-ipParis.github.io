@@ -1,7 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2024, Calvin Tran</copyright><lastBuildDate>Tue, 26 Mar 2024 00:55:40 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>XCM, an explainable CNN for MTS classficiation</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/xcm/</link><description>&lt;style TYPE="text/css">
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style>
-&lt;script type='text/javascript' src='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML'>&lt;/script>
+&lt;script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script>
 &lt;h1 style="font-size: 36px;">XCM: An Explainable Convolutional Neural Network for Multivariate Time Series Classification&lt;/h1>
 &lt;h3 style="font-size: 24px;">Authors : Nicolas SAINT &amp; Matthis Guérin&lt;/h3>
 &lt;h4 style="font-size: 22px;">Table of Contents
