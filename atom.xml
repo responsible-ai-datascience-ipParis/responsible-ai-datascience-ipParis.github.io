@@ -1991,25 +1991,7 @@ $$
 Where $g(x)=h(\Phi(\hat{f_I} (x)))$ for a given set of $I$ hidden layers and an attribute dictionnary of size $J$. The learning is performed the same as before but we only keep the parameters $\theta_\Psi$, $\theta_h$ and $\theta_d$. We fix $\theta_\hat{f}$ and remove $L_{pred}$ from the training loss $L$.&lt;/p>
 &lt;p>There are experimental results in the article and in the supplements that are not mentionned here that demonstrate the effectiveness of post-hoc interpretation within FLINT, showing that even without fine-tuning the internal layers of the classifier, meaningful interpretations can be generated with high fidelity.&lt;/p>
 &lt;h1 id="section-7">7 Conclusion&lt;/h1>
-&lt;p>In conclusion, FLINT offers a robust framework for enhancing the interpretability of machine learning models, particularly deep neural networks, in critical domains like healthcare, law, and defense. By jointly learning predictor and interpreter models, FLINT addresses the challenge of providing both global and local interpretations of model predictions. Through carefully designed loss functions, FLINT ensures fidelity to input and output, promotes concise and diverse interpretations, and facilitates the representation of intricate patterns associated with input data. Reproducing experiments on datasets such as CIFAR10 and QuickDRAW showcases FLINT&amp;rsquo;s effectiveness in providing interpretable insights into model predictions. Subjective evaluations affirm the understandability of FLINT&amp;rsquo;s learned attributes, reinforcing its potential for real-world applications. Moreover, FLINT&amp;rsquo;s adaptability for post-hoc interpretability underscores its versatility, enabling meaningful interpretations without extensive modification of the underlying classifier. Overall, FLINT emerges as a valuable tool for fostering transparency and trust in complex machine learning models, contributing to the development of interpretable AI systems across various domains.&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/a-framework-to-learn-with-interpretation/</guid><pubDate>Tue, 13 Feb 2024 16:56:04 +0100</pubDate></item><item><title>My Article</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/my-article/</link><description>&lt;p>Let&amp;rsquo;s start writing here !&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/my-article/</guid><pubDate>Wed, 07 Feb 2024 16:07:10 +0100</pubDate></item><item><title>NTK-SAP: IMPROVING NEURAL NETWORK PRUNING BY ALIGNING TRAINING DYNAMICS</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/ntk-sap/</link><description>&lt;style TYPE="text/css">
-code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
-&lt;/style>
-&lt;script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-tex2jax: {
-inlineMath: [['$','$'], ['\\(','\\)']],
-skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
-}
-});
-MathJax.Hub.Queue(function() {
-var all = MathJax.Hub.getAllJax(), i;
-for(i = 0; i &lt; all.length; i += 1) {
-all[i].SourceElement().parentNode.className += ' has-jax';
-}
-});
-&lt;/script>
-&lt;script type='text/javascript' src='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML'>&lt;/script>
-&lt;p>&lt;strong>Introduction:&lt;/strong>&lt;/p>
+&lt;p>In conclusion, FLINT offers a robust framework for enhancing the interpretability of machine learning models, particularly deep neural networks, in critical domains like healthcare, law, and defense. By jointly learning predictor and interpreter models, FLINT addresses the challenge of providing both global and local interpretations of model predictions. Through carefully designed loss functions, FLINT ensures fidelity to input and output, promotes concise and diverse interpretations, and facilitates the representation of intricate patterns associated with input data. Reproducing experiments on datasets such as CIFAR10 and QuickDRAW showcases FLINT&amp;rsquo;s effectiveness in providing interpretable insights into model predictions. Subjective evaluations affirm the understandability of FLINT&amp;rsquo;s learned attributes, reinforcing its potential for real-world applications. Moreover, FLINT&amp;rsquo;s adaptability for post-hoc interpretability underscores its versatility, enabling meaningful interpretations without extensive modification of the underlying classifier. Overall, FLINT emerges as a valuable tool for fostering transparency and trust in complex machine learning models, contributing to the development of interpretable AI systems across various domains.&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/a-framework-to-learn-with-interpretation/</guid><pubDate>Tue, 13 Feb 2024 16:56:04 +0100</pubDate></item><item><title>My Article</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/my-article/</link><description>&lt;p>Let&amp;rsquo;s start writing here !&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/my-article/</guid><pubDate>Wed, 07 Feb 2024 16:07:10 +0100</pubDate></item><item><title>NTK-SAP: IMPROVING NEURAL NETWORK PRUNING BY ALIGNING TRAINING DYNAMICS</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/ntk-sap/</link><description>&lt;p>&lt;strong>Introduction:&lt;/strong>&lt;/p>
 &lt;p>In a world increasingly driven by demand for data and computational resources, the narrative of artificial intelligence has been one of abundance: more data, more power, more precision. Yet, nestled within this grand tale, lies a quieter narrative - one that champions the concept of achieving more with less—Frugal AI.&lt;/p>
 &lt;p>Imagine a craftsman from a bygone era, working in a workshop filled with natural light. Instead of an overwhelming array of tools, he possesses only a few, each worn and refined by years of careful use. With these simple instruments, he creates works of unexpected beauty, demonstrating that the value lies not in the abundance of resources, but in the skill and wisdom with which they are used.
 Frugal AI embodies this craftsman’s spirit in the digital age. It does not revel in the excesses of computational power or data. Instead, it thrives in constraint, finding clever pathways through the limitations, optimizing algorithms not just for performance, but for efficiency and accessibility.&lt;/p>
@@ -2392,7 +2374,25 @@ class="full-width"
 &lt;p>While NTK-SAP represents a significant leap forward, it also unveils several avenues for future exploration. Subsequent research could delve into alternative spectral measures or extend the methodology to other forms of network optimization.&lt;/p>
 &lt;p>In essence, NTK-SAP not only signifies a crucial stride towards more efficient and theoretically grounded neural network pruning but also sets the stage for future innovations in enhancing network frugality.
 &lt;br>&lt;br>&lt;br>
-By Elia Lejzerowicz and Adrien Oleksiak.&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/ntk-sap/</guid><pubDate>Wed, 07 Feb 2024 16:07:10 +0100</pubDate></item><item><title>Do Perceptually Aligned Gradients imply Robustness?</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/robustness-and-pag-the-converse/</link><description>&lt;style TYPE="text/css">
+By Elia Lejzerowicz and Adrien Oleksiak.&lt;/p>
+&lt;style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style>
+&lt;script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/ntk-sap/</guid><pubDate>Wed, 07 Feb 2024 16:07:10 +0100</pubDate></item><item><title>Do Perceptually Aligned Gradients imply Robustness?</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/robustness-and-pag-the-converse/</link><description>&lt;style TYPE="text/css">
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style>
 &lt;script type="text/x-mathjax-config">
