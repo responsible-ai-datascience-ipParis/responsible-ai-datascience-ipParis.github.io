@@ -18,6 +18,7 @@ draft = false
 - [Reproducibility](#section-6)
 - [Conclusion](#section-7)
 
+This is a blog post about the paper Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints, published by R. Vogel et al. in 2021 and available [here](http://proceedings.mlr.press/v130/vogel21a/vogel21a-supp.pdf).
 
 # <h1 style="font-size: 24px; text-decoration: underline;">Introduction</h1> {#section-1}
 

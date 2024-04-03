@@ -27,7 +27,7 @@ draft = false
 ## Abstract {#section-0}
 
 
-This blog post retraces the study conducted in the paper "To be Robust or to be Fair: Towards Fairness in Adversarial Training" and written by Han Xu, Xiaorui Liu, Yaxin Li, Yaxin Li, Anil K. Jain and Jiliang Tang.  
+This blog post retraces the study conducted in the [paper](http://proceedings.mlr.press/v139/xu21b.html) "To be Robust or to be Fair: Towards Fairness in Adversarial Training" and written by Han Xu, Xiaorui Liu, Yaxin Li, Yaxin Li, Anil K. Jain and Jiliang Tang.  
 
 Their study is based on a simple observation: while adversarial training has been shown to improve model's robustness, it also introduces several performances disparities among different data groups.
 

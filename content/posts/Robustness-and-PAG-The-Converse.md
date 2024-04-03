@@ -28,6 +28,7 @@ MathJax.Hub.Queue(function() {
 <h1 style="font-size: 36px;">Robustness and Perceptually Aligned Gradients : does the converse stand ?</h1>
 <h3 style="font-size: 24px;">Author: Yohann Zerbib</h3>
 
+
 # Table of Contents
 
 - [Introduction](#section-0)
@@ -38,6 +39,7 @@ MathJax.Hub.Queue(function() {
 - [Conclusion](#section-5)
 - [References](#section-6)
 
+This is a blog post about the paper Do Perceptually Aligned Gradients Imply Robustness?, published by R. Ganz et al. in 2023 and available [here](https://openreview.net/pdf?id=W6topEXC2-v).
 
 ## Introduction {#section-0}
 In the context of image recognition in Machine Learning, one could quickly realize that building *robust* models is crucial. Having failures could potentially lead to worrying outcomes and it is part of the design to aim to implement models that would be prevented against ***adversarials attacks***, that will be explained. At some point, when reaching models that are robust, it somehow occurs that small variations made are easily **interpretable by humans**, something which is not common in current ML models such as this one. Having noticed this phenomenon, the authors of the paper would try to verify the opposite assumption. By building models that verify this idea of alignment with human perception, do we create robust models ? 

@@ -21,6 +21,8 @@ draft = false
 - [Results analysis](#section-8)
 - [Conclusion](#section-9)
 
+This is a blog post about the paper Fairness without Demographics through Adversarially Reweighted Learning, published by P. Lahoti et al. in 2020 and available [here](https://dl.acm.org/doi/abs/10.5555/3495724.3495786).
+
 ## Fairness issues in ML and AI {#section-0}
 
 As Machine Learning and Artificial Intelligence algorithms are increasingly developed to aid and automate decision-making, it is crucial that they provide ethical, fair and discrimination-free results. However, discriminative biases are now found in many facets of AI and ML and affect many possible applications. 

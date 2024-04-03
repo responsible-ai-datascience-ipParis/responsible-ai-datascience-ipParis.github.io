@@ -21,6 +21,8 @@ draft = false
 - [Conclusion](#section-5)
 - [References](#section-6)
 
+This is a blog post about the paper To update or not to update? Neurons at equilibrium in deep models, published by A. Bgragagnolo et al. in 2022 and available [here]https://proceedings.neurips.cc/paper_files/paper/2022/file/8b2fc235787852ead92da2268cd9e90c-Paper-Conference.pdf).
+
 ## Introduction {#section-0}
 
 ### Background

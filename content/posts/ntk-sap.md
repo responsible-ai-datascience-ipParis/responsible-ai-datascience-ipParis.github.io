@@ -4,6 +4,8 @@ date = 2024-02-07T16:07:10+01:00
 draft = false
 +++
 
+This is a blog post about the paper NTK-SAP: Improving neural network pruning by aligning training dynamics, published by Y. Wang et al. in 2023 and available [here](https://openreview.net/pdf?id=-5EWhW_4qWP).
+
 **Introduction:**
 
 In a world increasingly driven by demand for data and computational resources, the narrative of artificial intelligence has been one of abundance: more data, more power, more precision. Yet, nestled within this grand tale, lies a quieter narrative - one that champions the concept of achieving more with less—Frugal AI.

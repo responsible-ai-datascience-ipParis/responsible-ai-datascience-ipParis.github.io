@@ -39,7 +39,7 @@ MathJax.Hub.Queue(function() {
 - [Appendix](#appendix)
 - [References](#references)
 
-
+This is a blog post about the article "XCM: An Explainable Convolutional Neural Network for Multivariate Time Series Classification" published by Kevin Fauvel et al. in 2021 and available [here](https://www.mdpi.com/2227-7390/9/23/3137).
 ### 1. Introduction
 
 The classification of multivariate time series (MTS) has emerged as an increasingly important research area over the last decade, driven by the exponential growth of temporal data across various domains such as finance, healthcare, mobility, and natural disaster prediction . A time series is a sequence of real values ordered in time, and when a set of co-evolving series is recorded simultaneously by a set of sensors, it is referred to as an MTS. MTS classification, which involves learning the relationship between an MTS and its label, presents a significant challenge due to the inherent complexity of the multivariate and temporal nature of the data.

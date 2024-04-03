@@ -22,6 +22,7 @@ draft = false
 - [Experiment](#section-5)
 - [Conclusion](#section-6)
 
+This is a blog post about the paper Label-Free Explainability for Unsupervised Models, published by J. Crabbé et al. in 2022 and available [here](https://proceedings.mlr.press/v162/crabbe22a/crabbe22a.pdf).
 
 ## Why do we need explainability ? {#section-0}
 
