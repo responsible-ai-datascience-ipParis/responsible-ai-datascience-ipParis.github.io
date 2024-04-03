@@ -1,5 +1,5 @@
 +++
-title = 'Axiomatic_Explanations'
+title = 'Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning'
 date = 2024-03-28T05:58:39+01:00
 draft = false
 +++
@@ -83,6 +83,8 @@ src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-
 
 <h1 style="font-size: 13px;">Authors:Mark Hamilton ${ }^{1,2}$, Scott Lundberg ${ }^{2}$, Stephanie Fu ${ }^{1}$, Lei Zhang ${ }^{2}$, William T. Freeman ${ }^{1,3}$<br>${ }^{1}$ MIT, ${ }^{2}$ Microsoft, ${ }^{3}$ Google<br>markth@mit.edu
 
+<br/>
+**Authors of the blogpost**: Yassine Beniguemim and Noureddine BOULLAM.
 
 # Table of Contents
 

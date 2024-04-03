@@ -21,6 +21,8 @@ draft = false
 
 <br />
 
+This is a blogpost about the paper  Privacy Amplification by Decentralization, published by E. Cyffers et al. in 2022 and available [here](https://proceedings.mlr.press/v151/cyffers22a/cyffers22a.pdf).
+
 # <h1 style="font-size: 20px;">Introduction - the challenge of data privacy</h1> {#section-1}
 
 
