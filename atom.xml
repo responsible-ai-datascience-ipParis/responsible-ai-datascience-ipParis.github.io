@@ -1,4 +1,470 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2024, Calvin Tran</copyright><lastBuildDate>Wed, 27 Mar 2024 11:37:03 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>Robust or Fair</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/robust-or-fair/</link><description>&lt;h1 style="font-size: 36px;">To be Robust or to be Fair: Towards Fairness in Adversarial Training&lt;/h1>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2024, Calvin Tran</copyright><lastBuildDate>Thu, 28 Mar 2024 05:58:39 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>Axiomatic_Explanations</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link><description>&lt;style
+TYPE="text/css">
+code.has-jax {font:
+inherit;
+font-size:
+100%;
+background:
+inherit;
+border:
+inherit;}
+&lt;/style>
+&lt;script
+type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script>
+&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;head>
+&lt;meta charset="UTF-8">
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0">
+&lt;title>Styled Table&lt;/title>
+&lt;style>
+table {
+border-collapse: collapse;
+width: 100%;
+}
+th, td {
+padding: 8px;
+text-align: center;
+border-bottom: 1px solid #ddd;
+}
+th {
+background-color: #f2f2f2;
+}
+tr:hover {
+background-color: #f5f5f5;
+}
+&lt;/style>
+&lt;/head>
+&lt;/html>
+&lt;h1 style="font-size: 24px;">AXIOMATIC EXPlanATIONS FOR VISUAL SEARCh, RETRIEVAL, AND SIMILARITY LEARNING &lt;/h1>
+&lt;h1 style="font-size: 13px;">Authors:Mark Hamilton ${ }^{1,2}$, Scott Lundberg ${ }^{2}$, Stephanie Fu ${ }^{1}$, Lei Zhang ${ }^{2}$, William T. Freeman ${ }^{1,3}$&lt;br>${ }^{1}$ MIT, ${ }^{2}$ Microsoft, ${ }^{3}$ Google&lt;br>markth@mit.edu
+&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#section-0.0">Abstract&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-0.1">Introduction&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-1">Exploring Visual Search Algorithm Explanations&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#section-1.1">First-Order Explanations&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-1.2">Unifying First-Order Search Interpretation Techniques&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-1.3">Second-Order Explanations&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-1.4">A Fast Shapley-Taylor Approximation Kernel&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-1.5">Second-Order Search Activation Maps&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#section-2">Implementing Second-Order Explanations in Practice&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-3">Conclusion&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="section-0.0">Abstract&lt;/h2>
+&lt;p>Visual search, recommendation, and contrastive similarity learning are pivotal technologies shaping user experiences in the digital age. However, the complexity of modern model architectures often obscures their inner workings, making them challenging to interpret. In our blog, we delve into a groundbreaking paper titled &amp;ldquo;AXIOMATIC EXPLANATIONS FOR VISUAL SEARCH, RETRIEVAL, AND SIMILARITY LEARNING&amp;rdquo; authored by Mark Hamilton et al. This paper introduces a novel framework grounded in the theory of fair credit assignment, providing axiomatic solutions that generalize existing explanation techniques and address fairness concerns in recommendation systems. Through our exploration, we aim to demystify the complexities of visual search algorithms, offering readers insights into their operation and implications for various domains.&lt;/p>
+&lt;div style="display: inline-block; width:">
+&lt;img src="https://cdn.mathpix.com/cropped/2024_03_29_e6cbedd60806617ef5aeg-02.jpg?height=600&amp;width=1354&amp;top_left_y=282&amp;top_left_x=382" alt="Figure 5" width="100%">
+&lt;p style="text-align: center; font-size: 10px;">Figure 1: Architectures for search engine interpretability. Like classifier explanations, First-order search explanations yield heatmaps of important pixels for similarity (bottom row third column). Second order search interpretation methods yield a dense correspondence between image locations (last two columns). CAM (second column) is a particular case of Shapley value approximation, and we generalize it to yield dense correspondences (last column).&lt;/p>
+&lt;/div>
+&lt;h2 id="section-0.1">Introduction&lt;/h2>
+&lt;p>Welcome to our blog, where we embark on a journey to demystify the intricate world of visual search technology. In today&amp;rsquo;s digital age, recommendation systems play a pivotal role in guiding users through a vast sea of information, aiding in everything from online shopping to content discovery.&lt;/p>
+&lt;p>Yet, behind the scenes, these recommendation engines operate using sophisticated algorithms that can seem like a black box to many users. How do they decide which products to suggest, or which images are most similar to a given query? These questions lie at the heart of our exploration.&lt;/p>
+&lt;p>Inspired by the groundbreaking paper &amp;ldquo;AXIOMATIC EXPLANATIONS FOR VISUAL SEARCH, RETRIEVAL, AND SIMILARITY LEARNING&amp;rdquo; authored by Mark Hamilton et al., we embark on a quest to unravel the inner workings of these recommendation systems. By delving into the concepts of fair credit assignment, Shapley values, and Harsanyi Dividends, we aim to shed light on the underlying principles that govern visual search algorithms.&lt;/p>
+&lt;h2 id="section-1">1. Exploring Visual Search Algorithm Explanations&lt;/h2>
+&lt;p>In our exploration of visual search algorithm explanations, we delve into the fundamental concepts introduced in the paper by Mark Hamilton et al. Our journey begins with an examination of the two distinct classes of explanation methods: &amp;ldquo;first order&amp;rdquo; and &amp;ldquo;second order.&amp;rdquo; First-order approaches focus on highlighting important pixels contributing to object similarity, while second-order explanations provide a comprehensive correspondence between query and retrieved images.&lt;/p>
+&lt;h3 id="section-1.1">1.1 First-Order Explanations&lt;/h3>
+&lt;p>First-order interpretations are rooted in classifier explainability theory, offering insights into the importance of individual pixels or features in determining object similarity. We explore the theoretical underpinnings of these explanations, drawing parallels to existing techniques such as Class Activation Maps (CAM), GradCAM, and LIME.&lt;/p>
+&lt;h4 id="formalizing-first-order-interpretations">Formalizing First-Order Interpretations&lt;/h4>
+&lt;p>The core of first-order explanations lies in the formalization of the value function, typically represented as $v_1(S)$, where $S$ represents subsets of features or pixels. This function allows us to quantify the contribution of each subset to the overall similarity score between query and retrieved images.&lt;/p>
+&lt;p>$$
+v_1(S): 2^N \rightarrow \mathbb{R} := d(x, \text{mask}(y, S))
+$$&lt;/p>
+&lt;h3 id="section-1.2">1.2 Unifying First-Order Search Interpretation Techniques&lt;/h3>
+&lt;p>Building upon existing classifier explainability methods, we introduce an approach to transform opaque and grey-box classification explainers into search engine explainers. By formalizing the value function and leveraging concepts like Shapley values, we extend existing approaches such as LIME and SHAP to the realm of visual search.&lt;/p>
+&lt;h4 id="leveraging-shapley-values">Leveraging Shapley Values&lt;/h4>
+&lt;p>Shapley values provide a principled way to assign credit to individual features or pixels based on their contribution to the similarity function. By applying Shapley values to the search engine context, we can identify the most influential elements in both query and retrieved images.&lt;/p>
+&lt;p>$$
+\phi_{v_1}(S) = \sum_{T: S \subset T} \frac{d_v(T)}{\binom{|T|}{|S|}}
+$$&lt;/p>
+&lt;h3 id="section-1.3">1.3 Second-Order Explanations&lt;/h3>
+&lt;p>Moving beyond pixel-level interpretations, we delve into second-order explanations that capture the interactions between areas of query and retrieved images. Drawing inspiration from Harsanyi Dividends and Shapley-Taylor indices, we explore how these concepts generalize to provide richer insights into image similarity.&lt;/p>
+&lt;h4 id="understanding-second-order-interpretations">Understanding Second-Order Interpretations&lt;/h4>
+&lt;p>Second-order explanations go beyond individual features to capture the interaction strength between different parts of query and retrieved images. We introduce the concept of Harsanyi Dividends, which provide a detailed view of the function&amp;rsquo;s behavior at every coalition of features.&lt;/p>
+&lt;p>$$
+d_v(S) = \begin{cases} v(S) &amp;amp; \text{if } |S|=1 \
+v(S) - \sum_{T \subsetneq S} d_v(T) &amp;amp; \text{if } |S| &amp;gt; 1 \end{cases}
+$$&lt;/p>
+&lt;h3 id="section-1.4">1.4 A Fast Shapley-Taylor Approximation Kernel&lt;/h3>
+&lt;p>While Harsanyi Dividends and Shapley-Taylor indices offer robust credit assignment mechanisms, their computation can be challenging. We introduce a novel weighting kernel for second-order Shapley-Taylor indices, significantly reducing computational complexity while maintaining accuracy.&lt;/p>
+&lt;div style="display: inline-block; width: 45%;">
+&lt;img src="https://cdn.mathpix.com/cropped/2024_03_29_e6cbedd60806617ef5aeg-07.jpg?height=455&amp;width=610&amp;top_left_y=282&amp;top_left_x=405" alt="Figure 5" width="100%">
+&lt;p style="text-align: center; font-size: 10px;">Figure 5: Convergence of Shapley-Taylor estimation schemes with respect to the Mean Squared Error (MSE) on randomly initialized deep networks with 15 dimensional input. Our strategies (Kernel) converge with significantly fewer function evaluations.&lt;/p>
+&lt;/div>
+&lt;div style="display: inline-block; width: 45%;">
+&lt;img src="https://cdn.mathpix.com/cropped/2024_03_29_e6cbedd60806617ef5aeg-07.jpg?height=455&amp;width=656&amp;top_left_y=282&amp;top_left_x=1079" alt="Figure 6" width="100%">
+&lt;p style="text-align: center; font-size: 10px;">Figure 6: Our Second-order explanation evaluation strategy. A good method should project query objects (top left and middle) to corresponding objects in the retrieved image (bottom left and middle). When censoring all but these shared objects (right column) the search engine should view these images as similar.&lt;/p>
+&lt;/div>
+&lt;h4 id="efficient-computation-with-kernel-approximation">Efficient Computation with Kernel Approximation&lt;/h4>
+&lt;p>The proposed weighting kernel allows for efficient approximation of Shapley-Taylor indices, enabling faster computation without sacrificing accuracy. By sampling random coalitions and aggregating information into a weighted quadratic model, we achieve a significant reduction in computational overhead.&lt;/p>
+&lt;h3 id="section-1.5">1.5 Second-Order Search Activation Maps&lt;/h3>
+&lt;p>Applying the Shapley-Taylor framework, we derive second-order search activation maps, offering dense correspondences between query and retrieved image locations. These maps provide a deeper understanding of image similarity, facilitating more nuanced interpretations of visual search results.&lt;/p>
+&lt;h4 id="visualizing-second-order-explanations">Visualizing Second-Order Explanations&lt;/h4>
+&lt;p>Using the derived Shapley-Taylor indices, we construct matrices representing the interaction strength between query and retrieved image locations. These matrices allow us to visualize how different parts of the query image correspond to parts of the retrieved image, providing intuitive insights into the similarity judgments made by the search algorithm.&lt;/p>
+&lt;div style="display: inline-block; width:">
+&lt;img src="https://cdn.mathpix.com/cropped/2024_03_29_e6cbedd60806617ef5aeg-08.jpg?height=1003&amp;width=1312&amp;top_left_y=377&amp;top_left_x=404" alt="Figure 5" width="100%">
+&lt;p style="text-align: center; font-size: 10px;">Table 1: Comparison of performance of first- and second-order search explanation methods.&lt;/p>
+&lt;/div>
+&lt;h2 id="section-2">2. Implementing Second-Order Explanations in Practice&lt;/h2>
+&lt;p>With a solid theoretical foundation in place, we now turn our attention to practical implementation steps for incorporating second-order explanations into existing visual search systems.&lt;/p>
+&lt;h3 id="section-2.1">2.1 Data Preparation and Preprocessing&lt;/h3>
+&lt;p>Before integrating second-order explanations, it&amp;rsquo;s crucial to preprocess and structure the data appropriately. This involves organizing the dataset into query-image pairs, ensuring consistency in image format, resolution, and preprocessing steps such as normalization and resizing.&lt;/p>
+&lt;h4 id="data-pipeline-overview">Data Pipeline Overview&lt;/h4>
+&lt;p>We design a robust data pipeline encompassing data loading, preprocessing, and augmentation stages. Leveraging popular libraries like TensorFlow and PyTorch, we streamline the process of preparing the dataset for training and evaluation.&lt;/p>
+&lt;h3 id="section-2.2">2.2 Model Modification and Integration&lt;/h3>
+&lt;p>To enable the computation of second-order explanations, we modify the existing visual search model architecture. This adaptation involves incorporating additional layers or modules to capture the interactions between query and retrieved images.&lt;/p>
+&lt;h4 id="architectural-adjustments">Architectural Adjustments&lt;/h4>
+&lt;p>We introduce novel components such as interaction modules or attention mechanisms to facilitate the computation of second-order explanations. These architectural adjustments enable the model to learn and represent the complex relationships between different regions of query and retrieved images.&lt;/p>
+&lt;h3 id="section-2.3">2.3 Training and Evaluation Procedures&lt;/h3>
+&lt;p>Training a visual search model with second-order explanations requires careful consideration of training objectives, loss functions, and evaluation metrics. We devise training procedures that optimize both the primary search task and the secondary objective of generating accurate explanations.&lt;/p>
+&lt;h4 id="objective-function-formulation">Objective Function Formulation&lt;/h4>
+&lt;p>We define a composite objective function that combines the primary search task loss with a regularization term for encouraging meaningful second-order explanations. This formulation ensures that the model learns to balance between search accuracy and explanation fidelity during training.&lt;/p>
+&lt;h3 id="section-2.4">2.4 Validation and Interpretation&lt;/h3>
+&lt;p>Once trained, we validate the effectiveness of the model&amp;rsquo;s second-order explanations through comprehensive evaluation procedures. This involves qualitative analysis of explanation maps, quantitative assessment of explanation quality, and user studies to gauge the interpretability of the generated explanations.&lt;/p>
+&lt;h4 id="evaluation-metrics">Evaluation Metrics&lt;/h4>
+&lt;p>We define metrics such as explanation fidelity, coherence, and relevance to quantitatively evaluate the quality of second-order explanations. By comparing against baseline methods and human annotations, we assess the model&amp;rsquo;s ability to capture meaningful interactions between query and retrieved images.&lt;/p>
+&lt;h3 id="section-2.5">2.5 Deployment Considerations&lt;/h3>
+&lt;p>Deploying a visual search system with second-order explanations requires careful planning and integration into existing infrastructure. We address scalability, latency, and user experience considerations to ensure seamless deployment in real-world applications.&lt;/p>
+&lt;h4 id="scalable-inference-architecture">Scalable Inference Architecture&lt;/h4>
+&lt;p>We design an inference pipeline optimized for efficient computation of second-order explanations in production environments. This involves leveraging distributed computing frameworks and model optimization techniques to minimize latency and maximize throughput.&lt;/p>
+&lt;h2 id="section-3">3. Conclusion&lt;/h2>
+&lt;p>By following these implementation steps, we bridge the gap between theoretical insights and practical deployment of second-order explanations in visual search systems. Our approach empowers users to gain deeper insights into the underlying mechanisms driving search results, paving the way for more transparent and interpretable AI systems.&lt;/p>
+&lt;h2 id="additional-resources">Additional Resources&lt;/h2>
+&lt;ul>
+&lt;li>&lt;strong>Video Description&lt;/strong>: Dive deeper into the concepts with a detailed video overview available &lt;a href="https://aka.ms/axiomatic-video">here&lt;/a>.&lt;/li>
+&lt;li>&lt;strong>Code Repository&lt;/strong>: Access the training and evaluation code to explore the implementation details &lt;a href="https://aka.ms/axiomatic-code">here&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;p>For a comprehensive exploration of the technical details and experimental results, refer to the &lt;a href="https://arxiv.org/pdf/2103.00370.pdf">full paper&lt;/a>.&lt;/p>
+&lt;h2 id="references">REFERENCES&lt;/h2>
+&lt;p>Radhakrishna Achanta, Appu Shaji, Kevin Smith, Aurelien Lucchi, Pascal Fua, and Sabine Süsstrunk. Slic superpixels. Technical report, 2010.&lt;/p>
+&lt;p>Jiwoon Ahn, Sunghyun Cho, and Suha Kwak. Weakly supervised learning of instance segmentation with inter-pixel relations. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pp. 2209-2218, 2019.&lt;/p>
+&lt;p>Marco Ancona, Cengiz Oztireli, and Markus Gross. Explaining deep neural networks with a polynomial time algorithm for shapley value approximation. In International Conference on Machine Learning, pp. 272-281. PMLR, 2019.&lt;/p>
+&lt;p>Robert J Aumann and Lloyd S Shapley. Values of non-atomic games. Princeton University Press, 2015.&lt;/p>
+&lt;p>Sebastian Bach, Alexander Binder, Grégoire Montavon, Frederick Klauschen, Klaus-Robert Müller, and Wojciech Samek. On pixel-wise explanations for non-linear classifier decisions by layer-wise relevance propagation. PloS one, 10(7):e0130140, 2015.&lt;/p>
+&lt;p>Yoshua Bengio, Aaron Courville, and Pascal Vincent. Representation learning: A review and new perspectives. IEEE transactions on pattern analysis and machine intelligence, 35(8):1798-1828, 2013.&lt;/p>
+&lt;p>Bing. Beyond text queries: Searching with bing visual search, Jun 2017. URL https://aka. ms/AAas 7 jg.&lt;/p>
+&lt;p>Holger Caesar, Jasper Uijlings, and Vittorio Ferrari. Coco-stuff: Thing and stuff classes in context. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 12091218, 2018.&lt;/p>
+&lt;p>Mathilde Caron, Ishan Misra, Julien Mairal, Priya Goyal, Piotr Bojanowski, and Armand Joulin. Unsupervised learning of visual features by contrasting cluster assignments. arXiv preprint arXiv:2006.09882, 2020.&lt;/p>
+&lt;p>Hila Chefer, Shir Gur, and Lior Wolf. Transformer interpretability beyond attention visualization. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 782-791, 2021.&lt;/p>
+&lt;p>Ting Chen, Simon Kornblith, Mohammad Norouzi, and Geoffrey Hinton. A simple framework for contrastive learning of visual representations. arXiv preprint arXiv:2002.05709, 2020a.&lt;/p>
+&lt;p>Xinlei Chen, Haoqi Fan, Ross Girshick, and Kaiming He. Improved baselines with momentum contrastive learning. arXiv preprint arXiv:2003.04297, 2020 b.&lt;/p>
+&lt;p>Yun-Chun Chen, Yen-Yu Lin, Ming-Hsuan Yang, and Jia-Bin Huang. Show, match and segment: Joint weakly supervised learning of semantic matching and object co-segmentation. IEEE Transactions on Pattern Analysis and Machine Intelligence (PAMI), 2020c.&lt;/p>
+&lt;hr>
+&lt;style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style>
+&lt;script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</guid><pubDate>Thu, 28 Mar 2024 05:58:39 +0100</pubDate></item><item><title>Privacy Amplification by Decentralization</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/</link><description>&lt;h1 style="font-size: 36px;">Privacy Amplification by Decentralization&lt;/h1>
+&lt;h1 style="font-size: 24px;">Author: Sarah ABBANA BENNANI &lt;/h1>
+&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#section-1">Introduction - the challenge of data privacy&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-2">Theoretical Aspects on Differential Privacy&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-3">First Case: walk on a ring&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-4">Generalisation: walk on a complete graph&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-5">Experiments&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#section-6">Perspectives&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;br />
+&lt;h1 id="section-1">&lt;h1 style="font-size: 20px;">Introduction - the challenge of data privacy&lt;/h1>&lt;/h1>
+&lt;p>In recent years, the concept of privacy has gained significant attention due to the proliferation of data collection practices and the need to safeguard individuals&amp;rsquo; personal information. &lt;br>
+There has been a notable shift towards implementing regulations to govern the gathering of data from individuals, underscoring the pressing demand for privacy measures that are not only effective and robust against potential attacks but also transparent and firmly grounded in logic and mathematics.&lt;/p>
+&lt;p>&lt;strong>A current way to define privacy in the context of data sharing is the promess of the dataholder (the person or entity managing the data) towards the users, that there will be no consequences (positive or negative) induced by their consent to sharing their data.&lt;/strong>&lt;/p>
+&lt;br />
+&lt;p>&lt;em>Let us take a small example to illustrate and to understand the underlying complexity of this notion: we consider an entity that desires to conduct a study on the correlation between smoking and cancer risks. &lt;br>
+Should a smoker participate, and the study concludes that smoking indeed increases the likelihood of cancer, the repercussions for the smoker could vary.&lt;/em>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Some negative impacts: insurance premiums could increase&lt;/em>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Some positive impacts: motivation to quit smoking&lt;/em>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;em>We could therefore think that privacy in this case is broken for the participant, however there is a subtility which is one of the keys to capture the nuance between the privacy of an individiual and that of a group. In this case, crucially, we cannot say privacy is breached, as the participation of the smoker should not alter the study&amp;rsquo;s outcome, i.e. from a probabilistic standpoint, whether or not the individual participates in the study will not significantly change the likelihood of the conclusion of the study. &lt;br>
+Formally, and to introduce some probabilities, which we will delve into further later on:&lt;/em>&lt;/p>
+&lt;h1 style="font-size: 13px;">$\mathbb{P}(result=smoking\ bad | individual\ participates) \approx \mathbb{P}(result=smoking\ bad | individual\ does\ not\ participate) $&lt;/h1>
+&lt;br />
+&lt;p>Privacy has become a real challenge for all parties, as &lt;strong>it is necesssary to find a balance between the utility of the data and the privacy guarantees of the users&lt;/strong>.&lt;/p>
+&lt;ul>
+&lt;li>For the dataholder, the aim is to retain the wealth of data to derive useful insights. They must be able to analyse enough of the data to learn about the population without revealing any individual-specific information.&lt;/li>
+&lt;li>For the users, they must believe that their data will be protected and that they will not be hurt by giving them. This trust in the dataholder is important to incite the users to give their data.&lt;/li>
+&lt;/ul>
+&lt;br />
+&lt;p>In this paper, the aim of the authors, E. Cyffers and A. Bellet, was to show some algorithms and methods that allow to improve the privacy-utility trade-offs and therefore reinforce privacy around the data, while keeping scalability.&lt;/p>
+&lt;p>The proposed algorithms are based on &lt;strong>full decentralization&lt;/strong>, and &lt;strong>newtork differential privacy (DP)&lt;/strong>, two notions that we will explain right below.&lt;/p>
+&lt;br />
+&lt;h1 id="section-2">&lt;h1 style="font-size: 20px;">Theoretical Aspects on Differential Privacy&lt;/h1>&lt;/h1>
+&lt;h2 id="h1-stylefont-size-18pxmathematical-contexth1">&lt;h1 style="font-size: 18px;">Mathematical context&lt;/h1>&lt;/h2>
+&lt;p>We must introduce some key mathematical definitions to understand the problem we want to tackle.&lt;/p>
+&lt;h2 id="users-space">Users space&lt;/h2>
+&lt;p>We consider a set of $n$ users (e.g. a population responding to a survey), each holding a private dataset that we note $D_u$ (e.g. their answer to the questions of the survey).&lt;/p>
+&lt;p>&lt;img
+src="./images/Sarah_Abbana/users-space.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;h2 id="neighboring-relation">Neighboring relation&lt;/h2>
+&lt;p>We write $D=D_1 \cup \cdots \cup D_n$ the union of all users datasets.&lt;/p>
+&lt;p>We can define a &lt;strong>neighboring relation&lt;/strong> over these datasets, that we call user-level Differential Privacy: &lt;br>
+For two datasets $D$ and $D&amp;rsquo;$ of the same size, we denote by $D \sim_u D^{\prime}$ the fact that $D$ and $D&amp;rsquo;$ are neighbors, in the sense that they only differ on user $u$&amp;rsquo;s data.&lt;/p>
+&lt;p>&lt;em>For example, $D$ and $D&amp;rsquo;$ could be two datasets corresponding to the answers of a survey from 10 users. For nine of these users the answers are the same for the two datasets. But for one user $u$, the answers are different (e.g. in $D$ user $u$ smokes, in $D&amp;rsquo;$ he doesn&amp;rsquo;t smoke).&lt;/em>&lt;/p>
+&lt;p>The inuition between this definition relatively to privacy is that compared to traditional differential privacy, which considers changes in individual data points, user-level DP provides stronger privacy guarantees. By hiding the influence of an entire user&amp;rsquo;s dataset, rather than just a single data point, it ensures that individual user contributions are not discernible, thus enhancing overall privacy protection.&lt;/p>
+&lt;h2 id="decentralization">Decentralization&lt;/h2>
+&lt;p>We will set ourselves in a fully decentralized system. In this configuration, each user only communicates with a small number of other users at each step, and there is no central coordinator processing all the data. The aim of this setting is to limit the concentration of sensitive information in one place, reducing the risk of data breaches and unauthorized access.&lt;/p>
+&lt;p>The users and their communications are represented by a network (directed or undirected) graph $G = (V, E)$, where $V$ is the users ensemble defined above, and $E$ is the set of edges: $(u, v) \in E$ indicates that user $u$ can send messages to user $v$.&lt;/p>
+&lt;br />
+&lt;p>In this case, a randomised decentralized algorithm is defined as a mapping that from a dataset, returns that transcript of all messages exchanges between the users over the network. In formal terms, $A: D \longmapsto {(u, m, v): u \text{ sent message with content } m \text{ to } v }$.&lt;/p>
+&lt;br />
+&lt;p>The aim of decentralization in this representation, is to give users the fewer information possible, i.e. only the messages they are involved in, and not the full transcript $A(D)$.&lt;/p>
+&lt;p>We introduce this view of a user $u$: $\mathcal{O}_u(\mathcal{A}(D))=\left(\left(v, m, v^{\prime}\right) \in \mathcal{A}(D): v=u \text { or } v^{\prime}=u\right)$&lt;/p>
+&lt;br />
+&lt;h2 id="h1-stylefont-size-18pxdifferential-privacyh1">&lt;h1 style="font-size: 18px;">Differential Privacy&lt;/h1>&lt;/h2>
+&lt;p>We will take a step back on this representation to introduce in a more global way the mathematical notion of Differential Privacy (DP).&lt;/p>
+&lt;p>Let us consider a randomised algorithm $M$. $M$ is said to be &amp;ldquo;$\alpha$-differentially private&amp;rdquo; if, for any event $A$:&lt;/p>
+&lt;p>$$\mathbb{P}[M(D)\in A]\leq e^{\alpha} \cdot \mathbb{P}[M(D&amp;rsquo;)\in A]$$&lt;/p>
+&lt;p>where $D$ and $D&amp;rsquo;$ are two datasets differing on a single element.&lt;/p>
+&lt;br />
+&lt;p>To make this more intuitive, a randomized algorithm is an algorithm that employs a degree of randomness as part of its logic. The algorithm must treat the data so that the output is not overly depend on the data of any one individual.&lt;/p>
+&lt;p>Let&amp;rsquo;s consider the event &amp;ldquo;Smoking is correlated to cancer&amp;rdquo;, and $D$ and $D&amp;rsquo;$ differing on the user $u$&amp;rsquo;s data, whether or not that individual that has cancer smokes or not.&lt;/p>
+&lt;p>We can rewrite the definition as: $\frac{\mathbb{P}\left[M\left(D\right) \in A\right]}{\mathbb{P}\left[M\left(D&amp;rsquo;\right) \in A\right]} \leq e^{\alpha}$&lt;/p>
+&lt;p>We can see that $\alpha$, the privacy factor, represents the lost of privacy:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>When $\alpha \rightarrow 0$: the two probabilities are equal, meaning that whether user $u$ participates or not to the survey, the result is the same, i.e. privacy is at its maximum, but the statistical utility is null.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>When $\alpha \rightarrow+\infty$: there are no constraints on the probabilities and therefore no constraints on privacy.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>Thus it is the intermediate case for $\alpha$ that is the most interesting and that can allow a good trade-off between privacy and utility.&lt;/p>
+&lt;br />
+&lt;h2 id="network-differential-privacy">Network Differential Privacy&lt;/h2>
+&lt;p>In this paper, the definition used for Differential Privacy is a bit different, actually relaxed as the algorithm is decentralized.&lt;/p>
+&lt;p>An algorithm $A$ is said to be $(\varepsilon, \delta)$-network Differentially Private if for all pairs of distinct user $u, v \in V$ and all pairs of neighboring datasets $D \sim_u D^{\prime}$, we have:&lt;/p>
+&lt;p>$$ \mathbb{P}\left(\mathcal{O}_v(\mathcal{A}(D))\right) \leq e^{\varepsilon} \mathbb{P}\left(\mathcal{O}_v\left(\mathcal{A}\left(D^{\prime}\right)\right)\right)+\delta $$&lt;/p>
+&lt;p>We can interpret this as the need that the information gathered by $v$ during the execution of $A$ must not depend too much on $u$&amp;rsquo;s data.&lt;/p>
+&lt;br />
+&lt;p>Furthermore, the definition can be extended in the case of collusion between the users, i.e. if multiple individuals collaborate or conspire to exploit or manipulate a system or process for their collective benefit.&lt;/p>
+&lt;p>An algorithm $A$ is $(c, \varepsilon, \delta)$-network DP if for each user $u$, all subsets $W \subset V$ such that $\left|W\right| \leq c$, and all pairs of neighboring datasets $D \sim_u D^{\prime}$, we have:&lt;/p>
+&lt;p>$$ \mathbb{P}\left(\mathcal{O}_W(\mathcal{A}(D))\right) \leq e^{\varepsilon} \mathbb{P}\left(\mathcal{O}_W\left(\mathcal{A}\left(D^{\prime}\right)\right)\right)+\delta $$&lt;/p>
+&lt;p>Here $\mathcal{O}_W$ represents the aggregated information of the collusion: $\mathcal{O}_W = \cup _{w \in W} \mathcal{O}_w$.&lt;/p>
+&lt;br />
+&lt;h2 id="decentralized-computation-model">Decentralized computation model&lt;/h2>
+&lt;p>The algorithms studied in this paper are meant to perform computations by using a token that will walk through the nodes of the network graph. The purpose of the token is to facilitate sequential updates across the nodes in the network. As it traverses through the nodes following the edges of the graph, it carries information and updates its states based on local computations performed at each node from the values obtainable from the corresponding user.&lt;/p>
+&lt;p>If the token $\tau$ resides at some node $u$, it will be:&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>Updated by: $\tau \leftarrow \tau+x_u^k, \quad$ with $x_u^k=g^k\left(\tau ; D_u\right)$&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Sent to another user $v$ with $(u, v) \in E$&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>Here, $x_u^k$ denotes the contribution of user $u$ to the computation. It depends both on the current value of $\tau$ and on the number of times $k$ that the token visited $u$ so far.&lt;/p>
+&lt;p>This model of computation allows to optimize the combination of local costs within the network, which is useful for tasks like training machine learning models. The token holds the model&amp;rsquo;s parameters and is updated based on the local information at each point it visits. This decentralized approach can also be used to calculate summaries of data contributed by users, such as finding totals or averages.&lt;/p>
+&lt;br />
+&lt;p>&lt;em>The idea of the following parts is to study different graph achitectures and computation protocols, based on the formalization explained above, to achieve good utility-privacy trade-offs&lt;/em>&lt;/p>
+&lt;br />
+&lt;h1 id="section-3">&lt;h1 style="font-size: 20px;">First case: walk on a ring&lt;/h1>&lt;/h1>
+&lt;p>We consider here a graph architecture of a directed ring, i.e. $E = {(u, u+1)}_{u=1}^{n-1} \cup{(n, 1)}$, meaning that the token, starting from the first user, will travel around the ring multiple times, and more precisely go through every user $K$ times.&lt;/p>
+&lt;p>&lt;img
+src="./images/Sarah_Abbana/walk-on-ring.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>This is a simple case that is meant to show how we can achieve suitable results without relying on a centralised agregator.&lt;/p>
+&lt;p>We are going to explain how this architecture can perform for privacy guarantees on the task of &lt;em>Real Summation&lt;/em>, and then on &lt;em>Discrete Histogram Computation&lt;/em>.&lt;/p>
+&lt;br />
+&lt;h2 id="real-summation">Real Summation&lt;/h2>
+&lt;p>Each user will contribute a value during each round of the token&amp;rsquo;s journey. The task of &lt;em>real summation&lt;/em> aims to estimate the sum of all contributions made by users.&lt;/p>
+&lt;p>&lt;em>For example, we can imagine a scenario where users of a health monitoring app report their daily step counts. The app&amp;rsquo;s goal is to calculate the total number of steps taken by all users, without revealing individual step counts. Each user&amp;rsquo;s daily step count is considered a contribution, and the app needs to aggregate these contributions while preserving user privacy.&lt;/em>&lt;/p>
+&lt;p>Indeed to preserve privacy in this case, a common method is to add random noise, an abstract perturbation mechanism, which usually consist in a standard Gaussian or Laplace deviation to the contribution. We won&amp;rsquo;t go into further details on the perturbation, but we assume that it satisfies traditional local differntial privacy (LDP).&lt;/p>
+&lt;p>Furthermore, here the decentralized protocol proposes to add this noise only once every few hops of the token, and in fact every $n-1$ hops of the token as shown in the algorithm below:&lt;/p>
+&lt;p>&lt;img
+src="./images/Sarah_Abbana/algo1.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>They prove the following theorem:&lt;/p>
+&lt;p>&lt;strong>Theorem:&lt;/strong> Let $\varepsilon, \delta&amp;gt;0$. Algorithm 1 outputs an unbiased estimate of $\bar{x}$ with standard deviation $\sqrt{\left\lfloor \frac{Kn}{n - 1} \right\rfloor} \sigma_{\text{loc}}$, and is $\sqrt{2K \ln\left(\frac{1}{\delta&amp;rsquo;}\right)\varepsilon}$ $+ K\epsilon(e^\varepsilon - 1), K\delta + \delta&amp;rsquo;$-network DP for any $\delta&amp;rsquo; &amp;gt; 0$&lt;/p>
+&lt;p>The Algorithm 1 proposed actually provides a gain on the error of $O\left(\frac{1}{\sqrt{n}}\right)$ compared to a LDP achieving the same privacy guarantees. This means it achieves a similar balance between privacy and utility as a centralized aggregator would, if they itratively aggregated user contributions then perturb the results before sending it to the users, buy here without the need for this centralized party.&lt;/p>
+&lt;br />
+&lt;h2 id="discrete-histogram-computation">Discrete Histogram Computation&lt;/h2>
+&lt;p>Here we focus on another task that is computing histograms over a discrete domain.&lt;/p>
+&lt;p>&lt;em>With the same example as above, it could be such as counting the frequency of steps in different ranges for a health monitoring app.&lt;/em>&lt;/p>
+&lt;p>Traditional local differential privacy (LDP) methods use L-ary randomized response, where each user submits their true value with probability $1-\gamma$ and a random value with probability $\gamma$. However, in the decentralized approach with a ring network, they propose Algorithm 2. This algorithm randomizes each user&amp;rsquo;s contribution using L-ary randomized response before adding it to the token, which maintains a partial histogram representing the shuffled contributions, thus enhancing privacy through shuffling, as demonstrated in previous studies.&lt;/p>
+&lt;p>&lt;img
+src="./images/Sarah_Abbana/algo2.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>As for the case of real summation, a theorem proves that to achieve the same privacy in LDP, it would need $\sqrt n$ times more random responses, and when achieving the same utility (meaning to fix $\gamma$), Algorithm 2 provides a gain of privacy of $O\left(\frac{1}{\sqrt{n}}\right)$.&lt;/p>
+&lt;br />
+&lt;p>We see that decentralized computation over a ring enables comparable utility to a trusted aggregator by sequentially hiding previous users&amp;rsquo; contributions, without relying on a central server or requiring costly multi-party computation protocols.&lt;/p>
+&lt;p>However this simple topology presents limitations including vulnerability to collusions, which compromises differential privacy guarantees, and inadequacy for extensions to gradient descent due to the lack of privacy amplification between users with fixed positions in the ring.&lt;/p>
+&lt;p>This is why we shall now consider random walks over a complete graph.&lt;/p>
+&lt;br/>
+&lt;h1 id="section-4">&lt;h1 style="font-size: 20px;">Generalisation: walk on a complete graph&lt;/h1>&lt;/h1>
+&lt;p>Random walk on a complete graph assumes the token is randommly sent to a user at each step. The walk consists of fixed-length random walks, ensuring that each user&amp;rsquo;s contributions are random, and their path is concealed, allowing only the messages sent and received to be known by a user.&lt;/p>
+&lt;br />
+&lt;h2 id="real-summation-1">Real Summation&lt;/h2>
+&lt;p>Algorithm 3 shows the protocol, naturally extended from the ring topology, where each user updates the token with its contribution and a perturbation. The secrecy of the path taken by the token and the aggregations of the contributions between two visits of the token guarantee the network DP property.&lt;/p>
+&lt;p>&lt;img
+src="./images/Sarah_Abbana/algo3.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>Again, a theorem proves that asymptotically, network DP offers a privacy amplification of $O\left(\frac{1}{\sqrt{n}}\right)$ over LDP for the same conditions, which aligns with the privacy-utility trade-off of a trusted aggregtor.&lt;/p>
+&lt;br />
+&lt;p>The same analysis can be done for the discrete histogram computation case.&lt;/p>
+&lt;br />
+&lt;h2 id="stochastic-gradient-descent">Stochastic Gradient Descent&lt;/h2>
+&lt;p>In this section, we address the challenge of private convex optimization using stochastic gradient descent (SGD). We consider a convex set $(W \subseteq \mathbb{R}^d)$ and a collection of convex functions $(f(\cdot; D_1), \ldots, f(\cdot; D_n))$, each associated with a user, being L-Lipschitz and $(\beta)$-smooth over $(W)$. Our goal is to privately solve the optimization problem to find $(w^*)$ minimizing the average of these functions over $(W)$:&lt;/p>
+&lt;p>$$w^* \in \arg \min_{w \in \mathcal{W}} \left( F(w):=\frac{1}{n} \sum_{u=1}^n f\left(w ; D_u\right) \right)$$&lt;/p>
+&lt;p>This equation encapsulates various machine learning tasks, such as ridge and logistic regression, and others. This is significant because it addresses the need for private optimization in machine learning, ensuring that sensitive data remains protected while training models on distributed datasets.&lt;/p>
+&lt;p>The algorithm below proposes a method to privately approximate $w^*$, where the token represents the current iterate. At each step, the user $u$ holding the token performs a projected noisy gradient step and sends the updated token to a random user. The variance in the Gaussian mechanism of line 4 is deduced from the Lipschitz property of the functions.&lt;/p>
+&lt;p>&lt;img
+src="./images/Sarah_Abbana/algo4.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>A theorem based on the evolution of the privacy loss proves the differential privacy guarantees, and again the results are satisfactory. Compared to traditional local differential privacy methods, we obtain a privacy amplification of $O\left(\frac{\ln n}{\sqrt{n}}\right)$ for a specific number of iterations, with the same level of privacy-utility trade-off.&lt;/p>
+&lt;p>With a fixed privacy budget and a large number of iteration, the expected error of this algorithm is smaller with this network DP than with LDP.&lt;/p>
+&lt;br />
+&lt;p>Compared to the ring case, this random walk approach has better robustness to collusion, as colluding users can be treated as a single node with adjusted transition probabilities, leading to equivalent privacy guarantees as for non-colluding users.&lt;/p>
+&lt;br/>
+&lt;h1 id="section-5">&lt;h1 style="font-size: 20px;">Experiments&lt;/h1>&lt;/h1>
+&lt;p>To show the efficiency of the privacy amplification methods explained in this article, some experiments have been made on the complete graph, first for the Real Summation task, and then for Machine Learning with Stochastic Gradient Descent (SGD).&lt;/p>
+&lt;p>The code is available here: &lt;a href="https://github.com/totilas/privacy-amplification-by-decentralization/tree/main">Github Link&lt;/a>&lt;/h1>&lt;/p>
+&lt;br />
+&lt;h2 id="real-summation-2">Real Summation&lt;/h2>
+&lt;p>We reproduced the first experiment from the paper, comparing th analytical bounds of LDP and NDP on the real summation task.&lt;/p>
+&lt;p>To do so, we only need to run the &lt;em>main_a.py&lt;/em> and &lt;em>main_b.py&lt;/em> files with python from the &lt;em>fig1&lt;/em> folder to display the corresponding figures (a) and (b). It works, for instance, with Python version 3.8, with the prerequisite of having installed the packages &lt;em>numpy&lt;/em> and &lt;em>matplotlib&lt;/em>, only taking a few seconds to execute.&lt;/p>
+&lt;p>It gives the following results:&lt;/p>
+&lt;p>&lt;img
+src="./images/Sarah_Abbana/results1.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>As we may see from the theoretical bounds, privacy is amplified with network differential privacy over LDP when the numer of users $n$ is greater or equal to 20, with increaingly substancial improvements as $n$ grows.&lt;/p>
+&lt;p>In practice by making some simulations, the gains are even more significant and even for a smaller number of users, as we see in figure (b).&lt;/p>
+&lt;br/>
+&lt;h2 id="machine-learning-with-sgd">Machine Learning with SGD&lt;/h2>
+&lt;p>For this second experiment, the task is to train a logistic regression model in this decentralized context.&lt;/p>
+&lt;p>The setting of the experiment is:&lt;/p>
+&lt;ul>
+&lt;li>UCI Housing dataset (binarized version)&lt;/li>
+&lt;li>Standardized features and normalized data point (to have unit L2 norm and Lipschitz property of the logistic loss)&lt;/li>
+&lt;li>Train/test split of 80% uniformly at random&lt;/li>
+&lt;li>Training set split between $n = 2000$ users (each user has a local dataset of size $8$)&lt;/li>
+&lt;/ul>
+&lt;p>The experiment compares three settings for Stochastic Gradient Descent with perturbation:&lt;/p>
+&lt;ul>
+&lt;li>Centralized DP-SGD, requiring a trusted curator&lt;/li>
+&lt;li>Local DP-SGD, corresponding to Algorithm 4 with LDP method&lt;/li>
+&lt;li>Network DP-SGD, corresponding to Algorithm 4 with Network DP method, the one of interest&lt;/li>
+&lt;/ul>
+&lt;br/>
+&lt;p>We must run the &lt;em>main.py&lt;/em> file of folder &lt;em>fig2&lt;/em> with Python to display the results.&lt;/p>
+&lt;p>It is possible to use the command &lt;em>python main.py &amp;ndash;help&lt;/em> to show the list of parameters that can be tuned to modify the context of the experiment (the default ones are for $\varepsilon = 10$ and $\varepsilon = 1$):&lt;/p>
+&lt;p>&lt;img
+src="./images/Sarah_Abbana/options.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>I had some issues to run this program with my settings (same as for the first experiment).&lt;/p>
+&lt;ol>
+&lt;li>The &lt;em>typer&lt;/em> module was missing therefore I had to install it : &lt;em>pip install typer&lt;/em>&lt;/li>
+&lt;li>The &lt;em>_intercept_dot&lt;/em> function from &lt;em>sklearn.linear_model._logistic&lt;/em> couldn&amp;rsquo;t be found either. By checking the &lt;em>sklearn.linear_model.LogisticRegression&lt;/em> (which is the public class corresponding to the import here), this function doesn&amp;rsquo;t appear. I wanted to change it with the &lt;em>intercept_&lt;/em> attribute but it didn&amp;rsquo;t fit either. Then by checking the usage of this function in the case, it seemed that it computes a dot product between the model parameters and the input data, taking into account whether an intercept term is included. Therefore I tried to manually code this functionality but unfortunately it didn&amp;rsquo;t give coherent results compared to the paper.&lt;/li>
+&lt;/ol>
+&lt;p>Here are the original results from the paper:&lt;/p>
+&lt;p>&lt;img
+src="./images/Sarah_Abbana/results2.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>Here, although the number of contributions per user doesn&amp;rsquo;t align with the optimal regime for network DP, the observed privacy amplification surpasses theoretical expectations. By numerically determining the minimum noise level required for theoretical proofs, they demonstrated that Network DP-SGD achieves a privacy-utility trade-off comparable to Centralized DP-SGD across various privacy levels, showcasing significant privacy amplification benefits over Local DP-SGD, especially in scenarios with fewer iterations than typically recommended.&lt;/p>
+&lt;br/>
+&lt;h1 id="section-6">&lt;h1 style="font-size: 20px;">Perspectives&lt;/h1>&lt;/h1>
+&lt;p>The work presented suggests numerous avenues for exploration. Generalizations to diverse graph structures, incorporating dynamic topologies to reinforce resilience against collusion, and investigating decentralized models beyond our current scope are key directions. Exploring the potential of multiple tokens traversing the graph simultaneously and delving into randomized gossip algorithms offer promising avenues for advancing privacy-preserving techniques. Finally, probing the theoretical limits of network DP and exploring scenarios where users trust nearby peers more could provide insights into refining privacy mechanisms.&lt;/p>
+&lt;style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style>
+&lt;script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/</guid><pubDate>Wed, 27 Mar 2024 12:05:50 +0100</pubDate></item><item><title>Robust or Fair</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/robust-or-fair/</link><description>&lt;h1 style="font-size: 36px;">To be Robust or to be Fair: Towards Fairness in Adversarial Training&lt;/h1>
 &lt;h1 style="font-size: 24px;">Authors: Maryem Hajji &amp; Cément Teulier&lt;/h1>
 &lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
 &lt;ul>
