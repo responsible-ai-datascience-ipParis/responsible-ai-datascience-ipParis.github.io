@@ -4,6 +4,40 @@ date = 2024-01-08T11:26:03+01:00
 draft = false
 +++
 
+<script
+type="text/x-mathjax-config">
+
+MathJax.Hub.Config({
+
+    tex2jax: {
+
+        inlineMath: [['$','$'], ['\\(','\\)']],
+
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+
+    }
+
+});
+
+MathJax.Hub.Queue(function() {
+
+    var all = MathJax.Hub.getAllJax(), i;
+
+    for(i = 0; i < all.length; i += 1) {
+
+        all[i].SourceElement().parentNode.className += ' has-jax';
+
+    }
+
+});
+
+</script>
+
+<script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+
+
 **Authors** : Marion Chadal and Julie Massé
 
 This blog post discusses the paper "How Far Pre-trained Models Are from Neural Collapse on the Target Dataset Informs their Transferability" [[1]](#ref1). It provides an explanation of it so that you can understand the usefulness of measuring transferability, and a reproduction of the authors' experiment so that you can better visualize their methodology.
@@ -43,7 +77,7 @@ Fine-tuning pre-trained models works as follows. First, you **pick a downstream 
 Transferability estimation arises as a solution to anticipate and avoid unnecessary fine-tuning, by **ranking the performances of pre-trained models** on a downstream task without any fine-tuning. Having a **benchmark on the pre-trained models' transferability** would allow you to pick the relevant ones for your own downstream task.
 
 <p align="center">
-<img src="/images/ChadalMasse/machine-learning-file-cycle.png" width="250" height="250"/>
+<img src="/images/ChadalMasse/machine-learning-life-cycle.png" width="250" height="250"/>
 </p>
 
 This measure is also in line with **frugality in AI**, which means using limited resources at every step of the Machine Learning lifecycle, while maintaining an acceptable accuracy. This frugality is especially relevant for small and medium-sized enterprises (SMEs) or startups, which may not have the vast computational resources that larger corporations possess. Transferable models democratize access to advanced AI capabilities, enabling these smaller entities to innovate and compete effectively. Frugality in AI also speaks to the broader goal of creating models that are not only powerful but also lean and efficient. Models with high transferability can achieve excellent performance across multiple tasks using significantly less data and fewer computational resources. This efficiency reduces the carbon footprint of training models and makes AI more accessible to a wider range of users and applications.
