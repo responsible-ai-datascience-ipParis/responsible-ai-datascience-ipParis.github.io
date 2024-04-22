@@ -3931,7 +3931,25 @@ all[i].SourceElement().parentNode.className += ' has-jax';
 }
 });
 &lt;/script>
-&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/statistical_minimax_rates_under_privacy/</guid><pubDate>Wed, 31 Jan 2024 17:22:02 +0100</pubDate></item><item><title>Measuring the Transferability of Pre-trained Models: a link with Neural Collapse Distances on Target Datasets</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/transferability/</link><description>&lt;p>&lt;strong>Authors&lt;/strong> : Marion Chadal and Julie Massé&lt;/p>
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/statistical_minimax_rates_under_privacy/</guid><pubDate>Wed, 31 Jan 2024 17:22:02 +0100</pubDate></item><item><title>Measuring the Transferability of Pre-trained Models: a link with Neural Collapse Distances on Target Datasets</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/transferability/</link><description>&lt;script
+type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script>
+&lt;p>&lt;strong>Authors&lt;/strong> : Marion Chadal and Julie Massé&lt;/p>
 &lt;p>This blog post discusses the paper &amp;ldquo;How Far Pre-trained Models Are from Neural Collapse on the Target Dataset Informs their Transferability&amp;rdquo; &lt;a href="#ref1">[1]&lt;/a>. It provides an explanation of it so that you can understand the usefulness of measuring transferability, and a reproduction of the authors&amp;rsquo; experiment so that you can better visualize their methodology.&lt;/p>
 &lt;h1 id="pre-trained-models-and-fine-tuning">Pre-trained models and fine-tuning&lt;/h1>
 &lt;p>Pre-trained models are currently one of the most active fields in Machine Learning. They can be found in a wide range of applications, from image recognition and natural language processing to autonomous driving and medical diagnosis. These models are &amp;ldquo;pre-trained&amp;rdquo; on massive datasets, most of the time encompassing millions of examples across diverse domains. The training process leverages Deep Learning algorithms and can take weeks or even months, utilizing powerful computing resources to iteratively adjust the model&amp;rsquo;s parameters until it achieves high accuracy on the training data.&lt;/p>
@@ -3952,7 +3970,7 @@ all[i].SourceElement().parentNode.className += ' has-jax';
 &lt;p>Fine-tuning pre-trained models works as follows. First, you &lt;strong>pick a downstream task&lt;/strong>, for which you have at your disposal several pre-trained models candidates. You want to compare their performances to pick the best one on test set, with the &lt;strong>optimal fine-tuning configuration&lt;/strong>. Then, you have to fine-tune each of them. Even if the dataset to train on is smaller, thanks to fine-tuning, you have to repeat it for all your models candidates, and one does not want that, as it can quickly become &lt;strong>computationnally expensive&lt;/strong>.&lt;/p>
 &lt;p>Transferability estimation arises as a solution to anticipate and avoid unnecessary fine-tuning, by &lt;strong>ranking the performances of pre-trained models&lt;/strong> on a downstream task without any fine-tuning. Having a &lt;strong>benchmark on the pre-trained models&amp;rsquo; transferability&lt;/strong> would allow you to pick the relevant ones for your own downstream task.&lt;/p>
 &lt;p align="center">
-&lt;img src="./images/ChadalMasse/machine-learning-file-cycle.png" width="250" height="250"/>
+&lt;img src="./images/ChadalMasse/machine-learning-life-cycle.png" width="250" height="250"/>
 &lt;/p>
 &lt;p>This measure is also in line with &lt;strong>frugality in AI&lt;/strong>, which means using limited resources at every step of the Machine Learning lifecycle, while maintaining an acceptable accuracy. This frugality is especially relevant for small and medium-sized enterprises (SMEs) or startups, which may not have the vast computational resources that larger corporations possess. Transferable models democratize access to advanced AI capabilities, enabling these smaller entities to innovate and compete effectively. Frugality in AI also speaks to the broader goal of creating models that are not only powerful but also lean and efficient. Models with high transferability can achieve excellent performance across multiple tasks using significantly less data and fewer computational resources. This efficiency reduces the carbon footprint of training models and makes AI more accessible to a wider range of users and applications.&lt;/p>
 &lt;h1 id="neural-collapse">Neural Collapse&lt;/h1>
