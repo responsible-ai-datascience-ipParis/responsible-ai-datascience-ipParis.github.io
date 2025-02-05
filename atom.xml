@@ -1,4 +1,41 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2024, Calvin Tran</copyright><lastBuildDate>Thu, 28 Mar 2024 05:58:39 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link><description>&lt;style
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2025, Calvin Tran</copyright><lastBuildDate>Wed, 05 Feb 2025 14:03:13 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>How to augment my dataset?</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</link><description>&lt;style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style>
+&lt;script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+displayMath: [['$$','$$'], ['\\[','\\]']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script>
+&lt;h1 id="authors--tristan-waddington-fabien-lagnieu--dimitri-henrard-iratchet">Authors : &lt;em>Tristan Waddington, Fabien Lagnieu &amp;amp; Dimitri Henrard-Iratchet&lt;/em>&lt;/h1>
+&lt;h3 id="paper-comment-on-the-research-paper-tailoring-mixup-to-data-for-calibrationhttpsarxivorgabs231101434-written-by-quentin-bouniot-pavlo-mozharovskyi--florence-dalché-buc-from-ltci-télécom-paris-institut-polytechnique-de-paris-france">Paper: Comment on the research paper: &lt;a href="https://arxiv.org/abs/2311.01434">&lt;strong>Tailoring Mixup to Data for Calibration&lt;/strong>&lt;/a>, written by &lt;em>Quentin Bouniot, Pavlo Mozharovskyi &amp;amp; Florence d’Alché-Buc&lt;/em>, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France&lt;/h3>
+&lt;p>TODO: insert table of contents&lt;/p>
+&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>&lt;img
+src="./images/MixUpDataCalibration/AI_introvert.png"
+alt="Test image Mkdown"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+Let&amp;rsquo;s do it.&lt;/p>
+&lt;p align="center">
+&lt;img src="./images/MixUpDataCalibration/AI_introvert.png" alt="Test image mathematical">
+&lt;/p>
+&lt;h1 id="main-part">Main part&lt;/h1>
+&lt;p>Test LaTeX : $\sigma \left( \frac{1}{2}\right)$&lt;/p>
+&lt;p>$$\mathbb{R}^3 $$&lt;/p>
+&lt;h1 id="conclusion">Conclusion&lt;/h1></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</guid><pubDate>Wed, 05 Feb 2025 14:03:13 +0100</pubDate></item><item><title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link><description>&lt;style
 TYPE="text/css">
 code.has-jax {font:
 inherit;
@@ -2570,65 +2607,65 @@ class="full-width"
 &lt;thead>
 &lt;tr>
 &lt;th>&lt;/th>
-&lt;th style="text-align:center">&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">train_loss&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">test_loss&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">top1_accuracy&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">top5_accuracy&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">train_loss&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">test_loss&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">top1_accuracy&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">top5_accuracy&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
 &lt;td>Init.&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.607083&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">1.00&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.96&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.607083&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">1.00&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.96&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Pre-Prune&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.607083&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">1.00&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.96&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.607083&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">1.00&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.96&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Post-Prune&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.607083&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">1.00&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.96&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.607083&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">1.00&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.96&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Final&lt;/td>
-&lt;td style="text-align:center">10&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">3.337817&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">3.421804&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">17.91&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">45.41&lt;/td>
+&lt;td style="text-align: center">10&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">3.337817&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">3.421804&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">17.91&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">45.41&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -2639,65 +2676,65 @@ class="full-width"
 &lt;thead>
 &lt;tr>
 &lt;th>&lt;/th>
-&lt;th style="text-align:center">&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">train_loss&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">test_loss&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">top1_accuracy&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">top5_accuracy&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">train_loss&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">test_loss&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">top1_accuracy&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">top5_accuracy&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
 &lt;td>Init.&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.607163&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">1.02&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.72&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.607163&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">1.02&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.72&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Pre-Prune&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.607163&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">1.02&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.72&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.607163&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">1.02&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.72&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Post-Prune&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.607163&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">1.02&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.72&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.607163&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">1.02&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.72&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Final&lt;/td>
-&lt;td style="text-align:center">10&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">3.341863&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">3.460254&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">17.74&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">43.78&lt;/td>
+&lt;td style="text-align: center">10&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">3.341863&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">3.460254&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">17.74&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">43.78&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -2708,65 +2745,65 @@ class="full-width"
 &lt;thead>
 &lt;tr>
 &lt;th>&lt;/th>
-&lt;th style="text-align:center">&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">train_loss&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">test_loss&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">top1_accuracy&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">top5_accuracy&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">train_loss&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">test_loss&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">top1_accuracy&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">top5_accuracy&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
 &lt;td>Init.&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.606948&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">0.96&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">5.02&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.606948&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">0.96&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">5.02&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Pre-Prune&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.606948&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">0.96&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">5.02&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.606948&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">0.96&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">5.02&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Post-Prune&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.606948&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">0.96&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">5.02&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.606948&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">0.96&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">5.02&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Final&lt;/td>
-&lt;td style="text-align:center">10&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">3.337061&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">3.448972&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">18.09&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">43.97&lt;/td>
+&lt;td style="text-align: center">10&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">3.337061&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">3.448972&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">18.09&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">43.97&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -2776,65 +2813,65 @@ class="full-width"
 &lt;thead>
 &lt;tr>
 &lt;th>&lt;/th>
-&lt;th style="text-align:center">&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">train_loss&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">test_loss&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">top1_accuracy&lt;/th>
-&lt;th style="text-align:center">   &lt;/th>
-&lt;th style="text-align:center">top5_accuracy&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">train_loss&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">test_loss&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">top1_accuracy&lt;/th>
+&lt;th style="text-align: center">   &lt;/th>
+&lt;th style="text-align: center">top5_accuracy&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
 &lt;td>Init.&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.606786&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">1.01&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.95&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.606786&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">1.01&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.95&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Pre-Prune&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.606786&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">1.01&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.95&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.606786&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">1.01&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.95&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Post-Prune&lt;/td>
-&lt;td style="text-align:center">0&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">NaN&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.606786&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">1.01&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">4.95&lt;/td>
+&lt;td style="text-align: center">0&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">NaN&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.606786&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">1.01&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">4.95&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>Final&lt;/td>
-&lt;td style="text-align:center">10&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">3.335409&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">3.397401&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">18.93&lt;/td>
-&lt;td style="text-align:center">   &lt;/td>
-&lt;td style="text-align:center">44.89&lt;/td>
+&lt;td style="text-align: center">10&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">3.335409&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">3.397401&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">18.93&lt;/td>
+&lt;td style="text-align: center">   &lt;/td>
+&lt;td style="text-align: center">44.89&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
