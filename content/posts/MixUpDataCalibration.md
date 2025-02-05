@@ -32,18 +32,54 @@ MathJax.Hub.Queue(function() {
 TODO: insert table of contents
 
 # Introduction
-![Test image Mkdown](/images/MixUpDataCalibration/AI_introvert.png)
-Let's do it.
 
 <p align="center">
-  <img src="/images/MixUpDataCalibration/AI_introvert.png" alt="Test image mathematical">
+  <figure>
+  <img src="/images/MixUpDataCalibration/AI_introvert.png" 
+    alt="Test image mathematical"
+    width=300>
+    </img>
+  <figcaption>The power of AI.</figcaption>
+  </figure>
 </p>
-
-
 # Main part
+
 Test LaTeX : $\sigma \left( \frac{1}{2}\right)$
 
 
 $$\mathbb{R}^3 $$
+
+
+## Code Test
+```python
+import numpy as np
+ones = np.ones(1)
+print(ones)
+```
+```bash
+output:
+>>> [[1]]
+```
 # Conclusion
 
+**To explain**:
+- Similarity kernel
+- Beta distributions
+- different procedures of data augmentation 
+- produce images of augmentation
+- compare with other methodes : results and computing power
+- Why "calibration"?
+
+Further idea: Compare with CutMix[^Yun] and Manifold Mixup[^Verma]
+
+# References
+
+[^Verma]: Verma, V., Lamb, A., Beckham, C., Najafi, A., Mitliagkas, I., Lopez-Paz, D., and Bengio, Y. (2019).
+Manifold mixup: Better representations by interpolating hidden states. In Chaudhuri, K. and
+Salakhutdinov, R., editors, Proceedings of the 36th International Conference on Machine Learning,
+volume 97 of Proceedings of Machine Learning Research, pages 6438–6447. PMLR.
+
+[^Yun]: Yun, S., Han, D., Chun, S., Oh, S. J., Yoo, Y., and Choe, J. (2019). Cutmix: Regularization strategy
+to train strong classifiers with localizable features. In 2019 IEEE/CVF International Conference
+on Computer Vision, ICCV 2019, Seoul, Korea (South), October 27 - November 2, 2019, pages
+6022–6031. IEEE.

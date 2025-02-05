@@ -22,7 +22,7 @@
   <meta itemprop="description" content="Authors : Tristan Waddington, Fabien Lagnieu &amp; Dimitri Henrard-Iratchet Paper: Comment on the research paper: Tailoring Mixup to Data for Calibration, written by Quentin Bouniot, Pavlo Mozharovskyi &amp; Florence d’Alché-Buc, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France TODO: insert table of contents">
   <meta itemprop="datePublished" content="2025-02-05T14:03:13+01:00">
   <meta itemprop="dateModified" content="2025-02-05T14:03:13+01:00">
-  <meta itemprop="wordCount" content="55">
+  <meta itemprop="wordCount" content="207">
     
     <link rel="canonical" href="http://localhost:1313/posts/mixupdatacalibration/">
     <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
@@ -83,7 +83,7 @@
       },
       "image": "http://localhost:1313/assets/favicon.ico",
       "url" : "http:\/\/localhost:1313\/posts\/mixupdatacalibration\/",
-      "wordCount" : "55",
+      "wordCount" : "207",
       "genre" : [ ],
       "keywords" : [ ]
   }
@@ -147,22 +147,53 @@ MathJax.Hub.Queue(function() {
 <h3 id="paper-comment-on-the-research-paper-tailoring-mixup-to-data-for-calibrationhttpsarxivorgabs231101434-written-by-quentin-bouniot-pavlo-mozharovskyi--florence-dalché-buc-from-ltci-télécom-paris-institut-polytechnique-de-paris-france">Paper: Comment on the research paper: <a href="https://arxiv.org/abs/2311.01434"><strong>Tailoring Mixup to Data for Calibration</strong></a>, written by <em>Quentin Bouniot, Pavlo Mozharovskyi &amp; Florence d’Alché-Buc</em>, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France</h3>
 <p>TODO: insert table of contents</p>
 <h1 id="introduction">Introduction</h1>
-<p><img
-  src="../../images/MixUpDataCalibration/AI_introvert.png"
-  alt="Testimage"
-  loading="lazy"
-  decoding="async"
-  class="full-width"
-/>
-
-
-Let&rsquo;s do it.</p>
 <p align="center">
-  <img src="../../images/MixUpDataCalibration/AI_introvert.png" alt="Introvert">
+  <figure>
+  <img src="../../images/MixUpDataCalibration/AI_introvert.png" 
+    alt="Test image mathematical"
+    width=300>
+    </img>
+  <figcaption>The power of AI.</figcaption>
+  </figure>
 </p>
-<h1 id="main-part--column1">Main part | Column1</h1>
+# Main part
+<p>Test LaTeX : $\sigma \left( \frac{1}{2}\right)$</p>
 <p>$$\mathbb{R}^3 $$</p>
-<h1 id="conclusion">Conclusion</h1>
+<h2 id="code-test">Code Test</h2>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">numpy</span> <span style="color:#00a8c8">as</span> <span style="color:#111">np</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">ones</span> <span style="color:#f92672">=</span> <span style="color:#111">np</span><span style="color:#f92672">.</span><span style="color:#111">ones</span><span style="color:#111">(</span><span style="color:#ae81ff">1</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">print</span><span style="color:#111">(</span><span style="color:#111">ones</span><span style="color:#111">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>output:
+</span></span><span style="display:flex;"><span>&gt;&gt;&gt; <span style="color:#f92672">[[</span>1<span style="color:#f92672">]]</span>
+</span></span></code></pre></div><h1 id="conclusion">Conclusion</h1>
+<p><strong>To explain</strong>:</p>
+<ul>
+<li>Similarity kernel</li>
+<li>Beta distributions</li>
+<li>different procedures of data augmentation</li>
+<li>produce images of augmentation</li>
+<li>compare with other methodes : results and computing power</li>
+<li>Why &ldquo;calibration&rdquo;?</li>
+</ul>
+<p>Further idea: Compare with CutMix<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> and Manifold Mixup<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<h1 id="references">References</h1>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Yun, S., Han, D., Chun, S., Oh, S. J., Yoo, Y., and Choe, J. (2019). Cutmix: Regularization strategy
+to train strong classifiers with localizable features. In 2019 IEEE/CVF International Conference
+on Computer Vision, ICCV 2019, Seoul, Korea (South), October 27 - November 2, 2019, pages
+6022–6031. IEEE.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>Verma, V., Lamb, A., Beckham, C., Najafi, A., Mitliagkas, I., Lopez-Paz, D., and Bengio, Y. (2019).
+Manifold mixup: Better representations by interpolating hidden states. In Chaudhuri, K. and
+Salakhutdinov, R., editors, Proceedings of the 36th International Conference on Machine Learning,
+volume 97 of Proceedings of Machine Learning Research, pages 6438–6447. PMLR.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
 
       
       <div class="post-date">
