@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>Optimal Transport Based Adversarial Patch Attacks | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:url" content="http://localhost:1313/posts/optimal_transport_based_adversarial_patch/">
+  <meta property="og:site_name" content="Bloggin on Responsible AI">
+  <meta property="og:title" content="Optimal Transport Based Adversarial Patch Attacks">
+  <meta property="og:description" content="Authors: Mohammed Jawhar Aymane Rahmoune Paper : Optimal Transport Based Adversarial Based Patch To Leverage Large Scale Attack Transferability Table of contents : Introduction Understanding Adversarial Patch Attacks Decision boundary based Feature point based Distribution based Transferability Optimal Transport Experiments Experimental Setup Results and Findings Digital Experiments Hybrid Experiments Physical Experiments Reproducibility Conclusion Introduction Imagine you’re showing a picture to a friend, asking them to guess who’s in it, then sticking a tiny, almost invisible sticker on that photo. For some reason, this sticker makes your friend completely unable to recognize who’s in the picture. This might sound like magic, but something similar can happen with Computer Vision models designed to capture an image content, either through a classification, a segmentation or even a generation task. These AI programs can be vulnerable to such tricks, that we call technically, Adversarial Patch Attacks.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-02-03T22:22:36+01:00">
+    <meta property="article:modified_time" content="2024-02-03T22:22:36+01:00">
+
+    
+  <meta itemprop="name" content="Optimal Transport Based Adversarial Patch Attacks">
+  <meta itemprop="description" content="Authors: Mohammed Jawhar Aymane Rahmoune Paper : Optimal Transport Based Adversarial Based Patch To Leverage Large Scale Attack Transferability Table of contents : Introduction Understanding Adversarial Patch Attacks Decision boundary based Feature point based Distribution based Transferability Optimal Transport Experiments Experimental Setup Results and Findings Digital Experiments Hybrid Experiments Physical Experiments Reproducibility Conclusion Introduction Imagine you’re showing a picture to a friend, asking them to guess who’s in it, then sticking a tiny, almost invisible sticker on that photo. For some reason, this sticker makes your friend completely unable to recognize who’s in the picture. This might sound like magic, but something similar can happen with Computer Vision models designed to capture an image content, either through a classification, a segmentation or even a generation task. These AI programs can be vulnerable to such tricks, that we call technically, Adversarial Patch Attacks.">
+  <meta itemprop="datePublished" content="2024-02-03T22:22:36+01:00">
+  <meta itemprop="dateModified" content="2024-02-03T22:22:36+01:00">
+  <meta itemprop="wordCount" content="3061">
+    
+    <link rel="canonical" href="http://localhost:1313/posts/optimal_transport_based_adversarial_patch/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "posts",
+      "name": "Optimal Transport Based Adversarial Patch Attacks",
+      "headline": "Optimal Transport Based Adversarial Patch Attacks",
+      "alternativeHeadline": "",
+      "description": "\u003cstyle TYPE=\u0022text\/css\u0022\u003e\ncode.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}\n\u003c\/style\u003e\n\u003cscript type=\u0022text\/x-mathjax-config\u0022\u003e\nMathJax.Hub.Config({\n    tex2jax: {\n        inlineMath: [[\u0027$\u0027,\u0027$\u0027], [\u0027\\\\(\u0027,\u0027\\\\)\u0027]],\n        displayMath: [[\u0027$$\u0027,\u0027$$\u0027], [\u0027\\\\[\u0027,\u0027\\\\]\u0027]],\n        skipTags: [\u0027script\u0027, \u0027noscript\u0027, \u0027style\u0027, \u0027textarea\u0027, \u0027pre\u0027] \/\/ removed \u0027code\u0027 entry\n    }\n});\nMathJax.Hub.Queue(function() {\n    var all = MathJax.Hub.getAllJax(), i;\n    for(i = 0; i \u003c all.length; i \u002b= 1) {\n        all[i].SourceElement().parentNode.className \u002b= \u0027 has-jax\u0027;\n    }\n});\n\u003c\/script\u003e\n\u003cscript type=\u0022text\/javascript\u0022 src=\u0022https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/mathjax\/2.7.4\/MathJax.js?config=TeX-AMS_HTML-full\u0022\u003e\u003c\/script\u003e\n\u003ch1 id=\u0022authors\u0022\u003eAuthors:\u003c\/h1\u003e\n\u003cul\u003e\n\u003cli\u003eMohammed Jawhar\u003c\/li\u003e\n\u003cli\u003eAymane Rahmoune\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003ch3 id=\u0022paper--optimal-transport-based-adversarial-based-patch-to-leverage-large-scale-attack-transferabilityhttpsopenreviewnetforumidnzp10evtkv\u0022\u003ePaper : \u003ca href=\u0022https:\/\/openreview.net\/forum?id=nZP10evtkV\u0022\u003eOptimal Transport Based Adversarial Based Patch To Leverage Large Scale Attack Transferability\u003c\/a\u003e\u003c\/h3\u003e\n\u003ch1 id=\u0022table-of-contents-\u0022\u003eTable of contents :\u003c\/h1\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#section-0\u0022\u003eIntroduction\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-1\u0022\u003eUnderstanding Adversarial Patch Attacks\u003c\/a\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#subsection-11\u0022\u003eDecision boundary based\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#subsection-12\u0022\u003eFeature point based\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#subsection-13\u0022\u003eDistribution based\u003c\/a\u003e\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-2\u0022\u003eTransferability\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-3\u0022\u003eOptimal Transport\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-4\u0022\u003eExperiments\u003c\/a\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#subsection-41\u0022\u003eExperimental Setup\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#subsection-42\u0022\u003eResults and Findings\u003c\/a\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#subsection-421\u0022\u003eDigital Experiments\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#subsection-422\u0022\u003eHybrid Experiments\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#subsection-423\u0022\u003ePhysical Experiments\u003c\/a\u003e\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-5\u0022\u003eReproducibility\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-6\u0022\u003eConclusion\u003c\/a\u003e\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003ch2 id=\u0022section-0\u0022\u003eIntroduction\u003c\/h2\u003e\n\u003cp\u003eImagine you\u0026rsquo;re showing a picture to a friend, asking them to guess who\u0026rsquo;s in it, then sticking a tiny, almost invisible sticker on that photo. For some reason, this sticker makes your friend completely unable to recognize who\u0026rsquo;s in the picture. This might sound like magic, but something similar can happen with Computer Vision models designed to capture an image content, either through a classification, a segmentation or even a generation task. These AI programs can be vulnerable to such tricks, that we call technically, Adversarial Patch Attacks.\u003c\/p\u003e",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/posts\/optimal_transport_based_adversarial_patch\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "2024",
+      "dateCreated": "2024-02-03T22:22:36.00Z",
+      "datePublished": "2024-02-03T22:22:36.00Z",
+      "dateModified": "2024-02-03T22:22:36.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/posts\/optimal_transport_based_adversarial_patch\/",
+      "wordCount" : "3061",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="../../">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="../../posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="../../tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="../../about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="../../articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">Optimal Transport Based Adversarial Patch Attacks</h2>
+      <style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+<h1 id="authors">Authors:</h1>
+<ul>
+<li>Mohammed Jawhar</li>
+<li>Aymane Rahmoune</li>
+</ul>
+<h3 id="paper--optimal-transport-based-adversarial-based-patch-to-leverage-large-scale-attack-transferabilityhttpsopenreviewnetforumidnzp10evtkv">Paper : <a href="https://openreview.net/forum?id=nZP10evtkV">Optimal Transport Based Adversarial Based Patch To Leverage Large Scale Attack Transferability</a></h3>
+<h1 id="table-of-contents-">Table of contents :</h1>
+<ul>
+<li><a href="#section-0">Introduction</a></li>
+<li><a href="#section-1">Understanding Adversarial Patch Attacks</a>
+<ul>
+<li><a href="#subsection-11">Decision boundary based</a></li>
+<li><a href="#subsection-12">Feature point based</a></li>
+<li><a href="#subsection-13">Distribution based</a></li>
+</ul>
+</li>
+<li><a href="#section-2">Transferability</a></li>
+<li><a href="#section-3">Optimal Transport</a></li>
+<li><a href="#section-4">Experiments</a>
+<ul>
+<li><a href="#subsection-41">Experimental Setup</a></li>
+<li><a href="#subsection-42">Results and Findings</a>
+<ul>
+<li><a href="#subsection-421">Digital Experiments</a></li>
+<li><a href="#subsection-422">Hybrid Experiments</a></li>
+<li><a href="#subsection-423">Physical Experiments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#section-5">Reproducibility</a></li>
+<li><a href="#section-6">Conclusion</a></li>
+</ul>
+<h2 id="section-0">Introduction</h2>
+<p>Imagine you&rsquo;re showing a picture to a friend, asking them to guess who&rsquo;s in it, then sticking a tiny, almost invisible sticker on that photo. For some reason, this sticker makes your friend completely unable to recognize who&rsquo;s in the picture. This might sound like magic, but something similar can happen with Computer Vision models designed to capture an image content, either through a classification, a segmentation or even a generation task. These AI programs can be vulnerable to such tricks, that we call technically, Adversarial Patch Attacks.</p>
+<p>As AI becomes increasingly integrated into various aspects of our lives, including critical applications like passport security systems, autonomous vehicles, traffic sign detection, and surgical assistance; the reliability, trustworthiness, and performance of these systems under all conditions became of prime importance. This has led to a growing interest in the area of Robust AI, which focuses on enhancing the safety and security of AI technologies by improving their resilience to adverse conditions and digital threats. Within this domain, the study of Attacks and Defense ways plays a pivotal role.</p>
+<p align="center">
+  <img src="../../images/image_optimal_transport_patch/road_scene.png" alt="Road_scene">
+</p>
+<p>While these attacks might not seem like a big deal, nor dangerous in this context, the consequences can be severe in critical scenarios - take for example an autonomous vehicle failing to recognize a stop sign, hurting potentially a pedestrian. In this blog we will explore a new approach used for developping such adversarial patch attacks, based on Optimal Transport, as outlined in the paper <em><strong>Optimal Transport Based Adversarial Patch To Leverage Large Scale Attack Transferability</strong></em>. We will try to follow the same structure as in the paper to make the reading easier for you, but with much more simplicity.</p>
+<h2 id="section-1">Understanding Adversarial Attacks</h2>
+<p>First thing first, let us redefine some previously mentionned concepts, while making them into context.</p>
+<p>As deep neural networks keep getting better, developers are working hard to make sure they are trustworthy and reliable. This means constantly testing them to see how well they can handle different challenges, quantifying their robustness, and developping some robustification methods. In the context of image classification for instance, one way to do this is by designing adversarial attacks, which consists of a perturbation or noise, sometimes invisible patterns added to the input images in order to confuse the model and make it misclassify them, causing a huge drop in the accuracy.</p>
+<p><strong>Adversarial Patch Attacks</strong> are a specific type that consists of altering only a small part(patch) of the input, either physically or digitally by inserting a crafted &ldquo;sticker&rdquo;. These attacks happen to be more threatful as they can be easily applied in real life, they do not require modification of the entire image, and they can fool multiple, vastly different models with the same crafted patch. This last property is called <strong>transferability</strong> and aims to test these engineered adversarial patches on various target models, beyond the original one used for learning, even if the two models(source and target) have been trained on different data or use different architectures, to evaluate the attack&rsquo;s efficacy, and measure the models robustness.</p>
+<p>Despite the fact that crafting adversarial patch attacks is mainly based around maximizing the classification error through a gradient ascent, we can differenciate between three distinct approaches:</p>
+<p align="center">
+  <img src="../../images/image_optimal_transport_patch/APA_strategies.png" alt="APA_strategies">
+</p>
+<ul>
+<li>
+<p><strong>Decision boundaries based :</strong> <a name="subsection-11"></a> Which is the most applied approach in previous works and litterature. It focuses on pushing the image&rsquo;s representation in the neural network&rsquo;s <strong>decision</strong> space, across the decision boundary, making the network perceive it as belonging to a different, probability maximized class.</p>
+<ul>
+<li>
+<p>To simplify this approach, imagine a group of fans attempting to sneak into a VIP section at a concert by dressing in a fancy way, like known VIP guests(targeted class). The idea is to blend in so well that they are indistinguishable from actual VIPs to the security guards (the ML model). Despite the simplicity and goodness of this strategy, it has some drawbacks :</p>
+<ul>
+<li>
+<p>It is highly dependant on the model on which the attack is based, which makes it not really transferable: The success of this method hinges on the security&rsquo;s lack of detail. If they are controlled by another security gard who is very familiar with the actual VIPs, the disguises will fail.</p>
+</li>
+<li>
+<p>The patch may push the corrupted image representations into unknown regions of the representation space: In their attempt to mimic the VIPs, there&rsquo;s a risk that their disguises might be so overdone that they don&rsquo;t resemble any actual VIPs, pushing them to have a weird unique look. Hence, they end up in a no-man&rsquo;s-land, not fitting in with either the regular attendees or the VIPs.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Feature point based :</strong> <a name="subsection-12"></a>Instead of crossing a decision boundary, this strategy aims to modify the input so its representation in the <strong>feature space</strong> matches the one of a target point belonging to a different class. This is like fine-tuning the attack to match a specific &ldquo;signature&rdquo; that the model associates to a specific point.</p>
+<ul>
+<li>
+<p>Revisiting our concert analogy, consider the fans now opting to mimic a specific celebrity known to be attending the concert, assuming that matching this one high-profile individual&rsquo;s appearance will guarantee them entry. Although it seems more precise and effective than the first approach, this strategy has a significan drawback :</p>
+<ul>
+<li>It depends heavily on the targeted point selection, this later may be not representative of all instances in the target class :  For instance, if the celebrity is known for a distinctive but uncommon style or if it&rsquo;s unusual for such celebrities to attend such events, their attempt to copy him might not match what the security team usually expects from VIP guests.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Distribution based :</strong> <a name="subsection-13"></a>This new approach implemented in the paper we are analyzing , is based on Optimal Transport theory, and aims to alter the overall feature distribution ofa set of input images belonging to a specific class, to resemble another class&rsquo;s distribution, reducing the gap between them in the <strong>feature space</strong>. It is more sophisticated than the previous ones as it exploits the fundamental way neural networks process and classify images based on learned distributions.</p>
+<ul>
+<li>
+<p>This time, the group studies a wide variety of guests behaviors and appearances to craft a new, ambiguous look that doesn&rsquo;t specifically mimic any single guest type, nor disguise blindly in a &ldquo;VIP&rdquo; style, but instead blends into the overall crowd, avoiding easy detection.</p>
+<ul>
+<li>The main advantage of this approach is that it allows a better transferability between models, enhancing the performance in the blackbox configuration, as it is independant of the classifier&rsquo;s decision boundary , and the choice of a specific target point. Furthermore it captures the useful characteristics (features) from an input in a more universal way.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-2">Why do we need transferability ?</h2>
+<p>You surely noticed that we mentionned the transferability term many times in the last section, showing that is an essential property for designing such attacks, but why do we focus so much to make our patch transferable through many models? Well, it is like discovering a master key for many locks : It enables bad actors to compromise and confuse an AI system using a crafted patch they made without knowing anything about that system(architecture, training,&hellip;).</p>
+<p align="center">
+  <img src="../../images/image_optimal_transport_patch/transferability_diagram.png" alt="transferability_diagram">
+</p>
+<p>This ability to create a &lsquo;one-size-fits-all&rsquo; adversarial patch allows to challenge many models, making it more difficult to develop defense mechanisms, and fostering the development of more robust AI systems. Unfortunately, this important property, which confronts the real-world variability of target systems, whose specific architectures or training details are often unknown, was not achieved strongly by previously developped Adversarial attacks; it was studied only by some specialized Adversarial Patch Attacks models(GAP, LaVan, PS-GAN) and gave very modest rsults, being evaluated on dated, non state of the art models Other models (TTP, M3D, Inkawhich et al.) conducted some experiments to measure the transferability of ivisible adversarial attacks and gave promizing results, but they didn&rsquo;t focus i their work on patch attacks transferability.</p>
+<h2 id="section-3">Diving into Optimal Transport theory</h2>
+<p>The method introduced in this paper represents a remarkable success, as it bridges the gap between transferability studies of invisible adversarial examples and adversarial patch attacks, and provides a trade-off between an efficient non complex patch designing approach, and an exceptional transferability among many advanced state-of-the-art models. The key reason for this success lies in the inherent capabilities of <strong>optimal transport</strong> to measure the distance between two distributions. Particularly, the loss optimized in this method is relevant, as it can be used when the distributions do not overlap, and the theory behind it is intuitive. It is based mainly on the <strong>Wasserstain distance</strong> defined as :</p>
+<p>$$W_{p}^p(\mu,\nu) = \inf_{\pi \in \Pi(\mu,\nu)} \int_{\mathbb{R}^d \times \mathbb{R}^d} ||x - y||^p d\pi(x, y)$$</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MathJax Visualization Example</title>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            displayMath: [['$$','$$'], ['\\[','\\]']],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+</head>
+<body>
+<p>or its more computationnaly efficient Sliced version, which compares the two distributions by computing the expected Wasserstein distance between their one-dimensional linear projections :
+$$SW_{p}^p(\mu,\nu) = \int_{S^{d-1}} W_{p}^p(\theta_{\#}^{*}\mu, \theta_{\#}^{*}\nu) d\sigma(\theta)$$</p>
+<p>
+Where $\mu$ and $\nu$ are two propbability distributions on $\mathbb{R}^d$, $||.||$ the euclidean norm, $\pi$ is a transport plan between $\mu$ and $\nu$, and $ \theta_{\#}^{*} \mu $ and $ \theta_{\#}^{*} \nu $ the push-forward by $\theta^{*}(x)=<\theta, x>$ of $\mu$ and $\nu$ respectively.
+</p>
+</body>
+</html>
+<p align="center">
+  <img src="../../images/image_optimal_transport_patch/Sliced_wasserstain.png" alt="Sliced Wasserstain">
+  <br>
+  <em>This image is taken and adapted from the <a href="https://theses.hal.science/tel-03533097/document">Sliced-Wasserstein distance for large-scale machine learning: theory, methodology and extensions</a> paper.</em>
+</p>
+<!-- $$SW_{p}(\mu,\nu) = \int_{S^{d-1}} W_{p}(\theta_{\#}\mu, \theta_{\#}\nu) d\sigma(\theta)$$-->
+<p>To delve more into the mathematical details, let us explore how Optimal Transport, specifically the Wasserstein distance, is employed to craft effective adversarial examples:
+In the context of image classification, we consider the standard notation where a set of image-label pairs $(x_i, y_i)$ is drawn from a joint distribution of random variables $X$ and $Y$. The images $X$ are typically multi-dimensional arrays representing the height, width, and color channels of an image (e.g., a colored $256 \times 256$ pixel image would have $h = 256$, $w = 256$, and $c = 3$). Meanwhile, $Y$ is a set of discrete labels that classify these images (e.g., &lsquo;cat&rsquo;, &lsquo;dog&rsquo;, etc.). Within a given encoder-decoder neural network $F$, designed to predict these labels, the encoder function $f$ compresses the raw image data $X$ throughout each pooling layer into a feature space $S^{(l)}$, capturing essential patterns.</p>
+<p align="center">
+  <img src="../../images/image_optimal_transport_patch/Optimal transport.png" alt="Optimal Transport">
+</p>
+<p>The Wasserstein distance $W_p$, calculated between the distributions of these feature spaces, reflects how much &ldquo;effort&rdquo; it would take to transform the distribution of features from one class into another. In the case of the proposed method, crafting the patch consits of minimizing the transformation cost (distance)of the features distribution from a corrupted &ldquo;true&rdquo; class into a &ldquo;target&rdquo; adversarial class across multiple layers. This can be formulated as follows:</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MathJax Visualization Example</title>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            displayMath: [['$$','$$'], ['\\[','\\]']],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+</head>
+<body>
+<p>
+$$\delta^* = \arg \min_{\delta} \mathbb{E}_X \left[ \sum_{l \in \mathcal{L}} OT(\mu_{X_{\delta}}^{(l)}, \nu_y^{(l)}) \right]$$</p>
+<p>
+Where $OT$ is the optimal transport distance (Wasserstein or Sliced Wasserstein), $\mu_{X_{\delta}}^{(l)}$ is the feature distribution of images with the patch and $\nu_y^{(l)}$ is the target feature distribution for the incorrect class.</p>
+<p>This can be further enhanced by adding a regularization term to ensure that the patches are effective under various conditions, and can be physically realisable. The problem becomes as follows :</p>
+<p>
+$$\delta^* = \arg \min_{\delta} \mathbb{E}_{X, t\sim \tau, e\sim E} \left[ \sum_{l \in \mathcal{L}} OT(\mu_{A(\delta, X, e, t)}^{(l)}, \nu_y^{(l)}) + TV(\delta)\right]$$
+where TV is the total variation loss discouraging high-frequency patterns.</p>
+</body>
+</html>
+<h2 id="section-4">Experiments</h2>
+<h3 id="experimental-setup-a-namesubsection-41a">Experimental setup <a name="subsection-41"></a></h3>
+<p>To confirm the theoretical results and assumptions, several experiments were conducted under different conditions and settings. For the sake of simplicity, we will not delve into the exhaustive details of the experimental setup, procedures, and results. In summary:</p>
+<ul>
+<li>
+<p>The experiments aimed to evaluate the impact and transferability of the proposed adversarial patch - referred to as $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ - across a range of models.</p>
+</li>
+<li>
+<p>$(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ performance was benchmarked against other adversarial patch attack (APA) methods such as GAP, LaVAN, TNT, TTP, M3D, and others.</p>
+</li>
+<li>
+<p>The source and target models chosen for this analysis were regrouped into six categories based on their architecture: CNNs-V1, CNNs-V2, ENet, CNext(ConvNext), DeiT, and Swin.</p>
+</li>
+<li>
+<p>Tested patches were randomly placed to the side of images, in order to avoid occluding the object of interest and replicate more closely the real world conditions.</p>
+</li>
+<li>
+<p><strong>Targeted success rate (tSuc)</strong> metric was used for evaluating transferability. It consists of the percentage of instances where the network, when presented with an image containing the adversarial patch, incorrectly classifies the image as the attacker&rsquo;s intended target class, out of the total number of attempts.</p>
+</li>
+</ul>
+<h3 id="results-and-findings--a-namesubsection-42a">Results and Findings : <a name="subsection-42"></a></h3>
+<p>The experiments are structured into three main categories:</p>
+<h4 id="digital-experiments--a-namesubsection-421a">Digital experiments : <a name="subsection-421"></a></h4>
+<h5 id="simple-configuration-">Simple configuration :</h5>
+<p>In this configuration, the patches efficacy was tested in a purely digital environment, using images from the ImageNet-1K dataset, which was used also for training. Patches were first designed to attack one of the source models, then tested on other target models to measure the attacking transferability. The table below summarizes for each APA method, the best transferring attack performance achieved :</p>
+<p align="center">
+  <img src="../../images/image_optimal_transport_patch/Digital_transferability.png" alt="Digital Transferability">
+</p>
+<p>As expected through the novelty of $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ approach, it shows the highest transferability capacity(mean, min and max) and outperforms all the other methods. Additionaly, we can make the following observations:</p>
+<ul>
+<li>
+<p>Networks trained with older training recipes (CNNs-v1) seem more vulnerable to attacks, unlike tansformers and models trained with new training recipes (scheduler, augmenting training data like RandAug and Mixup, &hellip;) which appear to be more robust.</p>
+</li>
+<li>
+<p>For all APA methods, patches learned using Swin or CNext are more universal as they can transfer uniformly to multiple models.</p>
+</li>
+<li>
+<p>In general, baseline methods tend to overfit and fail to generate patches that effectively transfer to complex architectures like CNext and Swin models, even if these patches are developed using the same category of models.</p>
+</li>
+<li>
+<p>Methods based on feature space optimization, including L2 and the $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ approach, demonstrate improved transferability and are less likely to overfit.</p>
+</li>
+</ul>
+<h5 id="robustified-configuration-">Robustified configuration :</h5>
+<p>In the second configuration of the digital experiments, the same procedures were reapplied. However this time, the methods learn on Swin, and transfer to a robustified version, by Local Gradients Smoothing (LGS) - a defense mechanism smoothing salient regions in images before passing them to the network - , of the six model categories.</p>
+<p>Similarly, $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ outperforms significantly all other methods as we can see in the following table :</p>
+<p align="center">
+  <img src="../../images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
+</p>
+<h4 id="hybrid-experiments-a-namesubsection-422a">Hybrid experiments: <a name="subsection-422"></a></h4>
+<p>In order to simulate real-world applications more closely, the hybrid experiments conducted within this section involved printing adversarial patches trained with Swin, placing them in physical environments, capturing the images, and then digitally analyzing the results, for simple, and robustified models.</p>
+<p>The table below shows the criticality of the $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ giving very large tSuc in comparison with the other methods, for all settings:</p>
+<p align="center">
+  <img src="../../images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
+</p>
+<h4 id="physical-experiments-a-namesubsection-423a">Physical experiments: <a name="subsection-423"></a></h4>
+<p>In this last experiments category, we get closer to the real world situations, by recording a video of some ImageNet-1K objects (banana, cup , keyboard) while moving a designed patch in the set. This aims to quantify the severity of each attack, for realistic scenarios (as the example provided above about the autonomous vehicule not detecting the stop sign while driving due to an adversarial patch designed without knowing the AI system at all).</p>
+<p>All APA methods failed to transfer properly on all architectures except for L2 with a modest tSuc(9.3%) and $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ that gave much better results (23.4% and 29.3%)</p>
+<h2 id="section-5">Reproducibility</h2>
+<p>In this section, we wanted to reproduce some of the experiments conducted in the paper to validate the results and the findings. However, by exploring the code provided with the paper, and analyzing the python files, we found that it is not well documented, and the structure is not very clear, which makes it difficult to understand and reproduce the complex experiments involving transferability evaluation. Furthermore, given that the paper is based on the ImageNet dataset, which is very large and requires a lot of computational resources, we were not able to run the experiments on our local machines, as we do not have access to a powerful GPU cluster. Consequently, we opted for the CIFAR-10 dataset, which is smaller and more manageable. Despite this adjustment, we still faced some issues Specifically, the model is built from scratch without an available pre-trained, and there are missing components, notably the function required to extract feature vectors from each layer of the target models. To address these challenges and make the reproduction process easier, we decided to develop the missing feature extraction function as an enhancement, and save the obtained results into files(in the same way it was done in the code), to be able to apply the optimal transport method and craft the adversarial patches later as perspectives</p>
+<p>Here are the code that we developed :</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">torch</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">torchvision.models</span> <span style="color:#00a8c8">as</span> <span style="color:#111">models</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">torchvision.transforms</span> <span style="color:#00a8c8">as</span> <span style="color:#111">transforms</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">torch.utils.data</span> <span style="color:#f92672">import</span> <span style="color:#111">DataLoader</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">torchvision.datasets</span> <span style="color:#00a8c8">as</span> <span style="color:#111">datasets</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">def</span> <span style="color:#75af00">get_loader</span><span style="color:#111">(</span><span style="color:#111">dataset</span><span style="color:#111">:</span> <span style="color:#111">str</span><span style="color:#111">,</span> <span style="color:#111">split</span><span style="color:#111">:</span> <span style="color:#111">str</span><span style="color:#111">,</span> <span style="color:#111">batch_size</span><span style="color:#111">:</span> <span style="color:#111">int</span><span style="color:#111">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">utils</span><span style="color:#f92672">.</span><span style="color:#111">data</span><span style="color:#f92672">.</span><span style="color:#111">DataLoader</span><span style="color:#111">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;&#34;&#34;Return a DataLoader object for a given dataset and split.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">return</span> <span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">utils</span><span style="color:#f92672">.</span><span style="color:#111">data</span><span style="color:#f92672">.</span><span style="color:#111">DataLoader</span><span style="color:#111">(</span><span style="color:#111">get_dataset</span><span style="color:#111">(</span><span style="color:#111">dataset</span><span style="color:#111">,</span> <span style="color:#111">split</span><span style="color:#111">),</span> <span style="color:#111">batch_size</span><span style="color:#f92672">=</span><span style="color:#111">batch_size</span><span style="color:#111">,</span> <span style="color:#111">shuffle</span><span style="color:#f92672">=</span><span style="color:#00a8c8">True</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">def</span> <span style="color:#75af00">extract_features</span><span style="color:#111">(</span><span style="color:#111">data_loader</span><span style="color:#111">,</span> <span style="color:#111">list_models</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">    Extracts features from each layer of the pre-trained models provided in the list_models
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">    by applying average pooling, and saves the extracted features into files.
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">for</span> <span style="color:#111">model_name</span> <span style="color:#f92672">in</span> <span style="color:#111">list_models</span><span style="color:#111">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">model</span> <span style="color:#f92672">=</span> <span style="color:#111">models</span><span style="color:#f92672">.</span><span style="color:#111">__dict__</span><span style="color:#111">[</span><span style="color:#111">model_name</span><span style="color:#111">](</span><span style="color:#111">pretrained</span><span style="color:#f92672">=</span><span style="color:#00a8c8">True</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">model</span><span style="color:#f92672">.</span><span style="color:#111">eval</span><span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">for</span> <span style="color:#111">layer_name</span><span style="color:#111">,</span> <span style="color:#111">layer</span> <span style="color:#f92672">in</span> <span style="color:#111">model</span><span style="color:#f92672">.</span><span style="color:#111">named_children</span><span style="color:#111">():</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#00a8c8">if</span> <span style="color:#111">isinstance</span><span style="color:#111">(</span><span style="color:#111">layer</span><span style="color:#111">,</span> <span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">nn</span><span style="color:#f92672">.</span><span style="color:#111">Sequential</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">layer_features</span> <span style="color:#f92672">=</span> <span style="color:#111">[]</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#00a8c8">for</span> <span style="color:#111">i</span><span style="color:#111">,</span> <span style="color:#111">(</span><span style="color:#111">input</span><span style="color:#111">,</span> <span style="color:#111">target</span><span style="color:#111">)</span> <span style="color:#f92672">in</span> <span style="color:#111">enumerate</span><span style="color:#111">(</span><span style="color:#111">data_loader</span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#00a8c8">with</span> <span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">no_grad</span><span style="color:#111">():</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#111">output</span> <span style="color:#f92672">=</span> <span style="color:#111">layer</span><span style="color:#111">(</span><span style="color:#111">input</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#111">output</span> <span style="color:#f92672">=</span> <span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">nn</span><span style="color:#f92672">.</span><span style="color:#111">functional</span><span style="color:#f92672">.</span><span style="color:#111">adaptive_avg_pool2d</span><span style="color:#111">(</span><span style="color:#111">output</span><span style="color:#111">,</span> <span style="color:#111">(</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">1</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#111">output</span> <span style="color:#f92672">=</span> <span style="color:#111">output</span><span style="color:#f92672">.</span><span style="color:#111">view</span><span style="color:#111">(</span><span style="color:#111">output</span><span style="color:#f92672">.</span><span style="color:#111">size</span><span style="color:#111">(</span><span style="color:#ae81ff">0</span><span style="color:#111">),</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#111">layer_features</span><span style="color:#f92672">.</span><span style="color:#111">append</span><span style="color:#111">(</span><span style="color:#111">output</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">layer_features</span> <span style="color:#f92672">=</span> <span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">cat</span><span style="color:#111">(</span><span style="color:#111">layer_features</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">save</span><span style="color:#111">(</span><span style="color:#111">layer_features</span><span style="color:#111">,</span> <span style="color:#d88200">f</span><span style="color:#d88200">&#34;./data/CIFAR/all_images_feature/</span><span style="color:#d88200">{</span><span style="color:#111">layer_name</span><span style="color:#d88200">}</span><span style="color:#d88200">/</span><span style="color:#d88200">{</span><span style="color:#111">model_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.pt&#34;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Apply the function extract_features to some targeted models</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">list_models</span> <span style="color:#f92672">=</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;resnet18&#34;</span><span style="color:#111">,</span> <span style="color:#d88200">&#34;vgg19&#34;</span><span style="color:#111">,</span> <span style="color:#d88200">&#34;convnext_tiny&#34;</span><span style="color:#111">,</span> <span style="color:#d88200">&#34;swin_t&#34;</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">data_loader</span> <span style="color:#f92672">=</span> <span style="color:#111">get_loader</span><span style="color:#111">(</span><span style="color:#d88200">&#34;CIFAR10&#34;</span><span style="color:#111">,</span> <span style="color:#d88200">&#34;train&#34;</span><span style="color:#111">,</span> <span style="color:#111">batch_size</span><span style="color:#f92672">=</span><span style="color:#ae81ff">64</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">extract_features</span><span style="color:#111">(</span><span style="color:#111">data_loader</span><span style="color:#111">,</span> <span style="color:#111">list_models</span><span style="color:#111">)</span>
+</span></span></code></pre></div><h2 id="section-6">Conclusion</h2>
+<p>In conclusion, our exploration of the paper <em><strong>OPTIMAL TRANSPORT BASED ADVERSARIAL PATCH TO LEVERAGE LARGE SCALE ATTACK TRANSFERABILITY</strong></em>, revealed an innovative and promizing technique that uses Optimal Transport to make adversarial patches more effectively fool different models. This method, focusing on altering image feature distributions to match a target distribution from another class, has proven to be both theoretically sound and practically successful. It significantly outperforms current state of the art methods in creating patches that can be highly transferable between models and potentially very harmful, showing great promise for both advancements in the field and potential challenges in security applications.</p>
+<h2 id="references">References:</h2>
+<ul>
+<li>
+<p><a href="https://openreview.net/forum?id=nZP10evtkV">OPTIMAL TRANSPORT BASED ADVERSARIAL PATCH TO LEVERAGE LARGE SCALE ATTACK TRANSFERABILITY</a></p>
+</li>
+<li>
+<p><a href="https://theses.hal.science/tel-03533097/document">Sliced-Wasserstein distance for large-scale machine learning : theory, methodology and extensions</a></p>
+</li>
+<li>
+<p><a href="https://arxiv.org/pdf/1803.00567.pdf">Computational Optimal Transport</a></p>
+</li>
+<li>
+<p><a href="https://openaccess.thecvf.com/content_CVPR_2019/papers/Inkawhich_Feature_Space_Perturbations_Yield_More_Transferable_Adversarial_Examples_CVPR_2019_paper.pdf">Feature Space Perturbations Yield More Transferable Adversarial Examples</a></p>
+</li>
+</ul>
+
+      
+      <div class="post-date">
+        <span class="g time">February 3, 2024 </span> &#8729;
+         
+      </div>
+      
+    </section>
+    
+    <div id="comments">
+      <script src="https://utteranc.es/client.js"
+    repo=ZgotmplZ
+    issue-term="pathname"
+    theme=ZgotmplZ
+    crossorigin="anonymous"
+    async>
+</script>
+
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>
