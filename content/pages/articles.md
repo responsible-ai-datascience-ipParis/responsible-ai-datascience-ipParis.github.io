@@ -42,9 +42,11 @@ You can add images to the blogpost. To this end create a folder for your blogpos
 Then to add them in the blog post, you have two options.
 
 ### Html
+```
 <p align="center">
-  <img src="/images/MixUpDataCalibration/ip-logo.png" alt="ip paris logo">
+  <img src="/images/ip-logo.png" alt="ip paris logo">
 </p>
+```
 
 ### Markdown
-![Test image Mkdown](/images/ip-logo.png)
+```![Test image Mkdown](/images/ip-logo.png)```
