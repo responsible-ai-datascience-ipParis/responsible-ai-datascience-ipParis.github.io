@@ -1,7 +1,7 @@
 +++
 title = 'BitFit: A Simpler and More Efficient Approach to Fine-tuning Transformers'
 date = 2025-02-19T15:20:48+01:00
-draft = true
+draft = false
 +++
 
 BitFit: A Simpler and More Efficient Approach to Fine-tuning Transformers
