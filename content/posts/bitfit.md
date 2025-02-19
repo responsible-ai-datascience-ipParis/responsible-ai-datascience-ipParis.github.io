@@ -4,8 +4,6 @@ date = 2025-02-19T15:20:48+01:00
 draft = false
 +++
 
-BitFit: A Simpler and More Efficient Approach to Fine-tuning Transformers
-==============
 
 #### Authors : Abdoul R. Zeba, Nour Yahya, Nourelhouda Klich
 
