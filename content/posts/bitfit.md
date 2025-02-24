@@ -21,7 +21,16 @@ Fine-tuning large transformer models like BERT has become the standard practice 
 
 ## How Well Does BitFit Perform?
 
+Compared to other parameter-efficient fine-tuning techniques such as Diff-Pruning and Adapters, BitFit achieves competitive performance with significantly fewer trainable parameters.
 
+BitFit outperforms Diff-Pruning on 4 of the 9 tasks of the GLUE benchmark using the BERTLARGE model and with 6 times fewer trainable parameters. On the test set, BitFit decisively beats Diff-Pruning over two tasks and Adapters over four tasks with 45 times fewer trainable parameters.
+
+The performance trends of BitFit remain consistent across different base models, e.g., BERTBASE and RoBERTaBASE. The performance of BitFit is not simply due to its adaptation of a collection of parameters, but rather the specific choice of bias parameters. Random selection of an identical number of parameters yields significantly poorer performance, which means that bias parameters have a unique critical contribution to fine-tuning.
+Moreover, further analysis reveals that not all bias parameters are equally important as some of them contribute more to the model's performance than others.
+
+BitFit also demonstrates a smaller generalization gap compared to full fine-tuning, suggesting better generalization capabilities. In token-level tasks such as POS-tagging, BitFit achieves comparable results to full fine-tuning.
+
+Finally, BitFit's performance also appears to rely on training set size. In experiment with the Stanford Question Answering Dataset, BitFit outperforms full fine-tuning in small-data regimes, but the trend reverses as the training set size increases. What that means is that BitFit is particularly useful when it comes to targeted fine-tuning under small-to-mid-sized data conditions.
 
 ## Why Does BitFit Work?
 
@@ -32,6 +41,8 @@ Fine-tuning large transformer models like BERT has become the standard practice 
 
 
 ## Conclusion
+
+In conclusion, BitFit offers a desirable compromise between effectiveness and efficiency, making it a valuable tool for fine-tuning transformer-based models, especially in resource-constrained environments or with limited amounts of training data. Having the capability to achieve competitive performance using significantly fewer trainable parameters, coupled with its achievement in low data regimes, bodes well for other NLP tasks and applications.
 
 BitFit defies the usual wisdom concerning universal fine-tuning by illustrating how slight tweaks in only a very small percentage of model parameters yield high-performance. This efficient approach makes AI models more accessible, scalable, and cost-effective.
 
