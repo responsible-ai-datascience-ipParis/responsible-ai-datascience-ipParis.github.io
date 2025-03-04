@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Machine Learning on Bloggin on Responsible AI</title>
+    <link>http://localhost:1313/tags/machine-learning/</link>
+    <description>Recent content in Machine Learning on Bloggin on Responsible AI</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 19 Feb 2025 15:20:48 +0100</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/machine-learning/atom.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>BitFit: A Simpler and More Efficient Approach to Fine-tuning Transformers</title>
+      <link>http://localhost:1313/posts/bitfit/</link>
+      <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
+      <guid>http://localhost:1313/posts/bitfit/</guid>
+      <description>BitFit is a simple yet powerful method for fine-tuning BERT models efficiently. This blog post explores how BitFit works, its benefits, and why it matters.</description>
+    </item>
+  </channel>
+</rss>

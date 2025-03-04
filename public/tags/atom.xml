@@ -6,6 +6,42 @@
     <description>Recent content in Tags on Bloggin on Responsible AI</description>
     <generator>Hugo</generator>
     <language>en-us</language>
+    <lastBuildDate>Wed, 19 Feb 2025 15:20:48 +0100</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/atom.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>BERT</title>
+      <link>http://localhost:1313/tags/bert/</link>
+      <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
+      <guid>http://localhost:1313/tags/bert/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>BitFit</title>
+      <link>http://localhost:1313/tags/bitfit/</link>
+      <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
+      <guid>http://localhost:1313/tags/bitfit/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Fine-Tuning</title>
+      <link>http://localhost:1313/tags/fine-tuning/</link>
+      <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
+      <guid>http://localhost:1313/tags/fine-tuning/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Machine Learning</title>
+      <link>http://localhost:1313/tags/machine-learning/</link>
+      <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
+      <guid>http://localhost:1313/tags/machine-learning/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>NLP</title>
+      <link>http://localhost:1313/tags/nlp/</link>
+      <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
+      <guid>http://localhost:1313/tags/nlp/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>
