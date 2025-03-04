@@ -3,12 +3,33 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/</loc>
-    <lastmod>2025-02-05T14:03:13+01:00</lastmod>
+    <lastmod>2025-02-19T15:20:48+01:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/mixupdatacalibration/</loc>
-    <lastmod>2025-02-05T14:03:13+01:00</lastmod>
+    <loc>http://localhost:1313/tags/bert/</loc>
+    <lastmod>2025-02-19T15:20:48+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/bitfit/</loc>
+    <lastmod>2025-02-19T15:20:48+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/bitfit/</loc>
+    <lastmod>2025-02-19T15:20:48+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/fine-tuning/</loc>
+    <lastmod>2025-02-19T15:20:48+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/machine-learning/</loc>
+    <lastmod>2025-02-19T15:20:48+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/nlp/</loc>
+    <lastmod>2025-02-19T15:20:48+01:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/posts/</loc>
+    <lastmod>2025-02-19T15:20:48+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/</loc>
+    <lastmod>2025-02-19T15:20:48+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/mixupdatacalibration/</loc>
     <lastmod>2025-02-05T14:03:13+01:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/posts/axiomatic_explanations/</loc>
@@ -64,8 +85,6 @@
     <loc>http://localhost:1313/articles/</loc>
   </url><url>
     <loc>http://localhost:1313/pages/</loc>
-  </url><url>
-    <loc>http://localhost:1313/tags/</loc>
   </url><url>
     <loc>http://localhost:1313/tutorial/</loc>
   </url>
