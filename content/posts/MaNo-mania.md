@@ -60,8 +60,6 @@ A paper from **Renchunzi Xie**${ }^{1}$, **Ambroise Odonnat**${ }^{2}$, **Vasili
 
 <h1 style="font-size: 28px; text-align: center;"> MaNo-mania: Cracking the Code of Unsupervised Accuracy Estimation! </h1>
 
-Machine learning models deployed in real-world scenarios often face **distribution shifts**, leading to deteriorated performance. Traditional methods for monitoring model accuracy rely on access to **ground-truth labels**, which is **resource-intensive** and **impractical**. **MANO (Matrix Norm-based Accuracy Estimation)** introduces a novel unsupervised accuracy estimation approach. Let's explore how MANO works and why it matters.
-
 <style>
 .hr-line {
     border: none;
@@ -76,6 +74,9 @@ Machine learning models deployed in real-world scenarios often face **distributi
 <strong>Authors:</strong> Alice Devilder, Sibylle Degos | <strong>Affiliations:</strong> IP Paris, Responsible AI | <strong>Published:</strong> 2025-02-10
 
 <hr class="hr-line">
+
+Machine learning models deployed in real-world scenarios often face **distribution shifts**, leading to deteriorated performance. Traditional methods for monitoring model accuracy rely on access to **ground-truth labels**, which is **resource-intensive** and **impractical**. **MANO (Matrix Norm-based Accuracy Estimation)** introduces a novel unsupervised accuracy estimation approach. Let's explore how MANO works and why it matters.
+
 
 
 ## **Table of Contents**
