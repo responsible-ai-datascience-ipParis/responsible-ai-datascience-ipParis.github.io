@@ -1,5 +1,5 @@
 +++
-title = "MaNo: Exploiting Matrix Norm for Unsupervised Accuracy Estimation Under Distribution Shifts"
+title = "MaNo: A Smarter Way to Estimate Model Accuracy Without Labels"
 date = 2025-02-10T18:25:03+01:00
 draft = false
 authors = ["Alice Devilder", "Sibylle Degos"]
@@ -54,11 +54,7 @@ MathJax.Hub.Queue(function() {
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">
 </script>
 
-A paper from **Renchunzi Xie**${ }^{1}$, **Ambroise Odonnat**${ }^{2}$, **Vasilii Feofanov**${ }^{2}$, **Weijian Deng**${ }^{3}$, **Jianfeng Zhang**${ }^{2}$, **Bo An**${ }^{1}$ | **Affiliations:** ${ }^{1}$Nanyang Technological University, ${ }^{2}$Huawei Noah’s Ark Lab, ${ }^{3}$Australian National University | **Published:** 2024-11-25
-
----
-
-<h1 style="font-size: 28px; text-align: center;"> MaNo-mania: Cracking the Code of Unsupervised Accuracy Estimation! </h1>
+<h1 style="font-size: 28px; text-align: center;"> MaNo: A Smarter Way to Estimate Model Accuracy Without Labels </h1>
 
 <style>
 .hr-line {
@@ -75,10 +71,6 @@ A paper from **Renchunzi Xie**${ }^{1}$, **Ambroise Odonnat**${ }^{2}$, **Vasili
 
 <hr class="hr-line">
 
-Machine learning models deployed in real-world scenarios often face **distribution shifts**, leading to deteriorated performance. Traditional methods for monitoring model accuracy rely on access to **ground-truth labels**, which is **resource-intensive** and **impractical**. **MANO (Matrix Norm-based Accuracy Estimation)** introduces a novel unsupervised accuracy estimation approach. Let's explore how MANO works and why it matters.
-
-
-
 ## **Table of Contents**
 - [Introduction](#section-0.0)
     - [Why Do Logits Matter For Generalization Performance?](#section-0.1)
@@ -87,9 +79,18 @@ Machine learning models deployed in real-world scenarios often face **distributi
     - [Normalization with Softrun](#section-1.1)
     - [Aggregation Using Matrix Norms](#section-1.2)
 - [Empirical Success: MANO vs. Baselines](#section-2)
-- [Mathematical Formulation of MANO](#section-3)
-- [Applications and Future Directions](#section-4)
-- [Conclusion](#section-5)
+- [Applications and Future Directions](#section-3)
+- [Conclusion](#section-4)
+
+This is a blog post about the paper ***MaNo: Exploiting Matrix Norm for Unsupervised Accuracy Estimation Under Distribution Shifts***, published by *Renchunzi Xie*, *Ambroise Odonnat*, *Vasilii Feofanov*, *Weijian Deng*, *Jianfeng Zhang* and *Bo An* in November 2024 and avalaible on [arXiv](https://arxiv.org/abs/2405.18979).
+
+---
+
+Imagine deploying a machine learning model into the real world, only to watch its performance crumble under unpredictable data shifts. The ability to estimate model accuracy **without labeled test data** is crucial, yet remains a challenge. **MANO (Matrix Norm-based Accuracy Estimation)** presents a novel solution, leveraging **logits**—the raw outputs of a model—to infer confidence and predict accuracy in an **unsupervised manner**.
+
+Traditional approaches rely on costly, labor-intensive ground-truth labels, making real-time evaluation impractical. MANO sidesteps this limitation through an elegant two-step process: **Softrun normalization** to calibrate logits and **matrix norm aggregation** to quantify decision boundary distances. The result? A robust, label-free accuracy estimator that outperforms existing methods across a range of architectures and distribution shifts.
+
+This blog dives deep into the inner workings of MANO, uncovering the theoretical foundations and empirical success that make it a game-changer in **unsupervised accuracy estimation**.
 
 ---
 
@@ -97,50 +98,78 @@ Machine learning models deployed in real-world scenarios often face **distributi
 A common method for estimating accuracy without labels is analyzing a model’s **logits**—the raw outputs before softmax. However, existing methods suffer from **overconfidence issues** and **biased predictions** under distribution shifts.
 
 ### **Why Do Logits Matter?** {#section-0.1}
-Logits represent distances between learned features and the **decision boundary**. Based on the **Low-Density Separation (LDS) Assumption**, well-trained models position decision boundaries in low-density regions, ensuring that logits indicate confidence in classification.
+Logits, the raw model outputs before softmax transformation, encode essential information about a model’s confidence. Under the **Low-Density Separation (LDS) Assumption**, decision boundaries should lie in low-density regions, meaning that logits inherently reflect a model’s **generalization performance**.
+
+Mathematically, for a given input $x$, the model computes logits as:
+
+$$ q = f(x) = (\omega_k^T z)_k \in \mathbb{R}^K $$
+
+where $z$ is the learned feature representation, $\omega_k$ is the classifier’s weight vector, and $K$ is the number of classes. The magnitude of logits correlates with the **distance to decision boundaries**, making them valuable for accuracy estimation.
 
 ### **Why Does softmax normalisation fail to alleviate the overconfidence issues of logits-based methods?** {#section-0.2}
-Traditional methods rely on **softmax normalization** to convert logits into probabilities. However, softmax is **sensitive to outliers** and **overconfident predictions**, leading to **biased accuracy estimation**. This issue is exacerbated under **distribution shifts**.
+Most traditional accuracy estimators use **softmax normalization** to transform logits into probabilities. However, softmax is **highly sensitive to outliers** and can amplify **overconfidence issues**, leading to **biased accuracy predictions**. This happens because the softmax function applies an exponential transformation, making minor logit differences appear much more significant:
+
+$$ \text{softmax}(q_k) = \frac{e^{q_k}}{\sum_{j=1}^{K} e^{q_j}} $$
+
+This normalization can lead to overconfident predictions, especially when the model is miscalibrated under distribution shifts.
+
+---
 
 ## **Introducing MANO: A Two-Step Approach** {#section-1}
-MANO employs a **two-step process**: Normalization with Softrun and Aggregation using Matrix Norms.
+MANO addresses these challenges through a **two-step process**: **Softrun normalization** and **aggregation using matrix norms**.
 
 ### **1. Normalization with Softrun** {#section-1.1}
-Instead of relying on **softmax**, MANO introduces a **novel normalization function called Softrun**. When the model is well-calibrated, **Softrun behaves like softmax**. However, when confidence is unreliable, **Softrun adjusts logits to reduce overconfidence and bias**.
+Softmax has long been the standard for transforming logits into probabilities, but its fundamental flaw lies in its **sensitivity to large logits**, which causes models to be overconfident in their predictions. This issue is particularly detrimental under distribution shifts, where incorrect predictions may be assigned excessively high probabilities, leading to biased accuracy estimates. The exponential nature of softmax exaggerates differences between logits, making the model appear more confident than it actually is.
+
+Recognizing these shortcomings, the creators of MANO devised **Softrun**, a normalization method that mitigates overconfidence while preserving useful information. Instead of applying an unregulated exponential function, Softrun **dynamically adjusts its transformation based on dataset-wide confidence criteria**. It does so using a two-case function:
+
+$$ \sigma(q) = \frac{v(q)}{\sum_{k=1}^{K} v(q_k)} $$
+
+where:
+
+$$v(q) =
+\begin{cases} 
+  \begin{aligned}
+    1 + q + \frac{q^2}{2}, & \quad \text{if } \Phi(D_{test}) \leq \eta \quad \text{(Taylor approx.)}
+  \end{aligned} \\
+  \begin{aligned}
+    e^q, & \quad \text{otherwise (softmax)}
+  \end{aligned}
+\end{cases}
+$$
+
+This formulation ensures that when the dataset is **poorly calibrated**, i.e., when the model's predictions are unreliable, Softrun applies a **Taylor approximation** rather than an exponential function. The Taylor approximation smooths out the effect of large logits, preventing the model from being overly confident in any particular prediction. By contrast, when the dataset is **well-calibrated**, the function behaves like softmax, preserving probability distributions where confidence is warranted.
+
+The key advantage of Softrun is that it prevents **overconfidence accumulation**, a problem that softmax inherently suffers from. By adapting to the dataset's calibration quality, Softrun provides **more stable and realistic probability distributions**, leading to **improved accuracy estimation** even in challenging scenarios. 
 
 ### **2. Aggregation Using Matrix Norms** {#section-1.2}
-After normalization, MANO aggregates logits information using the **Lp norm of the logits matrix**. This metric reflects the overall distance of features to decision boundaries, **providing a standardized and robust accuracy estimation score**.
+After normalization, MANO **aggregates** the logits using the **Lp norm** of the matrix $Q$, defined as:
+
+$$ S(f,D_{test}) = \frac{1}{p\sqrt{NK}} \|Q\|_p = \left( \frac{1}{NK} \sum_{i=1}^{N} \sum_{k=1}^{K} |\sigma(q_i)_k|^p \right)^{\frac{1}{p}} $$
+
+where **p controls sensitivity to high-confidence predictions**. This metric effectively captures the overall **feature-to-boundary distance**, making it a reliable estimator of model accuracy.
+
+---
 
 ## **Empirical Success: MANO vs. Baselines** {#section-2}
-Experiments demonstrate that MANO **outperforms 11 baseline methods** across various architectures and distribution shifts:
+MANO has been extensively evaluated against **11 baseline methods** across a diverse set of neural network architectures and distribution shifts. The experiments were conducted on a range of classification tasks, including image recognition benchmarks such as CIFAR-10, CIFAR-100, TinyImageNet, and ImageNet, as well as domain adaptation datasets like PACS and Office-Home. 
 
-✅ **Higher correlation** with actual accuracy  
-✅ **More robust** across distribution shifts  
-✅ **Better calibration**, reducing overconfidence issues  
+The evaluation setup covered **three major types of distribution shifts**: synthetic shifts, where models were tested against artificially corrupted images; natural shifts, which involved datasets collected from different distributions than the training data; and subpopulation shifts, where certain classes or groups were underrepresented in the training data. MANO consistently outperformed existing methods in all three scenarios, demonstrating its robustness to varying degrees of domain shifts.
 
-## **Mathematical Formulation of MANO** {#section-3}
-We define the normalized logits matrix $X$ as follows:
+Unlike traditional approaches that either rely on softmax probabilities or require retraining on new distributions, MANO provides a label-free and computation-efficient accuracy estimation method that scales well across different domains. By using **Softrun normalization and matrix norm aggregation**, MANO achieves a **stronger correlation with actual accuracy**, ensuring that model performance estimates remain reliable even when faced with extreme distribution shifts.
 
-$$
-X = \frac{Z}{\|Z\|_p}
-$$
+---
 
-where $Z$ represents the original logits, and $\|Z\|_p$ denotes the matrix $L_p$-norm. The final accuracy estimation score is computed as:
+## **Applications and Future Directions** {#section-3}
+The ability to estimate model accuracy without labels has broad implications in AI. One crucial application is **deployment risk estimation**, where real-time insights into model reliability can be obtained without costly manual labeling. This is particularly useful for models deployed in dynamic environments, such as healthcare and autonomous systems, where distribution shifts are frequent and unpredictable.
 
-$$
-S = \sum_{i=1}^{n} \left| \frac{X_i}{X_{max}} \right|
-$$
+Another important application is **dataset selection**. MANO enables the identification of challenging test sets that require further improvements, allowing researchers to focus on areas where models struggle the most. By pinpointing performance gaps, AI practitioners can fine-tune models more effectively and improve generalization.
 
-where $X_{max}$ represents the largest logit magnitude.
+Furthermore, MANO can assist in **calibration diagnostics**, detecting when a model is overconfident and underperforming in specific regions of the data space. By highlighting miscalibrated predictions, MANO supports better model adjustments, ensuring that confidence levels align more closely with actual accuracy.
 
-## **Applications and Future Directions** {#section-4}
-MANO can be applied in multiple scenarios:
+## **Conclusion** {#section-4}
+MANO represents a **significant breakthrough** in unsupervised accuracy estimation. By addressing **logit overconfidence** and introducing **Softrun normalization**, MANO provides a **scalable, robust, and theoretically grounded** approach for evaluating model accuracy under distribution shifts.
 
-- **Deployment Risk Estimation**: Assessing model reliability without labeled test data.
-- **Dataset Selection**: Identifying challenging test cases.
-- **Calibration Diagnostics**: Detecting overconfident predictions.
+🔗 **Code available at:** [MANO GitHub Repository](https://github.com/Renchunzi-Xie/MaNo)
 
-## **Conclusion** {#section-5}
-MANO sets a new benchmark in **unsupervised accuracy estimation**, addressing **logit overconfidence** with a **novel normalization technique**.
-
-🔗 **Code available at:** [GitHub Repository](https://github.com/Renchunzi-Xie/MaNo)
+MANO isn’t just a step forward—it’s a leap toward **trustworthy AI deployment in the wild**!
