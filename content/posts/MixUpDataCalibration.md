@@ -37,22 +37,22 @@ MathJax.Hub.Queue(function() {
 
 >"But it works well on the training set!" is the machine learning equivalent to the classic "But it works on my computer!"
 
-The basic workflow in the machine leaning has two steps:
+The basic workflow of machine learning has two steps:
 - First, **train** your model to perform a task from an available dataset.
 - Second, **generalize** and predict the results from unseen data.
 
 
-How can data scientists be sure and *confident* that their model will infer a correct result on this unseen new data? We know that deep learning models need tons of data to be efficient.
-So, when there is not enough, researchers come to the idea to create new data. 
-This is the concept of **data augmentation**, that is visually easily understandable
-in computer vision for example.
+How can data scientists be sure and *confident* that their model will infer a correct result on this new data?
+We know that deep learning models need vast amounts of data to be efficient.
+So, when there is not enough, researchers simply… create more data:
+this is the concept of **data augmentation**.
 
-However, in reducing the unseen data, the models become **overconfident** on their
-predictions, even when they are wrong. Mistakes are acceptable in e-commerce recommendations, 
-where a 90% score for a model is satisfactory, but this is not enough for high stake applications 
-such as medical diagnosis or nuclear safety where we need an accurate **confidence score**.
+However, this technique tends to exarcerbate the models' **overconfidence** in their
+predictions.
+Discrepancies between confidence and prediction accuracy are acceptable in domains such as e-commerce recommendations,
+but high stake applications such as medical diagnosis or nuclear safety require an accurate **confidence score**.
 
-**This is the idea behind calibration: to accurately reflect the confidence of the prediction.**
+**This is the idea behind calibration: the model's confidence in its prediction must truly reflect its own prediction accuracy.**
 
 Merging data augmentation and calibration is challenging. The first is prone to 
 create **manifold intrusion**, where synthetic data with a given label conflicts 
@@ -71,28 +71,28 @@ Let's dig step by step into it.
 ---
 # 1. Existing Data Augmentation Methods
 
-Deep learning methods rely on tons of data, so if you do not have enough, make
+Deep learning methods rely on vast amounts of data, so if you do not have enough, make
 it yourself. This is the first conclusion of the 
 study of a Microsoft Research team, lead by Patrice Simard in 2003 aimed to list the 
 current best practices of neural networks training:
 > *"The most important practice is getting a training set as large as possible: we
 > expand the training set by adding a new form of distorted data."* [Simard et al. 2003] [^Simard]
 
-The good results of models since then have given them reason. And numerous 
-techniques have been developed since. We will review some of them.
+The good results of subsequent models have proved them right. And numerous 
+techniques have been developed since. Let's review some of them.
 
 
 ## 1.1. Create new images for classification
 
 The most visual example of data augmentation is the way image classifiers are trained.
-To make them more robust and efficient, scientists have transformed the input image
-to virtually drastically increase the size of the training set (up to 2048 times).
+To make them more robust and efficient, scientists have transform the input images
+to drastically increase the size of the training set (up to 2048 times).
 
 The most used transformations
-are: random cropping and resizing, flipping and color distortion. 
+are: random cropping and resizing, flipping, and color distortion. 
 This is now so common that it is done in a few lines in `pytorch` (cf next code
 snippet), and automatic recipes
-exists to augment common datasets, like `AutoAugment`[^AutoAugment].
+such as `AutoAugment`[^AutoAugment] are readily available to augment common datasets.
 
 ```python
 from torchvision import transforms
@@ -123,13 +123,13 @@ is processed 10 times in a different version during the training of the model.
 
 ## 1.2. Linear interpolation or Mixup
 Another idea is to create a virtual sample from a **vicinity** around the true
-training data. Like we did in high school when we added epsilon to a number to see in witch direction
-the function is moving. This principle has been proven as a way to help the model to 
+training data—like we did in high school when we added epsilon to a number to see in witch direction
+the function is moving. This principle has been demonstrated to help models 
 generalize. However, the method of creation is often hand-crafted and only mimic
 natural perturbations.
 
-To scale up this process, [Zhang et al., 2018][^Zhang] imagined the **Mixup** process
-that is a linear interpolation, or mixing, of two or more training data.
+To scale up this process, [Zhang et al., 2018][^Zhang] imagined the **Mixup** process,
+which is a linear interpolation, or mixing, of two or more training datapoints.
 
 <p align="center">
   <figure>
@@ -153,17 +153,17 @@ However, the literature explores the drawbacks of this process:
 mixing similar points helps in diversity [Dablain et al., 2022].
 - Furthermore, several previous work have highlighted a **trade-off between performance and calibration** in Mixup [Wang et al., 2023].
 
-Before digging further in the Mixup process, it is time to understand what 
-exactly is the calibration of a model and why it can be worth of atrade-off with performance.
+Before digging further into the Mixup process, it is time to understand what 
+exactly is the calibration of a model and why it can be worth of a trade-off with performance.
 
 
 ---
 # 2. Understanding Calibration
 
 Modern (post 2016) neural networks have a high accuracy but are overconfident 
-on their predictions, outputting softmax scores of 
-above 99.9% for the dominant class, misleading the user into a sense of confidence.
-That why we need **calibration**.
+in their predictions, outputting softmax scores of 
+above 99.9% for the dominant class, hence misleading the user into a false sense of confidence.
+This is why we need **calibration**.
 
 <p align="center">
   <figure>
@@ -175,7 +175,7 @@ That why we need **calibration**.
   </figure>
 </p>
 
-*Figure: Meme about the overconfidence of an AI agent (obviously un-calibrated) over a failed prediction.*
+*Figure: Meme about the overconfidence of an AI agent (obviously uncalibrated) over a failed prediction.*
 
 > *Calibration* is a metric to quantify uncertainty, measuring the difference between a model’s confidence
 > in its predictions and the actual probability of those predictions being correct.[^Bouniot] 
@@ -186,22 +186,21 @@ of 0.3, this prediction has a 30% chance of being correct.
 some mistakes by associating a prediction with its confidence score.**
 
 
-We will explore further the motivations of calibration and the way to measure 
+Let's explore further the motivations of calibration and the way to measure 
 it and the potential draw backs.
 
 ### 2.1. Importance of calibration
 The gap in confidence calibration has been spotted by [Guo et al. (2017)][^Guo], 
 and is linked to the actual use cases of neural networks, where the calibration is not crucial.
 In LLMs or online recommender systems, a 90% quality of predictions is enough and occasional mistakes are acceptable. For further use however, like in medical diagnosis prediction or 
-in defense systems, an overconfident model can be dramatic.
+in defense systems, an overconfident model can lead to tragic consequences.
 
 What would be the benefits of a well calibrated model ?
-- It can **filter out the poor predictions**, and not make a wrong prediction to the user.
+- It can **filter out the poor predictions**, and not provide a wrong prediction to the user.
 - It can **reinforce the continuous training**, by asking for the actual label of the low confidence prediction.
-- It can **detect outliers** that are not under the coverage of the training data and 
-warn the user that something strange is happening.
+- It can **detect outliers** and warn the user that something strange is happening.
 
-**To sum up, a well calibrated model is a reliable coworker aware of its own capacities.**
+**To sum it up, a well calibrated model is a reliable coworker aware of its own capacities.**
 
 
 ### 2.2. Calibration Metrics
@@ -228,9 +227,9 @@ Intuitively, the **Brier Score measures the accuracy of predicted probabilities*
 
 > **Brier Score = uncertainty - resolution + reliability**
 
-The Brier Score is insensitive to the low frequencies events, hence can be used in combination 
+The Brier Score is insensitive to the low frequencies events, hence it can be used in combination 
 with one of the other following metrics to provide useful insights.
-Basically, the score is low when the predictions reflect the confidence, ie when the model is calibrated.
+Basically, the score is low when the predictions reflect the confidence, i.e. when the model is calibrated.
 
 *The following code is a dummy example of Brier score computation of a single classification probabilities over 3 classes. The same probabilities will be used on different metrics.*
 ```python
@@ -257,10 +256,8 @@ Brier score for high confidence:	0.0053
 
 #### 2.2.2. The Expected Calibration Error (ECE)
 
-The Expected Calibration Error [Guo et al, 2017] approximate the difference between **accuracy** and **confidence**
-in expectation by grouping sample into equally spaced **bins** with respect to their confidence scores.
-ECE is a popular metric to score calibration on classification tasks in practice,
-because it provides a simple and interpretable estimate of the model calibration.
+The Expected Calibration Error [Guo et al, 2017] approximates the difference between **accuracy** and **confidence** by grouping samples into equally spaced **bins** with respect to their confidence scores.
+Because it is both simple and interpretable, ECE is a popular metric to evaluate calibration on classification tasks in practice.
 ECE computes the difference between average confidence and accuracy within each 
 bin, then takes a **weighted average of these values based upon the relative 
 size of each bin.** 
@@ -284,12 +281,11 @@ the predictions into $M$ equally spaced bins.
 
 $$ECE  = \sum_{bins}^M \frac{\text{bin size}}{\text{nb samples}} | \text{accuracy per bin} - \text{average bin probability}| $$
 
-A very good example on how to compute by hand the ECE can be found in the article
+A very good example on how to compute ECE by hand can be found in the article
 of [Maja Pavlovic](https://towardsdatascience.com/expected-calibration-error-ece-a-step-by-step-visual-explanation-with-python-code-c3e9aa12937d/) 
 on the blog TowardsDataScience[^Pavlovic].
 
-**Variants**: The *Adaptative ECE* (AECE) is a simmilar metric as ECE, but the bin size is calculated
-to have the same number of samples across the bins. Other extensions of ECE can
+**Variants**: *Adaptative ECE* (AECE) is simmilar to ECE, but with each bin having the same number of samples. Other extensions of ECE can
 be used to estimate the variance over the bins, the *Uncertainty Calibration Error*
 (UCE) or the *Expected Normalize Calibration Error* (ENCE). They will not be 
 detailed further here.
@@ -328,9 +324,8 @@ nll low confidence:   0.6184
 nll high confidence:  0.0001
 ```
 
-**However, this NNL is also the cause of the overconfidence of modern neural networks.**
-They are purposely trained to minimize it by making high confidence predictions.
-It will actually lower the exponential sum of the soft max, as in our 
+**However, NNL also causes overconfidence in modern neural networks.**
+They are purposely trained to minimize it by making high confidence predictions, which actually lowers the exponential sum of the soft max, as in our 
 high_confidence example above.
 
 This kind of behavior can be exhibited by drawing the calibration curve of the predictor.
@@ -340,15 +335,15 @@ The calibration curves [Wilks, 1995] compare how well the probabilistic predicti
 binary classifier are calibrated. It shows the frequency of the predicted label against the 
 predicted probability. It is easily drawn with the method `model.predict_proba()` of scikit-learn.
 
-The [Scikit-Learn documentation](https://scikit-learn.org/stable/auto_examples/calibration/plot_compare_calibration.html#calibration-curves) 
+[Scikit-Learn's documentation](https://scikit-learn.org/stable/auto_examples/calibration/plot_compare_calibration.html#calibration-curves) 
 provides a very insightful illustration to better understand these curves. They 
-have fitted 4 different classifiers on very small training set and plot the 
-calibration curve with below the histogram showing the related distribution of 
+have fitted 4 different classifiers on a very small training set and plot the 
+calibration curve along with the histogram showing the related distribution of 
 the predicted probabilities on each of the 10 bins. On this specific example, 
 we can observe the following behaviors:
-- **Logistic Regression** not perfect, but is well calibrated because the 
-optimized log loss is also the scoring rule as seen in previous section.
-- **Gaussian Naive Bayes** tendency to push probabilities to 0 or 1 is well 
+- **Logistic Regression**: not perfect, but well calibrated because the 
+optimized log loss is also the scoring rule (as seen in previous section).
+- **Gaussian Naive Bayes**: its tendency to push probabilities to 0 or 1 is well 
 shown on histogram orange. This means an overconfident model.
 - **Support vector Classifier** displays a typical sigmoid calibration curve.
 This under-confident result is typical of maximum-margin methods.
@@ -380,7 +375,7 @@ and its histogram will be flat.
 
 
 
-### 2.4 Draw backs
+### 2.4 Drawbacks
 To provide an insight of the side effects of the calibration, we will study the 
 impact of the provided method `CalibratedClassifierCV` in Scikit-Learn.
 It uses cross-validation to obtain unbiased predictions, which are then used for calibration.
@@ -432,17 +427,16 @@ accuracy and a reduction (improvement) of the Brier Score. But our method is not
 efficient here.*
 
 We can see that this method has moderate and sometimes counterintuitive effects.
-**This argues for the fact that the training set is not sufficient to 
+**This suggests that the training set is not sufficient to 
 fit a calibrated estimator.**
 
 
 
 ---
 # 3. Best of Both Worlds: Tailoring Mixup to Data for Calibration
-We have reached the core of the paper of Bouniot et al. It states that by 
+We have reached the core of the paper of Bouniot et al. They show that, by 
 **taking the distance of points into account when sampling the coefficients** in the 
-second phase of Mixup, they have avoid (i) a loss in diversity and (ii) reduced 
-the manifold intrusion and label noise.
+second phase of Mixup, we can (i) avoid a loss in diversity, and (ii) reduce manifold intrusion and label noise.
 
 <p align="center">
   <figure>
@@ -459,34 +453,33 @@ If we had only used a selection of samples with similar labels, we would have
 lost the possible exploration of new directions of the latent space.
 **With this similarity process, at the end of the day, we have avoided restricting**
 **possible direction of mixing while staying in the vicinity of original points,** 
-**hence prevent manifold intrusion.**
+**hence preventing manifold intrusion.**
 
 
 
 ## 3.1 Linear interpolation of training samples: Mixup
-Mixing samples through linear interpolation is the most easiest and efficient way
+Mixing samples through linear interpolation is the easiest and most efficient way
 to create new data from a computational point of view. Combining data from the same
-batch also avoid additional sampling during the training.
+batch also avoids additional sampling during training.
 
 Specific techniques have been proposed since 2018 to compute linear interpolation
-but often at the cost of most complex training or lost of diversity. 
+but often at the cost of more complex training or loss of diversity. 
 The selection process of samples to interpolate from may be computationally
 expensive.
 Furthermore
-this studies have been conducted in the aim to improve the generalization of the
-model, not its calibration, and will not solve our issue.
+such studies have been conducted with the aim of improving models' generalization, not their calibration, and will not solve our issue.
 
 In the original mixup method of [Zhang et al. 2018][^Zhang], at each training iteration
 of the model, each input is mixed with another input randomly selected from the 
 same batch, with a random strength drawn form a Beta law.
 
-But how can we be sure of the label of this new point?
+But how can we be sure of the label of these new datapoints?
 
 
 ## 3.2 Weighting to prevent manifold intrusion
-The real danger of mixup is the **manifold intrusion**, where the interpolated
+The real danger of mixup is **manifold intrusion**, where the interpolated
 sample between two identical label points falls into an other class. 
->  the likelihood of conflict in the synthetic label 
+>  The likelihood of conflict in the synthetic label 
 >  increases with the distance between the two points.  As
 >  data live in manifolds of the representation space, the linear combination of 
 >  two points far from each other can lie in a different manifold than the linear 
@@ -511,18 +504,18 @@ of elements to mix, **and uncertainty** by mixing elements far from each other.
 Furthermore, it shows that we cannot restrict pairs to mix by selecting data 
 solely based on distance, as **it can degrade performance by reducing diversity of synthetic samples**. 
 
-To better control this trade-off with Mixup, they propose to tailor interpolation
-coefficients from the distance of training data. The final part will detail this process.
+To better control this trade-off with Mixup, they suggest to tailor interpolation
+coefficients based on the distance of training data. The final part will detail this process.
 
 ## 3.3 The power of the similarity kernel
-In Bouniot et al. work, **they used a similarity kernel to mix more strongly 
+Bouniot et al. **used a similarity kernel to mix more strongly 
 similar data and avoid mixing less similar ones**, to preserve label 
 quality and confidence of the network. 
 
-To do so, **they need to change the interpolation coefficient depending on the 
-similarity between the points**. They have find a way to preserve the type of 
+To do so, **they needed to change the interpolation coefficient depending on the 
+similarity between the points**. They have found a way to preserve the type of 
 distribution of samples by warping these coefficients at every iteration to 
-govern the strength and direction of the mixup. The curious reader can refer 
+govern the strength and direction of the mixup. Curious readers can refer 
 to section 3.2 of [^Bouniot] for technical details. In summary, they only
 need the parameter $\tau$ of a Beta distribution $B(\tau, \tau)$ that behaves 
 logarithmically with this parameter. Hence, $\tau$ should be exponentially 
@@ -570,7 +563,7 @@ Output: the updated model parameters
 > **Using this similarity kernel to find the correct τ to parameterize the Beta distribution defines our full**
 > **Similarity Kernel Mixup framework.**
 
-## 3.4 To go further
+## 3.4 Going further
 Extensive experiments have been conducted by the authors on image classification and regression tasks.
 They have reproduced the protocol of the literature and **their framework displays an improvement in 
 both accuracy and calibration across the 3 metrics described above (ECE, Brier and NLL)**. 
@@ -586,8 +579,8 @@ the training of the models.
 # Conclusion
 With similarity kernel, we get a more accurate and better calibrated model because
 the coefficients governing the interpolation are warped to change their underlying distribution
-depending on the similarity between the points to mix, such that 
-**similar data are mixed more strongly than less similar ones**, 
+depending on the similarity between the points to mix, so that 
+**similar datapoints are mixed more strongly than less similar ones**, 
 **preserving calibration by avoiding manifold intrusion and label noise**. 
 
 As seen in the pseudo-code, this provides a more efficient data augmentation 
