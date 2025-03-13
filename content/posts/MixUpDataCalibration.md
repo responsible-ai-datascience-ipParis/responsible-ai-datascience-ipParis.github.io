@@ -43,6 +43,16 @@ The basic workflow of machine learning has two steps:
 
 
 How can data scientists be sure and *confident* that their model will infer a correct result on this new data?
+
+<p align="center">
+  <figure>
+  <img src="/images/MixUpDataCalibration/WoMM.jpg" 
+    alt="Does not know why it (don't) works."
+    width=300>
+    </img>
+  </figure>
+</p>
+
 We know that deep learning models need vast amounts of data to be efficient.
 So, when there is not enough, researchers simply… create more data:
 this is the concept of **data augmentation**.
@@ -55,10 +65,22 @@ but high stake applications such as medical diagnosis or nuclear safety require 
 **This is the idea behind calibration: the model's confidence in its prediction must truly reflect its own prediction accuracy.**
 Well-calibrated models do not just inspire trust; they also contribute to **fairer decision-making**, by ensuring that predictions are accompanied by reliable confidence estimates, which can help reduce biased or unjust outcomes.
 
+<p align="center">
+  <figure>
+  <img src="/images/MixUpDataCalibration/CalibratedClassifier.png" 
+    alt="Difference between a calibrated classifier (right) and a bad one (left)."
+    width=600>
+    </img>
+  </figure>
+</p>
+
+*Figure: Illustration of the confidence of a calibrated classifier (right) with 
+accurate prediction probabilities and a more brutal and under-confident one (left).*
+
 Merging data augmentation and calibration is challenging. The first is prone to 
 create **manifold intrusion**, where synthetic data with a given label conflicts 
-with original data of another class. The second is known to **constrain the accuracy**
-of the predictions, and can increase computational cost—raising concerns about sustainability and frugality, especially when training large-scale models.
+with original data of another class. The rise of the size of the dataset also 
+increases the computational cost of the training. This contradicts the potential objective of frugality. The second is known to **constrain the accuracy**.
 
 To handle these challenges, Quentin Bouniot and Pavlo Mozharovskyi have conducted
 under the direction of Florence d'Alché-Buc an extensive study on one of the 
@@ -86,12 +108,12 @@ techniques have been developed since. Let's review some of them.
 ## 1.1. Create new images for classification
 
 The most visual example of data augmentation is the way image classifiers are trained.
-To make them more robust and efficient, scientists have transform the input images
-to drastically increase the size of the training set (up to 2048 times).
+To make them more robust and efficient, scientists have transformed the input images
+to drastically increase the size of the training set (by up to 2048 times).
 
-The most used transformations
-are: random cropping and resizing, flipping, and color distortion. 
-This is now so common that it is done in a few lines in `pytorch` (cf next code
+The most commonly used transformations
+are random cropping and resizing, flipping, and color distortion. 
+This is now so common that it can be done in a few lines in `pytorch` (see next code
 snippet), and automatic recipes
 such as `AutoAugment`[^AutoAugment] are readily available to augment common datasets.
 
@@ -107,8 +129,8 @@ transformTrain = transforms.Compose([
 
 Additional transformations for images are illustrated
 on the next figure. We expect the neural networks to "see" these 10 new images
-as close in their latent space. With this example, one original labeled image 
-is processed 10 times in a different version during the training of the model.
+as being close in their latent space. With this example, one original labeled image 
+is processed 10 times in different versions during the training of the model.
 
 
 <p align="center">
@@ -202,7 +224,7 @@ What would be the benefits of a well calibrated model ?
 - It can **detect outliers** and warn the user that something strange is happening.
 - It can improve the **robustness of the model** by ensuring that prediction confidence accurately reflects the underlying uncertainty, leading to more reliable decisions in critical situations.
 
-**To sum it up, a well calibrated model is a reliable coworker aware of its own capacities, and promotes fairness by preventing overconfident, biased predictions.**
+**To sum it up, a well calibrated model is a reliable coworker aware of its own capacities.**
 
 
 ### 2.2. Calibration Metrics
