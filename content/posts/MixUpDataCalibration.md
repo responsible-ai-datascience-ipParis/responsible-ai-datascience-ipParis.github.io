@@ -50,14 +50,15 @@ this is the concept of **data augmentation**.
 However, this technique tends to exarcerbate the models' **overconfidence** in their
 predictions.
 Discrepancies between confidence and prediction accuracy are acceptable in domains such as e-commerce recommendations,
-but high stake applications such as medical diagnosis or nuclear safety require an accurate **confidence score**.
+but high stake applications such as medical diagnosis or nuclear safety require an accurate **confidence score**, where robustness and reliability are critical.
 
 **This is the idea behind calibration: the model's confidence in its prediction must truly reflect its own prediction accuracy.**
+Well-calibrated models do not just inspire trust; they also contribute to **fairer decision-making**, by ensuring that predictions are accompanied by reliable confidence estimates, which can help reduce biased or unjust outcomes.
 
 Merging data augmentation and calibration is challenging. The first is prone to 
 create **manifold intrusion**, where synthetic data with a given label conflicts 
 with original data of another class. The second is known to **constrain the accuracy**
-of the predictions. 
+of the predictions, and can increase computational cost—raising concerns about sustainability and frugality, especially when training large-scale models.
 
 To handle these challenges, Quentin Bouniot and Pavlo Mozharovskyi have conducted
 under the direction of Florence d'Alché-Buc an extensive study on one of the 
@@ -199,8 +200,9 @@ What would be the benefits of a well calibrated model ?
 - It can **filter out the poor predictions**, and not provide a wrong prediction to the user.
 - It can **reinforce the continuous training**, by asking for the actual label of the low confidence prediction.
 - It can **detect outliers** and warn the user that something strange is happening.
+- It can improve the **robustness of the model** by ensuring that prediction confidence accurately reflects the underlying uncertainty, leading to more reliable decisions in critical situations.
 
-**To sum it up, a well calibrated model is a reliable coworker aware of its own capacities.**
+**To sum it up, a well calibrated model is a reliable coworker aware of its own capacities, and promotes fairness by preventing overconfident, biased predictions.**
 
 
 ### 2.2. Calibration Metrics
@@ -576,6 +578,8 @@ During the experiment process, the authors have compared the final results after
  is also a learnable parameter that have been optimized during 
 the training of the models.
 
+In addition to improving calibration and performance, this approach demonstrates **greater frugality** by reducing computational overhead compared to other calibration-driven data augmentation methods. By efficiently tailoring the interpolation process, it lowers the number of unnecessary computations and memory usage, contributing to **more sustainable and energy-efficient** machine learning practices.
+
 # Conclusion
 With similarity kernel, we get a more accurate and better calibrated model because
 the coefficients governing the interpolation are warped to change their underlying distribution
@@ -585,7 +589,7 @@ depending on the similarity between the points to mix, so that
 
 As seen in the pseudo-code, this provides a more efficient data augmentation 
 approach than Calibration-driven Mixup methods, both in
-terms of time and memory, with a **better trade-off between performance and calibration improvement**.
+terms of time and memory, offering a **better trade-off between performance and calibration improvement**, while promoting frugality by reducing unnecessary computational resources. 
 
 Concurrently, [Verma et al. 2018][^Verma] have proposed the **Manifold Mixup** 
 framework that encourages neural networks to predict less confidently on 
