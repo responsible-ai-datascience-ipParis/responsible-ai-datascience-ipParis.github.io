@@ -592,6 +592,8 @@ framework that encourages neural networks to predict less confidently on
 interpolations of hidden representation via a simple regularizer. This 
 training method leads to class-representations with fewer directions of variance.
 But even with the actual purpose the reduce the over confidence, the word 
+"Calibration" never occurs in the paper...
+
 **This highlights the necessity of raising awareness about calibration and establishing a standard process for evaluating models.**
 
 
