@@ -506,4 +506,4 @@ As AI models grow in scale and complexity, methods like Edge Pruning will play a
    <img src="/images/Images_Ahmed_Ahmed/aibg.png" alt="AI" style="width: 700px; height: auto;"> 
 </p>
 
-By advancing these approaches, we move toward AI systems that are not just powerful but also more *transparent, understandable,* and *trustworthy*.
+By advancing these approaches, we move towards AI systems that are not just powerful but also more *transparent, accurate, robust* and *trustworthy*.
