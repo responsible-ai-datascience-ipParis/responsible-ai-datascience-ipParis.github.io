@@ -7,11 +7,430 @@
     
     <language>en</language>
     <copyright>Copyright 2025, Calvin Tran</copyright>
-    <lastBuildDate>Wed, 05 Feb 2025 14:03:13 +0100</lastBuildDate>
+    <lastBuildDate>Thu, 13 Mar 2025 19:14:57 +0530</lastBuildDate>
     <generator>Hugo - gohugo.io</generator>
     <docs>http://cyber.harvard.edu/rss/rss.html</docs>
     <atom:link href="http://localhost:1313//atom.xml" rel="self" type="application/atom+xml"/>
     
+    
+    <item>
+      <title>Unraveling the Mysteries of Language Models: The Power of Edge Pruning in Finding Transformer Circuits</title>
+      <link>http://localhost:1313/posts/edge-pruning/</link>
+      <description>&lt;style
+TYPE=&#34;text/css&#34;&gt;
+
+code.has-jax {font:
+inherit;
+font-size:
+100%; 
+background: 
+inherit; 
+border: 
+inherit;}
+
+&lt;/style&gt;
+&lt;script
+type=&#34;text/x-mathjax-config&#34;&gt;
+
+MathJax.Hub.Config({
+
+    tex2jax: {
+
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+
+    }
+
+});
+
+MathJax.Hub.Queue(function() {
+
+    var all = MathJax.Hub.getAllJax(), i;
+
+    for(i = 0; i &lt; all.length; i += 1) {
+
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+
+    }
+
+});
+
+&lt;/script&gt;
+&lt;script
+type=&#34;text/javascript&#34;
+src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+&lt;head&gt;
+&lt;meta charset=&#34;UTF-8&#34;&gt;
+&lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34;&gt;
+&lt;title&gt;Styled Table&lt;/title&gt;
+&lt;style&gt;
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        padding: 8px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    tr:hover {
+        background-color: #f5f5f5;
+    }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;/html&gt;
+&lt;h1 style=&#34;font-size: 25px;&#34;&gt;Unraveling the Mysteries of Language Models: The Power of Edge Pruning in Finding Transformer Circuits&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 13px;&#34;&gt;Authors: Adithya Bhaskar ${ }^{1}$, Alexander Wettig ${ }^{2}$, Dan Friedman ${ }^{1}$, Danqi Chen ${ }^{2}$&lt;br&gt;${ }^{1}$ Princeton Language and Intelligence (PLI), Princeton University&lt;br&gt;adithyab@princeton.edu&lt;br&gt;{awettig, dfriedman, danqic}@cs.princeton.edu&lt;/h1&gt;
+&lt;br/&gt;
+Authors of the blogpost: AHMED Ayan and AHMED Rayyan.
+&lt;p&gt;What if we told you that the technology shaping our generation is still a black box and we might know nothing about it?&lt;/p&gt;
+&lt;p&gt;Language models like ChatGPT are revolutionizing the way we communicate, create, and seek information. Not only do they complete our sentences and answer our questions, but they even generate original ideas by using billions of training data—but on critical examination we should ask ourselves this one primary question, &lt;em&gt;do we truly understand how they work?&lt;/em&gt; Without looking inside these models, we risk a state of stagnation, where we rely on them without refining or improving their potential.&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/BB.png&#34; alt=&#34;Black Box&#34; style=&#34;width: 400px; height: auto;&#34;&gt;
+&lt;/p&gt; 
+&lt;p&gt;To push the boundaries of AI, we need a way to decode their inner workings, to see which components drive specific behaviors, and to do so with precision and efficiency.&lt;/p&gt;
+&lt;p&gt;It is like trying to fine-tune an orchestra while being blindfolded. You can hear the symphony, but without seeing which instruments are playing which notes, making deliberate adjustments is nearly impossible unless you have a perfect hearing sensation(only 1% of the population has it!). Similarly, the intricate mechanisms of language models have long remained a mystery. We try to understand them effectively by making them more transparent, but so far, we have not reached there. Now, a groundbreaking technique is emerging, ready to lift the veil and transform our understanding of these powerful systems.&lt;/p&gt;
+&lt;h2 id=&#34;1-introduction&#34;&gt;1. Introduction&lt;/h2&gt;
+&lt;h3 id=&#34;motivation&#34;&gt;Motivation&lt;/h3&gt;
+&lt;p&gt;To tackle the aforementioned issue, researchers have turned to the concept of &amp;ldquo;circuits&amp;rdquo;—sparse computational subgraphs that highlight key interactions within a model (the definition sounds a bit complex, but it is exactly what it sounds like). These circuits serve as pathways through which the information flows and they offer a structured way to analyze which components are responsible for particular behaviors.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Think of it like the electrical wiring in your home. Every switch, bulb, and appliance is connected through a network of wires, but understanding which wire controls what can be a tangled mess!&lt;br&gt;
+The ideal scenario? A streamlined, minimal wiring system that preserves full functionality without unnecessary complexity.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/EW.png&#34; alt=&#34;Electric Board&#34; style=&#34;width: 400px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;p&gt;Similarly, when analyzing the language models, researchers aim to identify circuits that are as sparse as possible—capturing only the most essential connections while maintaining the model’s performance. However, automating this process of finding circuits still remains a challenge, and existing methods as explained further, often fail to produce circuits that are truly minimal and interpretable.&lt;/p&gt;
+&lt;p&gt;The paper &lt;em&gt;&amp;ldquo;Finding Transformer Circuits with Edge Pruning&amp;rdquo;&lt;/em&gt; introduces an exquisite technique as a counter to this problem. By taking advantage of a technique called &lt;strong&gt;Edge Pruning&lt;/strong&gt;, it offers a scalable, fast and efficient approach to discover circuits, allowing researchers to peel back the layers of complexity and reveal the fundamental mechanisms of Language models at play. This advancement has keen implications for natural language processing, pushing us closer to a deeper understanding of how these models operate.&lt;/p&gt;
+&lt;h2 id=&#34;in-this-blog-post-well-explore-the-details-of-this-paper-breaking-down-the-concept-of-edge-pruning-its-usage-on-some-popular-datasets-and-finally-seeing-if-this-technique-scales-well-with-model-size&#34;&gt;In this blog post, we’ll explore the details of this paper, breaking down the concept of edge pruning, its usage on some popular datasets and finally seeing if this technique scales well with model size.&lt;/h2&gt;
+&lt;h3 id=&#34;existing-frameworks&#34;&gt;Existing Frameworks&lt;/h3&gt;
+&lt;p&gt;Currently, there are two primary methods that help us automate the discovery of circuits in language models: &lt;strong&gt;ACDC&lt;/strong&gt; and &lt;strong&gt;EAP&lt;/strong&gt;.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;ACDC&lt;/strong&gt; uses a greedy search algorithm, which is effective but is highly computationally expensive and struggles to scale to larger models or datasets.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;EAP&lt;/strong&gt;, on the other hand, takes a shortcut by using first-order approximations, making it more efficient but at the cost of fidelity—it doesn&amp;rsquo;t fully capture the true behavior of the model.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Another important point to highlight is that these approaches majorly focused on model compression by sparsifying circuits. Their main objective was compression rather than circuit discovery, leading them to remove entire components within the model, such as attention heads or MLP layers.&lt;/p&gt;
+&lt;h3 id=&#34;beyond-approximations-and-greedy-search&#34;&gt;Beyond Approximations and Greedy Search&lt;/h3&gt;
+&lt;p&gt;This paper introduces a fresh perspective on circuit discovery by &lt;strong&gt;&amp;ldquo;recasting it as an optimization problem&amp;rdquo;&lt;/strong&gt; and solving it through &lt;em&gt;gradient-based pruning&lt;/em&gt;—a technique called &lt;strong&gt;Edge Pruning&lt;/strong&gt;. Unlike previous approaches as discussed before, Edge Pruning cuts unnecessary &lt;em&gt;connections (edges)&lt;/em&gt; between components rather than removing the components themselves, leading to a more efficient and scalable solution.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Imagine trying to simplify a complex metro system. Instead of shutting down entire stations (which could break the network), you strategically remove redundant rail connections while preserving the city&amp;rsquo;s accessibility.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;In a very similar way, Edge Pruning refines the structure of a language model by isolating only the most crucial connections, ensuring that its core functionality remains intact while minimizing unnecessary complexity.&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/EP.gif&#34; alt=&#34;Edge Pruning&#34; style=&#34;width: 400px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;p&gt;The authors put Edge Pruning to the test in multiple benchmarks, evaluating its ability to:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Identify circuits that faithfully represent the behavior of the model.&lt;/li&gt;
+&lt;li&gt;Recover known ground-truth circuits.&lt;/li&gt;
+&lt;li&gt;Scale efficiently to large models and datasets.&lt;/li&gt;
+&lt;li&gt;Discover extremely &lt;em&gt;sparse&lt;/em&gt; circuits in massive language models.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;the-results-are-compellingedge-pruning-consistently-outperforms-prior-methods-in-both-speed-and-performance-for-example-in-the-multi-template-ioi-task-it-identifies-circuits-with-as-much-as-265-fewer-edges-than-the-next-best-method-while-maintaining-the-same-level-of-accuracy-in-predicting-model-outputs&#34;&gt;The results are compelling—Edge Pruning consistently outperforms prior methods in both speed and performance. For example, in the &lt;em&gt;multi-template IOI task&lt;/em&gt;, it identifies circuits with as much as &lt;em&gt;2.65× fewer edges&lt;/em&gt; than the next-best method while maintaining the same level of accuracy in predicting model outputs.&lt;/h2&gt;
+&lt;h3 id=&#34;scaling-to-large-scale-models&#34;&gt;Scaling to Large-Scale Models&lt;/h3&gt;
+&lt;p&gt;One of the most groundbreaking aspects of Edge Pruning is its ability to handle &lt;strong&gt;massive&lt;/strong&gt; models. The authors demonstrate this with &lt;em&gt;CodeLlama-13B&lt;/em&gt;—a model &lt;strong&gt;100× larger&lt;/strong&gt; than GPT-2 Small. In a case study inspired by the BBH benchmark, they analyze how &lt;em&gt;instruction-prompting&lt;/em&gt; and &lt;em&gt;in-context learning&lt;/em&gt; mechanisms function. Shockingly, Edge Pruning identifies circuits with just &lt;strong&gt;0.04%&lt;/strong&gt; of the model’s edges, yet these circuits still capture the model&amp;rsquo;s full performance.&lt;/p&gt;
+&lt;p&gt;Moreover, their findings reveal that there are significant overlaps between the circuits driving these two learning paradigms.&lt;/p&gt;
+&lt;p&gt;This breakthrough paves the way for deeper interpretability of large-scale AI models, offering a scalable and precise method to uncover the hidden logic behind their decision-making processes.&lt;/p&gt;
+&lt;h1 id=&#34;2-why-do-we-need-circuit-discovery&#34;&gt;2. Why do we need Circuit Discovery?&lt;/h1&gt;
+&lt;p&gt;Imagine a complex network of roads and highways that connect different cities and towns. Each road represents a connection between different parts of a language model, and the traffic flowing through these roads represents the flow of information. The goal of circuit discovery is to identify the specific roads (or connections) that are most relevant to a particular behavior or task, such as going from Paris to Nice by road. Since we are working with Language Models whose core component is the Transformer architecture (Transformer Encoder for BERT and Decoder for ChatGPT), we will first try to understand the computational graph of Transformers.&lt;/p&gt;
+&lt;h2 id=&#34;the-computational-graph-of-transformers&#34;&gt;The Computational Graph of Transformers&lt;/h2&gt;
+&lt;p&gt;A Transformer is a type of neural network architecture that consists of a sequence of layers, including attention layers and MLPs (multi-layer perceptrons). These layers operate on a residual stream, which is like a highway that carries information from one layer to the next. Each layer reads the current state of the residual stream $h_i$, computes its activations $y_i$, and applies an additive update to the stream.&lt;/p&gt;
+&lt;p&gt;Mathematically, this can be represented as:&lt;/p&gt;
+&lt;p&gt;$$
+y_i = f_i(h_i)
+$$&lt;/p&gt;
+&lt;p&gt;$$
+h_{i+1} = h_i + y_i
+$$&lt;/p&gt;
+&lt;p&gt;where $y_i$ is the activation of the $i^{th}$ layer, $f_i$ is the function computed by the $i^{th}$ layer, and $h_i$ is the current state of the residual stream. The picture below shows a simple computational graph of a regular transformer.&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/RTbg.png&#34; alt=&#34;Regular Transformer&#34; style=&#34;width: 300px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+The residual stream $h_i$ can be expanded to make the dependence on prior outputs $y_{i-1}, \ldots, y_{1}$ explicit:
+&lt;p&gt;$$
+y_i = f_i \left( y_0 + \sum_{j=1}^{i-1} y_j \right)
+$$&lt;/p&gt;
+&lt;p&gt;where $y_0$ is the initialization of the residual stream with the input embeddings. But how do we form a circuit? The answer is simple! The attention heads and the MLP(s) would act as the &lt;em&gt;nodes&lt;/em&gt; of the computational subgraph whereas the connections between these layers would act as the &lt;em&gt;edges&lt;/em&gt; of the graph. For our convention, we will denote edge $j\rightarrow i$ as the connection between the output of layer $j$ to the input of layer $i$.&lt;/p&gt;
+&lt;h2 id=&#34;circuits-as-subgraphs&#34;&gt;Circuits as Subgraphs&lt;/h2&gt;
+&lt;p&gt;A circuit $\mathcal{C}$ is a subset of the computational graph $\mathcal{G}$ that isolates the specific components responsible for a particular task or behavior. Think of it like a subway system—while the full city map represents the entire model, a circuit is like a key subset of routes that efficiently connect essential stations without unnecessary detours.&lt;/p&gt;
+&lt;p&gt;However, previous methods overlooked a critical factor: the impact of removing edges on the model&amp;rsquo;s performance. Simply pruning edges without considering their contribution risks breaking important pathways. The approach introduced in this paper tackles this challenge through an elegant technique called &lt;em&gt;interchange ablation&lt;/em&gt;. This method ensures that even with missing edges, the model remains functional by intelligently replacing their contributions.&lt;/p&gt;
+&lt;p&gt;To illustrate, imagine a language model designed for English-to-Spanish translation. If we modify a single word in the input sentence—say, replacing “hello” with “hola”—we create a &amp;ldquo;corrupted&amp;rdquo; example. The model then processes this modified input, and the activations it generates are used to substitute the missing edges. This way, rather than simply deleting edges and hoping for the best, interchange ablation strategically fills in the gaps, allowing the model to continue producing meaningful outputs.&lt;/p&gt;
+&lt;h3 id=&#34;mathematical-formulation&#34;&gt;Mathematical Formulation&lt;/h3&gt;
+&lt;p&gt;For a given task, each input example $x$ is paired with a corrupted counterpart $\tilde{x}$ that alters the expected output. Following this, all corrupted outputs $\tilde{y}_j$ are computed using the modified residual stream states $\tilde{h}_j$. When an edge $j \to i$ is removed, the contribution of $y_j$ at node $i$ is substituted with its corrupted counterpart $\tilde{y}_j$.&lt;/p&gt;
+&lt;p&gt;This is a game-changer—it effectively frames edge removal as a &lt;em&gt;counterfactual intervention&lt;/em&gt;, allowing researchers to analyze model behavior in a principled way. Mathematically, this process is represented as:&lt;/p&gt;
+&lt;p&gt;$$
+\tilde{y}_j = f_j(\tilde{h}_j)
+$$&lt;/p&gt;
+&lt;p&gt;where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$\tilde{y}_j$ is the corrupted activation at the $j^{th}$ layer,&lt;/li&gt;
+&lt;li&gt;$f_j$ is the function computed by the $j^{th}$ layer,&lt;/li&gt;
+&lt;li&gt;$\tilde{h}_j$ is the modified state of the residual stream.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/ABLbg.png&#34; alt=&#34;Interchange Ablation&#34; style=&#34;width: 400px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;p&gt;By leveraging interchange ablation, this method provides a structured approach to pruning edges while preserving the model&amp;rsquo;s integrity, ultimately leading to more interpretable and efficient circuit discovery.&lt;/p&gt;
+&lt;h2 id=&#34;the-goal-of-circuit-discovery&#34;&gt;The Goal of Circuit Discovery&lt;/h2&gt;
+&lt;p&gt;The goal of circuit discovery is to find a sparse subgraph (or circuit) that describes the behavior of the full model on a particular task. We want to find the minimum number of roads (or edges) that are necessary to get from the starting point to the destination. This is a challenging problem, as it involves searching through a vast space of possible circuits.&lt;/p&gt;
+&lt;p&gt;Mathematically, this objective can be represented as:&lt;/p&gt;
+&lt;p&gt;$$
+\arg\min_{\mathcal{C}} \mathbb{E}_{(x, \tilde{x}) \in \mathcal{T}} \left[ D(p_\mathcal{G}(y|x) || p_\mathcal{C}(y|x, \tilde{x})) \right] , 1 - \frac{|\mathcal{C}|}{|\mathcal{G}|} \geq c
+$$&lt;/p&gt;
+&lt;p&gt;where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$\mathcal{C}$ is the number of edges in the circuit,&lt;/li&gt;
+&lt;li&gt;$\mathcal{G}$ is the number of edges in the full computational graph,&lt;/li&gt;
+&lt;li&gt;$T$ is the task distribution,&lt;/li&gt;
+&lt;li&gt;$p_\mathcal{G}(y|x)$ is the output of the full model,&lt;/li&gt;
+&lt;li&gt;$p_\mathcal{C}(y|x, \tilde{x})$ is the output of the Transformer circuit given the original and corrupted examples $(x,\tilde{x})$,&lt;/li&gt;
+&lt;li&gt;$D$ is the KL divergence between the token predictions which is simply a kind of loss,&lt;/li&gt;
+&lt;li&gt;$c$ is the target sparsity.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;While the above equation seems complex at first sight, it simply represents the minimum circuit $\mathcal{C}$ that can be found by minimizing the discrepancy (KL Divergence) between the output of the full model and the output of the Transformer circuit given the original and corrupted examples. The constraint here basically enforces a target sparsity of the circuit.&lt;/p&gt;
+&lt;p&gt;To illustrate this further, consider a simple example of a language model that can perform addition and subtraction. The full computational graph might look like this:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Layer 1: Input embedding&lt;/li&gt;
+&lt;li&gt;Layer 2: Attention layer 1&lt;/li&gt;
+&lt;li&gt;Layer 3: Attention layer 2&lt;/li&gt;
+&lt;li&gt;Layer 4: MLP layer 1&lt;/li&gt;
+&lt;li&gt;Layer 5: MLP layer 2&lt;/li&gt;
+&lt;li&gt;Layer 6: Output layer&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The circuit for the task of adding 2+2 might be a subset of this graph, such as:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Layer 1: Input embedding&lt;/li&gt;
+&lt;li&gt;Layer 3: Attention layer 2&lt;/li&gt;
+&lt;li&gt;Layer 5: MLP layer 2&lt;/li&gt;
+&lt;li&gt;Layer 6: Output layer&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This circuit only uses a subset of the layers and edges in the full computational graph but still produces the correct output for the input &amp;ldquo;2+2&amp;rdquo;.&lt;/p&gt;
+&lt;h2 id=&#34;previous-approaches&#34;&gt;Previous Approaches&lt;/h2&gt;
+&lt;p&gt;Previous methods, such as ACDC, have used greedy search algorithms to solve the circuit discovery problem. At each iteration, ACDC evaluates the effect of removing each edge individually on the whole model. If the effect of removing a particular edge on the target metric is above a certain predefined threshold, it simply removes it. This algorithm has limitations, such as failing to capture the relative importance of edges and their interactions.&lt;/p&gt;
+&lt;p&gt;EAP (Edge Attribution Patching), on the other hand, is a method used to assign importance scores to the edges (connections) in a Transformer model. EAP uses a linear approximation to compute the importance scores for each edge. This means that instead of calculating the exact contribution of each edge to the model&amp;rsquo;s output, EAP estimates it using a simpler, first-order method.&lt;/p&gt;
+&lt;p&gt;Other methods, like those proposed by Michel et al. (2019) and Cao et al. (2021), (&lt;em&gt;structured pruning&lt;/em&gt;), focus on pruning entire attention heads or nodes instead of edges. This is like removing entire neighborhoods from our city instead of just closing certain roads.&lt;/p&gt;
+&lt;h1 id=&#34;3-diving-into-the-proposed-method&#34;&gt;3. Diving into the Proposed Method&lt;/h1&gt;
+&lt;h2 id=&#34;why-not-structured-pruning&#34;&gt;Why not Structured Pruning?&lt;/h2&gt;
+&lt;p&gt;As discussed above, &lt;em&gt;structured pruning&lt;/em&gt; focusses on removing entire components (nodes) such as attention heads and MLP layers from the sub graph to increase the inference efficiency of the models. To decide what &lt;em&gt;nodes&lt;/em&gt; to remove and what not, a binary mask (like an on/off switch) is used. However, rather than using a strict mask that is strictly 0 and 1, researchers use a &lt;em&gt;soft&lt;/em&gt; mask that can be continuously adjusted using gradient based training. Is it effective? Yes! It has been found that structured pruning produces subgraphs with fewer nodes (components). But is it interpretable enough? No! Removing large chunks of the model makes the circuit too coarse (not detailed enough) to help understand how the model computes things.&lt;/p&gt;
+&lt;h2 id=&#34;from-masking-nodes-to-masking-edges&#34;&gt;From Masking Nodes to Masking Edges&lt;/h2&gt;
+&lt;p&gt;The authors propose a way to counter that. Instead of masking nodes which might remove entire components, they mask the edges connecting them. Specifically, in this process, we freeze the weights of the original model and introduce new trainable parameters $z \in [0,1]^{|\mathcal{G}|}$. Thus, each edge in the original graph now has a trainable parameter $z_{ji}$ attached to it. Again, this trainable parameter is a &lt;em&gt;soft&lt;/em&gt; mask where $ z_{ji} = 1 $ means the edge is included and $ z_{ji} = 0 $ means the edge is removed. Does this help? Why? Yes! We are able to achieve subgraphs with greater granularity and precision when compared to structural pruning since the number of edges (connections) grows much faster (quadratically) with the number of nodes (layers).&lt;/p&gt;
+&lt;p&gt;In structural pruning, if a node is removed, its activation is automatically set to 0 and it doesn&amp;rsquo;t play part in the circuit. However, for interpretability, this isn&amp;rsquo;t ideal because this changes the model too much. We obviously don&amp;rsquo;t want that! So, in edge pruning as discussed previously, we replace the activation of the removed edge not by 0 but by a corrupted activation which we refer to as &amp;ldquo;interchange activation.&amp;rdquo; This is done smoothly using a mathematical function that blends the normal activation with the corrupted one. We model the process as the masks continuously interpolating between the clean and corrupted activation. Specifically, we parameterize the i’th component as,&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+&lt;/p&gt;
+$$
+y_i = f_{i}\left(z_{0i}y_0 + (1 - z_{0i})\tilde{y}_0 + \sum_{1\leq j &lt; i} (z_{ji}y_j + (1 - z_{ji})\tilde{y}_j)\right)
+$$
+&lt;h2 id=&#34;where--tildey_j--represents-the-corrupted-activations-corresponding-to-tildex&#34;&gt;where $ \tilde{y}_j $ represents the corrupted activations corresponding to $\tilde{x}$.&lt;/h2&gt;
+&lt;h2 id=&#34;challenges-and-solutions&#34;&gt;Challenges and Solutions&lt;/h2&gt;
+&lt;p&gt;In a traditional model, every node receives activations from all its connected components and simply adds them up.
+$$h_{i+1} = h_i + y_i$$
+However, with Edge Pruning, some connections are removed, meaning each node gets a different mix of activations. Since addition assumes a fixed number of inputs, removing edges disrupts this balance, making activations harder to interpret.&lt;/p&gt;
+&lt;p&gt;To solve this, we use concatenation instead of addition. This keeps activations separate, preserving their origin and making the representation clearer. Instead of a single residual stream, we introduce a disentangled residual stream, where activations $y_i$ are stored in a growing list and dynamically combined at each node’s input. This allows for more flexible and structured processing. Now, this would increase the GPU memory footprint while training, but it is essential! And, furthermore it gives results that can back it up!&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/IAbg.png&#34; alt=&#34;Disentangled Transformer&#34; style=&#34;width: 400px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;h2 id=&#34;how-do-we-optimize-edge-pruning&#34;&gt;How Do We Optimize Edge Pruning?&lt;/h2&gt;
+&lt;p&gt;To train the model with Edge Pruning, we tweak the edge weights $ z $ using &lt;strong&gt;stochastic gradient descent (SGD)&lt;/strong&gt;—basically, a trial-and-error method that gradually improves performance. The goal is to find the best set of connections that keeps the model accurate while removing unnecessary edges to make it &lt;em&gt;leaner&lt;/em&gt; and &lt;em&gt;faster&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;To enforce this sparsity, we add an $ \mathcal{L}_0 $ regularization term with a &lt;em&gt;Lagrangian penalty&lt;/em&gt;, which acts like a &amp;ldquo;cost&amp;rdquo; for keeping too many edges. This nudges the model to &amp;ldquo;drop unimportant connections&amp;rdquo; while holding on to the most useful ones.&lt;/p&gt;
+&lt;p&gt;Now, here’s the tricky part: $ \mathcal{L}_0 $ is &lt;em&gt;non-differentiable&lt;/em&gt; because it simply counts how many edges are active—there&amp;rsquo;s no smooth way to calculate its slope for optimization. To get around this, we use a clever trick: instead of flipping edges on or off directly (which would be abrupt), we introduce a &lt;em&gt;smooth&lt;/em&gt; approximation called the &amp;ldquo;hard concrete&amp;rdquo; distribution (Louizos et al., 2018). This allows the model to gradually adjust edge weights, making the process trainable with standard gradient-based methods.&lt;br&gt;
+At the end of training, each edge is converted into a binary &lt;em&gt;keep-or-remove&lt;/em&gt; decision based on a threshold (like 0.5), resulting in a final pruned and optimized model.&lt;/p&gt;
+&lt;p&gt;The final binary mask $ M $ can be defined as:&lt;/p&gt;
+&lt;p&gt;$$
+M_{ji} = \mathbb{1}_{z_{ji} \geq 0.5}
+$$&lt;/p&gt;
+&lt;h2 id=&#34;edge-pruning-process-from-text-to-math&#34;&gt;Edge Pruning Process-From Text to Math!&lt;/h2&gt;
+&lt;h3 id=&#34;handling-the-masks&#34;&gt;Handling the Masks&lt;/h3&gt;
+&lt;p&gt;Like explained before, we model the masks $z$ based on hard concrete distribution. We start by generating a random number, $u$, from a uniform distribution. This means that $u$ will be between 0 and 1, but it is distributed evenly over that range. The range is slightly adjusted by $\epsilon$ (a very small number, $10^{-6}$) to avoid edge cases of 0 and 1:
+$$u\sim \mathcal{U}(\epsilon,1-\epsilon)$$
+Next, we transform the value of $ u $ into another value $ s $, which determines the probability of keeping the edge. This transformation uses a sigmoid function ($ \sigma $) and a parameter $ \beta $ (which is fixed at $ \frac{2}{3} $). The sigmoid function helps smooth out the transformation to map values between 0 and 1 and $\alpha$ which is a learnable parameter, and indicates the logarithm is applied element wise:
+$$
+s = \sigma \left( \frac{1}{\beta} \cdot \frac{u}{1-u}+\text{log}(\alpha) \right)
+$$
+Now we stretch the output of the sigmoid function to fit the new range $[l,r]=[-0.1,1.1]$.
+$$\tilde{s} = s \times (r - l) + l$$
+Now, to get the final masks, we just accumulate the excess probability on either side by taking the minimum and maximum values to ensure that
+$z$ is strictly between 0 and 1. This ensures that we either keep (1) or remove (0) the edge:
+$$z = \min\left(1, \max\left(0, \tilde{s}\right)\right)$$
+At the end, $ z $ will be a value between 0 and 1, representing the probability of keeping an edge.&lt;/p&gt;
+&lt;h3 id=&#34;lagrangian-term&#34;&gt;Lagrangian Term&lt;/h3&gt;
+&lt;p&gt;Now, we want to ensure that we prune the network to a target sparsity $t$, which is a measure of how much pruning we want to do. We introduce a Lagrangian term to penalize the model if it doesn&amp;rsquo;t meet the target sparsity $t$. The sparsity loss is calculated as:
+$$\mathcal{L}_s = \lambda_1 \cdot (t - s) + \lambda_2 \cdot (t - s)^2$$
+Where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$s$ is the current sparsity (the proportion of edges kept).&lt;/li&gt;
+&lt;li&gt;$t$ is the target sparsity (the desired proportion of edges to keep).&lt;/li&gt;
+&lt;li&gt;$\lambda_1$ and $\lambda_2$ are regularization parameters that adjust how tightly the pruning should adhere to the target sparsity.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This term helps guide the pruning process and makes sure the network is pruned to a desired level without being too aggressive or too lenient. The target sparsity $t$ is not fixed but increases over time during training. It starts at a small value (e.g., 0) and gradually increases toward the desired target. This gradual increase allows the model to start with a dense network and slowly prune it over time, helping to maintain performance during early stages of training. We set the final value of $t$ to be just above 1 since we know, that $s$ would never be able to reach the target $t$ but the model will try to push $s$ towards higher sparsities.&lt;/p&gt;
+&lt;h3 id=&#34;not-1-mask-but-2&#34;&gt;Not 1 Mask but 2!&lt;/h3&gt;
+&lt;p&gt;In the original setup, only edge masks were used to decide which edges to keep, but this approach led to slower pruning and lower sparsities. To speed up the process and achieve higher sparsities, node masks were introduced. Edge masks determine which edges are retained or pruned, while node masks decide whether a node remains active in the network. The interaction between node and edge masks is key: an edge $ e $ connecting two nodes $ n_1 $ and $ n_2 $ is kept if both nodes are active. This is represented as:&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+&lt;/p&gt;
+$$
+\tilde{z}_{(n_1, n_2)} = z_{(n_1, n_2)} \times z_{n_1}
+$$
+&lt;p&gt;Where $ z_{(n_1, n_2)} $ is the edge mask between nodes $ n_1 $ and $ n_2 $, and $ z_{n_1} $ is the node mask for node $ n_1 $, indicating whether the node is active. This ensures that edges are only kept if both connected nodes are active, making the pruning process more efficient.&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/MEMNbg.png&#34; alt=&#34;Masks&#34; style=&#34;width: 400px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;p&gt;At the end of the pruning process, the final loss function, denoted as $ \mathcal{L}_{} $, combines multiple components to guide the pruning while ensuring the model&amp;rsquo;s performance remains intact. This total loss consists of two main parts: the KL divergence loss, $ \mathcal{L}_{KL} $, which quantifies the deviation of the pruned network from the original, and the edge sparsity loss, $ \mathcal{L}_{edge,s} $, which is simply the sum of $ \mathcal{L}_0 $ and $ \mathcal{L}_s $. Therefore, the total loss function can be expressed as:&lt;/p&gt;
+&lt;p&gt;$$
+\mathcal{L} = \mathcal{L}_{KL} + \mathcal{L}_{edge,s}
+$$&lt;/p&gt;
+&lt;h1 id=&#34;4-experiments&#34;&gt;4. Experiments&lt;/h1&gt;
+&lt;p&gt;The experiments compare Edge Pruning with a Kullback-Leibler (KL) loss to the two other methods: ACDC and EAP. The choice to exclude other pruning-based methods is based on findings by Conmy et al. (2023), which indicated that these methods performed significantly worse than ACDC. All experiments are conducted using the GPT-2 Small model, which has 117 million parameters.&lt;/p&gt;
+&lt;h2 id=&#34;tasks&#34;&gt;Tasks&lt;/h2&gt;
+&lt;p&gt;The tasks used for evaluation are designed to assess the model&amp;rsquo;s ability to identify and process indirect objects, compare numerical values, and handle gendered pronouns. The datasets are split into training, validation, and test sets to avoid overfitting artifacts. The specific tasks are as follows:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Indirect Object Identification (IOI-t1 and IOI)&lt;/strong&gt;: This task involves sentences where the model must identify the indirect object. For example, in the sentence &lt;em&gt;&amp;ldquo;Kristi gave it to→Juana,&amp;rdquo;&lt;/em&gt; the model must recognize &lt;em&gt;&amp;ldquo;Juana&amp;rdquo;&lt;/em&gt; as the indirect object. The dataset includes 50 examples for IOI-t1 and 36,084 examples for the IOI variant.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Greater Than (GT)&lt;/strong&gt;: This task requires the model to determine the probability of a number being greater than another. For instance, given the statement &lt;em&gt;&amp;ldquo;The war lasted from the year 1743 to 17→xy,&amp;rdquo;&lt;/em&gt; the model must predict that &lt;em&gt;&amp;ldquo;xy&amp;rdquo;&lt;/em&gt; is likely to be a number greater than 43. The dataset consists of 150 training examples and 12,240 test examples.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Gendered Pronoun (GP)&lt;/strong&gt;: This task involves sentences with gendered pronouns, such as &lt;em&gt;&amp;ldquo;So Evan is a really great friend, isn’t→ he?&amp;rdquo;&lt;/em&gt; The dataset is generated using the top 1,000 most popular baby names for boys and girls, resulting in 150 training examples and 378 test examples.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Tracr&lt;/strong&gt;: This task evaluates Edge Pruning on two programs compiled into Transformers: &lt;em&gt;xproportion&lt;/em&gt;, which calculates the fraction of a specific character in a sequence, and &lt;em&gt;reverse&lt;/em&gt;, which reverses a list. The performance is assessed based on how well the method recovers the ground-truth circuits.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;evaluation&#34;&gt;Evaluation&lt;/h2&gt;
+&lt;p&gt;The faithfulness of a circuit is determined by its ability to maintain model behavior on a task when non-circuit edges are corrupted. This is evaluated using KL divergence between the model&amp;rsquo;s outputs and the circuit&amp;rsquo;s outputs. Specifically, the evaluation metrics include:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;For IOI-t1, IOI, and GP: The &lt;strong&gt;Logit Difference&lt;/strong&gt;:
+$$
+\log P(\text{correct}) - \log P(\text{misleading})
+$$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;For GT: The &lt;strong&gt;Probability Difference&lt;/strong&gt;:
+$$
+P(y_{y+1:99}) - P(00:y_{y-1})
+$$&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;5-results&#34;&gt;5. Results&lt;/h1&gt;
+&lt;p&gt;The results of the experiments demonstrate that Edge Pruning outperforms prior methods on more complex tasks and is competitive on simpler tasks like IOI-t1 and GP.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Performance Comparison&lt;/strong&gt;: Edge Pruning consistently finds better-performing circuits across all four tasks. Specifically, on the IOI task, Edge Pruning achieves a circuit with 98.8% sparsity that is as faithful and performs as well as the one found by ACDC at 96.8% sparsity, using over 2.65 times fewer edges.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/CPbg.png&#34; alt=&#34;CP&#34; style=&#34;width: 700px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Faithfulness&lt;/strong&gt;: Edge Pruning shows significantly higher faithfulness on IOI and GT compared to both ACDC and EAP, especially at higher sparsities. For instance, ACDC performs worse than random selection on IOI at high sparsities, while Edge Pruning maintains better performance.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/Fbg.png&#34; alt=&#34;Faithfulness&#34; style=&#34;width: 700px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Scalability&lt;/strong&gt;: Edge Pruning scales effectively to larger datasets, such as a version of the IOI dataset with 100K examples. It demonstrates the least runtime and the highest faithfulness among the methods evaluated. In contrast, ACDC improves with more examples but suffers from prohibitive runtime, while EAP is fast but does not perform as well.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/MSbg.png&#34; alt=&#34;Large Dataset&#34; style=&#34;width: 700px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Ground-Truth Circuit Recovery&lt;/strong&gt;: Edge Pruning successfully recovers the ground-truth circuits in the Tracr programs, achieving perfect reconstruction for both the &lt;em&gt;xproportion&lt;/em&gt; and &lt;em&gt;reverse&lt;/em&gt; tasks.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/TRbg.png&#34; alt=&#34;Tracr&#34; style=&#34;width: 700px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Robustness to Initialization&lt;/strong&gt;: The results indicate that Edge Pruning is robust to variations in random initialization. The resulting sparsity and faithfulness of the circuits found are consistent across different random initializations of masks. This consistency suggests that Edge Pruning is a reliable method for discovering circuits, regardless of the starting conditions.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;6-case-study-scaling-to-13b-parameters&#34;&gt;6. Case Study: Scaling to 13B Parameters&lt;/h1&gt;
+&lt;p&gt;In this section, we explore the scalability of Edge Pruning by applying it to a much larger model, CodeLlama-13B, which has 13 billion parameters—over 100 times larger than GPT-2. This case study serves two purposes: it demonstrates the effectiveness of Edge Pruning on large models and illustrates how circuit-finding methods can enhance our understanding of these complex systems.&lt;/p&gt;
+&lt;h2 id=&#34;why-scale-to-larger-models&#34;&gt;Why Scale to Larger Models?&lt;/h2&gt;
+&lt;p&gt;As AI models grow in size, understanding their inner workings becomes increasingly important. Traditional methods for interpreting these models, such as path patching and distributed alignment search, have their limitations. For instance, path patching identifies important components but does not produce edge-level circuits, while distributed alignment requires prior knowledge of the correct symbolic graph, which can be difficult to obtain.&lt;/p&gt;
+&lt;p&gt;Edge Pruning, on the other hand, can efficiently scale to large models using model parallelism, making it a promising approach for interpreting multi-billion parameter models.&lt;/p&gt;
+&lt;h2 id=&#34;task-and-model-setup&#34;&gt;Task and Model Setup&lt;/h2&gt;
+&lt;p&gt;The authors focus on the &lt;em&gt;Boolean Expressions&lt;/em&gt; task from the BBH benchmark suite. This task involves evaluating expressions like “((not False) and False) or (False and True) is → False.” The original dataset had only 250 examples, so they programmatically generated a larger version with 3,840 training examples, 767 validation examples, and 3,070 test examples. Each expression contains between 3 and 6 literals, with a maximum nesting depth of 3.&lt;/p&gt;
+&lt;p&gt;They use the instruction-finetuned version of CodeLlama-13B, which achieves accuracies of 82% in the instruction-prompted setting and 89.25% in the few-shot setting.&lt;/p&gt;
+&lt;h3 id=&#34;can-edge-pruning-find-edge-sparse-circuits-in-a-13b-model&#34;&gt;Can Edge Pruning find edge-sparse circuits in a 13B model?&lt;/h3&gt;
+&lt;p&gt;When we apply Edge Pruning to the task, we discover two circuits: one for instruction prompting and one for few-shot prompting. The results are impressive:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The circuit found in the instruction-prompted setting has 1,041 edges, corresponding to 99.97% edge sparsity.&lt;/li&gt;
+&lt;li&gt;The circuit found in the few-shot setting has 1,464 edges, equivalent to 99.96% edge sparsity.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Despite using less than 0.04% of the edges, these circuits closely match the performance of the full model. For instance, the few-shot circuit achieves an accuracy of 87.25%, performing within 2% of the full model when prompted in a few-shot manner. The instruction-prompted circuit is accurate within 2.75% of the full model.&lt;/p&gt;
+&lt;h3 id=&#34;to-what-extent-do-the-circuits-for-instruction-and-few-shot-prompting-share-the-same-edges&#34;&gt;To what extent do the circuits for instruction and few-shot prompting share the same edges?&lt;/h3&gt;
+&lt;p&gt;Next, we examine the overlap between the instruction-prompted and few-shot circuits. The two circuits share 653 edges, accounting for 62.7% of the edges in the sparser instruction-prompted circuit. This overlap is over 1,700 times larger than what would be expected by random chance.&lt;/p&gt;
+&lt;p&gt;The authors evaluate the performance of the circuit formed by this intersection in both prompting settings. It performs well in the instruction-prompted setting and significantly above chance when prompted in a few-shot manner.&lt;/p&gt;
+&lt;h3 id=&#34;does-the-instruction-prompted-circuit-perform-well-when-used-in-a-few-shot-manner-and-vice-versa&#34;&gt;Does the instruction-prompted circuit perform well when used in a few-shot manner, and vice versa?&lt;/h3&gt;
+&lt;p&gt;The results indicate that the circuits demonstrate strong performance when evaluated across different prompting methods. For example, the few-shot circuit performs well even when used in the instruction-prompted setting, and vice versa. This suggests that the same underlying mechanisms are at play in both prompting scenarios.&lt;/p&gt;
+&lt;p&gt;However, there is still a performance gap between the circuits. For instance, the few-shot circuit achieves 87.25% accuracy when evaluated in the few-shot setting but drops to 75.75% in the instruction-prompted setting. This indicates that while there is significant overlap, additional components may be necessary to fully capture the model&amp;rsquo;s behavior.&lt;/p&gt;
+&lt;p&gt;Interpreting circuits in such large models, even when sparse, remains a challenging task. The authors isolate a small region of the circuit and identify intriguing behaviors, leading to interesting conjectures. However, a thorough analysis requires more extensive study, which is an exciting avenue for future research.&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/CSbg.png&#34; alt=&#34;Case Study&#34; style=&#34;width: 700px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;h1 id=&#34;7-last-few-words&#34;&gt;7. Last few words&amp;hellip;&lt;/h1&gt;
+&lt;p&gt;We introduced &lt;strong&gt;Edge Pruning&lt;/strong&gt;, a method for discovering circuits by pruning edges between model components. The experiments demonstrate that it identifies sparse, faithful circuits while scaling effectively to large datasets and models. However, it does come with trade-offs.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Limitations:&lt;/strong&gt; While Edge Pruning is highly accurate, approximation-based methods like EAP are faster for smaller datasets. Scaling to large models also demands significant GPU resources—32 H100 GPUs were used for CodeLlama-13B. A hybrid approach, combining a fast approximation method like EAP with Edge Pruning for refinement, could offer a balance between efficiency and performance. Additionally, even at extreme sparsities, circuits in large models remain complex, highlighting the need for automated interpretability tools and improved faithfulness metrics.&lt;/p&gt;
+&lt;p&gt;As AI models grow in scale and complexity, methods like Edge Pruning will play a crucial role in making them more interpretable and efficient. Its ability to discover meaningful circuits while maintaining high faithfulness positions it as a valuable tool for research and real-world applications. Future work could explore refining the pruning process, identifying multiple circuits for complex tasks, and improving efficiency.&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;img src=&#34;./images/Images_Ahmed_Ahmed/aibg.png&#34; alt=&#34;AI&#34; style=&#34;width: 700px; height: auto;&#34;&gt; 
+&lt;/p&gt;
+&lt;p&gt;By advancing these approaches, we move toward AI systems that are not just powerful but also more &lt;em&gt;transparent, understandable,&lt;/em&gt; and &lt;em&gt;trustworthy&lt;/em&gt;.&lt;/p&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/edge-pruning/</guid>
+      <pubDate>Thu, 13 Mar 2025 19:14:57 +0530</pubDate>
+    </item>
+    
+    <item>
+      <title>How to augment my dataset?</title>
+      <link>http://localhost:1313/posts/mixupdatacalibration/</link>
+      <description>&lt;style TYPE=&#34;text/css&#34;&gt;
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style&gt;
+&lt;script type=&#34;text/x-mathjax-config&#34;&gt;
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+        displayMath: [[&#39;$$&#39;,&#39;$$&#39;], [&#39;\\[&#39;,&#39;\\]&#39;]],
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i &lt; all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+    }
+});
+&lt;/script&gt;
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+&lt;h1 id=&#34;authors--tristan-waddington-fabien-lagnieu--dimitri-henrard-iratchet&#34;&gt;Authors : &lt;em&gt;Tristan Waddington, Fabien Lagnieu &amp;amp; Dimitri Henrard-Iratchet&lt;/em&gt;&lt;/h1&gt;
+&lt;h3 id=&#34;paper-comment-on-the-research-paper-tailoring-mixup-to-data-for-calibration-written-by-quentin-bouniot-pavlo-mozharovskyi--florence-dalché-buc-from-ltci-télécom-paris-institut-polytechnique-de-paris-france&#34;&gt;Paper: Comment on the research paper: &lt;a href=&#34;https://arxiv.org/abs/2311.01434&#34;&gt;&lt;strong&gt;Tailoring Mixup to Data for Calibration&lt;/strong&gt;&lt;/a&gt;, written by &lt;em&gt;Quentin Bouniot, Pavlo Mozharovskyi &amp;amp; Florence d’Alché-Buc&lt;/em&gt;, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France&lt;/h3&gt;
+&lt;p&gt;TODO: insert table of contents&lt;/p&gt;
+&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/MixUpDataCalibration/AI_introvert.png&#34;
+  alt=&#34;Test image Mkdown&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+
+Let&amp;rsquo;s do it.&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+  &lt;img src=&#34;./images/MixUpDataCalibration/AI_introvert.png&#34; alt=&#34;Test image mathematical&#34;&gt;
+&lt;/p&gt;
+&lt;h1 id=&#34;main-part&#34;&gt;Main part&lt;/h1&gt;
+&lt;p&gt;Test LaTeX : $\sigma \left( \frac{1}{2}\right)$&lt;/p&gt;
+&lt;p&gt;$$\mathbb{R}^3 $$&lt;/p&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/mixupdatacalibration/</guid>
+      <pubDate>Wed, 05 Feb 2025 14:03:13 +0100</pubDate>
+    </item>
     
     <item>
       <title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title>
@@ -273,7 +692,7 @@ Formally, and to introduce some probabilities, which we will delve into further 
 &lt;p&gt;The proposed algorithms are based on &lt;strong&gt;full decentralization&lt;/strong&gt;, and &lt;strong&gt;newtork differential privacy (DP)&lt;/strong&gt;, two notions that we will explain right below.&lt;/p&gt;
 &lt;br /&gt;
 &lt;h1 id=&#34;section-2&#34;&gt;&lt;h1 style=&#34;font-size: 20px;&#34;&gt;Theoretical Aspects on Differential Privacy&lt;/h1&gt;&lt;/h1&gt;
-&lt;h2 id=&#34;h1-stylefont-size-18pxmathematical-contexth1&#34;&gt;&lt;h1 style=&#34;font-size: 18px;&#34;&gt;Mathematical context&lt;/h1&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;mathematical-context&#34;&gt;&lt;h1 style=&#34;font-size: 18px;&#34;&gt;Mathematical context&lt;/h1&gt;&lt;/h2&gt;
 &lt;p&gt;We must introduce some key mathematical definitions to understand the problem we want to tackle.&lt;/p&gt;
 &lt;h2 id=&#34;users-space&#34;&gt;Users space&lt;/h2&gt;
 &lt;p&gt;We consider a set of $n$ users (e.g. a population responding to a survey), each holding a private dataset that we note $D_u$ (e.g. their answer to the questions of the survey).&lt;/p&gt;
@@ -301,7 +720,7 @@ For two datasets $D$ and $D&amp;rsquo;$ of the same size, we denote by $D \sim_u
 &lt;p&gt;The aim of decentralization in this representation, is to give users the fewer information possible, i.e. only the messages they are involved in, and not the full transcript $A(D)$.&lt;/p&gt;
 &lt;p&gt;We introduce this view of a user $u$: $\mathcal{O}_u(\mathcal{A}(D))=\left(\left(v, m, v^{\prime}\right) \in \mathcal{A}(D): v=u \text { or } v^{\prime}=u\right)$&lt;/p&gt;
 &lt;br /&gt;
-&lt;h2 id=&#34;h1-stylefont-size-18pxdifferential-privacyh1&#34;&gt;&lt;h1 style=&#34;font-size: 18px;&#34;&gt;Differential Privacy&lt;/h1&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;differential-privacy&#34;&gt;&lt;h1 style=&#34;font-size: 18px;&#34;&gt;Differential Privacy&lt;/h1&gt;&lt;/h2&gt;
 &lt;p&gt;We will take a step back on this representation to introduce in a more global way the mathematical notion of Differential Privacy (DP).&lt;/p&gt;
 &lt;p&gt;Let us consider a randomised algorithm $M$. $M$ is said to be &amp;ldquo;$\alpha$-differentially private&amp;rdquo; if, for any event $A$:&lt;/p&gt;
 &lt;p&gt;$$\mathbb{P}[M(D)\in A]\leq e^{\alpha} \cdot \mathbb{P}[M(D&amp;rsquo;)\in A]$$&lt;/p&gt;
@@ -3514,7 +3933,7 @@ MathJax.Hub.Queue(function() {
 &lt;li&gt;Mohammed Jawhar&lt;/li&gt;
 &lt;li&gt;Aymane Rahmoune&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;paper--optimal-transport-based-adversarial-based-patch-to-leverage-large-scale-attack-transferabilityhttpsopenreviewnetforumidnzp10evtkv&#34;&gt;Paper : &lt;a href=&#34;https://openreview.net/forum?id=nZP10evtkV&#34;&gt;Optimal Transport Based Adversarial Based Patch To Leverage Large Scale Attack Transferability&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;paper--optimal-transport-based-adversarial-based-patch-to-leverage-large-scale-attack-transferability&#34;&gt;Paper : &lt;a href=&#34;https://openreview.net/forum?id=nZP10evtkV&#34;&gt;Optimal Transport Based Adversarial Based Patch To Leverage Large Scale Attack Transferability&lt;/a&gt;&lt;/h3&gt;
 &lt;h1 id=&#34;table-of-contents-&#34;&gt;Table of contents :&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#section-0&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -3668,7 +4087,7 @@ where TV is the total variation loss discouraging high-frequency patterns.&lt;/p
 &lt;/body&gt;
 &lt;/html&gt;
 &lt;h2 id=&#34;section-4&#34;&gt;Experiments&lt;/h2&gt;
-&lt;h3 id=&#34;experimental-setup-a-namesubsection-41a&#34;&gt;Experimental setup &lt;a name=&#34;subsection-41&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;experimental-setup&#34;&gt;Experimental setup &lt;a name=&#34;subsection-41&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
 &lt;p&gt;To confirm the theoretical results and assumptions, several experiments were conducted under different conditions and settings. For the sake of simplicity, we will not delve into the exhaustive details of the experimental setup, procedures, and results. In summary:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -3687,9 +4106,9 @@ where TV is the total variation loss discouraging high-frequency patterns.&lt;/p
 &lt;p&gt;&lt;strong&gt;Targeted success rate (tSuc)&lt;/strong&gt; metric was used for evaluating transferability. It consists of the percentage of instances where the network, when presented with an image containing the adversarial patch, incorrectly classifies the image as the attacker&amp;rsquo;s intended target class, out of the total number of attempts.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;results-and-findings--a-namesubsection-42a&#34;&gt;Results and Findings : &lt;a name=&#34;subsection-42&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;results-and-findings-&#34;&gt;Results and Findings : &lt;a name=&#34;subsection-42&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
 &lt;p&gt;The experiments are structured into three main categories:&lt;/p&gt;
-&lt;h4 id=&#34;digital-experiments--a-namesubsection-421a&#34;&gt;Digital experiments : &lt;a name=&#34;subsection-421&#34;&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;digital-experiments-&#34;&gt;Digital experiments : &lt;a name=&#34;subsection-421&#34;&gt;&lt;/a&gt;&lt;/h4&gt;
 &lt;h5 id=&#34;simple-configuration-&#34;&gt;Simple configuration :&lt;/h5&gt;
 &lt;p&gt;In this configuration, the patches efficacy was tested in a purely digital environment, using images from the ImageNet-1K dataset, which was used also for training. Patches were first designed to attack one of the source models, then tested on other target models to measure the attacking transferability. The table below summarizes for each APA method, the best transferring attack performance achieved :&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
@@ -3716,13 +4135,13 @@ where TV is the total variation loss discouraging high-frequency patterns.&lt;/p
 &lt;p align=&#34;center&#34;&gt;
   &lt;img src=&#34;./images/image_optimal_transport_patch/Digital_robustified.png&#34; alt=&#34;Digital robustified&#34;&gt;
 &lt;/p&gt;
-&lt;h4 id=&#34;hybrid-experiments-a-namesubsection-422a&#34;&gt;Hybrid experiments: &lt;a name=&#34;subsection-422&#34;&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;hybrid-experiments&#34;&gt;Hybrid experiments: &lt;a name=&#34;subsection-422&#34;&gt;&lt;/a&gt;&lt;/h4&gt;
 &lt;p&gt;In order to simulate real-world applications more closely, the hybrid experiments conducted within this section involved printing adversarial patches trained with Swin, placing them in physical environments, capturing the images, and then digitally analyzing the results, for simple, and robustified models.&lt;/p&gt;
 &lt;p&gt;The table below shows the criticality of the $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ giving very large tSuc in comparison with the other methods, for all settings:&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
   &lt;img src=&#34;./images/image_optimal_transport_patch/Digital_robustified.png&#34; alt=&#34;Digital robustified&#34;&gt;
 &lt;/p&gt;
-&lt;h4 id=&#34;physical-experiments-a-namesubsection-423a&#34;&gt;Physical experiments: &lt;a name=&#34;subsection-423&#34;&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;physical-experiments&#34;&gt;Physical experiments: &lt;a name=&#34;subsection-423&#34;&gt;&lt;/a&gt;&lt;/h4&gt;
 &lt;p&gt;In this last experiments category, we get closer to the real world situations, by recording a video of some ImageNet-1K objects (banana, cup , keyboard) while moving a designed patch in the set. This aims to quantify the severity of each attack, for realistic scenarios (as the example provided above about the autonomous vehicule not detecting the stop sign while driving due to an adversarial patch designed without knowing the AI system at all).&lt;/p&gt;
 &lt;p&gt;All APA methods failed to transfer properly on all architectures except for L2 with a modest tSuc(9.3%) and $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ that gave much better results (23.4% and 29.3%)&lt;/p&gt;
 &lt;h2 id=&#34;section-5&#34;&gt;Reproducibility&lt;/h2&gt;
