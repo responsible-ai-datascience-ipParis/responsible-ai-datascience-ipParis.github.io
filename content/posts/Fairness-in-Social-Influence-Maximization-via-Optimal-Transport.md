@@ -15,7 +15,7 @@ draft = false
 
 **Table of Contents**  
 - [1. Introduction](#introduction)  
-- [2. Mutual Fairness: A New Metric](#mutual-fairness)  
+- [2. Mutual Fairness: A New Metric] (#mutual-fairness)  
   - [2.1 Why Make a New Metric?](#why-make-a-new-metric)  
   - [2.2 Proposed Fairness Metric](#proposed-fairness-metric)  
   - [2.3 Short Example](#short-example)
