@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 <html lang="en">
   <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
@@ -11,11 +12,27 @@
   <meta property="og:site_name" content="Bloggin on Responsible AI">
   <meta property="og:title" content="Robust or Fair">
   <meta property="og:description" content="To be Robust or to be Fair: Towards Fairness in Adversarial TrainingAuthors: Maryem Hajji &amp; Cément TeulierTable of Contents Abstract Introduction Initial Analysis Previous Studies Theoretical Demonstration Model Fairness Requirements Practical Algorithms Experimentation Conclusion References Abstract This blog post retraces the study conducted in the paper “To be Robust or to be Fair: Towards Fairness in Adversarial Training” and written by Han Xu, Xiaorui Liu, Yaxin Li, Yaxin Li, Anil K. Jain and Jiliang Tang.">
+=======
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>Robust or Fair | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:url" content="http://localhost:1313/posts/robust-or-fair/">
+  <meta property="og:site_name" content="Bloggin on Responsible AI">
+  <meta property="og:title" content="Robust or Fair">
+  <meta property="og:description" content="To be Robust or to be Fair: Towards Fairness in Adversarial Training Authors: Maryem Hajji &amp; Cément Teulier Table of Contents Abstract Introduction Initial Analysis Previous Studies Theoretical Demonstration Model Fairness Requirements Practical Algorithms Experimentation Conclusion References Abstract This blog post retraces the study conducted in the paper “To be Robust or to be Fair: Towards Fairness in Adversarial Training” and written by Han Xu, Xiaorui Liu, Yaxin Li, Yaxin Li, Anil K. Jain and Jiliang Tang.">
+>>>>>>> 782f9424acfe718b474c52e01dfba91a6d3427d5
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2024-03-27T11:37:03+01:00">
     <meta property="article:modified_time" content="2024-03-27T11:37:03+01:00">
+<<<<<<< HEAD
 
     
   <meta itemprop="name" content="Robust or Fair">
@@ -126,6 +143,118 @@
       <h2 class="post">Robust or Fair</h2>
       <h1 style="font-size: 36px;">To be Robust or to be Fair: Towards Fairness in Adversarial Training</h1>
 <h1 style="font-size: 24px;">Authors: Maryem Hajji & Cément Teulier</h1>
+=======
+
+    
+  <meta itemprop="name" content="Robust or Fair">
+  <meta itemprop="description" content="To be Robust or to be Fair: Towards Fairness in Adversarial Training Authors: Maryem Hajji &amp; Cément Teulier Table of Contents Abstract Introduction Initial Analysis Previous Studies Theoretical Demonstration Model Fairness Requirements Practical Algorithms Experimentation Conclusion References Abstract This blog post retraces the study conducted in the paper “To be Robust or to be Fair: Towards Fairness in Adversarial Training” and written by Han Xu, Xiaorui Liu, Yaxin Li, Yaxin Li, Anil K. Jain and Jiliang Tang.">
+  <meta itemprop="datePublished" content="2024-03-27T11:37:03+01:00">
+  <meta itemprop="dateModified" content="2024-03-27T11:37:03+01:00">
+  <meta itemprop="wordCount" content="2077">
+    
+    <link rel="canonical" href="http://localhost:1313/posts/robust-or-fair/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "posts",
+      "name": "Robust or Fair",
+      "headline": "Robust or Fair",
+      "alternativeHeadline": "",
+      "description": "\u003ch1 style=\u0022font-size: 36px;\u0022\u003eTo be Robust or to be Fair: Towards Fairness in Adversarial Training\u003c\/h1\u003e\n\u003ch1 style=\u0022font-size: 24px;\u0022\u003eAuthors: Maryem Hajji \u0026 Cément Teulier\u003c\/h1\u003e\n\u003ch1 id=\u0022table-of-contents\u0022\u003eTable of Contents\u003c\/h1\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#section-0\u0022\u003eAbstract\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-1\u0022\u003eIntroduction\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-2\u0022\u003eInitial Analysis\u003c\/a\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#section-2.1\u0022\u003ePrevious Studies\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-2.2\u0022\u003eTheoretical Demonstration\u003c\/a\u003e\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-3\u0022\u003eModel\u003c\/a\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#section-3.1\u0022\u003eFairness Requirements\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-3.2\u0022\u003ePractical Algorithms\u003c\/a\u003e\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-4\u0022\u003eExperimentation\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-5\u0022\u003eConclusion\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-6\u0022\u003eReferences\u003c\/a\u003e\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003ch2 id=\u0022section-0\u0022\u003eAbstract\u003c\/h2\u003e\n\u003cp\u003eThis blog post retraces the study conducted in the \u003ca href=\u0022http:\/\/proceedings.mlr.press\/v139\/xu21b.html\u0022\u003epaper\u003c\/a\u003e \u0026ldquo;To be Robust or to be Fair: Towards Fairness in Adversarial Training\u0026rdquo; and written by Han Xu, Xiaorui Liu, Yaxin Li, Yaxin Li, Anil K. Jain and Jiliang Tang.\u003c\/p\u003e",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/posts\/robust-or-fair\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "2024",
+      "dateCreated": "2024-03-27T11:37:03.00Z",
+      "datePublished": "2024-03-27T11:37:03.00Z",
+      "dateModified": "2024-03-27T11:37:03.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/posts\/robust-or-fair\/",
+      "wordCount" : "2077",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="../../">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="../../posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="../../tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="../../about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="../../articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">Robust or Fair</h2>
+      <h1 style="font-size: 36px;">To be Robust or to be Fair: Towards Fairness in Adversarial Training</h1>
+<h1 style="font-size: 24px;">Authors: Maryem Hajji & Cément Teulier</h1>
+>>>>>>> 782f9424acfe718b474c52e01dfba91a6d3427d5
 <h1 id="table-of-contents">Table of Contents</h1>
 <ul>
 <li><a href="#section-0">Abstract</a></li>
@@ -163,6 +292,7 @@ To put a word on it, the authors have identified this issue as the <strong>robus
 <p>For their first analysis, the authors have decided to study algorithms like the PGD ( Projected Gradient Descent) adversarial training and TRADES ( Theoretically Principled Trade-off between Robustness and Accuracy for Deep Learning ) on the CIFAR-10 dataset.
 The investigation is made using a PreAct-ResNet18 model structure under specific adversarial attack constraints.
 The results they obtained are as follows:</p>
+<<<<<<< HEAD
 <p><img
   src="../../images/Hajji_Teulier/cat_car.png"
   alt="Paper Initial Results"
@@ -171,6 +301,16 @@ The results they obtained are as follows:</p>
   class="full-width"
 />
 
+=======
+<p><img
+  src="../../images/Hajji_Teulier/cat_car.png"
+  alt="Paper Initial Results"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+>>>>>>> 782f9424acfe718b474c52e01dfba91a6d3427d5
 </p>
 <p>As we can see, natural training maintains a consistent standard error across classes and a consistent robust error rate when faced with 8/255 PGD attacks. However, in the case of adversarial training, some huge disparities appear. Going back to our introduction&rsquo;s example with &ldquo;cats&rdquo; and &ldquo;cars&rdquo;, we observe that the standard and robust errors for &ldquo;car&rdquo; class ( respectively 6% and 34% ) are significantly lower than those of the &ldquo;cat&rdquo; class ( respectively 33% and 82% ). The results on the TRADES, altough not depicted here, also show some great disparities between certain classes.</p>
 <p>To support this graphical study, the authors also present statistical evidence of this phenomenom throughout metrics like the Standard Deviation (SD) or the Normalized SD (NSD) of class-wide error. Once again, these metrics reveal that adversarial training indeed results in greater disparities across classes in both standard and robust performance compared to natural training.</p>
@@ -219,6 +359,7 @@ $$</p>
 <h2 id="section-4">3. Experimentation</h2>
 <p>In this section, we reproduce the experimental methodology and setup used to evaluate the effectiveness of the proposed Fair Robust Learning (FRL) framework in constructing robust deep neural network (DNN) models.</p>
 <p>Firstly, we train a fairly simple model on the Fashion MNIST dataset, then we test out torchattack&rsquo;s PGD on our naturally trained model, Then we will adversarially train the same architecture to see if we can identify this unfairness.</p>
+<<<<<<< HEAD
 <p><img
   src="../../images/Hajji_Teulier/result1.png"
   alt="Paper Initial Results"
@@ -227,10 +368,21 @@ $$</p>
   class="full-width"
 />
 
+=======
+<p><img
+  src="../../images/Hajji_Teulier/result1.png"
+  alt="Paper Initial Results"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+>>>>>>> 782f9424acfe718b474c52e01dfba91a6d3427d5
 </p>
 <p>As we can see above, the naturally trained model has low standard error, but high PGD error. The adversarially trained model, in contrast, has a much lower PGD error, but higher standard error, and higher disparity between the classes.</p>
 <p>Second, we implement the FRL algorithm (Reweight strategy) which formulates the learning problem as a cost-sensitive classification that penalizes those classes which violate fairness. Essentially, we create multipliers that up or down weight the loss of classes based on how fair or unfair they are with respect to the average across all classes.</p>
 <p>The following is the FRL Algorithm outlined in the paper:</p>
+<<<<<<< HEAD
 <div style="text-align: center;">
   <img src="../../images/Hajji_Teulier/algo1.png" alt="Paper Initial Results" width="400" />
 </div>
@@ -243,6 +395,20 @@ $$</p>
   class="full-width"
 />
 
+=======
+<div style="text-align: center;">
+  <img src="../../images/Hajji_Teulier/algo1.png" alt="Paper Initial Results" width="400" />
+</div>
+<p>We made a setup to run the process 3 times: once with equal alpha values, once with an alpha ratio that favors the natural error, and one with an alpha ratio that favors the boundary error.</p>
+<p><img
+  src="../../images/Hajji_Teulier/result2.png"
+  alt="Paper Initial Results"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+>>>>>>> 782f9424acfe718b474c52e01dfba91a6d3427d5
 </p>
 <p>In accordance with the authors of the paper, we find that the alpha ratio that favors the natural error is successful in preventing the unfairness of the standard error in the model, and does help somewhat with the unfairness of the PGD error. On the other hand, we notice that the algorithm struggles to improve the worst-case boundary error, leading to disparities in robustness performance across different classes.</p>
 <h2 id="conclusion">Conclusion</h2>
@@ -260,6 +426,7 @@ $$</p>
 <p>[6] He, H. and Garcia, E. A. Learning from imbalanced data. IEEE Transactions on knowledge and data engineering, 21(9):1263–1284. 2009.</p>
 <p>[7] Zhang, H., Yu, Y., Jiao, J., Xing, E. P., Ghaoui, L. E., and Jordan, M. I. Theoretically principled trade-off between robustness and accuracy. 2019.</p>
 <p>[8] Tramer, F., Behrmann, J., Carlini, N., Papernot, N., and Ja- ` cobsen, J.-H. Fundamental tradeoffs between invariance and sensitivity to adversarial perturbations. In International Conference on Machine Learning, pp. 9561–9571. PMLR. 2020.</p>
+<<<<<<< HEAD
 <style TYPE="text/css">
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 </style>
@@ -302,3 +469,47 @@ MathJax.Hub.Queue(function() {
 </main>
 </body>
 </html>
+=======
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+
+      
+      <div class="post-date">
+        <span class="g time">March 27, 2024 </span> &#8729;
+         
+      </div>
+      
+    </section>
+    
+    <div id="comments">
+      <script src="https://utteranc.es/client.js"
+    repo=ZgotmplZ
+    issue-term="pathname"
+    theme=ZgotmplZ
+    crossorigin="anonymous"
+    async>
+</script>
+
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>
+>>>>>>> 782f9424acfe718b474c52e01dfba91a6d3427d5

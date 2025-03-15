@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>How to augment my dataset? | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:url" content="http://localhost:1313/posts/mixupdatacalibration/">
+  <meta property="og:site_name" content="Bloggin on Responsible AI">
+  <meta property="og:title" content="How to augment my dataset?">
+  <meta property="og:description" content="Authors : Tristan Waddington, Fabien Lagnieu &amp; Dimitri Henrard-Iratchet Paper: Comment on the research paper: Tailoring Mixup to Data for Calibration, written by Quentin Bouniot, Pavlo Mozharovskyi &amp; Florence d’Alché-Buc, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France TODO: insert table of contents">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-02-05T14:03:13+01:00">
+    <meta property="article:modified_time" content="2025-02-05T14:03:13+01:00">
+
+    
+  <meta itemprop="name" content="How to augment my dataset?">
+  <meta itemprop="description" content="Authors : Tristan Waddington, Fabien Lagnieu &amp; Dimitri Henrard-Iratchet Paper: Comment on the research paper: Tailoring Mixup to Data for Calibration, written by Quentin Bouniot, Pavlo Mozharovskyi &amp; Florence d’Alché-Buc, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France TODO: insert table of contents">
+  <meta itemprop="datePublished" content="2025-02-05T14:03:13+01:00">
+  <meta itemprop="dateModified" content="2025-02-05T14:03:13+01:00">
+  <meta itemprop="wordCount" content="59">
+    
+    <link rel="canonical" href="http://localhost:1313/posts/mixupdatacalibration/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "posts",
+      "name": "How to augment my dataset?",
+      "headline": "How to augment my dataset?",
+      "alternativeHeadline": "",
+      "description": "\u003cstyle TYPE=\u0022text\/css\u0022\u003e\r\ncode.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}\r\n\u003c\/style\u003e\r\n\u003cscript type=\u0022text\/x-mathjax-config\u0022\u003e\r\nMathJax.Hub.Config({\r\n    tex2jax: {\r\n        inlineMath: [[\u0027$\u0027,\u0027$\u0027], [\u0027\\\\(\u0027,\u0027\\\\)\u0027]],\r\n        displayMath: [[\u0027$$\u0027,\u0027$$\u0027], [\u0027\\\\[\u0027,\u0027\\\\]\u0027]],\r\n        skipTags: [\u0027script\u0027, \u0027noscript\u0027, \u0027style\u0027, \u0027textarea\u0027, \u0027pre\u0027] \/\/ removed \u0027code\u0027 entry\r\n    }\r\n});\r\nMathJax.Hub.Queue(function() {\r\n    var all = MathJax.Hub.getAllJax(), i;\r\n    for(i = 0; i \u003c all.length; i \u002b= 1) {\r\n        all[i].SourceElement().parentNode.className \u002b= \u0027 has-jax\u0027;\r\n    }\r\n});\r\n\u003c\/script\u003e\r\n\u003cscript type=\u0022text\/javascript\u0022 src=\u0022https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/mathjax\/2.7.4\/MathJax.js?config=TeX-AMS_HTML-full\u0022\u003e\u003c\/script\u003e\r\n\u003ch1 id=\u0022authors--tristan-waddington-fabien-lagnieu--dimitri-henrard-iratchet\u0022\u003eAuthors : \u003cem\u003eTristan Waddington, Fabien Lagnieu \u0026amp; Dimitri Henrard-Iratchet\u003c\/em\u003e\u003c\/h1\u003e\n\u003ch3 id=\u0022paper-comment-on-the-research-paper-tailoring-mixup-to-data-for-calibrationhttpsarxivorgabs231101434-written-by-quentin-bouniot-pavlo-mozharovskyi--florence-dalché-buc-from-ltci-télécom-paris-institut-polytechnique-de-paris-france\u0022\u003ePaper: Comment on the research paper: \u003ca href=\u0022https:\/\/arxiv.org\/abs\/2311.01434\u0022\u003e\u003cstrong\u003eTailoring Mixup to Data for Calibration\u003c\/strong\u003e\u003c\/a\u003e, written by \u003cem\u003eQuentin Bouniot, Pavlo Mozharovskyi \u0026amp; Florence d’Alché-Buc\u003c\/em\u003e, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France\u003c\/h3\u003e\n\u003cp\u003eTODO: insert table of contents\u003c\/p\u003e",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/posts\/mixupdatacalibration\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "2025",
+      "dateCreated": "2025-02-05T14:03:13.00Z",
+      "datePublished": "2025-02-05T14:03:13.00Z",
+      "dateModified": "2025-02-05T14:03:13.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/posts\/mixupdatacalibration\/",
+      "wordCount" : "59",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="../../">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="../../posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="../../tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="../../about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="../../articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">How to augment my dataset?</h2>
+      <style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+<h1 id="authors--tristan-waddington-fabien-lagnieu--dimitri-henrard-iratchet">Authors : <em>Tristan Waddington, Fabien Lagnieu &amp; Dimitri Henrard-Iratchet</em></h1>
+<h3 id="paper-comment-on-the-research-paper-tailoring-mixup-to-data-for-calibrationhttpsarxivorgabs231101434-written-by-quentin-bouniot-pavlo-mozharovskyi--florence-dalché-buc-from-ltci-télécom-paris-institut-polytechnique-de-paris-france">Paper: Comment on the research paper: <a href="https://arxiv.org/abs/2311.01434"><strong>Tailoring Mixup to Data for Calibration</strong></a>, written by <em>Quentin Bouniot, Pavlo Mozharovskyi &amp; Florence d’Alché-Buc</em>, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France</h3>
+<p>TODO: insert table of contents</p>
+<h1 id="introduction">Introduction</h1>
+<p><img
+  src="../../images/MixUpDataCalibration/AI_introvert.png"
+  alt="Test image Mkdown"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+
+Let&rsquo;s do it.</p>
+<p align="center">
+  <img src="../../images/MixUpDataCalibration/AI_introvert.png" alt="Test image mathematical">
+</p>
+<h1 id="main-part">Main part</h1>
+<p>Test LaTeX : $\sigma \left( \frac{1}{2}\right)$</p>
+<p>$$\mathbb{R}^3 $$</p>
+<h1 id="conclusion">Conclusion</h1>
+
+      
+      <div class="post-date">
+        <span class="g time">February 5, 2025 </span> &#8729;
+         
+      </div>
+      
+    </section>
+    
+    <div id="comments">
+      <script src="https://utteranc.es/client.js"
+    repo=ZgotmplZ
+    issue-term="pathname"
+    theme=ZgotmplZ
+    crossorigin="anonymous"
+    async>
+</script>
+
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>

@@ -7,13 +7,18 @@
     
     <language>en</language>
     <copyright>Copyright 2025, Calvin Tran</copyright>
+<<<<<<< HEAD
     <lastBuildDate>Sat, 15 Mar 2025 17:27:56 +0100</lastBuildDate>
+=======
+    <lastBuildDate>Wed, 05 Feb 2025 14:03:13 +0100</lastBuildDate>
+>>>>>>> 782f9424acfe718b474c52e01dfba91a6d3427d5
     <generator>Hugo - gohugo.io</generator>
     <docs>http://cyber.harvard.edu/rss/rss.html</docs>
     <atom:link href="http://localhost:1313//atom.xml" rel="self" type="application/atom+xml"/>
     
     
     <item>
+<<<<<<< HEAD
       <title>Fairness in Social Influence Maximization via Optimal Transport</title>
       <link>http://localhost:1313/posts/fairness-in-social-influence-maximization-via-optimal-transport/</link>
       <description>&lt;p&gt;+++
@@ -275,6 +280,8 @@ Without S3D, certain communities miss job postings entirely in some scenarios.&l
     </item>
     
     <item>
+=======
+>>>>>>> 782f9424acfe718b474c52e01dfba91a6d3427d5
       <title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title>
       <link>http://localhost:1313/posts/axiomatic_explanations/</link>
       <description>&lt;style
