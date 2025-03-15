@@ -3,18 +3,60 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/</loc>
-    <lastmod>2024-02-27T15:05:20+01:00</lastmod>
+    <lastmod>2025-02-05T14:23:18+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/jaishan/</loc>
+    <lastmod>2025-02-05T14:23:18+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/</loc>
+    <lastmod>2025-02-05T14:23:18+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/axiomatic_explanations/</loc>
+    <lastmod>2024-03-28T05:58:39+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/privacy-amplification/</loc>
+    <lastmod>2024-03-27T12:05:50+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/robust-or-fair/</loc>
+    <lastmod>2024-03-27T11:37:03+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/xcm/</loc>
+    <lastmod>2024-03-26T00:55:40+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/robustai_regmixup/</loc>
+    <lastmod>2024-03-24T12:38:16+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/lambert-davy/</loc>
+    <lastmod>2024-03-23T19:39:13+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/label-free-explainability/</loc>
+    <lastmod>2024-03-17T15:31:34+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/adversarially_reweighted_learning/</loc>
+    <lastmod>2024-03-04T18:35:12+01:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/posts/packed-ensembles/</loc>
     <lastmod>2024-02-27T15:05:20+01:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/</loc>
-    <lastmod>2024-02-27T15:05:20+01:00</lastmod>
+    <loc>http://localhost:1313/posts/a-framework-to-learn-with-interpretation/</loc>
+    <lastmod>2024-02-13T16:56:04+01:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/my-first-blog/</loc>
-    <lastmod>2024-01-08T11:26:03+01:00</lastmod>
+    <loc>http://localhost:1313/posts/ntk-sap/</loc>
+    <lastmod>2024-02-07T16:07:10+01:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/my-second-blog/</loc>
+    <loc>http://localhost:1313/posts/robustness-and-pag-the-converse/</loc>
+    <lastmod>2024-02-07T16:06:43+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/neq/</loc>
+    <lastmod>2024-02-07T15:55:14+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/optimal_transport_based_adversarial_patch/</loc>
+    <lastmod>2024-02-03T22:22:36+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/statistical_minimax_rates_under_privacy/</loc>
+    <lastmod>2024-01-31T17:22:02+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/transferability/</loc>
     <lastmod>2024-01-08T11:26:03+01:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/about/</loc>

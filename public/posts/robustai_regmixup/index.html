@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>RobustAI_RegMixup | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:url" content="http://localhost:1313/posts/robustai_regmixup/">
+  <meta property="og:site_name" content="Bloggin on Responsible AI">
+  <meta property="og:title" content="RobustAI_RegMixup">
+  <meta property="og:description" content="&lt;!DOCTYPE html&gt;Styled TableRegMixup : Regularizer for robust AIImprove accuracy and Out-of-Distribution RobustnessAuthors: Marius Ortega, Ly An CHHAY Paper : RegMixup by Francesco Pinto, Harry Yang, Ser-Nam Lim, Philip H.S. Torr, Puneet K. DokaniaTable of Contents Abstract Introduction Prerequisites Empirical Risk Minimization Vicinal Risk Minimization Mixup RegMixup in theory RegMixup in practice Conclusion Abstract In this blog post, we will present the paper “RegMixup: Regularizer for robust AI” by Francesco Pinto, Harry Yang, Ser-Nam Lim, Philip H.S. Torr, Puneet K. Dokania. This paper introduces a new regularizer called RegMixup, which is designed to improve the accuracy and out-of-distribution robustness of deep neural networks. The authors show that RegMixup can be used to improve the performance of state-of-the-art models on various datasets, including CIFAR-10, CIFAR-100, and ImageNet. The paper also provides an extensive empirical evaluation of RegMixup, demonstrating its effectiveness in improving the robustness of deep neural networks to out-of-distribution samples.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-03-24T12:38:16+01:00">
+    <meta property="article:modified_time" content="2024-03-24T12:38:16+01:00">
+
+    
+  <meta itemprop="name" content="RobustAI_RegMixup">
+  <meta itemprop="description" content="&lt;!DOCTYPE html&gt;Styled TableRegMixup : Regularizer for robust AIImprove accuracy and Out-of-Distribution RobustnessAuthors: Marius Ortega, Ly An CHHAY Paper : RegMixup by Francesco Pinto, Harry Yang, Ser-Nam Lim, Philip H.S. Torr, Puneet K. DokaniaTable of Contents Abstract Introduction Prerequisites Empirical Risk Minimization Vicinal Risk Minimization Mixup RegMixup in theory RegMixup in practice Conclusion Abstract In this blog post, we will present the paper “RegMixup: Regularizer for robust AI” by Francesco Pinto, Harry Yang, Ser-Nam Lim, Philip H.S. Torr, Puneet K. Dokania. This paper introduces a new regularizer called RegMixup, which is designed to improve the accuracy and out-of-distribution robustness of deep neural networks. The authors show that RegMixup can be used to improve the performance of state-of-the-art models on various datasets, including CIFAR-10, CIFAR-100, and ImageNet. The paper also provides an extensive empirical evaluation of RegMixup, demonstrating its effectiveness in improving the robustness of deep neural networks to out-of-distribution samples.">
+  <meta itemprop="datePublished" content="2024-03-24T12:38:16+01:00">
+  <meta itemprop="dateModified" content="2024-03-24T12:38:16+01:00">
+  <meta itemprop="wordCount" content="2474">
+    
+    <link rel="canonical" href="http://localhost:1313/posts/robustai_regmixup/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "posts",
+      "name": "RobustAI_RegMixup",
+      "headline": "RobustAI_RegMixup",
+      "alternativeHeadline": "",
+      "description": "\u003cstyle\r\nTYPE=\u0022text\/css\u0022\u003e\r\n\r\ncode.has-jax {font:\r\ninherit;\r\nfont-size:\r\n100%; \r\nbackground: \r\ninherit; \r\nborder: \r\ninherit;}\r\n\r\n\u003c\/style\u003e\r\n\u003cscript\r\ntype=\u0022text\/x-mathjax-config\u0022\u003e\r\n\r\nMathJax.Hub.Config({\r\n\r\n    tex2jax: {\r\n\r\n        inlineMath: [[\u0027$\u0027,\u0027$\u0027], [\u0027\\\\(\u0027,\u0027\\\\)\u0027]],\r\n\r\n        skipTags: [\u0027script\u0027, \u0027noscript\u0027, \u0027style\u0027, \u0027textarea\u0027, \u0027pre\u0027] \/\/ removed \u0027code\u0027 entry\r\n\r\n    }\r\n\r\n});\r\n\r\nMathJax.Hub.Queue(function() {\r\n\r\n    var all = MathJax.Hub.getAllJax(), i;\r\n\r\n    for(i = 0; i \u003c all.length; i \u002b= 1) {\r\n\r\n        all[i].SourceElement().parentNode.className \u002b= \u0027 has-jax\u0027;\r\n\r\n    }\r\n\r\n});\r\n\r\n\u003c\/script\u003e\r\n\u003cscript\r\ntype=\u0022text\/javascript\u0022\r\nsrc=\u0022https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/mathjax\/2.7.4\/MathJax.js?config=TeX-AMS_HTML-full\u0022\u003e\u003c\/script\u003e\r\n\u003c!DOCTYPE html\u003e\r\n\u003chtml lang=\u0022en\u0022\u003e\r\n\u003chead\u003e\r\n\u003cmeta charset=\u0022UTF-8\u0022\u003e\r\n\u003cmeta name=\u0022viewport\u0022 content=\u0022width=device-width, initial-scale=1.0\u0022\u003e\r\n\u003ctitle\u003eStyled Table\u003c\/title\u003e\r\n\u003cstyle\u003e\r\n    table {\r\n        border-collapse: collapse;\r\n        width: 100%;\r\n    }\r\n    th, td {\r\n        padding: 8px;\r\n        text-align: center;\r\n        border-bottom: 1px solid #ddd;\r\n    }\r\n    th {\r\n        background-color: #f2f2f2;\r\n    }\r\n    tr:hover {\r\n        background-color: #f5f5f5;\r\n    }\r\n\u003c\/style\u003e\r\n\u003c\/head\u003e\r\n\u003c\/html\u003e\r\n\u003ch1 style=\u0022font-size: 36px;\u0022\u003eRegMixup : Regularizer for robust AI\u003c\/h1\u003e\r\n\u003ch1 style=\u0022font-size: 24px;\u0022\u003eImprove accuracy and Out-of-Distribution Robustness\u003ch1\u003e\r\n\u003ch1 style=\u0022font-size: 18px;\u0022\u003eAuthors: Marius Ortega, Ly An CHHAY \u003cbr \/\u003e\r\nPaper : \u003ca href=\u0022https:\/\/arxiv.org\/abs\/2206.14502\u0022\u003eRegMixup\u003c\/a\u003e  by Francesco Pinto, Harry Yang, Ser-Nam Lim, Philip H.S. Torr, Puneet K. Dokania\u003c\/h1\u003e\r\n\u003ch1 id=\u0022table-of-contents\u0022\u003eTable of Contents\u003c\/h1\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#section-0.0\u0022\u003eAbstract\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-0.1\u0022\u003eIntroduction\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-1\u0022\u003ePrerequisites\u003c\/a\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#section-1.1\u0022\u003eEmpirical Risk Minimization\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-1.2\u0022\u003eVicinal Risk Minimization\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-1.3\u0022\u003eMixup\u003c\/a\u003e\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-2\u0022\u003eRegMixup in theory\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-3\u0022\u003eRegMixup in practice \u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-4\u0022\u003eConclusion\u003c\/a\u003e\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003ch2 id=\u0022section-0.0\u0022\u003eAbstract\u003c\/h2\u003e\n\u003cp\u003eIn this blog post, we will present the paper \u0026ldquo;RegMixup: Regularizer for robust AI\u0026rdquo; by Francesco Pinto, Harry Yang, Ser-Nam Lim, Philip H.S. Torr, Puneet K. Dokania. This paper introduces a new regularizer called RegMixup, which is designed to improve the accuracy and out-of-distribution robustness of deep neural networks. The authors show that RegMixup can be used to improve the performance of state-of-the-art models on various datasets, including CIFAR-10, CIFAR-100, and ImageNet. The paper also provides an extensive empirical evaluation of RegMixup, demonstrating its effectiveness in improving the robustness of deep neural networks to out-of-distribution samples.\u003c\/p\u003e",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/posts\/robustai_regmixup\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "2024",
+      "dateCreated": "2024-03-24T12:38:16.00Z",
+      "datePublished": "2024-03-24T12:38:16.00Z",
+      "dateModified": "2024-03-24T12:38:16.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/posts\/robustai_regmixup\/",
+      "wordCount" : "2474",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="../../">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="../../posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="../../tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="../../about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="../../articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">RobustAI_RegMixup</h2>
+      <style
+TYPE="text/css">
+
+code.has-jax {font:
+inherit;
+font-size:
+100%; 
+background: 
+inherit; 
+border: 
+inherit;}
+
+</style>
+<script
+type="text/x-mathjax-config">
+
+MathJax.Hub.Config({
+
+    tex2jax: {
+
+        inlineMath: [['$','$'], ['\\(','\\)']],
+
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+
+    }
+
+});
+
+MathJax.Hub.Queue(function() {
+
+    var all = MathJax.Hub.getAllJax(), i;
+
+    for(i = 0; i < all.length; i += 1) {
+
+        all[i].SourceElement().parentNode.className += ' has-jax';
+
+    }
+
+});
+
+</script>
+<script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Styled Table</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        padding: 8px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    tr:hover {
+        background-color: #f5f5f5;
+    }
+</style>
+</head>
+</html>
+<h1 style="font-size: 36px;">RegMixup : Regularizer for robust AI</h1>
+<h1 style="font-size: 24px;">Improve accuracy and Out-of-Distribution Robustness<h1>
+<h1 style="font-size: 18px;">Authors: Marius Ortega, Ly An CHHAY <br />
+Paper : <a href="https://arxiv.org/abs/2206.14502">RegMixup</a>  by Francesco Pinto, Harry Yang, Ser-Nam Lim, Philip H.S. Torr, Puneet K. Dokania</h1>
+<h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#section-0.0">Abstract</a></li>
+<li><a href="#section-0.1">Introduction</a></li>
+<li><a href="#section-1">Prerequisites</a>
+<ul>
+<li><a href="#section-1.1">Empirical Risk Minimization</a></li>
+<li><a href="#section-1.2">Vicinal Risk Minimization</a></li>
+<li><a href="#section-1.3">Mixup</a></li>
+</ul>
+</li>
+<li><a href="#section-2">RegMixup in theory</a></li>
+<li><a href="#section-3">RegMixup in practice </a></li>
+<li><a href="#section-4">Conclusion</a></li>
+</ul>
+<h2 id="section-0.0">Abstract</h2>
+<p>In this blog post, we will present the paper &ldquo;RegMixup: Regularizer for robust AI&rdquo; by Francesco Pinto, Harry Yang, Ser-Nam Lim, Philip H.S. Torr, Puneet K. Dokania. This paper introduces a new regularizer called RegMixup, which is designed to improve the accuracy and out-of-distribution robustness of deep neural networks. The authors show that RegMixup can be used to improve the performance of state-of-the-art models on various datasets, including CIFAR-10, CIFAR-100, and ImageNet. The paper also provides an extensive empirical evaluation of RegMixup, demonstrating its effectiveness in improving the robustness of deep neural networks to out-of-distribution samples.</p>
+<p>In this blong post, we will provide an overview of the paper, explain the theoretical background of RegMixup, and finally, perform a toy example to demonstrate how to use RegMixup with the torch-uncertainty library.</p>
+<h2 id="section-0.1">Introduction </h2>
+<p>Most real-world machine algorithm applications are good when it comes to predicting new data following the train distribution. However, they are not robust to out-of-distribution (OOD) samples (i.e. when the test data distribution is different from the train data distribution). This is a major problem in machine learning as it can lead to catastrophic predictions.</p>
+<p>The question is how to improve the robustness of machine learning algorithms to OOD samples ?
+Many researchers have tried such as Liu et al. (2020a, 2020b), Wen et al. (2021), Lakshminarayanan et al. (2017). Even though they have shown some improvements, their approaches use expensive ensemble methods or propose non-trivial modifications of the neural network architecture. What if we could improve the robustness of deep neural networks with respect to OOD samples while utilizing much simpler and cost-effective methods?</p>
+<p>The first step toward the method presented in this blog is Mixup, proposed by Zang and al (2018). This method is quite good when it comes to dealing with slight perturbations in the data distribution. However, Mixup has the tendency to emphasize difference in labels from very similar samples (high predictive entropy). This is not ideal for OOD samples as the model do not differentiate ID (In-distribution) and OOD samples very well.</p>
+<p>RegMixup adds a new layer to Mixup by using it as a regularizer. From there, we will present the theoretical background of the paper, the implementation so as to easily use it in practice.</p>
+<h2 id="section-1">1. Prerequisites </h2>
+<p>In order to understand the paper, we need to understand what is Empirical and Vicinal Risk Minimization (ERM and VRM) as well as Mixup.</p>
+<h3 id="section-1.1">1.1. Empirical Risk Minimization (ERM)</h3>
+<p>Empirical Risk Minimization is an inference principle which consists in finding the model $\hat{f}$ that minimizes the empirical risk $R_{emp}(\hat{f})$ on the training set. The empirical risk is defined as the average loss over the training set :</p>
+<p>$$
+R_{emp}(\hat{f}) = \frac{1}{n} \sum_{i=1}^{n} L(\hat{f}(x_i), y_i) \tag{1}
+$$</p>
+<p>where $L$ is the loss function, $x_i$ is the input, $y_i$ is the label and $n$ is the number of samples in the training set. However, ERM contains a very strong assumption which is that $\hat{f} \approx f$ where $f$ is the true (and unknown) distribution for all points of the dataset. Thereby, if the testing set distribution differs even slighly from the training set one, ERM is unable to explain or provide generalization. Vicinal Risk is a way to relax this assumption.</p>
+<h3 id="section-1.2">1.2. Vicinal Risk Minimization (VRM)</h3>
+<p>Vicinal Risk Minimization (VRM) is a generalization of ERM. Instead of having a single distribution estimate $\hat{f}$, VRM uses a set of distributions $\hat{f}_{x_i, y_i}$ for each training sample $(x_i, y_i)$. The goal is to minimize the average loss over the training set, but with respect to the vicinal distribution of each sample.</p>
+<p>$$
+R_{vrm}(\hat{f}) = \frac{1}{n} \sum_{i=1}^{n} L(\hat{f}_{x_i, y_i}(x_i), y_i) \tag{2}
+$$</p>
+<p>Consequently, each training point has its own distribution estimate. This is a way to relax the strong assumption of ERM explained above.</p>
+<h3 id="section-1.3">1.3. Mixup</h3>
+<p>Mixup is a data augmentation technique that generates new samples by mixing pairs of training samples. By doing so, Mixup regularizes models to favor simple linear behavior in-between training examples. Experimentally speaking, Mixup has been shown to improve the generalization of deep neural networks, increase their robustness to adversarial attacks, reduce the memorization of corrupt labels as well as stabilize the training of generative adversarial networks.</p>
+<p>In essence, Mixup can be thought as a learning objective designed for robustness and accountability of the model. Now, let&rsquo;s see how Mixup works.</p>
+<p>First, we take two samples $(x_i, y_i)$ and $(x_j, y_j)$ from the training set. Then, we generate a new sample $(\tilde{x}, \tilde{y})$ by taking a convex combination of the two samples with a mixup coefficient $\lambda \sim \text{Beta}(\alpha, \alpha)$ :</p>
+<p>$$
+\tilde{x} = \lambda x_i + (1 - \lambda) x_j \hspace{1cm}
+\tilde{y} = \lambda y_i + (1 - \lambda) y_j
+$$</p>
+<p>We can then define the vicinal distribution of the mixed sample $(\tilde{x}, \tilde{y})$ as :</p>
+<p>$$
+P_{x_i, y_i} = \mathbb{E}_\lambda[( \delta {\tilde{x}_i}(x), \delta{\tilde{y}_i}(y))] \tag{3}
+$$</p>
+<p>Mixup is an interesting method to consider but it possesses some limitations :</p>
+<ul>
+<li><strong>Small $\alpha$ issues :</strong> With our setup, $\alpha \approx 1$ encourages $\tilde{x}$ to be perceptually different from $x$. Consequently, training and testing distribution will also grow appart from each other. When $\alpha \ll 1$, the mixup convex interpolation factor λ leads to a sharp peaks of 0 and 1. Therefore, Mixup will produce samples close to the initial ones (in case λ close to 1) or in the direction of another sample (in case of λ close to 0). Look at the <strong><a href="#my-fig">figure</a></strong> below, one of the two interpolating images dominates the interpolated one. What is noticed after cross-validation of alpha is that the best values are $\alpha \approx 0.2$ which is very small. Consequently, the final sample effectively presents only a small perturbation in comparison to the original one while the vicinal distribution exploration space is much larger. We could say that Mixup does not allow to use the full potential of the vicinal distributions of the data.</li>
+<li><strong>Model underconfidence :</strong> When a neural network is trained with Mixup, it is only exposed to interpolated samples. Consequently, the model learns to predict smoothed labels which is the very root cause of its underconfidence. This results in a high predictive entropy for both ID and OOD samples.</li>
+</ul>
+<figure id="my-fig" class="numbered">
+    <img src="../../images/regmixup/fig.png" class="align-center">
+    <p style="text-align: center;">Mixup vs RegMixup, underconfidence and space exploration.</p>
+</figure>
+<h2 id="section-2">2. RegMixup in theory</h2>
+<p>Now that we have understood the path that led to RegMixup, we will explore its theoretical background and see how and why it is a good regularizer for robust AI.</p>
+<p>While Mixup utilizes data points&rsquo; vicinal distribution only, RegMixup uses both the vicinal and the empirical one (refering respectively to VRM and ERM). This can seem far-fetched or even counter-intuitive but produces very interesting properties.</p>
+<p>$$
+P(x, y) = \frac{1}{n} \sum_{i=1}^n \left( \gamma \delta_{x_i}(x) \delta_{y_i}(y) + (1-\gamma) P_{x_i, y_i}(x, y) \right) \tag{4}
+$$</p>
+<p>Here, $\gamma$ is the hyperparameter controlling the mixup between the empirical and vicinal distribution. In fact, we see that the distribution $P(x, y)$ for RegMixup is a convex combination of the empirical distribution (left term of the addition in equation 4) and the vicinal distribution defined with equations (2) and (3).</p>
+<p>From there, we can define a new loss function $\mathcal{L}$ based on the Cross Entropy Loss ($\text{CE}$)</p>
+<p>$$
+\mathcal{L}(\hat{y}, y) = \text{CE}(p_\theta(\hat{y} \vert x), y) + \eta \text{CE}(p_\theta(\hat{y} \vert \tilde{x}), \tilde{y}) \tag{5}
+$$</p>
+<p>With $ \eta \in R_{+}^{\ast} $ being the hyperparameter controlling the importance of the vicinal cross entropy sub-loss and $p_\theta$ the activation function of the model parameterized by $\theta$. In the paper, the value of $\eta$ is set to 1 and its variation seem negligible. Consequently, we will not focus on it in this blog post.</p>
+<p>Such a model (equation 4) exhibits properties that lacked in Mixup :</p>
+<ul>
+<li><strong>Values of $\alpha$ and underconfidence :</strong> As we explicitly add the empirical distribution to the vicinal one, the ERM term will encourage the model to predict the true labels of the training set while the VRM term, motivated by the interpolation factor $\lambda$, will explore the vicinal distribution space in a much more thorough way than what was possible with Mixup. For instance, if λ $\approx$ 0.5, a wide variety of images containing features from both the images in the pair are obtained (look at the <strong><a href="#my-fig">figure</a></strong>). Consequently, the ERM term allows to better predict in-distribution samples while the VRM term, with a larger $\alpha$, will allow to better predict OOD samples. This is a very interesting property as it allows to have a model that is both confident and accurate.</li>
+<li><strong>Prediction entropy :</strong> Through their experiments and observations, researchers found that a cross-validated value of $\alpha$ leads to a maximum likelihood estimation having high entropy for ODD samples only. While Mixup demonstrated high entropy for both ID and OOD samples, RegMixup is able to differentiate between the two. This is an highly desirable properties indicating us that RegMixup acts as a <strong>regularizer</strong> in essense.</li>
+</ul>
+<p>As a preliminary conclusion, RegMixup is a very powerful, cost-efficient and simple-to-implement regularizer that allows to improve the robustness and accuracy of deep neural networks for both in-distribution and out-of-distribution samples. In the next section, we will see how to use RegMixup in practice trough a toy example.</p>
+<h2 id="section-3">3. RegMixup in practice (implementation)</h2>
+<p>Now, our objective will be to demonstrate the effectiveness of RegMixup through a very simple example. We will use the CIFAR-10-C dataset (corrupted version of CIFAR-10) and a standard ResNet-18 model. We will compare performances of 3 models :</p>
+<ul>
+<li>A baseline model trained with ERM</li>
+<li>A model trained with Mixup</li>
+<li>A model trained with RegMixup</li>
+</ul>
+<p>To do so, we have two possibilities :</p>
+<ul>
+<li>Use the official implementation of RegMixup available on <a href="https://github.com/FrancescoPinto/RegMixup">Francesco Pinto's GitHub</a>.</li>
+<li>Use the torch-uncertainty library which provides a simple and efficient way to use RegMixup. Note, the library is developed by researchers from ENSTA Paris and is available on <a href="https://github.com/ENSTA-U2IS-AI/torch-uncertainty">GitHub</a>.</li>
+</ul>
+<p>In this blog post, we will use the torch-uncertainty library as it is very simple to use and provides a very well-implemented version of RegMixup.</p>
+<h3 id="31-installation">3.1. Installation</h3>
+<p>First, we need to install the torch-uncertainty library. To do so, we can use pip :</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pip install torch-uncertainty
+</span></span></code></pre></div><p>Note: If you use a gpu, torch-uncertainty will automatically install a cpu version of torch and torchvision, you can compile the following lines to install the gpu version of torch and torchvision (took from <a href="https://pytorch.org/get-started/locally/">PyTorch website</a>) :</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pip unistall torch torchvision
+</span></span><span style="display:flex;"><span>pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+</span></span></code></pre></div><p>To check if the installation was successful, you can run the following code, it should return True if you have a gpu and False if you don&rsquo;t have one :</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">torch</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">print</span><span style="color:#111">(</span><span style="color:#111">torch</span><span style="color:#f92672">.</span><span style="color:#111">cuda</span><span style="color:#f92672">.</span><span style="color:#111">is_available</span><span style="color:#111">())</span>
+</span></span></code></pre></div><h3 id="32-training-the-models-with-torch-uncertainty">3.2. Training the models with torch-uncertainty</h3>
+<p>Now that we have installed torch-uncertainty, we can train the models. First, we need to import the necessary libraries :</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">torch_uncertainty</span> <span style="color:#f92672">import</span> <span style="color:#111">cli_main</span><span style="color:#111">,</span> <span style="color:#111">init_args</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">torch_uncertainty.baselines.classification</span> <span style="color:#f92672">import</span> <span style="color:#111">ResNet</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">torch_uncertainty.optimization_procedures</span> <span style="color:#f92672">import</span> <span style="color:#111">optim_cifar10_resnet18</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">torch_uncertainty.datamodules</span> <span style="color:#f92672">import</span> <span style="color:#111">CIFAR10DataModule</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">torchvision.datasets</span> <span style="color:#f92672">import</span> <span style="color:#111">CIFAR10</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">torchvision</span> <span style="color:#f92672">import</span> <span style="color:#111">transforms</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">torch.nn</span> <span style="color:#f92672">import</span> <span style="color:#111">CrossEntropyLoss</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">torch</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#111">os</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">pathlib</span> <span style="color:#f92672">import</span> <span style="color:#111">Path</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> <span style="color:#111">cli_test_helpers</span> <span style="color:#f92672">import</span> <span style="color:#111">ArgvContext</span>
+</span></span></code></pre></div><p>Then, we can define the 3 models we discussed earlier :</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">baseline</span> <span style="color:#f92672">=</span> <span style="color:#111">ResNet</span><span style="color:#111">(</span><span style="color:#111">num_classes</span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">loss</span><span style="color:#f92672">=</span><span style="color:#111">CrossEntropyLoss</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">optimization_procedure</span><span style="color:#f92672">=</span><span style="color:#111">optim_cifar10_resnet18</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">version</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;std&#34;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">in_channels</span><span style="color:#f92672">=</span><span style="color:#ae81ff">3</span><span style="color:#111">,</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#111">arch</span><span style="color:#f92672">=</span><span style="color:#ae81ff">18</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">cuda</span><span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">mixup</span> <span style="color:#f92672">=</span> <span style="color:#111">ResNet</span><span style="color:#111">(</span><span style="color:#111">num_classes</span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">loss</span><span style="color:#f92672">=</span><span style="color:#111">CrossEntropyLoss</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">optimization_procedure</span><span style="color:#f92672">=</span><span style="color:#111">optim_cifar10_resnet18</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">version</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;std&#34;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">in_channels</span><span style="color:#f92672">=</span><span style="color:#ae81ff">3</span><span style="color:#111">,</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#111">arch</span><span style="color:#f92672">=</span><span style="color:#ae81ff">18</span><span style="color:#111">,</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#111">mixup</span><span style="color:#f92672">=</span><span style="color:#00a8c8">True</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">mixup_alpha</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0.2</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">cuda</span><span style="color:#111">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">regmixup</span> <span style="color:#f92672">=</span> <span style="color:#111">ResNet</span><span style="color:#111">(</span><span style="color:#111">num_classes</span><span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">loss</span><span style="color:#f92672">=</span><span style="color:#111">CrossEntropyLoss</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">optimization_procedure</span><span style="color:#f92672">=</span><span style="color:#111">optim_cifar10_resnet18</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">version</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;std&#34;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">in_channels</span><span style="color:#f92672">=</span><span style="color:#ae81ff">3</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">arch</span><span style="color:#f92672">=</span><span style="color:#ae81ff">18</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">reg_mixup</span><span style="color:#f92672">=</span><span style="color:#00a8c8">True</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">mixup_alpha</span><span style="color:#f92672">=</span><span style="color:#ae81ff">15</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">cuda</span><span style="color:#111">()</span>
+</span></span></code></pre></div><p>Before training the models, we need to define important arguments such as training parameters (epochs, estimators, etc.) and the datamodule. We can do so with the following code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">root</span> <span style="color:#f92672">=</span> <span style="color:#111">Path</span><span style="color:#111">(</span><span style="color:#111">os</span><span style="color:#f92672">.</span><span style="color:#111">path</span><span style="color:#f92672">.</span><span style="color:#111">abspath</span><span style="color:#111">(</span><span style="color:#d88200">&#34;&#34;</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># We mock the arguments for the trainer</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">with</span> <span style="color:#111">ArgvContext</span><span style="color:#111">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;file.py&#34;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;--max_epochs&#34;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;20&#34;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;--enable_progress_bar&#34;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;False&#34;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;--num_estimators&#34;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;8&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">args</span> <span style="color:#f92672">=</span> <span style="color:#111">init_args</span><span style="color:#111">(</span><span style="color:#111">network</span><span style="color:#f92672">=</span><span style="color:#111">ResNet</span><span style="color:#111">,</span> <span style="color:#111">datamodule</span><span style="color:#f92672">=</span><span style="color:#111">CIFAR10DataModule</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">net_name</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;logs/reset18-cifar10&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># datamodule</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">args</span><span style="color:#f92672">.</span><span style="color:#111">root</span> <span style="color:#f92672">=</span> <span style="color:#111">str</span><span style="color:#111">(</span><span style="color:#111">root</span> <span style="color:#f92672">/</span> <span style="color:#d88200">&#34;data&#34;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">dm</span> <span style="color:#f92672">=</span> <span style="color:#111">CIFAR10DataModule</span><span style="color:#111">(</span><span style="color:#f92672">**</span><span style="color:#111">vars</span><span style="color:#111">(</span><span style="color:#111">args</span><span style="color:#111">))</span>
+</span></span></code></pre></div><p>Finally, we can train the models using the <code>cli_main</code> function from torch-uncertainty :</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#111">results_baseline</span> <span style="color:#f92672">=</span> <span style="color:#111">cli_main</span><span style="color:#111">(</span><span style="color:#111">baseline</span><span style="color:#111">,</span> <span style="color:#111">dm</span><span style="color:#111">,</span> <span style="color:#111">root</span><span style="color:#111">,</span> <span style="color:#111">net_name</span><span style="color:#111">,</span> <span style="color:#111">args</span><span style="color:#f92672">=</span><span style="color:#111">args</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">results_mixup</span> <span style="color:#f92672">=</span> <span style="color:#111">cli_main</span><span style="color:#111">(</span><span style="color:#111">mixup</span><span style="color:#111">,</span> <span style="color:#111">dm</span><span style="color:#111">,</span> <span style="color:#111">root</span><span style="color:#111">,</span> <span style="color:#111">net_name</span><span style="color:#111">,</span> <span style="color:#111">args</span><span style="color:#f92672">=</span><span style="color:#111">args</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">results_regmixup</span> <span style="color:#f92672">=</span> <span style="color:#111">cli_main</span><span style="color:#111">(</span><span style="color:#111">regmixup</span><span style="color:#111">,</span> <span style="color:#111">dm</span><span style="color:#111">,</span> <span style="color:#111">root</span><span style="color:#111">,</span> <span style="color:#111">net_name</span><span style="color:#111">,</span> <span style="color:#111">args</span><span style="color:#f92672">=</span><span style="color:#111">args</span><span style="color:#111">)</span>
+</span></span></code></pre></div><p>Note: If you have a gpu, you can make a slight modification to the code to use it :</p>
+<ol>
+<li>Click on <code>cli_main</code> and press <code>F12</code> to go to the function definition.</li>
+<li>Go to line 222 and replace the trainer definition by the following one :</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># trainer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">trainer</span> <span style="color:#f92672">=</span> <span style="color:#111">pl</span><span style="color:#f92672">.</span><span style="color:#111">Trainer</span><span style="color:#f92672">.</span><span style="color:#111">from_argparse_args</span><span style="color:#111">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">args</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">accelerator</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;gpu&#34;</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">devices</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">callbacks</span><span style="color:#f92672">=</span><span style="color:#111">callbacks</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">logger</span><span style="color:#f92672">=</span><span style="color:#111">tb_logger</span><span style="color:#111">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">deterministic</span><span style="color:#f92672">=</span><span style="color:#111">(</span><span style="color:#111">args</span><span style="color:#f92672">.</span><span style="color:#111">seed</span> <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#00a8c8">None</span><span style="color:#111">),</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">inference_mode</span><span style="color:#f92672">=</span><span style="color:#f92672">not</span> <span style="color:#111">(</span><span style="color:#111">args</span><span style="color:#f92672">.</span><span style="color:#111">opt_temp_scaling</span> <span style="color:#f92672">or</span> <span style="color:#111">args</span><span style="color:#f92672">.</span><span style="color:#111">val_temp_scaling</span><span style="color:#111">),</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">)</span>
+</span></span></code></pre></div><ol start="3">
+<li>Save the file and you are all set.</li>
+</ol>
+<h3 id="33-results">3.3. Results</h3>
+<p>So as to compare the performances of the 3 models, we use two corrupted versions of Cifar-10-C. The first version has a corruption severity factor of 5 (slight data corruption) and the second one has a corruption severity factor of 15 (more severe data corruption). Our study contains 5 metrics : entropy, accuracy, brier score, expected calibration error (ECE) and negative log-likelihood (NLL). In our explanation, we will focus on the accuracy and entropy to keep it simple.</p>
+<p>With corruption severity factor of 5, we obtain the following results :</p>
+<table>
+  <thead>
+      <tr>
+          <th></th>
+          <th>entropy</th>
+          <th>accuracy</th>
+          <th>brier</th>
+          <th>ece</th>
+          <th>nll</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>baseline</td>
+          <td>0.656294</td>
+          <td>0.7480</td>
+          <td>0.349862</td>
+          <td>0.032466</td>
+          <td>0.729336</td>
+      </tr>
+      <tr>
+          <td>mixup</td>
+          <td>0.640811</td>
+          <td><strong>0.7578</strong></td>
+          <td>0.335403</td>
+          <td>0.024429</td>
+          <td>0.703844</td>
+      </tr>
+      <tr>
+          <td>regmixup</td>
+          <td><strong>0.676174</strong></td>
+          <td>0.7564</td>
+          <td>0.340233</td>
+          <td>0.023135</td>
+          <td>0.711405</td>
+      </tr>
+  </tbody>
+</table>
+<p>First of all, we can see that the accuracy is quite similar for the 3 models. This makes sense as the corruption severity factor is quite low, thus cifar-10-c is not very different from the original cifar-10. However, we can see that the entropy of the RegMixup model is higher than the one of the Mixup model. This is symptomatic of Mixup&rsquo;s underconfidence. As stated previously, given the low corruption severity factor of cifar-10-c, the underconfidence of Mixup does not impact its performances in a visible manner.</p>
+<p>With corruption severity factor of 15, we obtain the following results :</p>
+<table>
+  <thead>
+      <tr>
+          <th></th>
+          <th>entropy</th>
+          <th>accuracy</th>
+          <th>brier</th>
+          <th>ece</th>
+          <th>nll</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>baseline</td>
+          <td>0.615607</td>
+          <td>0.7402</td>
+          <td>0.358522</td>
+          <td>0.048414</td>
+          <td>0.750933</td>
+      </tr>
+      <tr>
+          <td>mixup</td>
+          <td>0.698558</td>
+          <td>0.7558</td>
+          <td>0.338540</td>
+          <td>0.014760</td>
+          <td>0.709190</td>
+      </tr>
+      <tr>
+          <td>regmixup</td>
+          <td><strong>0.702599</strong></td>
+          <td><strong>0.7614</strong></td>
+          <td>0.327945</td>
+          <td>0.008439</td>
+          <td>0.687550</td>
+      </tr>
+  </tbody>
+</table>
+<p>Here the results are much more unequivocal. As the severity factor increases, the baseline model drops in accuracy and entropy, Mixup also drops in accuracy but increases in entropy and RegMixup increases in accuracy and entropy. Here, RegMixup has the higher entropy as the model has higher entropy for OOD samples which are more frequent at this corruption level. Mixup shows a greater delta increase in entropy due to its higher predictive entropy tendency whether or not samples are OOD or ID. Consequently, RegMixup is more confident and accurate than the Mixup model eventhough Mixup is not fully underperforming.</p>
+<h2 id="section-4">4. Conclusion</h2>
+<p>As a conclusion, we have seen that RegMixup is a powerful method to regularize deep neural networks. Despite being very simple and cost-effective, it is important to specify that the paper does not provide a theoretical explanation of the method. These experimental grounds are very promising but it appears important to stay cautious while utilizing RegMixup.</p>
+
+      
+      <div class="post-date">
+        <span class="g time">March 24, 2024 </span> &#8729;
+         
+      </div>
+      
+    </section>
+    
+    <div id="comments">
+      <script src="https://utteranc.es/client.js"
+    repo=ZgotmplZ
+    issue-term="pathname"
+    theme=ZgotmplZ
+    crossorigin="anonymous"
+    async>
+</script>
+
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>

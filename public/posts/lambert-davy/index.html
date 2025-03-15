@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:url" content="http://localhost:1313/posts/lambert-davy/">
+  <meta property="og:site_name" content="Bloggin on Responsible AI">
+  <meta property="og:title" content="Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints">
+  <meta property="og:description" content="Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness ConstraintsAuthors: Godefroy LAMBERT and Louise DAVYTable of Contents Introduction Definitions AUC-based fairness constraints ROC-based fairness constraints Results Reproducibility Conclusion This is a blog post about the paper Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints, published by R. Vogel et al. in 2021 and available here.
+Introduction With recent advances in machine learning, applications are becoming increasingly numerous and the expectations are high. Those applications will only be able to be deployed if some important issues are addressed such as bias. There are famous datasets known for containing variables that induce a lot of bias such as Compas with racial bias and gender bias in the Adult dataset. To avoid those biases, new algorithms were created to provide more fairness in the prediction by using diverse methods.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-03-23T19:39:13+01:00">
+    <meta property="article:modified_time" content="2024-03-23T19:39:13+01:00">
+
+    
+  <meta itemprop="name" content="Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints">
+  <meta itemprop="description" content="Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness ConstraintsAuthors: Godefroy LAMBERT and Louise DAVYTable of Contents Introduction Definitions AUC-based fairness constraints ROC-based fairness constraints Results Reproducibility Conclusion This is a blog post about the paper Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints, published by R. Vogel et al. in 2021 and available here.
+Introduction With recent advances in machine learning, applications are becoming increasingly numerous and the expectations are high. Those applications will only be able to be deployed if some important issues are addressed such as bias. There are famous datasets known for containing variables that induce a lot of bias such as Compas with racial bias and gender bias in the Adult dataset. To avoid those biases, new algorithms were created to provide more fairness in the prediction by using diverse methods.">
+  <meta itemprop="datePublished" content="2024-03-23T19:39:13+01:00">
+  <meta itemprop="dateModified" content="2024-03-23T19:39:13+01:00">
+  <meta itemprop="wordCount" content="1792">
+    
+    <link rel="canonical" href="http://localhost:1313/posts/lambert-davy/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "posts",
+      "name": "Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints",
+      "headline": "Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints",
+      "alternativeHeadline": "",
+      "description": "\u003ch1 style=\u0022font-size: 24px;\u0022\u003eLearning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints\u003c\/h1\u003e\r\n\u003ch1 style=\u0022font-size: 18px;\u0022\u003eAuthors: Godefroy LAMBERT and Louise DAVY\u003c\/h1\u003e\r\n\u003ch1 id=\u0022table-of-contents\u0022\u003eTable of Contents\u003c\/h1\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#section-1\u0022\u003eIntroduction\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-2\u0022\u003eDefinitions\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-3\u0022\u003eAUC-based fairness constraints\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-4\u0022\u003eROC-based fairness constraints\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-5\u0022\u003eResults\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-6\u0022\u003eReproducibility\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-7\u0022\u003eConclusion\u003c\/a\u003e\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003cp\u003eThis is a blog post about the paper Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints, published by R. Vogel et al. in 2021 and available \u003ca href=\u0022http:\/\/proceedings.mlr.press\/v130\/vogel21a\/vogel21a-supp.pdf\u0022\u003ehere\u003c\/a\u003e.\u003c\/p\u003e\n\u003ch1 id=\u0022section-1\u0022\u003e\u003ch1 style=\u0022font-size: 24px; text-decoration: underline;\u0022\u003eIntroduction\u003c\/h1\u003e\u003c\/h1\u003e\n\u003cp\u003eWith recent advances in machine learning, applications are becoming increasingly numerous and the expectations are high. Those applications will only be able to be deployed if some important issues are addressed such as bias. There are famous datasets known for containing variables that induce a lot of bias such as Compas with racial bias and gender bias in the Adult dataset. To avoid those biases, new algorithms were created to provide more fairness in the prediction by using diverse methods.\u003c\/p\u003e",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/posts\/lambert-davy\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "2024",
+      "dateCreated": "2024-03-23T19:39:13.00Z",
+      "datePublished": "2024-03-23T19:39:13.00Z",
+      "dateModified": "2024-03-23T19:39:13.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/posts\/lambert-davy\/",
+      "wordCount" : "1792",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="../../">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="../../posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="../../tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="../../about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="../../articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints</h2>
+      <h1 style="font-size: 24px;">Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints</h1>
+<h1 style="font-size: 18px;">Authors: Godefroy LAMBERT and Louise DAVY</h1>
+<h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#section-1">Introduction</a></li>
+<li><a href="#section-2">Definitions</a></li>
+<li><a href="#section-3">AUC-based fairness constraints</a></li>
+<li><a href="#section-4">ROC-based fairness constraints</a></li>
+<li><a href="#section-5">Results</a></li>
+<li><a href="#section-6">Reproducibility</a></li>
+<li><a href="#section-7">Conclusion</a></li>
+</ul>
+<p>This is a blog post about the paper Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints, published by R. Vogel et al. in 2021 and available <a href="http://proceedings.mlr.press/v130/vogel21a/vogel21a-supp.pdf">here</a>.</p>
+<h1 id="section-1"><h1 style="font-size: 24px; text-decoration: underline;">Introduction</h1></h1>
+<p>With recent advances in machine learning, applications are becoming increasingly numerous and the expectations are high. Those applications will only be able to be deployed if some important issues are addressed such as bias. There are famous datasets known for containing variables that induce a lot of bias such as Compas with racial bias and gender bias in the Adult dataset. To avoid those biases, new algorithms were created to provide more fairness in the prediction by using diverse methods.</p>
+<p>Today, we will be reviewing the methods presented in “Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints”. This paper uses basic metrics such as AUC constraint and ROC constraint and shows some limitations. Since this is bipartite ranking, we will only focus on binary prediction, such as will this person recid for the COMPAS dataset or will this person get his loan for the Adult dataset.</p>
+<h1 id="section-2"><h1 style="font-size: 24px; text-decoration: underline;">Definitions</h1></h1>
+<p>The goal of <strong>bipartite ranking</strong> is to acquire an ordering of X where positive instances are consistently ranked above negative ones with a high probability. This is done by learning an appropriate scoring function $s$. Such scoring functions are widely used in many critical domains such as <strong>loan granting</strong>, <strong>anomaly detection</strong>, or even in <strong>court decisions</strong>. A nice way to assess their performance is through the analysis of the <strong>Receiver Operating Characteristic</strong> (ROC) curve and the <strong>Area Under the ROC Curve</strong> (AUC).</p>
+<p><strong>ROC</strong> stands for <strong>Receiver Operating Characteristic curve</strong> and is a graph showing the performance of a classification model at all classification thresholds for a model. This curve plots two parameters:</p>
+<ul>
+<li>True Positive Rate</li>
+<li>False Positive Rate</li>
+</ul>
+<p><img
+  src="../../images/lambert_davy/roc_easy.png"
+  alt="Roc_1"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<p>The formula for the True Positive Rate (TPR) is:
+$$TPR = \frac{TP}{TP + FN}$$</p>
+<p>And the formula for the False Positive Rate (FPR) is:
+$$FPR = \frac{FP}{FP + TN}$$</p>
+<p>With ${FP}$ = False Positive, $FN$ = False Negative, $TP$ = True Positive, $TN$ = True Negative.</p>
+<p>By varying the classifier, we can obtain different ROC curves that are represented in the following image. The curve that is closer to the upper-left corner is the best one, while the curve in diagonal represents a random classifier.
+<img
+  src="../../images/lambert_davy/Roc_curve.svg.png"
+  alt="Roc_full"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<p><strong>AUC</strong> stands for <strong>Area Under the ROC Curve</strong> and is a widely used metric in machine learning, particularly in binary classification tasks. The AUC quantifies the <strong>overall performance of the model</strong> across all possible classification thresholds.</p>
+<p>That is, AUC measures the entire two-dimensional area underneath the entire ROC curve (think integral calculus) from (0,0) to (1,1). The AUC ranges in value from 0 to 1. A model whose predictions are <strong>100% wrong has an AUC of 0.0</strong>, one whose predictions are <strong>100% correct has an AUC of 1.0</strong>.</p>
+<p><img
+  src="../../images/lambert_davy/AUC.png"
+  alt="AUC"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<p>While <strong>fairness</strong> seems like a desirable goal for any ranking function, there are many different definitions of what fairness really is and thus, many different <strong>metrics</strong> to assess the fairness of an algorithm. In the case of loan grants for example, one could consider that fairness is achieved between men and women if we granted the same percentage of loans for both groups. <strong>Statistical parity</strong>, which  compares the proportion of positive outcomes between different demographic groups, is a good metric in this case.  However, this approach might overlook underlying disparities in socioeconomic status that affect loan approval rates. Another vision of fairness might ensure that individuals are all as likely to get a wrong decision, regardless of demographic factors such as gender or ethnicity. In this case, <strong>parity of mistreatment</strong> would be a good metric, as it ensures that the proportion of errors is the same for all demographic groups. However, this considers that all errors are the same, which means that one group could have a high false positive rate and another a high false negative rate. The authors thus decided to choose <strong>parity in false positive rates</strong> and/or <strong>parity in false negative rates</strong>.</p>
+<h1 id="section-3"><h1 style="font-size: 24px; text-decoration: underline;">AUC-based fairness constraints</h1></h1>
+<p>This first approach is based on the AUC, it will help us to highlight the limitations of this metric which motivated the authors to introduce another approach based on ROC constraints.</p>
+<p>Precise example of AUC based constraints presented in the paper are the intra-group pairwise AUC fairness (Beutel et al., 2019), Background Negative Subgroup Positive (BNSP) AUC fairness (Borkan et al., 2019), the inter-group pairwise AUC fairness (Kallus and Zhou, 2019). The first one require the ranking performance to be equal within groups, the second one enforces that positive instances from either group have the same probability of being ranked higher than a negative example and the last one imposes that the positives of a group can be distinguished from the negatives of the other group as effectively for both groups. Those 3 AUC based constraints are only a part of the many constraints that exist.</p>
+<p>The paper introduces a new framework to generalize all relevant AUC-based constraint as a <strong>linear combination of 5 relevant elementary constraints</strong> noted $C_1$ to $C_5$.</p>
+<p>The value of |$ C_ {1} $(s)| (resp. |$ C_ {2} $(s)|) quantifies the <strong>resemblance of the distribution</strong> of the negatives (resp. positives) between the <strong>two sensitive attributes</strong>.</p>
+<p>$ C_ {1} $(s) = $ AUC_ {{H_S^{(0)}} ,{H_S^{(1)}}} $ - $\frac{1}{2}$</p>
+<p>$ C_ {2} $(s) = $\frac{1}{2}$ - $ AUC_ {{G_S^{(0)}} ,{G_S^{(1)}}} $</p>
+<p>The values of $ C_ {3} $(s), $ C_ {4} $(s) and $ C_ {5} $(s) measure the <strong>difference
+in ability of a score to discriminate</strong> between positives and negatives for any two pairs of sensitive attributes.</p>
+<p>$ C_ {3} $(s) = $ AUC_ {{H_S^{(0)}} ,{G_S^{(0)}}} $ - $ AUC_ {{H_S^{(0)}} ,{G_S^{(1)}}} $</p>
+<p>$ C_ {4} $(s) = $ AUC_ {{H_S^{(0)}} ,{G_S^{(1)}}} $ - $ AUC_ {{H_S^{(1)}} ,{G_S^{(0)}}} $</p>
+<p>$ C_ {5} $(s) = $ AUC_ {{H_S^{(1)}} ,{G_S^{(0)}}} $ - $ AUC_ {{H_S^{(1)}} ,{G_S^{(1)}}} $</p>
+<p>The family of fairness constraints considered is then the set of linear combinations of the $C_l(s)$ = 0:</p>
+<p>\begin{align*}
+% $C_l(s)$ = 0
+C_Γ(s): Γ^T C(s) =
+\sum_{l=1}^{5} {Γ_l}{C_l}(s) = 0
+\end{align*}</p>
+<p>Where $Γ$ = $(Γ_1, &hellip; Γ_5)^T$.</p>
+<p>The objective function is thus defined as follows :</p>
+<p>\begin{align}
+\label{eq:auc_general_problem}
+\textstyle\max_{s\in\mathcal{S}} \quad AUC_{H_s,G_s} - \lambda
+|\Gamma^\top
+C
+(s)|,
+\end{align}
+where $\lambda\ge 0$ is a hyperparameter balancing ranking performance
+and fairness.</p>
+<p>The paper focuses on a special case of fairness, the <strong>intra-group pairwise AUC fairness</strong>. This was to be more concise. In this example, the objective function becomes:</p>
+<p>$$
+L_\lambda(s) = AUC_{H_s,G_s} - \lambda  | AUC_{H_s^{(0)}, G_s^{(0)}} -  AUC_{H_s^{(1)}, G_s^{(1)} } |
+$$</p>
+<p><strong><u> Issues of AUC-Based constraint:</u></strong></p>
+<p>Fairness using AUC-based constraints defined by the equality between two AUC’s only quantify a stochastic order between distributions, not the equality between these distributions, and would lead to some unfair result, for a group or for the other group.</p>
+<p>The authors conducted experiments with the credit-risk dataset and found that creditworthy individuals from both groups had equal chances of being ranked higher than a &ldquo;bad borrower.&rdquo; However, employing high thresholds (which represent low probabilities of default on approved loans) would result in unfair outcomes for one group.</p>
+<h1 id="section-4"><h1 style="font-size: 24px; text-decoration: underline;">ROC-based fairness constraints</h1></h1>
+<p>A richer approach is then to use <strong>pointwised ROC-based fairness constraints</strong>. Ideally, we would want to enforce the equality of all score distributions between both groups (i.e., identical ROC curves). This would satisfy all AUC-based fairness constraints previously mentioned. However, this condition is so restrictive that it will most likely lead to a significant drop in performances. As a result, the authors propose to satisfy this constraint on only a <strong>finite number of points</strong>. They were indeed able to prove that this was sufficient to ensure maximum fairness for a fixed false positive or false negative  $\alpha$.</p>
+<p>As a result, the objective function becomes :</p>
+<p>\begin{align*}
+% L_\Lambda(s) =
+AUC_{H_s,G_s} &amp;-
+\sum_{k=1}^{m_H} \lambda_H^{(k)}  \big| \Delta_{H,\alpha_H^{
+(k)}}(s) \big|
+- \sum_{k=1}^{m_G} \lambda_G^{(k)} \big| \Delta_{G,\alpha_G^{(k)}}(s) \big|,
+\end{align*}</p>
+<p>Where $\Delta_{H,\alpha_H^{(k)}}(s)$ and $\Delta_{G,\alpha_G^{(k)}}(s)$ represent the deviations between the positive (resp. negative) inter-group ROCs and the identity function:</p>
+<p>$$
+\Delta_{G, \alpha}(s) = ROC_{G^{(0)}_s, G^{(1)}_s}(\alpha) - \alpha
+$$</p>
+<p>$$
+\Delta_{H, \alpha}(s) = ROC_{H^{(0)}_s,H^{(1)}_s}(\alpha) - \alpha
+$$</p>
+<p>In practice, the objective function is slightly modified to be able to maximise it. The authors applied a classic smooth surrogate relaxations of the AUCs or ROCs based on a logistic function. They also removed the absolute values and, instead, relied on some parameters to ensure positive values.</p>
+<h1 id="section-5"><h1 style="font-size: 24px; text-decoration: underline;">Results</h1></h1>
+<p>The authors tested out their results on two datasets : <strong>Compas</strong> and <strong>Adult</strong>. Both are widely used when it comes to fairness. Indeed, they are known to be biased against race (for Compas) and gender (for both). Compas is a recidivism prediction dataset, whereas Adult predicts whether income exceeds $50K/yr based on census data. The results reported in the next figure show that the ROC-based method achieves its goal of mitigating the differences between favoured and unfavoured groups with limited drop in performances (the AUC went from 0.72 to 0.70 on the Compas dataset and from 0.91 to 0.87 on the Adult dataset). Indeed, the blue ROC curve, which is the ROC curve of the unfavoured group (Afro-American people for the Compas Dataset and women for the Adult Dataset), is brought closer to the green ROC curve (the ROC curve of the favoured group).</p>
+<p><img
+  src="../../images/lambert_davy/main_text_inkscape_all_rocs_no_train_new.svg"
+  alt="AUC"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<h1 id="section-6"><h1 style="font-size: 24px; text-decoration: underline;">Reproducibility</h1></h1>
+<p>We were able to run the provided code without too much trouble on WSL2. The only modification we had to make was to change the calls for python in the sh files. We replace <code>python</code> with <code>python3</code>. However, as mentionned in the cide, the experiments were very long to run (several days) and we were not able to run the <code>generate_all_figures.sh</code> script fully as it made our computers crash. Still, we were able to get some of the figures found in the paper (see below) by launching some scripts separately.</p>
+<p><img
+  src="../../images/lambert_davy/dist.png"
+  alt="dist"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<p><img
+  src="../../images/lambert_davy/roc.png"
+  alt="roc_gen"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<p>Here are two figure generated for the toy 1 dataset, one for the distribution of the scores and one for the ROC curve.</p>
+<h1 id="section-7"><h1 style="font-size: 24px; text-decoration: underline;">Conclusion</h1></h1>
+<p>The paper &ldquo;Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints&rdquo; underscores the growing importance of fairness in machine learning applications. It shows the limits of AUC-based fairness constraints for their inability to ensure equality between distributions, potentially leading to unfair outcomes. In contrast, ROC-based fairness constraints offer a richer approach by enforcing equality of score distributions between groups, albeit with some performance trade-offs. The paper tests the method on typical fairness datasets, but it is also possible to apply it to reel use cases. &ldquo;A Probabilistic Theory of Supervised Similarity Learning for Pointwise ROC Curve Optimization&rdquo;, for example, explores the possibility to apply ROC-based methods for similarity learning, such as face recognition.</p>
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+      
+      <div class="post-date">
+        <span class="g time">March 23, 2024 </span> &#8729;
+         
+      </div>
+      
+    </section>
+    
+    <div id="comments">
+      <script src="https://utteranc.es/client.js"
+    repo=ZgotmplZ
+    issue-term="pathname"
+    theme=ZgotmplZ
+    crossorigin="anonymous"
+    async>
+</script>
+
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>
