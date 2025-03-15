@@ -7,27 +7,16 @@
     
     <language>en</language>
     <copyright>Copyright 2025, Calvin Tran</copyright>
-<<<<<<< HEAD
     <lastBuildDate>Sat, 15 Mar 2025 17:27:56 +0100</lastBuildDate>
-=======
-    <lastBuildDate>Wed, 05 Feb 2025 14:03:13 +0100</lastBuildDate>
->>>>>>> 782f9424acfe718b474c52e01dfba91a6d3427d5
     <generator>Hugo - gohugo.io</generator>
     <docs>http://cyber.harvard.edu/rss/rss.html</docs>
     <atom:link href="http://localhost:1313//atom.xml" rel="self" type="application/atom+xml"/>
     
     
     <item>
-<<<<<<< HEAD
       <title>Fairness in Social Influence Maximization via Optimal Transport</title>
       <link>http://localhost:1313/posts/fairness-in-social-influence-maximization-via-optimal-transport/</link>
-      <description>&lt;p&gt;+++
-title = &amp;lsquo;Jaishan&amp;rsquo;
-date = 2025-02-05T14:23:18+01:00
-draft = false
-+++&lt;/p&gt;
-&lt;h1 id=&#34;fairness-in-social-influence-maximization-via-optimal-transport&#34;&gt;Fairness in Social Influence Maximization via Optimal Transport&lt;/h1&gt;
-&lt;h3 id=&#34;authors-guillaume-marin-bertin--jaishan-burton-elmo&#34;&gt;Authors: Guillaume MARIN-BERTIN &amp;amp; Jaishan BURTON ELMO&lt;/h3&gt;
+      <description>&lt;h3 id=&#34;authors-guillaume-marin-bertin--jaishan-burton-elmo&#34;&gt;Authors: Guillaume MARIN-BERTIN &amp;amp; Jaishan BURTON ELMO&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;1. Introduction&lt;/a&gt;&lt;/li&gt;
@@ -217,15 +206,15 @@ Each set is scored using the β-Fairness metric, which balances fairness and eff
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;Acceptance Criteria (Metropolis-Hastings Selection Rule)&lt;/strong&gt;:&lt;br&gt;
 The new seed set (S&amp;rsquo;) is accepted with a probability defined as:&lt;/p&gt;
-&lt;p&gt;$$
-p_{\text{accept}} \leftarrow \min { 1, e^{ES - E{S&amp;rsquo;}} }
-$$&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p align=&#34;center&#34;&gt;
+  &lt;img src=&#34;\images\Burton_Elmo-MARIN_BERTIN\images\figure12.png&#34; alt=&#34;figure12&#34;&gt;
+&lt;/p&gt;
 &lt;p&gt;ensuring fairness-improving modifications are favored while maintaining some randomness.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Convergence&lt;/strong&gt;:&lt;br&gt;
-The process runs until the fairness score stabilizes, achieving an optimal trade-off between fairness and outreach.&lt;/p&gt;
-&lt;/li&gt;
+&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Convergence&lt;/strong&gt;:&lt;br&gt;
+The process runs until the fairness score stabilizes, achieving an optimal trade-off between fairness and outreach.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h4 id=&#34;experiment&#34;&gt;Experiment&lt;/h4&gt;
 &lt;p&gt;To evaluate the effectiveness of S3D, we compare it against traditional influence maximization algorithms on real-world social networks.&lt;/p&gt;
@@ -280,8 +269,55 @@ Without S3D, certain communities miss job postings entirely in some scenarios.&l
     </item>
     
     <item>
-=======
->>>>>>> 782f9424acfe718b474c52e01dfba91a6d3427d5
+      <title>How to augment my dataset?</title>
+      <link>http://localhost:1313/posts/mixupdatacalibration/</link>
+      <description>&lt;style TYPE=&#34;text/css&#34;&gt;
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style&gt;
+&lt;script type=&#34;text/x-mathjax-config&#34;&gt;
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+        displayMath: [[&#39;$$&#39;,&#39;$$&#39;], [&#39;\\[&#39;,&#39;\\]&#39;]],
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i &lt; all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+    }
+});
+&lt;/script&gt;
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+&lt;h1 id=&#34;authors--tristan-waddington-fabien-lagnieu--dimitri-henrard-iratchet&#34;&gt;Authors : &lt;em&gt;Tristan Waddington, Fabien Lagnieu &amp;amp; Dimitri Henrard-Iratchet&lt;/em&gt;&lt;/h1&gt;
+&lt;h3 id=&#34;paper-comment-on-the-research-paper-tailoring-mixup-to-data-for-calibrationhttpsarxivorgabs231101434-written-by-quentin-bouniot-pavlo-mozharovskyi--florence-dalché-buc-from-ltci-télécom-paris-institut-polytechnique-de-paris-france&#34;&gt;Paper: Comment on the research paper: &lt;a href=&#34;https://arxiv.org/abs/2311.01434&#34;&gt;&lt;strong&gt;Tailoring Mixup to Data for Calibration&lt;/strong&gt;&lt;/a&gt;, written by &lt;em&gt;Quentin Bouniot, Pavlo Mozharovskyi &amp;amp; Florence d’Alché-Buc&lt;/em&gt;, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France&lt;/h3&gt;
+&lt;p&gt;TODO: insert table of contents&lt;/p&gt;
+&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;&lt;img
+  src=&#34;./images/MixUpDataCalibration/AI_introvert.png&#34;
+  alt=&#34;Test image Mkdown&#34;
+  loading=&#34;lazy&#34;
+  decoding=&#34;async&#34;
+  class=&#34;full-width&#34;
+/&gt;
+
+
+Let&amp;rsquo;s do it.&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+  &lt;img src=&#34;./images/MixUpDataCalibration/AI_introvert.png&#34; alt=&#34;Test image mathematical&#34;&gt;
+&lt;/p&gt;
+&lt;h1 id=&#34;main-part&#34;&gt;Main part&lt;/h1&gt;
+&lt;p&gt;Test LaTeX : $\sigma \left( \frac{1}{2}\right)$&lt;/p&gt;
+&lt;p&gt;$$\mathbb{R}^3 $$&lt;/p&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>http://localhost:1313/posts/mixupdatacalibration/</guid>
+      <pubDate>Wed, 05 Feb 2025 14:03:13 +0100</pubDate>
+    </item>
+    
+    <item>
       <title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title>
       <link>http://localhost:1313/posts/axiomatic_explanations/</link>
       <description>&lt;style

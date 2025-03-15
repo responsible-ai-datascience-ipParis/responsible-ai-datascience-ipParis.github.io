@@ -4,18 +4,11 @@ date = 2025-03-15T17:27:56+01:00
 draft = false
 +++
 
-+++
-title = 'Jaishan'
-date = 2025-02-05T14:23:18+01:00
-draft = false
-+++ 
-
-# Fairness in Social Influence Maximization via Optimal Transport  
 ### Authors: Guillaume MARIN-BERTIN & Jaishan BURTON ELMO  
 
 **Table of Contents**  
 - [1. Introduction](#introduction)  
-- [2. Mutual Fairness: A New Metric] (#mutual-fairness)  
+- [2. Mutual Fairness: A New Metric](#mutual-fairness)  
   - [2.1 Why Make a New Metric?](#why-make-a-new-metric)  
   - [2.2 Proposed Fairness Metric](#proposed-fairness-metric)  
   - [2.3 Short Example](#short-example)
@@ -236,9 +229,9 @@ The algorithm follows these key steps:
 4. **Acceptance Criteria (Metropolis-Hastings Selection Rule)**:  
    The new seed set \(S'\) is accepted with a probability defined as:
 
-   $$
-   p_{\text{accept}} \leftarrow \min { 1, e^{ES - E{S'}} }
-   $$
+<p align="center">
+  <img src="\images\Burton_Elmo-MARIN_BERTIN\images\figure12.png" alt="figure12">
+</p>
 
    ensuring fairness-improving modifications are favored while maintaining some randomness.
 
