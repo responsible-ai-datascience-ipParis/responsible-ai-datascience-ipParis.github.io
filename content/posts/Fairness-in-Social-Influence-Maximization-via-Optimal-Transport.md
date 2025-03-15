@@ -8,7 +8,7 @@ draft = false
 title = 'Jaishan'
 date = 2025-02-05T14:23:18+01:00
 draft = false
-+++
++++ 
 
 # Fairness in Social Influence Maximization via Optimal Transport  
 ### Authors: Guillaume MARIN-BERTIN & Jaishan BURTON ELMO  
