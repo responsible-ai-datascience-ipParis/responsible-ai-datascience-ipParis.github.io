@@ -54,10 +54,19 @@ Paper: <a href="https://arxiv.org/abs/2305.15734">ICML 2023</a> by Hyeongrok Han
 
 ## NOUVEAU A PARTIR D'ICI
 
+<p align="center">
+  <img src="/images/Bryan_Remi/meme.png" alt="test123">
+</p>
+
 Knowledge distillation is a method to transfer the knowledge of a "teacher" model to a "student" model and can be used to get a highly performant small model from a large model. Several paper investigate why knowledge distillation improves the performance of models. This blog post highlights an other advantage of knowledge distillation that is better interpretability of models after knowledge distillation. We focus on the paper "On the Impact of Knowledge Distillation for Model Interpretability" by Hyeongrok Han and al.
 
 
-## How to define interpretability ?
+## I. Crash course on knowledge distillation and label smoothing
+
+This section will present the basic concept of knowledge distillation and label smoothing. You can skip it if you are already familiar with those.
+
+
+## II. But how to define interpretability ?
 The first thing to know is that there are different approach to define and measure interpretability in machine learning.
 
 For image classification, the authors choose a network dissection approach. The idea is to compare activation maps and see if areas with high activation correspond to an object or a concept on the image.
@@ -65,40 +74,57 @@ For image classification, the authors choose a network dissection approach. The 
 Feed a neural network model an image, pick a deep layer and count the number of neurons that detects a concept like "cat" or "dog".
 We call those neurons concept detectors and will define them more precisely. In this blog post, the number of concept detectors will be the primary metric to define the interpretability of a model, the higher the more we will consider it interpretable.
 
-Here is the pseudo code of the procedure to compute the number of concept detectors :
-
-1) Feed an image in the neural network.
-2) Choose a layer l deep in the network.
-3) We suppose that the layer l contains N neurons and for each neuron indexed by i, we collect the activation maps Aᵢ(x) ∈ ℝᵈˣᵈ, where d < n.
-4) Let note a_i the distribution of individual unit activation. You can think of it as an empirical distribution where the varying element is the image x. Each image contributes to construct a_i.
-5) For each neuron we compute a threshold T_i such that P(a_i >= T_i) = 0.005.
-6) We reshape A_i to match the dimension of the image of shape (n,n) to be able to make comparisons.
-7) We create a binary mask of shape(n,n) where each element is 1 if its correspond in A_i(x) is greater or equal than the threshold T_i. This permits to considerate only the top 0.5% activation.
-8) We are provided an other mask
+**The easiest way to understand what is a concept detector is to look at the following pseudo code to compute the number of concept detectors:**
 
 
+1. First, we need to choose a layer $\mathcal{l}$ to **dissect**, typically deep in the network.
+2. For each image x in the dataset, do steps 2.a and 2.b.
+
+   2.a) Feed an image **x** of shape (n,n) into the neural network.
+
+   2.b) For each neuron in the layer $\mathcal{l}$, we collect the activation maps
+   **A<sub>i</sub>(x)** ∈ ℝ<sup>d×d</sup>, where **d < n** and i is the index of the neuron.
+
+3. For each neuron in the layer **l**, we define **a<sub>i</sub>** as the distribution of
+   individual unit activation. This can be thought of as an empirical distribution where
+   the varying element is the image **x**. Each image contributes to construct **a<sub>i</sub>**.
+
+4. For each neuron, we compute a threshold **T<sub>i</sub>** such that
+   P(a<sub>i</sub> ≥ T<sub>i</sub>) = 0.005. That will be usefull to only keep top 0.5% of activations.
+
+5. We interpolate **A<sub>i</sub>** to match the dimension of the image of shape (n,n)
+   to enable comparisons.
+
+6. For each image x in the dataset, do steps 2.a, 2.b and 2.c.
+
+   6.a) We create a binary mask **A<sub>i</sub><sup>mask</sup>(x)** of shape (n,n),
+   where each element is 1 if its corresponding element in **A<sub>i</sub>(x)**
+   is greater than or equal to the threshold **T<sub>i</sub>**.
+   This allows us to consider only the top 0.5% activations.
+
+   6.b) We are provided with another mask **M<sub>c</sub>(x)** of shape (n,n),
+    where each element is 1 if its corresponding pixel in the image **x**
+    is labeled with the ground truth class **c**, and 0 otherwise.
+
+   6.c) We compute the intersection over union **IoU<sub>i,c</sub>** between
+    **A<sub>i</sub><sup>mask</sup>(x)** and **M<sub>c</sub>(x)**. If the intersection over union **IoU<sub>i,c</sub>** is larger than a fixed threshold (0.05),
+    then neuron **i** is considered a **concept detector** for concept **c**.
 
 
 
-1:  N ← the number of convolutional units in the fourth layer of f <br>
-2:  for x ∈ ℝⁿˣⁿ in X do<br>
-3:      for i = 1, 2, ..., N do<br>
-4:          Collect the activation map Aᵢ(x) ∈ ℝᵈˣᵈ, where d < n<br>
-5:      end for<br>
-6:  end for<br>
-7:  aᵢ ← the distribution of individual unit activation<br>
-8:  for x ∈ ℝⁿˣⁿ in X do<br>
-9:      for i = 1, 2, ..., N do<br>
-10:         Calculate Tᵢ to satisfy P(aᵢ ≥ Tᵢ) = 0.005<br>
-11:         Interpolate Aᵢ(x) to be ∈ ℝⁿˣⁿ<br>
-12:         Aᵢ(x) ← Aᵢ(x) ≥ Tᵢ<br>
-13:         M𝑐(x) ← annotation mask of x for concept c<br>
-14:         Compute IoUᵢ,𝑐 value between Aᵢ(x) and M𝑐(x)<br>
-15:         if IoUᵢ,𝑐 ≥ 0.05 then<br>
-16:             Unit i is the concept detector of the concept c<br>
-17:         end if<br>
-18:     end for<br>
-19: end for<br>
+
+
+## III. Why knowledge distillation can make models more interpretable ?
+
+
+## IV. Experimental results and reproduction
+
+
+
+
+## V. Your definition of interpretable is very specific, do you obtain similar results with other definitions of interpretability ?
+At this point you probably asked yourself if the results displayed in the article are robust to other definitions of interpretability.
+
 
 
 
