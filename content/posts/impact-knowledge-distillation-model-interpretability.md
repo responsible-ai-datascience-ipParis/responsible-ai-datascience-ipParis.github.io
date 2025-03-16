@@ -125,6 +125,22 @@ The second part of the loss $\alpha T^2 \mathrm{CE}(\sigma(z_t^T),\sigma(z_s^T))
 The larger $\alpha$ is, the more the student will try to replicate the teacher model's outputs and ignore the one hot encoded groundtruth and vice versa.
 
 
+### Label smoothing
+Label smoothing (LS) is another technique that smooths hard targets by mixing them with a uniform distribution. In the cross entropy loss we replace the one hot encoded $y$ by $y_{LS} \mathrel{:}= (1-\alpha)y + \frac{\alpha}{K}$, where $K$ is the number of classes and $\alpha$ the smoothing parameter:
+
+<script type="math/tex; mode=display">
+\begin{align}
+CE(y_{LS},\sigma(z)) &= - \sum_{i=1}^{K} \left( (1 - \alpha) y_i + \frac{\alpha}{K} \right) \log \sigma(z_i) \\
+&= -(1 - \alpha) \sum_{i=1}^{K} y_i \log \sigma(z_i) - \alpha \sum_{i=1}^{K} \frac{1}{K}\log \sigma(z_i) \\
+\end{align}
+</script>
+
+We obtain a loss that is similar to knowledge diffusion but there is a key difference important for interpretability that we will discuss later.
+From the equation above, we get the label smoothing loss equation:
+$$L_{LS} = (1-\alpha)\mathrm{CE}(y,\sigma(z)) + \alpha\mathrm{CE}(u,\sigma(z)) $$
+Where $u$ is a uniform distribution over all the possible $K$ classes.
+
+
 ### Knowledge Distillation vs. Label Smoothing
 
 Label smoothing (LS) is another technique that smooths hard targets by mixing them with a uniform distribution. While it might seem similar to KD, the paper shows fundamental differences:
@@ -314,21 +330,17 @@ When a teacher model sees an image of a dog, it might assign:
 These "soft targets" encode rich hierarchical information about how classes relate. The student model distilling this knowledge learns to focus on features that are common to similar classes (e.g., general "dog" features).
 
 ### Label Smoothing vs. Knowledge Distillation
+By looking at the KD and label smoothing losses, we can see that they are similar. When $T=1$ they only differ in the second member where we have a $\sigma(z_t^T)$ that contains class similarity information instead of $u$ that doesn't contain any information.
 
-While both techniques modify one-hot labels, they have opposing effects on interpretability:
 
-<p align="center">
-  <img src="/images/Bryan_Remi/NbConceptDetDiffModels.png" alt="KD vs LS Distributions" width="600">
-</p>
 
-- **Label Smoothing**: Replaces one-hot with a uniform mixture, removing class similarity information
-- **Knowledge Distillation**: Transfers structured class similarities from teacher to student
+ * $\mathcal{L}_{KD}=(1-\alpha)\mathrm{CE}(y,\sigma(z_s))+\alpha T^2 \mathrm{CE}(\sigma(z_t^T),\sigma(z_s^T))$
+ * $L_{LS} = (1-\alpha)\mathrm{CE}(y,\sigma(z)) + \alpha\mathrm{CE}(u,\sigma(z)) $
 
-The paper shows that while label smoothing can improve accuracy, it often reduces interpretability by erasing these valuable class relationships.
+ So if there is a difference in interpretability, it is likely that it comes from the fact that distillation permits to get class similarity knowledge from the teacher model. This is exactly what is shown in the figure below.
 
-### Object-Centric Activation
 
-Knowledge distillation guides student models to focus on more object-centric features rather than background or contextual features. This results in activation maps that better align with the actual objects in images.
+
 
 <!-- <p align="center">
   <img src="/images/Bryan_Remi/activation_comparison.png" alt="Activation Map Comparison" width="700">
@@ -337,6 +349,25 @@ Knowledge distillation guides student models to focus on more object-centric fea
 <p align="center">
   <img src="/images/Bryan_Remi/comparisons_dog.png" alt="ObjectCentricActivation" width="700">
 </p>
+
+
+
+
+A virer je pense et remplacer par une petite phrase qui dit que c'est grace à la transmission de class similarity :(Knowledge distillation guides student models to focus on more object-centric features rather than background or contextual features. This results in activation maps that better align with the actual objects in images.)
+
+
+
+This figure also highlights the loss of interpretability when using label smoothing and the improvement of interpretability for KD:
+
+<p align="center">
+  <img src="/images/Bryan_Remi/NbConceptDetDiffModels.png" alt="KD vs LS Distributions" width="600">
+</p>
+<!--
+- **Label Smoothing**: Replaces one-hot with a uniform mixture, removing class similarity information
+- **Knowledge Distillation**: Transfers structured class similarities from teacher to student
+-->
+The paper shows that while label smoothing can improve accuracy, it often reduces interpretability by erasing these valuable class relationships while KD improves accuracy and interpretability.
+
 
 <h2 style="font-size: 21px; display: flex; align-items: center;"> IV. Experimental Results and Reproduction </h2>
 
