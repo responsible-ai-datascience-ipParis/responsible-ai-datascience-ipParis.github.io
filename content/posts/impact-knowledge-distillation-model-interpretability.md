@@ -140,7 +140,7 @@ From the equation above, we get the label smoothing loss equation:
 $$L_{LS} = (1-\alpha)\mathrm{CE}(y,\sigma(z)) + \alpha\mathrm{CE}(u,\sigma(z)) $$
 Where $u$ is a uniform distribution over all the possible $K$ classes.
 
-
+<!--
 ### Knowledge Distillation vs. Label Smoothing
 
 Label smoothing (LS) is another technique that smooths hard targets by mixing them with a uniform distribution. While it might seem similar to KD, the paper shows fundamental differences:
@@ -149,9 +149,10 @@ Label smoothing (LS) is another technique that smooths hard targets by mixing th
 - **Knowledge Distillation**: Uses teacher's soft predictions that contain rich class similarity information
 
 This distinction is crucial for interpretability, as we'll see later.
+-->
 
 ### Basic Knowledge Distillation Implementation
-
+Y'a peut etre une erreur dans le code ici dquand on divisve par la temperature je pense que la division de s'applique pas dans le dénominateur du softmax mais je ne suis pas sur
 Let's look at a basic PyTorch implementation:
 
 ```python
@@ -195,8 +196,22 @@ The first thing to know is that there are different approaches to define and mea
 
 For image classification, the authors use <a href="https://arxiv.org/pdf/1711.05611v2">network dissection</a> to quantitatively measure interpretability. The idea is to compare activation maps and see if areas with high activation correspond to an object or a meaningful concept on the image.
 
+The process can be better understood through the following illustration:
+
+<p align="center">
+  <img src="/images/Bryan_Remi/network_dissection.png" alt="Network Dissection Process" width="700">
+</p>
+
+
+
 Feed a neural network model an image, pick a deep layer and count the number of neurons that detects a concept like "cat" or "dog".
 We call those neurons concept detectors and will define them more precisely. The number of concept detectors will be the primary metric to define the interpretability of a model, the higher the more we will consider it interpretable.
+
+
+
+
+
+
 
 ### Network Dissection Algorithm
 
@@ -308,13 +323,6 @@ def identify_concept_detectors(model, layer_name, dataset, concept_masks):
     **A<sub>i</sub><sup>mask</sup>(x)** and **M<sub>c</sub>(x)**. If the intersection over union **IoU<sub>i,c</sub>** is larger than a fixed threshold (0.05),
     then neuron **i** is considered a **concept detector** for concept **c**.
 
-### Visual Explanation of Network Dissection
-
-The process can be better understood through the following illustration:
-
-<p align="center">
-  <img src="/images/Bryan_Remi/network_dissection.png" alt="Network Dissection Process" width="700">
-</p>
 
 <h2 style="font-size: 21px; display: flex; align-items: center;"> III. Why Knowledge Distillation Enhances Interpretability </h2>
 
