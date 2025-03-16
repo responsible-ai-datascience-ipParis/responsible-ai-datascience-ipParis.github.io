@@ -169,11 +169,65 @@ Finally, BitFit's performance also appears to rely on training set size. In expe
 
 <h2 style="font-size: 20px;"> 5. Why Does BitFit Work? </h2>
 
+BitFit's success can be attributed to several key factors that challenge traditional assumptions about fine-tuning large language models. Rather than retraining all parameters, BitFit selectively updates only the bias terms, leading to efficient adaptation without sacrificing performance. But why is this approach effective?
 
+<h3 style="font-size: 18px;"> 5.1 Fine-Tuning as Knowledge Exposure, Not Learning </h3>
+
+A crucial insight is that fine-tuning large pre-trained transformers is often less about "learning new knowledge" and more about "exposing" the knowledge already embedded in the model. Since transformer-based models like BERT have already learned a vast range of linguistic patterns during their unsupervised pre-training phase, adjusting a small number of parameters—specifically the bias terms—can be enough to bring out task-specific information without reworking the entire model.
+
+<h3 style="font-size: 18px;"> 5.2 Bias Terms and Their Unique Role </h3>
+
+Bias terms in neural networks serve as offset values, allowing neurons to activate even when input features are zero. Unlike weights, which define relationships between features, bias terms shift outputs in a task-specific manner.
+
+BitFit leverages the fact that bias terms interact across layers in a way that can subtly adjust how information flows through the model without needing to modify the main weight matrices. This enables significant changes in task-specific performance with minimal modifications to the model structure.
+
+<h3 style="font-size: 18px;"> 5.3 A Targeted and Structured Approach </h3>
+
+Not all bias parameters contribute equally to model adaptation. The study found that:
+
+- **Query Biases (bQ)**: Found in self-attention layers, crucial for determining which words receive attention.
+
+- **Middle-Layer MLP Biases (b2)**: Found in feedforward layers, responsible for transforming hidden representations.
+
+By focusing updates on these specific biases, BitFit achieves near full fine-tuning performance while modifying only 0.04% of model parameters.
+
+<h3 style="font-size: 18px;"> 5.4 The Generalization Advantage </h3>
+
+Another reason BitFit works well is its effect on generalization. Traditional fine-tuning tends to overfit on small datasets because it updates many parameters, potentially memorizing noise rather than learning transferable patterns. BitFit, by contrast, updates only a fraction of the parameters, leading to a smaller generalization gap.
+
+In fact, experiments show that BitFit performs better than full fine-tuning in small-data regimes. This suggests that limiting parameter updates can sometimes lead to better robustness and generalization.
 
 <h2 style="font-size: 20px;"> 6. Implications and Future Directions </h2>
 
+BitFit opens new avenues for efficient fine-tuning, making it particularly relevant in scenarios where computational resources are limited, such as:
 
+<h3 style="font-size: 18px;"> 6.1 Efficient Deployment in Real-World Applications </h3>
+
+- **Low-Resource AI Systems**: BitFit’s lightweight approach is ideal for deploying NLP models in mobile applications, IoT devices, and embedded AI systems where computational efficiency is critical.
+
+- **Multi-Task Learning**: Since only bias terms need updating, multiple tasks can share the same base model, reducing memory overhead and increasing flexibility in production systems.
+
+- **Scalable NLP Services**: Cloud-based NLP services that handle multiple tasks (e.g., chatbots, automated translations) can benefit from BitFit by reducing the need to store and load separate models for each task.
+
+<h3 style="font-size: 18px;"> 6.2 Understanding Model Adaptation </h3>
+
+The success of BitFit raises deeper questions about the nature of transfer learning and fine-tuning:
+
+- Do large transformers truly need full fine-tuning, or is most of their knowledge already latent?
+
+- Could bias-only tuning be the key to unlocking efficient continual learning strategies?
+
+- Are there other small but critical subsets of parameters that can be updated to achieve similar efficiency gains?
+
+<h3 style="font-size: 18px;"> 6.3 Potential Enhancements </h3>
+
+While BitFit is a promising step forward, future research could explore:
+
+- **Selective bias tuning**: Further analyzing which specific bias terms contribute most to adaptation and whether additional optimization can reduce the number of updates even further.
+
+- **Hybrid approaches**: Combining BitFit with methods like adapters or LoRA (Low-Rank Adaptation) to achieve even better efficiency.
+
+- **Application to other architectures**: Investigating whether BitFit’s principles extend beyond BERT to models like GPT, T5, and multimodal transformers.
 
 <h2 style="font-size: 20px;"> 7. Conclusion </h2>
 
