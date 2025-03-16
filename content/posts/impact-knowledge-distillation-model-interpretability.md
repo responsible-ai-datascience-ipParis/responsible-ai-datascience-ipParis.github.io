@@ -33,7 +33,7 @@ draft = false
 <!DOCTYPE html>
 <html lang="fr">
 
-<head> 
+<head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -107,15 +107,23 @@ The standard KD loss function combines the standard cross-entropy loss with a di
 
 <!-- $$\mathbb{P}[M(D)\in A]\leq e^{\alpha} \cdot \mathbb{P}[M(D')\in A]$$ -->
 
-$$\mathcal{L}_{KD}=(1-\alpha)\mathrm{CE}(y,\sigma(z_s))+\alpha T^2 \mathrm{KL}(\sigma(z_t/T),\sigma(z_s/T))$$
+$$\mathcal{L}_{KD}=(1-\alpha)\mathrm{CE}(y,\sigma(z_s))+\alpha T^2 \mathrm{CE}(\sigma(z_t^T),\sigma(z_s^T))$$
 
 Where:
 - $z_s$ and $z_t$ are the logits from the student and teacher models
-- $\sigma$ is the softmax function
-- $\alpha$ balances the importance of each loss component
 - $T$ is the temperature parameter that controls softening of probability distributions
+- $z_s^T \mathrel{:}= \frac{z_s}{T}$ and $z_t^T \mathrel{:}= \frac{z_t}{T}$
+- $\sigma$ is the softmax function
+- $\sigma(z_s^T) \mathrel{:}= \frac{\exp(z_s^T)}{\sum_j \exp(z_j^T)}$ and $\sigma(z_t^T) \mathrel{:}= \frac{\exp(z_t^T)}{\sum_j \exp(z_j^T)}$
 - $\mathrm{CE}$ is cross-entropy loss
-- $\mathrm{KL}$ is Kullback-Leibler divergence loss
+- $\alpha$ balances the importance of each loss component.
+
+
+The first part of the loss $(1-\alpha)\mathrm{CE}(y,\sigma(z_s))$ is to incitate the student model to learn from one hot encoded ground truth label.
+
+The second part of the loss $\alpha T^2 \mathrm{CE}(\sigma(z_t^T),\sigma(z_s^T))$ is to incitate the student model to try to reproduce the ouputs of the teacher model. This is what permits the student to learn from the teacher.
+The larger $\alpha$ is, the more the student will try to replicate the teacher model's outputs and ignore the one hot encoded groundtruth and vice versa.
+
 
 ### Knowledge Distillation vs. Label Smoothing
 
@@ -138,30 +146,30 @@ import torch.nn.functional as F
 def knowledge_distillation_loss(student_logits, teacher_logits, targets, alpha=0.5, temperature=4.0):
     """
     Compute the knowledge distillation loss.
-    
+
     Args:
         student_logits: Logits from the student model
         teacher_logits: Logits from the teacher model
         targets: Ground truth labels
         alpha: Weight for distillation loss vs. standard cross-entropy loss
         temperature: Temperature for softening probability distributions
-        
+
     Returns:
         Total loss combining cross-entropy and distillation loss
     """
     # Standard cross-entropy loss
     ce_loss = F.cross_entropy(student_logits, targets)
-    
+
     # Soften logits with temperature
     soft_student = F.log_softmax(student_logits / temperature, dim=1)
     soft_teacher = F.softmax(teacher_logits / temperature, dim=1)
-    
+
     # KL divergence loss
     kd_loss = F.kl_div(soft_student, soft_teacher, reduction='batchmean') * (temperature ** 2)
-    
+
     # Combine losses
     total_loss = (1 - alpha) * ce_loss + alpha * kd_loss
-    
+
     return total_loss
 ```
 
@@ -182,28 +190,28 @@ Here's how to identify concept detectors through network dissection:
 def identify_concept_detectors(model, layer_name, dataset, concept_masks):
     """
     Identify neurons that act as concept detectors in a specific layer.
-    
+
     Args:
         model: Neural network model
         layer_name: Name of the layer to analyze
         dataset: Dataset with images
         concept_masks: Dictionary mapping images to concept segmentation masks
-        
+
     Returns:
         Dictionary mapping neurons to detected concepts
     """
     # Step 1: Collect activation maps for each image
     activation_maps = {}
-    
+
     for image in dataset:
         # Forward pass and extract activation at specified layer
         activations = get_layer_activation(model, layer_name, image)
-        
+
         for neuron_idx, activation in enumerate(activations):
             if neuron_idx not in activation_maps:
                 activation_maps[neuron_idx] = []
             activation_maps[neuron_idx].append(activation)
-    
+
     # Step 2: Compute threshold for top 0.5% activations for each neuron
     thresholds = {}
     for neuron_idx, activations in activation_maps.items():
@@ -212,39 +220,39 @@ def identify_concept_detectors(model, layer_name, dataset, concept_masks):
         # Compute threshold for top 0.5%
         threshold = torch.quantile(all_activations, 0.995)
         thresholds[neuron_idx] = threshold
-    
+
     # Step 3: Create binary masks and compute IoU with concept masks
     concept_detectors = {}
-    
+
     for image_idx, image in enumerate(dataset):
         image_concepts = concept_masks[image_idx]
-        
+
         for neuron_idx, activations in activation_maps.items():
             # Get activation for this neuron on this image
             activation = activations[image_idx]
-            
+
             # Create binary mask using threshold
             binary_mask = (activation >= thresholds[neuron_idx]).float()
-            
+
             # Resize to match image dimensions
             binary_mask = F.interpolate(
-                binary_mask.unsqueeze(0).unsqueeze(0), 
-                size=image.shape[1:], 
+                binary_mask.unsqueeze(0).unsqueeze(0),
+                size=image.shape[1:],
                 mode='bilinear'
             ).squeeze()
-            
+
             # Compute IoU with each concept mask
             for concept, mask in image_concepts.items():
                 intersection = torch.sum(binary_mask * mask)
                 union = torch.sum(binary_mask) + torch.sum(mask) - intersection
                 iou = intersection / union if union > 0 else 0
-                
+
                 # If IoU exceeds threshold (typically 0.05), consider it a detector
                 if iou > 0.05:
                     if neuron_idx not in concept_detectors:
                         concept_detectors[neuron_idx] = set()
                     concept_detectors[neuron_idx].add(concept)
-    
+
     return concept_detectors
 ```
 
@@ -378,7 +386,7 @@ The first thing to know is that there are different approach to define and measu
 Feed a neural network model an image, pick a deep layer and count the number of neurons that detects a concept like "cat" or "dog".
 We call those neurons concept detectors and will define them more precisely. In this blog post, the number of concept detectors will be the primary metric to define the interpretability of a model, the higher the more we will consider it interpretable. -->
 
-<!-- 
+<!--
 **The easiest way to understand what is a concept detector is to look at the following pseudo code to compute the number of concept detectors:**
 
 
@@ -446,7 +454,7 @@ At this point you probably asked yourself if the results displayed in the articl
 
 
 
-<!-- 
+<!--
 ## EN DESSOUS C'EST L'ANCIEN TRUC
 
 ## Context and Motivations
