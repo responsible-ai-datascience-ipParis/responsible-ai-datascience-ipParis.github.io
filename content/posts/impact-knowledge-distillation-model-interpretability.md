@@ -491,9 +491,6 @@ To reproduce the results, you could use a virtual environment (e.g. <a href="htt
 
 ```bash
 git clone https://github.com/Rok07/KD_XAI.git
-mkdir /tmp/
-mv KD_XAI /tmp/
-cd /tmp/KD_XAI/
 cd torchdistill
 pip install -e .
 cd ..
@@ -504,15 +501,54 @@ pip install opencv-python
 pip install imageio
 sudo apt update
 sudo apt install -y libgl1-mesa-glx
-nano /tmp/KD_XAI/util/vecquantile.py
+nano util/vecquantile.py
 ~ change NaN by nan
-nano /tmp/KD_XAI/loader/data_loader.py
+nano loader/data_loader.py
 ~ add out[i] = rgb[:,:,0] + (rgb[:,:,1].astype(np.uint16) * 256)
-nano /tmp/KD_XAI/settings.py
-~ change BATCH_SIZE=16
-~ change WORKERS=4
+cd ..
+nano settings.py
+~ change TEST_MODE = False to True
+cd dataset/broden1_224
+cp index.csv index_sm.csv
+~ keep the 4000 first lines
+cd ../..
+nano visualize/bargraph.py
+~ change parameter threshold of bar_graph_svg() to 0.00001
 python main.py
 ```
+
+Network Dissection quantifies the interpretability of hidden units by measuring their alignment with human-interpretable concepts. The following results reveal several interesting findings:
+
+#### 1. Concept Distribution (from bargraph.svg):
+
+<p align="center">
+  <img src="/images/Bryan_Remi/class_distribution.png" alt="Class Distribution" width="600">
+</p>
+
+   - ~6 units detecting object concepts
+   - ~2 units detecting scene concepts
+   - 1 unit detecting material properties
+   - ~13 units detecting textures
+   - ~6 units detecting colors
+
+
+#### 2. Specific Units: (layer4-0xxx.jpg)
+
+<p align="center">
+  <img src="/images/Bryan_Remi/unit_grid.png" alt="Unit Grid" width="1600">
+</p>
+
+   - **Unit 330** has specialized in detecting grid and regular pattern textures
+
+<p align="center">
+  <img src="/images/Bryan_Remi/unit_sky.png" alt="Unit Sky" width="1600">
+</p>
+
+   - **Unit 202** detects sky regions in images
+
+
+The Network Dissection approach reveals that even after knowledge distillation, ResNet18 retains interpretable neurons that detect specific visual concepts
+
 <h2 id="vi-beyond-network-dissection-other-interpretability-metrics" style="font-size: 21px; display: flex; align-items: center;"> VI. Beyond Network Dissection: Other Interpretability Metrics </h2>
 
 <p>While the paper emphasizes the use of <strong>Network Dissection</strong> to measure model interpretability by quantifying concept detectors, it also explores several additional metrics to confirm the broader impact of <strong>Knowledge Distillation (KD)</strong> on interpretability:</p>
