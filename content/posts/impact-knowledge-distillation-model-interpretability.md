@@ -38,7 +38,7 @@ draft = false
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<h1 style="font-size: 28px;">Can Teaching Smaller Models Make Them More Transparent? The Hidden Power of Knowledge Distillation</h1>
+<h1 style="font-size: 28px;">Interpretability, the hidden power of knowledge distillation</h1>
 
 <p>Published March 15, 2025</p>
 
@@ -65,15 +65,18 @@ draft = false
 
 </div>
 
-Knowledge distillation is a powerful technique to transfer the knowledge from a large "teacher" model to a much smaller "student" model. While it's commonly used to improve performance and reduce computational costs, this blog post explores a fascinating discovery: knowledge distillation can also significantly enhance model interpretability. We'll dive into the paper <a href="https://arxiv.org/abs/2305.15734">On the Impact of Knowledge Distillation for Model Interpretability"</a> (ICML 2023) by H. Han et al., which sheds light on this novel perspective.
+Knowledge distillation is a powerful technique to transfer the knowledge from a large "teacher" model to a "student" model. While it's commonly used to improve performance and reduce computational costs by compressing large models, this blog post explores a fascinating discovery: knowledge distillation can also significantly enhance model interpretability. We'll dive into the paper <a href="https://arxiv.org/abs/2305.15734">On the Impact of Knowledge Distillation for Model Interpretability"</a> (ICML 2023) by H. Han et al., which sheds light on this novel perspective.
 
 <p align="center">
-  <img src="/images/Bryan_Remi/meme.png" alt="Introduction" style="width: 60%; max-width: 500px; height: auto;">
+  <img src="/images/Bryan_Remi/better_meme.png" alt="Introduction" style="width: 60%; max-width: 500px; height: auto;">
 </p>
 
-Interpretability in AI allows researchers, engineers, and decision-makers to trust and control deep learning models. When we understand how an AI model reaches its conclusions, we can debug issues faster, ensure fairness, and prevent catastrophic failures. Without interpretability, AI systems become black boxes, leaving us blind to potential biases or misjudgments.
+Interpretability in AI allows researchers, engineers, and decision-makers to trust and control machine learning models. Recent models show impressive performance on many different tasks and often rely on deep learning models. Unfortunately, deep learning models are also know for the difficulty to interprete them and understand how they come to a result wich can be problematic in highly sensitive applications like autonomous driving or healthcare. The article we present in this blog shows that knowledge distillation can improve the interpretability of deep learning models.
 
-<p align="center"> <img src="/images/Bryan_Remi/ai_interpretable.gif" alt="Feeling strong with interpretable AI" style="width: 60%; max-width: 500px; height: auto;"> </p>
+<!--
+Interpretability in AI allows researchers, engineers, and decision-makers to trust and control deep learning models. When we understand how an AI model reaches its conclusions, we can debug issues faster, ensure fairness, and prevent catastrophic failures. Without interpretability, AI systems become black boxes, leaving us blind to potential biases or misjudgments. -->
+<!--
+<p align="center"> <img src="/images/Bryan_Remi/ai_interpretable.gif" alt="Feeling strong with interpretable AI" style="width: 60%; max-width: 500px; height: auto;"> </p> -->
 
 When AI is a black box, you're just hoping for the best. But when you understand it, you become unstoppable.
 
@@ -147,6 +150,7 @@ Label smoothing (LS) is another technique that smooths hard targets by mixing th
 This distinction is crucial for interpretability, as we'll see later.
 -->
 
+<!--
 ### Basic Knowledge Distillation Implementation
 Y'a peut etre une erreur dans le code ici dquand on divisve par la temperature je pense que la division de s'applique pas dans le dénominateur du softmax mais je ne suis pas sur
 Let's look at a basic PyTorch implementation:
@@ -185,6 +189,7 @@ def knowledge_distillation_loss(student_logits, teacher_logits, targets, alpha=0
 
     return total_loss
 ```
+-->
 
 <h2 id="ii-defining-interpretability-through-network-dissection" style="font-size: 21px; display: flex; align-items: center;"> II. Defining Interpretability Through Network Dissection </h2>
 
@@ -205,11 +210,48 @@ We call those neurons concept detectors and will define them more precisely. The
 
 
 
+**The easiest way to understand what is a concept detector is to look at the following pseudo code to compute the number of concept detectors:**
 
 
-### Network Dissection Algorithm
+1. First, we need to choose a layer $\mathcal{l}$ to **dissect**, typically deep in the network.
+2. For each image x in the dataset,
 
-Here's how to identify concept detectors through network dissection:
+   2.a) Feed an image **x** of shape (n,n) into the neural network.
+
+   2.b) For each neuron in the layer $\mathcal{l}$, we collect the activation maps
+   **A<sub>i</sub>(x)** ∈ ℝ<sup>d×d</sup>, where **d < n** and i is the index of the neuron.
+
+3. For each neuron in the layer **l**, we define **a<sub>i</sub>** as the distribution of
+   individual unit activation. This can be thought of as an empirical distribution where
+   the varying element is the image **x**. Each image contributes to construct **a<sub>i</sub>**.
+
+4. For each neuron, we compute a threshold **T<sub>i</sub>** such that
+   P(a<sub>i</sub> ≥ T<sub>i</sub>) = 0.005. That will be usefull to only keep top 0.5% of activations.
+
+5. We interpolate **A<sub>i</sub>** to match the dimension of the image of shape (n,n)
+   to enable comparisons.
+
+6. For each image x in the dataset,
+
+   6.a) We create a binary mask **A<sub>i</sub><sup>mask</sup>(x)** of shape (n,n),
+   where each element is 1 if its corresponding element in **A<sub>i</sub>(x)**
+   is greater than or equal to the threshold **T<sub>i</sub>**.
+   This allows us to consider only the top 0.5% activations.
+
+   6.b) We are provided with another mask **M<sub>c</sub>(x)** of shape (n,n),
+    where each element is 1 if its corresponding pixel in the image **x**
+    is labeled with the ground truth class **c**, and 0 otherwise.
+
+   6.c) We compute the intersection over union **IoU<sub>i,c</sub>** between
+    **A<sub>i</sub><sup>mask</sup>(x)** and **M<sub>c</sub>(x)**. If the intersection over union **IoU<sub>i,c</sub>** is larger than a fixed threshold (0.05),
+    then neuron **i** is considered a **concept detector** for concept **c**.
+
+
+
+
+
+
+### If you prefer to understand with code, here is an implementation of the procedure described above:
 
 ```python
 def identify_concept_detectors(model, layer_name, dataset, concept_masks):
@@ -281,42 +323,6 @@ def identify_concept_detectors(model, layer_name, dataset, concept_masks):
     return concept_detectors
 ```
 
-**The easiest way to understand what is a concept detector is to look at the following pseudo code to compute the number of concept detectors:**
-
-
-1. First, we need to choose a layer $\mathcal{l}$ to **dissect**, typically deep in the network.
-2. For each image x in the dataset,
-
-   2.a) Feed an image **x** of shape (n,n) into the neural network.
-
-   2.b) For each neuron in the layer $\mathcal{l}$, we collect the activation maps
-   **A<sub>i</sub>(x)** ∈ ℝ<sup>d×d</sup>, where **d < n** and i is the index of the neuron.
-
-3. For each neuron in the layer **l**, we define **a<sub>i</sub>** as the distribution of
-   individual unit activation. This can be thought of as an empirical distribution where
-   the varying element is the image **x**. Each image contributes to construct **a<sub>i</sub>**.
-
-4. For each neuron, we compute a threshold **T<sub>i</sub>** such that
-   P(a<sub>i</sub> ≥ T<sub>i</sub>) = 0.005. That will be usefull to only keep top 0.5% of activations.
-
-5. We interpolate **A<sub>i</sub>** to match the dimension of the image of shape (n,n)
-   to enable comparisons.
-
-6. For each image x in the dataset,
-
-   6.a) We create a binary mask **A<sub>i</sub><sup>mask</sup>(x)** of shape (n,n),
-   where each element is 1 if its corresponding element in **A<sub>i</sub>(x)**
-   is greater than or equal to the threshold **T<sub>i</sub>**.
-   This allows us to consider only the top 0.5% activations.
-
-   6.b) We are provided with another mask **M<sub>c</sub>(x)** of shape (n,n),
-    where each element is 1 if its corresponding pixel in the image **x**
-    is labeled with the ground truth class **c**, and 0 otherwise.
-
-   6.c) We compute the intersection over union **IoU<sub>i,c</sub>** between
-    **A<sub>i</sub><sup>mask</sup>(x)** and **M<sub>c</sub>(x)**. If the intersection over union **IoU<sub>i,c</sub>** is larger than a fixed threshold (0.05),
-    then neuron **i** is considered a **concept detector** for concept **c**.
-
 
 <h2 id="iii-why-knowledge-distillation-enhances-interpretability" style="font-size: 21px; display: flex; align-items: center;"> III. Why Knowledge Distillation Enhances Interpretability </h2>
 
@@ -339,7 +345,7 @@ By looking at the KD and label smoothing losses, we can see that they are simila
  * $\mathcal{L}_{KD}=(1-\alpha)\mathrm{CE}(y,\sigma(z_s))+\alpha T^2 \mathrm{CE}(\sigma(z_t^T),\sigma(z_s^T))$
  * $L_{LS} = (1-\alpha)\mathrm{CE}(y,\sigma(z)) + \alpha\mathrm{CE}(u,\sigma(z)) $
 
- So if there is a difference in interpretability, it is likely that it comes from the fact that distillation permits to get class similarity knowledge from the teacher model. This is exactly what is shown in the figure below.
+ So, if there is a difference in interpretability, it is likely that it comes from the fact that distillation permits to get class similarity knowledge from the teacher model. This is exactly what is shown in the figure below. Knowledge distillation guides student models to focus on more object-centric features rather than background or contextual features. This results in activation maps that better align with the actual objects in images.
 
 
 
@@ -353,11 +359,11 @@ By looking at the KD and label smoothing losses, we can see that they are simila
 </p>
 
 
-A virer je pense et remplacer par une petite phrase qui dit que c'est grace à la transmission de class similarity :(Knowledge distillation guides student models to focus on more object-centric features rather than background or contextual features. This results in activation maps that better align with the actual objects in images.)
 
 
 
-This figure also highlights the loss of interpretability when using label smoothing and the improvement of interpretability for KD:
+
+The next figure also highlights the loss of interpretability (less concept detectors) when using label smoothing and the improvement of interpretability (more concept detectors) for KD:
 
 <p align="center">
   <img src="/images/Bryan_Remi/NbConceptDetDiffModels.png" alt="KD vs LS Distributions" width="600">
@@ -366,7 +372,7 @@ This figure also highlights the loss of interpretability when using label smooth
 - **Label Smoothing**: Replaces one-hot with a uniform mixture, removing class similarity information
 - **Knowledge Distillation**: Transfers structured class similarities from teacher to student
 -->
-The paper shows that while label smoothing can improve accuracy, it often reduces interpretability by erasing these valuable class relationships while KD improves accuracy and interpretability.
+While label smoothing can improve accuracy, it often reduces interpretability by erasing valuable class relationships while KD keep class relationship information and improves both accuracy and interpretability.
 
 
 <h2 id="iv-experimental-results-and-reproduction" style="font-size: 21px; display: flex; align-items: center;"> IV. Experimental Results and Reproduction </h2>
@@ -377,6 +383,7 @@ Let's implement a reproduction of one of the paper's key experiments to see know
 
 We are going to replicate the experiment by using the <a href="https://github.com/Rok07/KD_XAI">GitHub repository provided by the authors</a>. The repository contains the code to train the models, compute the concept detectors, and evaluate the interpretability of the models.
 
+As it is often the case with a machine learning paper, running the code to reproduce results requires some struggle.
 To reproduce the results, you could use a virtual environment and then do the following:
 
 ```bash
@@ -409,18 +416,39 @@ python main.py
 
 <ul>
   <li><strong>Five-Band Scores:</strong> This metric assesses interpretability by evaluating pixel accuracy (accuracy of saliency maps in identifying critical features), precision (how well the saliency maps match the actual distinguishing features), recall, and false positive rates (FPR, lower FPR indicates better interpretability) using a synthesized dataset with heatmap ground truths. KD-trained models consistently show higher accuracy and lower FPR compared to other methods.</li>
-  <li><strong><a href="https://arxiv.org/pdf/2102.12781">DiffROAR Scores</a>, proposed by Shah et al. (2021):</strong> This evaluates the degree to which instance-specific explanations focus on discriminative features. KD-trained models outperform others in aligning these explanations effectively.</li>
-  <li><strong>Loss Gradient Alignment:</strong> This metric measures the alignment of model gradients with human-perceived important features. KD models exhibit better alignment, indicating greater interpretability.</li>
+  <li><strong><a href="https://arxiv.org/pdf/2102.12781">DiffROAR Scores</a>, proposed by Shah et al. (2021):</strong> This evaluates the difference in predictive power on a model trained on a dataset and a model trained on a version of the dataset where we removed top and bottom x% of the pixel according to their importance for the task. The authors find that KD has a higher DiffROAR score than a model trained from scratch. It means that KD makes the model use more relevant features and thus more interpretable in that sense.
+
+
+<!--  This evaluates the degree to which instance-specific explanations focus on discriminative features. KD-trained models outperform others in aligning these explanations effectively.</li> -->
+
+
+  <li><strong>Loss Gradient Alignment:</strong> This metric measures the alignment of model gradients with human-perceived important features. KD models exhibit better alignment, indicating greater interpretability as we can see on this figure:
+  <p align="center">
+  <img src="/images/Bryan_Remi/gradient_interpre.png" alt="ObjectCentricActivation" width="700">
+</p>
+
+
+  </li>
 </ul>
 
-<p>These metrics collectively demonstrate that KD enhances interpretability across diverse datasets and domains, extending beyond the visual tasks traditionally associated with these evaluations. The inclusion of these metrics highlights KD's consistent advantages beyond traditional measures like concept detectors, providing a more holistic perspective on interpretability.</p>
+
+<p>
+<p>These metrics collectively show that KD can enhance interpretability. The consistent results showing that knowledge distillation can enhance interpretability for different metrics of interpretability provide strong arguments to believe that KD could be broadly used for better interpretability of machine learning models. </p>
+
+<!--
+<p>These metrics collectively demonstrate that KD enhances interpretability across diverse datasets and domains, extending beyond the visual tasks traditionally associated with these evaluations. The inclusion of these metrics highlights KD's consistent advantages beyond traditional measures like concept detectors, providing a more holistic perspective on interpretability.</p> -->
 
 
 <h2 id="conclusion" style="font-size: 21px; display: flex; align-items: center;"> Conclusion </h2>
 
 <p align="center"> <img src="/images/Bryan_Remi/pinguins_studying.gif" alt="Feeling strong with interpretable AI" style="width: 30%; max-width: 500px; height: auto;"> </p>
 
-The research sheds light on a game-changing discovery: knowledge distillation not only boosts performance but significantly enhances model interpretability. By transferring class-similarity information, KD ensures that student models become more interpretable. From applications in healthcare to autonomous systems, this insight could redefine how we approach AI development. What’s your take on making AI models more transparent and interpretable?
+
+The article showed that knowledge distillation can improve both accuracy and interpretability. They attribute the improvement in interpretability to the transfer of class similarity knowledge from the teacher to the student model. They compare label smoothing (LS) that is similar to KD but LS does not benefit from class similarity information. The empirical experiments shows better accuracy for LS and KD but the interpretability of LS descreases whereas it increases for KD confirming the hypothesis that class similarity knowledge has a role in interpretability. The authors obtain consistent results when using other metrics than the number of concept detectors for interpretability showing that their approach is robust to different definitions of interpretability.
+
+Those encouraging results could lead to applications of knowledge distillation to improve the interpretability of machine learning models in highly sensitive areas like autonomous systems and healthcare.
+
+<!--The research sheds light on a game-changing discovery: knowledge distillation not only boosts performance but significantly enhances model interpretability. By transferring class-similarity information, KD ensures that student models become more interpretable. From applications in healthcare to autonomous systems, this insight could redefine how we approach AI development. What’s your take on making AI models more transparent and interpretable? -->
 
 
 
