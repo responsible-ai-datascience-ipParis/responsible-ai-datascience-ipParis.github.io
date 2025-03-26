@@ -958,7 +958,187 @@ Salakhutdinov, R., editors, Proceedings of the 36th International Conference on 
 volume 97 of Proceedings of Machine Learning Research, pages 6438–6447. PMLR.&amp;#160;&lt;a href="#fnref:10" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
 &lt;/li>
 &lt;/ol>
-&lt;/div></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</guid><pubDate>Sun, 09 Mar 2025 21:03:13 +0100</pubDate></item><item><title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link><description>&lt;style
+&lt;/div></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</guid><pubDate>Sun, 09 Mar 2025 21:03:13 +0100</pubDate></item><item><title>BitFit: BIas-Term FIne-Tuning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</link><description>&lt;style
+TYPE="text/css">
+code.has-jax {font:
+inherit;
+font-size:
+100%;
+background:
+inherit;
+border:
+inherit;}
+&lt;/style>
+&lt;script
+type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\\(','\\)']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script>
+&lt;h1 style="font-size: 24px;">BitFit: A Simpler and More Efficient Approach to Fine-tuning Transformers&lt;/h1>
+&lt;h3 id="authors--abdoul-r-zeba-nour-yahya-nourelhouda-klich">Authors : Abdoul R. Zeba, Nour Yahya, Nourelhouda Klich&lt;/h3>
+&lt;h2 style="font-size: 20px;"> 1. Introduction &lt;/h2>
+&lt;p>Fine-tuning large transformer models like BERT has become the gold standard for adapting them to specific tasks. However, this process is often computationally expensive, requiring vast amounts of memory, making it impractical for many real-world applications. What if there was a way to adapt these models with minimal computational overhead while maintaining competitive performance?&lt;/p>
+&lt;p>Through this blog post, we will discuss &lt;i>&lt;strong>BitFit&lt;/strong>&lt;/i> — a novel parameter-efficient fine-tuning technique proposed in the paper BitFit: A Simpler and More Efficient Approach to Fine-tuning Transformers (&lt;a href="#benzaken">Ben Zaken et al., 2022&lt;/a>).&lt;/p>
+&lt;h2 style="font-size: 20px;"> 2. Why Fine-tuning Needs Optimization &lt;/h2>
+&lt;p>Fine-tuning NLP models typically involves updating all model parameters, but this poses some major challenges:&lt;/p>
+&lt;ol>
+&lt;li>Computational Cost: Training a full BERT-large model requires high-end GPUs and significant memory.&lt;/li>
+&lt;li>Deployment Complexity: Every task-specific fine-tuned model requires a separate copy of the large model.&lt;/li>
+&lt;li>Transfer Learning Issues: Modifying too many parameters can lead to overfitting on small datasets.&lt;/li>
+&lt;/ol>
+&lt;p>Wouldn&amp;rsquo;t it be great if we could fine-tune just a small subset of the parameters and get similar results? This is exactly where &lt;i>&lt;strong>BitFit&lt;/strong>&lt;/i> comes in.&lt;/p>
+&lt;h2 style="font-size: 20px;"> 3. How BitFit Works &lt;/h2>
+&lt;p>Traditional fine-tuning updates &lt;strong>all&lt;/strong> the parameters in a Transformer model, which is computationally expensive. BitFit, on the other hand, &lt;strong>only updates the bias terms&lt;/strong> in the model while keeping all other weights &lt;strong>frozen&lt;/strong>.&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>Bias terms&lt;/strong> are small but essential parameters in neural networks. They adjust activations before applying transformations, helping models adapt to new tasks with minimal updates.&lt;/p>&lt;/blockquote>
+&lt;h3 style="font-size: 18px;"> 3.1 Why Focus on Bias Terms ? &lt;/h3>
+&lt;p>Bias terms &lt;strong>&lt;i>b&lt;/i>&lt;/strong> play a crucial role in neural networks because:&lt;/p>
+&lt;ul>
+&lt;li>They allow neurons to fire (activate) even when inputs are zero.&lt;/li>
+&lt;li>Adjusting bias values can shift outputs without requiring full retraining.&lt;/li>
+&lt;li>Updating biases is a lightweight operation, meaning less memory and faster adaptation.&lt;/li>
+&lt;/ul>
+&lt;p>A key finding in the BitFit paper is that bias terms contribute uniquely to fine-tuning. When researchers randomly selected the &lt;strong>same number&lt;/strong> of non-bias parameters for fine-tuning, the model performed significantly worse than BitFit → This suggests that bias parameters are not just a small subset but play an important role in model adaptation.&lt;/p>
+&lt;h3 style="font-size: 18px;"> 3.2 What Layers Does BitFit Modify ? &lt;/h3>
+&lt;p>BitFit updates the bias terms in &lt;strong>key layers&lt;/strong> of Transformer models like BERT:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Self-Attention Layers&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;p>Transformers use self-attention to focus on important words in a sentence. Each attention head contains three transformations: &lt;strong>Query&lt;/strong> (&lt;code>Q&lt;/code>), &lt;strong>Key&lt;/strong> (&lt;code>K&lt;/code>), &lt;strong>Value&lt;/strong> (&lt;code>V&lt;/code>). And each transformation has its own bias term (&lt;code>bQ&lt;/code>, &lt;code>bK&lt;/code>, &lt;code>bV&lt;/code>).&lt;/p>
+&lt;p>→ BitFit &lt;strong>updates only these biases&lt;/strong> (&lt;code>bQ&lt;/code>, &lt;code>bK&lt;/code>, &lt;code>bV&lt;/code>), while the main attention weights (&lt;code>WQ&lt;/code>, &lt;code>WK&lt;/code>, &lt;code>WV&lt;/code>) remain &lt;strong>unchanged&lt;/strong>.&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Feedforward Layers (MLPs)&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;p>Transformers contain fully connected layers that transform intermediate representations. These layers consist of two main &lt;strong>weight matrices&lt;/strong> (&lt;code>W1&lt;/code>, &lt;code>W2&lt;/code>) and &lt;strong>bias terms&lt;/strong> (&lt;code>b1&lt;/code>, &lt;code>b2&lt;/code>).&lt;/p>
+&lt;p>→ BitFit &lt;strong>updates only the bias terms&lt;/strong> (&lt;code>b1&lt;/code>, &lt;code>b2&lt;/code>), keeping the weight matrices (&lt;code>W1&lt;/code>, &lt;code>W2&lt;/code>) &lt;strong>frozen&lt;/strong>.&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Layer Normalization (LN) Layers&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;p>Transformers use Layer Normalization to stabilize training and prevent exploding gradients. Each LN layer has two learnable parameters: the &lt;strong>scale factor&lt;/strong> &lt;code>$\gamma$&lt;/code> to control the output scaling and the &lt;strong>bias&lt;/strong> &lt;code>$\beta$&lt;/code> to adjust the mean shift.&lt;/p>
+&lt;p>→ BitFit &lt;strong>modifies only the bias term&lt;/strong> &lt;code>$\beta$&lt;/code>, while keeping the scale factor &lt;code>$\gamma$&lt;/code> &lt;strong>fixed&lt;/strong>.&lt;/p>
+&lt;h3 style="font-size: 18px;"> 3.3 Mathematical Explanation &lt;/h3>
+&lt;h4 style="font-size: 16px;"> 3.3.1 Standard Fine-Tuning &lt;/h4>
+&lt;p>In traditional fine-tuning, we update &lt;strong>both&lt;/strong> the weights ($W$) and bias terms ($b$):&lt;/p>
+&lt;p>$$
+W_{\text{fine-tuned}} = W_{\text{pretrained}} + \Delta W
+$$&lt;/p>
+&lt;p>$$
+b_{\text{fine-tuned}} = b_{\text{pretrained}} + \Delta b
+$$&lt;/p>
+&lt;p>where:&lt;/p>
+&lt;ul>
+&lt;li>$W_{\text{pretrained}}$ is the original weight matrix from the pre-trained model.&lt;/li>
+&lt;li>$\Delta W$ is the learned update during fine-tuning.&lt;/li>
+&lt;li>$b_{\text{pretrained}}$ is the original bias vector.&lt;/li>
+&lt;li>$\Delta b$ is the learned bias update.&lt;/li>
+&lt;/ul>
+&lt;h4 style="font-size: 16px;"> 3.3.2 BitFit: BIas-Term FIne-Tuning &lt;/h4>
+&lt;p>Instead of updating all weights, BitFit &lt;strong>freezes&lt;/strong> $W$ and &lt;strong>only updates&lt;/strong> $b$:&lt;/p>
+&lt;p>$$
+W_{\text{fine-tuned}} = W_{\text{pretrained}}
+$$&lt;/p>
+&lt;p>$$
+b_{\text{fine-tuned}} = b_{\text{pretrained}} + \Delta b
+$$&lt;/p>
+&lt;p>Here, $\Delta b$ represents the learned adjustments needed for the new task.&lt;/p>
+&lt;h3 style="font-size: 18px;"> 3.4 Are all Bias Terms Equal ? &lt;/h3>
+&lt;p>Not all bias parameters contribute equally to fine-tuning. Researchers found that two types of bias terms are especially important:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Query Biases&lt;/strong> &lt;code>bQ&lt;/code>: Found in self-attention layers, responsible for selecting relevant words.&lt;/li>
+&lt;li>&lt;strong>Middle-Layer MLP Biases&lt;/strong> &lt;code>b2&lt;/code>: Found in feedforward layers, responsible for transforming representations.&lt;/li>
+&lt;/ul>
+&lt;p>By only fine-tuning these two subsets, performance remained almost identical to full BitFit while updating half the parameters.&lt;/p>
+&lt;blockquote>
+&lt;p>BitFit typically fine-tunes &lt;strong>0.08%&lt;/strong> of model parameters, but using only &lt;code>bQ&lt;/code> and &lt;code>b2&lt;/code>, this number drops to &lt;strong>0.04%&lt;/strong> with no major accuracy loss!&lt;/p>&lt;/blockquote>
+&lt;p>This means fine-tuning can be made even more efficient by selecting only the most impactful bias terms.&lt;/p>
+&lt;h2 style="font-size: 20px;"> 4. How Well Does BitFit Perform? &lt;/h2>
+&lt;p>Compared to other parameter-efficient fine-tuning techniques such as Diff-Pruning and Adapters, BitFit achieves competitive performance with significantly fewer trainable parameters.&lt;/p>
+&lt;p>BitFit outperforms Diff-Pruning on 4 of the 9 tasks of the GLUE benchmark using the BERTLARGE model and with 6 times fewer trainable parameters. On the test set, BitFit decisively beats Diff-Pruning over two tasks and Adapters over four tasks with 45 times fewer trainable parameters.&lt;/p>
+&lt;p>The performance trends of BitFit remain consistent across different base models, e.g., BERTBASE and RoBERTaBASE. The performance of BitFit is not simply due to its adaptation of a collection of parameters, but rather the specific choice of bias parameters. Random selection of an identical number of parameters yields significantly poorer performance, which means that bias parameters have a unique critical contribution to fine-tuning.
+Moreover, further analysis reveals that not all bias parameters are equally important as some of them contribute more to the model&amp;rsquo;s performance than others.&lt;/p>
+&lt;p>BitFit also demonstrates a smaller generalization gap compared to full fine-tuning, suggesting better generalization capabilities. In token-level tasks such as POS-tagging, BitFit achieves comparable results to full fine-tuning.&lt;/p>
+&lt;p>Finally, BitFit&amp;rsquo;s performance also appears to rely on training set size. In experiment with the Stanford Question Answering Dataset, BitFit outperforms full fine-tuning in small-data regimes, but the trend reverses as the training set size increases. What that means is that BitFit is particularly useful when it comes to targeted fine-tuning under small-to-mid-sized data conditions.&lt;/p>
+&lt;h2 style="font-size: 20px;"> 5. Why Does BitFit Work? &lt;/h2>
+&lt;p>BitFit&amp;rsquo;s success can be attributed to several key factors that challenge traditional assumptions about fine-tuning large language models. Rather than retraining all parameters, BitFit selectively updates only the bias terms, leading to efficient adaptation without sacrificing performance. But why is this approach effective?&lt;/p>
+&lt;h3 style="font-size: 18px;"> 5.1 Fine-Tuning as Knowledge Exposure, Not Learning &lt;/h3>
+&lt;p>A crucial insight is that fine-tuning large pre-trained transformers is often less about &amp;ldquo;learning new knowledge&amp;rdquo; and more about &amp;ldquo;exposing&amp;rdquo; the knowledge already embedded in the model. Since transformer-based models like BERT have already learned a vast range of linguistic patterns during their unsupervised pre-training phase, adjusting a small number of parameters—specifically the bias terms—can be enough to bring out task-specific information without reworking the entire model.&lt;/p>
+&lt;h3 style="font-size: 18px;"> 5.2 Bias Terms and Their Unique Role &lt;/h3>
+&lt;p>Bias terms in neural networks serve as offset values, allowing neurons to activate even when input features are zero. Unlike weights, which define relationships between features, bias terms shift outputs in a task-specific manner.&lt;/p>
+&lt;p>BitFit leverages the fact that bias terms interact across layers in a way that can subtly adjust how information flows through the model without needing to modify the main weight matrices. This enables significant changes in task-specific performance with minimal modifications to the model structure.&lt;/p>
+&lt;h3 style="font-size: 18px;"> 5.3 A Targeted and Structured Approach &lt;/h3>
+&lt;p>Not all bias parameters contribute equally to model adaptation. The study found that:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Query Biases (bQ)&lt;/strong>: Found in self-attention layers, crucial for determining which words receive attention.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Middle-Layer MLP Biases (b2)&lt;/strong>: Found in feedforward layers, responsible for transforming hidden representations.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>By focusing updates on these specific biases, BitFit achieves near full fine-tuning performance while modifying only 0.04% of model parameters.&lt;/p>
+&lt;h3 style="font-size: 18px;"> 5.4 The Generalization Advantage &lt;/h3>
+&lt;p>Another reason BitFit works well is its effect on generalization. Traditional fine-tuning tends to overfit on small datasets because it updates many parameters, potentially memorizing noise rather than learning transferable patterns. BitFit, by contrast, updates only a fraction of the parameters, leading to a smaller generalization gap.&lt;/p>
+&lt;p>In fact, experiments show that BitFit performs better than full fine-tuning in small-data regimes. This suggests that limiting parameter updates can sometimes lead to better robustness and generalization.&lt;/p>
+&lt;h2 style="font-size: 20px;"> 6. Implications and Future Directions &lt;/h2>
+&lt;p>BitFit opens new avenues for efficient fine-tuning, making it particularly relevant in scenarios where computational resources are limited, such as:&lt;/p>
+&lt;h3 style="font-size: 18px;"> 6.1 Efficient Deployment in Real-World Applications &lt;/h3>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Low-Resource AI Systems&lt;/strong>: BitFit’s lightweight approach is ideal for deploying NLP models in mobile applications, IoT devices, and embedded AI systems where computational efficiency is critical.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Multi-Task Learning&lt;/strong>: Since only bias terms need updating, multiple tasks can share the same base model, reducing memory overhead and increasing flexibility in production systems.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Scalable NLP Services&lt;/strong>: Cloud-based NLP services that handle multiple tasks (e.g., chatbots, automated translations) can benefit from BitFit by reducing the need to store and load separate models for each task.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 style="font-size: 18px;"> 6.2 Understanding Model Adaptation &lt;/h3>
+&lt;p>The success of BitFit raises deeper questions about the nature of transfer learning and fine-tuning:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>Do large transformers truly need full fine-tuning, or is most of their knowledge already latent?&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Could bias-only tuning be the key to unlocking efficient continual learning strategies?&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Are there other small but critical subsets of parameters that can be updated to achieve similar efficiency gains?&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 style="font-size: 18px;"> 6.3 Potential Enhancements &lt;/h3>
+&lt;p>While BitFit is a promising step forward, future research could explore:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Selective bias tuning&lt;/strong>: Further analyzing which specific bias terms contribute most to adaptation and whether additional optimization can reduce the number of updates even further.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Hybrid approaches&lt;/strong>: Combining BitFit with methods like adapters or LoRA (Low-Rank Adaptation) to achieve even better efficiency.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Application to other architectures&lt;/strong>: Investigating whether BitFit’s principles extend beyond BERT to models like GPT, T5, and multimodal transformers.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 style="font-size: 20px;"> 7. Conclusion &lt;/h2>
+&lt;p>In conclusion, BitFit offers a desirable compromise between effectiveness and efficiency, making it a valuable tool for fine-tuning transformer-based models, especially in resource-constrained environments or with limited amounts of training data. Having the capability to achieve competitive performance using significantly fewer trainable parameters, coupled with its achievement in low data regimes, bodes well for other NLP tasks and applications.&lt;/p>
+&lt;p>BitFit defies the usual wisdom concerning universal fine-tuning by illustrating how slight tweaks in only a very small percentage of model parameters yield high-performance. This efficient approach makes AI models more accessible, scalable, and cost-effective.&lt;/p>
+&lt;h3 id="references">References&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a id="#benzaken">&lt;/a> &lt;a href="https://aclanthology.org/2022.acl-short.1/">BitFit: Simple Parameter-efficient Fine-tuning for Transformer-based Masked Language-models&lt;/a> (Ben Zaken et al., ACL 2022)&lt;/li>
+&lt;/ul></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</guid><pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate></item><item><title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link><description>&lt;style
 TYPE="text/css">
 code.has-jax {font:
 inherit;

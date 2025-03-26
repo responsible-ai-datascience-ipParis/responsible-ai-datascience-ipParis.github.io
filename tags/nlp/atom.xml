@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>NLP on Bloggin on Responsible AI</title><link>https://responsible-ai-datascience-ipParis.github.io/tags/nlp/</link><description>Recent content in NLP on Bloggin on Responsible AI</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 19 Feb 2025 15:20:48 +0100</lastBuildDate><atom:link href="https://responsible-ai-datascience-ipParis.github.io/tags/nlp/atom.xml" rel="self" type="application/rss+xml"/><item><title>BitFit: BIas-Term FIne-Tuning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</link><pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate><guid>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</guid><description>&lt;style
+TYPE="text/css">
+
+code.has-jax {font:
+inherit;
+font-size:
+100%; 
+background: 
+inherit; 
+border: 
+inherit;}
+
+&lt;/style>
+&lt;script
+type="text/x-mathjax-config">
+
+MathJax.Hub.Config({
+
+ tex2jax: {
+
+ inlineMath: [['$','$'], ['\\(','\\)']],
+
+ skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+
+ }
+
+});
+
+MathJax.Hub.Queue(function() {
+
+ var all = MathJax.Hub.getAllJax(), i;
+
+ for(i = 0; i &lt; all.length; i += 1) {
+
+ all[i].SourceElement().parentNode.className += ' has-jax';
+
+ }
+
+});
+
+&lt;/script>
+&lt;script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script>
+&lt;h1 style="font-size: 24px;">BitFit: A Simpler and More Efficient Approach to Fine-tuning Transformers&lt;/h1>
+&lt;h3 id="authors--abdoul-r-zeba-nour-yahya-nourelhouda-klich">Authors : Abdoul R. Zeba, Nour Yahya, Nourelhouda Klich&lt;/h3>
+&lt;h2 style="font-size: 20px;"> 1. Introduction &lt;/h2>
+&lt;p>Fine-tuning large transformer models like BERT has become the gold standard for adapting them to specific tasks. However, this process is often computationally expensive, requiring vast amounts of memory, making it impractical for many real-world applications. What if there was a way to adapt these models with minimal computational overhead while maintaining competitive performance?&lt;/p></description></item></channel></rss>
