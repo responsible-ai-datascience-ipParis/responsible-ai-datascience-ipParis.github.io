@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2025, Calvin Tran</copyright><lastBuildDate>Wed, 05 Feb 2025 14:03:13 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>How to augment my dataset?</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</link><description>&lt;style TYPE="text/css">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2025, Calvin Tran</copyright><lastBuildDate>Sun, 09 Mar 2025 21:03:13 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>Get a calibrated and efficient model with tailored data augmentation.</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</link><description>&lt;style TYPE="text/css">
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style>
 &lt;script type="text/x-mathjax-config">
@@ -17,25 +17,527 @@ all[i].SourceElement().parentNode.className += ' has-jax';
 });
 &lt;/script>
 &lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script>
-&lt;h1 id="authors--tristan-waddington-fabien-lagnieu--dimitri-henrard-iratchet">Authors : &lt;em>Tristan Waddington, Fabien Lagnieu &amp;amp; Dimitri Henrard-Iratchet&lt;/em>&lt;/h1>
-&lt;h3 id="paper-comment-on-the-research-paper-tailoring-mixup-to-data-for-calibrationhttpsarxivorgabs231101434-written-by-quentin-bouniot-pavlo-mozharovskyi--florence-dalché-buc-from-ltci-télécom-paris-institut-polytechnique-de-paris-france">Paper: Comment on the research paper: &lt;a href="https://arxiv.org/abs/2311.01434">&lt;strong>Tailoring Mixup to Data for Calibration&lt;/strong>&lt;/a>, written by &lt;em>Quentin Bouniot, Pavlo Mozharovskyi &amp;amp; Florence d’Alché-Buc&lt;/em>, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France&lt;/h3>
-&lt;p>TODO: insert table of contents&lt;/p>
+&lt;h2 id="authors--tristan-waddington-fabien-lagnieu--dimitri-henrard-iratchet">Authors : &lt;em>Tristan Waddington, Fabien Lagnieu &amp;amp; Dimitri Henrard-Iratchet&lt;/em>&lt;/h2>
+&lt;h2 id="comment-on-the-research-paper-tailoring-mixup-to-data-for-calibration-written-by-quentin-bouniot-pavlo-mozharovskyi--florence-dalché-buc-from-ltci-télécom-paris-institut-polytechnique-de-paris-france">Comment on the research paper: &lt;a href="https://arxiv.org/abs/2311.01434">&lt;strong>Tailoring Mixup to Data for Calibration&lt;/strong>&lt;/a>, written by &lt;em>Quentin Bouniot, Pavlo Mozharovskyi &amp;amp; Florence d’Alché-Buc&lt;/em>, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France&lt;/h2>
+&lt;h1 id="table-of-contents">Table of contents&lt;/h1>
+&lt;ol>
+&lt;li>&lt;a href="#1-existing-data-augmentation-methods">Existing Data Augmentation Methods&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#2-understanding-calibration">Understanding Calibration&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#3-best-of-both-worlds-tailoring-mixup-to-data-for-calibration">Best of both worlds: Tailoring Mixup to Data for Calibration&lt;/a>&lt;/li>
+&lt;/ol>
 &lt;h1 id="introduction">Introduction&lt;/h1>
-&lt;p>&lt;img
-src="./images/MixUpDataCalibration/AI_introvert.png"
-alt="Test image Mkdown"
-loading="lazy"
-decoding="async"
-class="full-width"
-/>
-Let&amp;rsquo;s do it.&lt;/p>
+&lt;blockquote>
+&lt;p>&amp;ldquo;But it works well on the training set!&amp;rdquo; is the machine learning equivalent to the classic &amp;ldquo;But it works on my computer!&amp;rdquo;&lt;/p>&lt;/blockquote>
+&lt;p>The basic workflow of machine learning has two steps:&lt;/p>
+&lt;ul>
+&lt;li>First, &lt;strong>train&lt;/strong> your model to perform a task from an available dataset.&lt;/li>
+&lt;li>Second, &lt;strong>generalize&lt;/strong> and predict the results from unseen data.&lt;/li>
+&lt;/ul>
+&lt;p>How can data scientists be sure and &lt;em>confident&lt;/em> that their model will infer a correct result on this new data?&lt;/p>
 &lt;p align="center">
-&lt;img src="./images/MixUpDataCalibration/AI_introvert.png" alt="Test image mathematical">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/WoMM.jpg"
+alt="Does not know why it (don't) works."
+width=300>
+&lt;/img>
+&lt;/figure>
 &lt;/p>
-&lt;h1 id="main-part">Main part&lt;/h1>
-&lt;p>Test LaTeX : $\sigma \left( \frac{1}{2}\right)$&lt;/p>
-&lt;p>$$\mathbb{R}^3 $$&lt;/p>
-&lt;h1 id="conclusion">Conclusion&lt;/h1></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</guid><pubDate>Wed, 05 Feb 2025 14:03:13 +0100</pubDate></item><item><title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link><description>&lt;style
+&lt;p>We know that deep learning models need vast amounts of data to be efficient.
+So, when there is not enough, researchers simply… create more data:
+this is the concept of &lt;strong>data augmentation&lt;/strong>.&lt;/p>
+&lt;p>However, this technique tends to exarcerbate the models&amp;rsquo; &lt;strong>overconfidence&lt;/strong> in their
+predictions.
+Discrepancies between confidence and prediction accuracy are acceptable in domains such as e-commerce recommendations,
+but high stake applications such as medical diagnosis or nuclear safety require an accurate &lt;strong>confidence score&lt;/strong>, where robustness and reliability are critical.&lt;/p>
+&lt;p>&lt;strong>This is the idea behind calibration: the model&amp;rsquo;s confidence in its prediction must truly reflect its own prediction accuracy.&lt;/strong>
+Well-calibrated models do not just inspire trust; they also contribute to &lt;strong>fairer decision-making&lt;/strong>, by ensuring that predictions are accompanied by reliable confidence estimates, which can help reduce biased or unjust outcomes.&lt;/p>
+&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/CalibratedClassifier.png"
+alt="Difference between a calibrated classifier (right) and a bad one (left)."
+width=600>
+&lt;/img>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: Illustration of the confidence of a calibrated classifier (right) with
+accurate prediction probabilities and a more brutal and under-confident one (left).&lt;/em>&lt;/p>
+&lt;p>Merging data augmentation and calibration is challenging. The first is prone to
+create &lt;strong>manifold intrusion&lt;/strong>, where synthetic data with a given label conflicts
+with original data of another class. The rise of the size of the dataset also
+increases the computational cost of the training. This contradicts the potential objective of frugality. The second is known to &lt;strong>constrain the accuracy&lt;/strong>.&lt;/p>
+&lt;p>To handle these challenges, Quentin Bouniot and Pavlo Mozharovskyi have conducted
+under the direction of Florence d&amp;rsquo;Alché-Buc an extensive study on one of the
+technique of data augmentation, the &lt;strong>linear interpolation of training samples&lt;/strong>,
+also called &lt;strong>Mixup&lt;/strong>. They have found an efficient way to tune this process to
+both improve the performance &lt;strong>and&lt;/strong> the calibration of models, while being
+much more efficient than previous methods.&lt;/p>
+&lt;p>Let&amp;rsquo;s dig step by step into it.&lt;/p>
+&lt;hr>
+&lt;h1 id="1-existing-data-augmentation-methods">1. Existing Data Augmentation Methods&lt;/h1>
+&lt;p>Deep learning methods rely on vast amounts of data, so if you do not have enough, make
+it yourself. This is the first conclusion of the
+study of a Microsoft Research team, lead by Patrice Simard in 2003 aimed to list the
+current best practices of neural networks training:&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;em>&amp;ldquo;The most important practice is getting a training set as large as possible: we
+expand the training set by adding a new form of distorted data.&amp;rdquo;&lt;/em> [Simard et al. 2003] &lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>&lt;/p>&lt;/blockquote>
+&lt;p>The good results of subsequent models have proved them right. And numerous
+techniques have been developed since. Let&amp;rsquo;s review some of them.&lt;/p>
+&lt;h2 id="11-create-new-images-for-classification">1.1. Create new images for classification&lt;/h2>
+&lt;p>The most visual example of data augmentation is the way image classifiers are trained.
+To make them more robust and efficient, scientists have transformed the input images
+to drastically increase the size of the training set (by up to 2048 times).&lt;/p>
+&lt;p>The most commonly used transformations
+are random cropping and resizing, flipping, and color distortion.
+This is now so common that it can be done in a few lines in &lt;code>pytorch&lt;/code> (see next code
+snippet), and automatic recipes
+such as &lt;code>AutoAugment&lt;/code>&lt;sup id="fnref:2">&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref">2&lt;/a>&lt;/sup> are readily available to augment common datasets.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">from&lt;/span> &lt;span style="color:#111">torchvision&lt;/span> &lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#111">transforms&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Definition of transformations for an image dataset&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">transformTrain&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">transforms&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Compose&lt;/span>&lt;span style="color:#111">([&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">transforms&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">RandomResizedCrop&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#ae81ff">224&lt;/span>&lt;span style="color:#111">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">transforms&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">RandomHorizontalFlip&lt;/span>&lt;span style="color:#111">(),&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">transforms&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">ColorJitter&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">brightness&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">.5&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">hue&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">.3&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">])&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Additional transformations for images are illustrated
+on the next figure. We expect the neural networks to &amp;ldquo;see&amp;rdquo; these 10 new images
+as being close in their latent space. With this example, one original labeled image
+is processed 10 times in different versions during the training of the model.&lt;/p>
+&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/Data-Augmentation.png"
+alt="Different methods of data augmentation operators."
+width=600>
+&lt;/img>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: Illustration of different data augmentation operators, taken from the paper of Chen 2020 &lt;sup id="fnref:3">&lt;a href="#fn:3" class="footnote-ref" role="doc-noteref">3&lt;/a>&lt;/sup>&lt;/em>&lt;/p>
+&lt;h2 id="12-linear-interpolation-or-mixup">1.2. Linear interpolation or Mixup&lt;/h2>
+&lt;p>Another idea is to create a virtual sample from a &lt;strong>vicinity&lt;/strong> around the true
+training data—like we did in high school when we added epsilon to a number to see in witch direction
+the function is moving. This principle has been demonstrated to help models
+generalize. However, the method of creation is often hand-crafted and only mimic
+natural perturbations.&lt;/p>
+&lt;p>To scale up this process, [Zhang et al., 2018]&lt;sup id="fnref:4">&lt;a href="#fn:4" class="footnote-ref" role="doc-noteref">4&lt;/a>&lt;/sup> imagined the &lt;strong>Mixup&lt;/strong> process,
+which is a linear interpolation, or mixing, of two or more training datapoints.&lt;/p>
+&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/mixup_figures-vanilla.png"
+alt="Example of vanilla Mixup"
+width=300>
+&lt;/img>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: Illustration of a linear interpolation of Mixup. New points $\tilde{\mathrm{x}}_1$ and $\tilde{\mathrm{x}}_2$ are respectively drawn from the segment $[\mathrm{x}_1, \mathrm{x}_2]$ and $[\mathrm{x}_1, \mathrm{x}_3]$&lt;/em>&lt;/p>
+&lt;p>The process of data augmentation during training with Mixup consists of three phases:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>selecting tuples&lt;/strong> (most often pairs) of points to mix together,&lt;/li>
+&lt;li>&lt;strong>sampling coefficients&lt;/strong> that will govern the interpolation to generate synthetic points,&lt;/li>
+&lt;li>applying a specific &lt;strong>interpolation procedure&lt;/strong> between the points weighted by the coefficients sampled.&lt;/li>
+&lt;/ol>
+&lt;p>However, the literature explores the drawbacks of this process:&lt;/p>
+&lt;ul>
+&lt;li>Mixing carelessly different points can result in
+&lt;strong>incorrect labels and hurt generalization&lt;/strong> [Guo et al., 2019]&lt;sup id="fnref:5">&lt;a href="#fn:5" class="footnote-ref" role="doc-noteref">5&lt;/a>&lt;/sup>, while
+mixing similar points helps in diversity [Dablain et al., 2022].&lt;/li>
+&lt;li>Furthermore, several previous work have highlighted a &lt;strong>trade-off between performance and calibration&lt;/strong> in Mixup [Wang et al., 2023].&lt;/li>
+&lt;/ul>
+&lt;p>Before digging further into the Mixup process, it is time to understand what
+exactly is the calibration of a model and why it can be worth of a trade-off with performance.&lt;/p>
+&lt;hr>
+&lt;h1 id="2-understanding-calibration">2. Understanding Calibration&lt;/h1>
+&lt;p>Modern (post 2016) neural networks have a high accuracy but are overconfident
+in their predictions, outputting softmax scores of
+above 99.9% for the dominant class, hence misleading the user into a false sense of confidence.
+This is why we need &lt;strong>calibration&lt;/strong>.&lt;/p>
+&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/Over_confident_IA.jpg"
+alt="Failed object detection with high confidence"
+width=400>
+&lt;/img>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: Meme about the overconfidence of an AI agent (obviously uncalibrated) over a failed prediction.&lt;/em>&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;em>Calibration&lt;/em> is a metric to quantify uncertainty, measuring the difference between a model’s confidence
+in its predictions and the actual probability of those predictions being correct.&lt;sup id="fnref:6">&lt;a href="#fn:6" class="footnote-ref" role="doc-noteref">6&lt;/a>&lt;/sup>&lt;/p>&lt;/blockquote>
+&lt;p>In other words, if a &lt;em>calibrated model&lt;/em> predicts the image as a cat with a confidence
+of 0.3, this prediction has a 30% chance of being correct.
+&lt;strong>The actual aim is not exactly to explain the results, but confidence calibration prevents
+some mistakes by associating a prediction with its confidence score.&lt;/strong>&lt;/p>
+&lt;p>Let&amp;rsquo;s explore further the motivations of calibration and the way to measure
+it and the potential draw backs.&lt;/p>
+&lt;h3 id="21-importance-of-calibration">2.1. Importance of calibration&lt;/h3>
+&lt;p>The gap in confidence calibration has been spotted by [Guo et al. (2017)]&lt;sup id="fnref1:5">&lt;a href="#fn:5" class="footnote-ref" role="doc-noteref">5&lt;/a>&lt;/sup>,
+and is linked to the actual use cases of neural networks, where the calibration is not crucial.
+In LLMs or online recommender systems, a 90% quality of predictions is enough and occasional mistakes are acceptable. For further use however, like in medical diagnosis prediction or
+in defense systems, an overconfident model can lead to tragic consequences.&lt;/p>
+&lt;p>What would be the benefits of a well calibrated model ?&lt;/p>
+&lt;ul>
+&lt;li>It can &lt;strong>filter out the poor predictions&lt;/strong>, and not provide a wrong prediction to the user.&lt;/li>
+&lt;li>It can &lt;strong>reinforce the continuous training&lt;/strong>, by asking for the actual label of the low confidence prediction.&lt;/li>
+&lt;li>It can &lt;strong>detect outliers&lt;/strong> and warn the user that something strange is happening.&lt;/li>
+&lt;li>It can improve the &lt;strong>robustness of the model&lt;/strong> by ensuring that prediction confidence accurately reflects the underlying uncertainty, leading to more reliable decisions in critical situations.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>To sum it up, a well calibrated model is a reliable coworker aware of its own capacities.&lt;/strong>&lt;/p>
+&lt;h3 id="22-calibration-metrics">2.2. Calibration Metrics&lt;/h3>
+&lt;p>To compare the calibration of models, specific metrics are required. Unlike simple accuracy on a dataset, various metrics have been proposed in the literature, each focusing on different characteristics.&lt;/p>
+&lt;h4 id="221-the-brier-score">2.2.1. The Brier Score&lt;/h4>
+&lt;p>The Brier score [Brier, 1050] is the mean square error between predicted confidence and target.
+Here the target has the form of a one-hot encoded vector.&lt;/p>
+&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/BrierScore_Wolfe.png"
+alt="Brier Score illustration"
+width=600>
+&lt;/img>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: Computing the Brier Score on classification task (image by Wolfe)&lt;sup id="fnref:7">&lt;a href="#fn:7" class="footnote-ref" role="doc-noteref">7&lt;/a>&lt;/sup>.&lt;/em>&lt;/p>
+&lt;p>Intuitively, the &lt;strong>Brier Score measures the accuracy of predicted probabilities&lt;/strong>. It can be decomposed into three components — uncertainty (marginal uncertainty over labels), resolution (deviations of individual predictions against the marginal), and reliability (average violation of true label frequencies)&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>Brier Score = uncertainty - resolution + reliability&lt;/strong>&lt;/p>&lt;/blockquote>
+&lt;p>The Brier Score is insensitive to the low frequencies events, hence it can be used in combination
+with one of the other following metrics to provide useful insights.
+Basically, the score is low when the predictions reflect the confidence, i.e. when the model is calibrated.&lt;/p>
+&lt;p>&lt;em>The following code is a dummy example of Brier score computation of a single classification probabilities over 3 classes. The same probabilities will be used on different metrics.&lt;/em>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#111">torch&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">from&lt;/span> &lt;span style="color:#111">sklearn.metrics&lt;/span> &lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#111">brier_score_loss&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Example of prediction outputs&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">prob_u&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Tensor&lt;/span>&lt;span style="color:#111">([&lt;/span>&lt;span style="color:#ae81ff">0.34&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.33&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.33&lt;/span>&lt;span style="color:#111">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">prob_l&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Tensor&lt;/span>&lt;span style="color:#111">([&lt;/span>&lt;span style="color:#ae81ff">0.5&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.25&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.25&lt;/span>&lt;span style="color:#111">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">prob_h&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Tensor&lt;/span>&lt;span style="color:#111">([&lt;/span>&lt;span style="color:#ae81ff">0.9&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.07&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.03&lt;/span>&lt;span style="color:#111">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">target&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Tensor&lt;/span>&lt;span style="color:#111">([&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#111">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Compute brier score&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">print&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#d88200">f&lt;/span>&lt;span style="color:#d88200">&amp;#34;Brier score for uniform:&lt;/span>&lt;span style="color:#8045ff">\t&lt;/span>&lt;span style="color:#d88200"> &lt;/span>&lt;span style="color:#d88200">{&lt;/span>&lt;span style="color:#111">brier_score_loss&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">target&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">prob_u&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#d88200">:&lt;/span>&lt;span style="color:#d88200">.4f&lt;/span>&lt;span style="color:#d88200">}&lt;/span>&lt;span style="color:#d88200">&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">print&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#d88200">f&lt;/span>&lt;span style="color:#d88200">&amp;#34;Brier score for low confidence:&lt;/span>&lt;span style="color:#8045ff">\t&lt;/span>&lt;span style="color:#d88200"> &lt;/span>&lt;span style="color:#d88200">{&lt;/span>&lt;span style="color:#111">brier_score&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">target&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">prob_l&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#d88200">:&lt;/span>&lt;span style="color:#d88200">.4f&lt;/span>&lt;span style="color:#d88200">}&lt;/span>&lt;span style="color:#d88200">&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">print&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#d88200">f&lt;/span>&lt;span style="color:#d88200">&amp;#34;Brier score for high confidence: &lt;/span>&lt;span style="color:#d88200">{&lt;/span>&lt;span style="color:#111">brier_score&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">target&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">prob_h&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#d88200">:&lt;/span>&lt;span style="color:#d88200">.4f&lt;/span>&lt;span style="color:#d88200">}&lt;/span>&lt;span style="color:#d88200">&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;em>Output&lt;/em>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Brier score &lt;span style="color:#00a8c8">for&lt;/span> uniform: 0.2178
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Brier score &lt;span style="color:#00a8c8">for&lt;/span> low confidence: 0.1250
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Brier score &lt;span style="color:#00a8c8">for&lt;/span> high confidence: 0.0053
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="222-the-expected-calibration-error-ece">2.2.2. The Expected Calibration Error (ECE)&lt;/h4>
+&lt;p>The Expected Calibration Error [Guo et al, 2017] approximates the difference between &lt;strong>accuracy&lt;/strong> and &lt;strong>confidence&lt;/strong> by grouping samples into equally spaced &lt;strong>bins&lt;/strong> with respect to their confidence scores.
+Because it is both simple and interpretable, ECE is a popular metric to evaluate calibration on classification tasks in practice.
+ECE computes the difference between average confidence and accuracy within each
+bin, then takes a &lt;strong>weighted average of these values based upon the relative
+size of each bin.&lt;/strong>&lt;/p>
+&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/ECE_Wolfe.png"
+alt="ECE illustration "
+width=600>
+&lt;/img>
+&lt;figcaption>&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: Computing ECE over a group of prediction, (image by Wolfe)&lt;sup id="fnref1:7">&lt;a href="#fn:7" class="footnote-ref" role="doc-noteref">7&lt;/a>&lt;/sup>.&lt;/em>&lt;/p>
+&lt;p>ECE measures how well a model’s estimated &amp;ldquo;probabilities&amp;rdquo; match the observed
+probabilities by taking a weighted average over the absolute difference between
+accuracy and estimated probabilities (confidence). This measure involves splitting
+the predictions into $M$ equally spaced bins.&lt;/p>
+&lt;p>$$ECE = \sum_{bins}^M \frac{\text{bin size}}{\text{nb samples}} | \text{accuracy per bin} - \text{average bin probability}| $$&lt;/p>
+&lt;p>A very good example on how to compute ECE by hand can be found in the article
+of &lt;a href="https://towardsdatascience.com/expected-calibration-error-ece-a-step-by-step-visual-explanation-with-python-code-c3e9aa12937d/">Maja Pavlovic&lt;/a>
+on the blog TowardsDataScience&lt;sup id="fnref:8">&lt;a href="#fn:8" class="footnote-ref" role="doc-noteref">8&lt;/a>&lt;/sup>.&lt;/p>
+&lt;p>&lt;strong>Variants&lt;/strong>: &lt;em>Adaptative ECE&lt;/em> (AECE) is simmilar to ECE, but with each bin having the same number of samples. Other extensions of ECE can
+be used to estimate the variance over the bins, the &lt;em>Uncertainty Calibration Error&lt;/em>
+(UCE) or the &lt;em>Expected Normalize Calibration Error&lt;/em> (ENCE). They will not be
+detailed further here.&lt;/p>
+&lt;h4 id="223-the-negative-log-likelihood-nll">2.2.3. The Negative Log Likelihood (NLL)&lt;/h4>
+&lt;p>The Negative Log Likelihood (NLL) is the typical objective function for training neural networks in multi-class classification. It characterizes the disparity
+between the predicted and the actual confidence for the true label.
+It reaches a perfect score of $0$ when all data is correctly predicted with 100% confidence,
+and rises as soon as some are misclassified. Hence lower scores correspond to better calibration.&lt;/p>
+&lt;p>&lt;em>Dummy example of NLL computation of a single prediction over 3 classes&lt;/em>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#111">torch&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#111">torch.nn&lt;/span> &lt;span style="color:#00a8c8">as&lt;/span> &lt;span style="color:#111">nn&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">log_softmax&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">nn&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">LogSoftmax&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">dim&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">loss_fn&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">nn&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">NLLLoss&lt;/span>&lt;span style="color:#111">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># input to NLLLoss is of size (batch_size x nb_classes) = 1 x 3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">target&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Tensor&lt;/span>&lt;span style="color:#111">([&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#111">])&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">long&lt;/span>&lt;span style="color:#111">()&lt;/span> &lt;span style="color:#75715e"># correct class is at index O&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># different examples of logits from a classifier&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">logits_u&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Tensor&lt;/span>&lt;span style="color:#111">([[&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">]])&lt;/span> &lt;span style="color:#75715e"># uniform prediction&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">logits_l&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Tensor&lt;/span>&lt;span style="color:#111">([[&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.2&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.1&lt;/span>&lt;span style="color:#111">]])&lt;/span> &lt;span style="color:#75715e"># low confidence prediction&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">logits_h&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Tensor&lt;/span>&lt;span style="color:#111">([[&lt;/span>&lt;span style="color:#ae81ff">10&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.1&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.1&lt;/span>&lt;span style="color:#111">]])&lt;/span> &lt;span style="color:#75715e"># high confidence prediction&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">print&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#d88200">f&lt;/span>&lt;span style="color:#d88200">&amp;#34;nll uniform: &lt;/span>&lt;span style="color:#8045ff">\t\t&lt;/span>&lt;span style="color:#d88200">{&lt;/span>&lt;span style="color:#111">loss_fn&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">log_softmax&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">logits_u&lt;/span>&lt;span style="color:#111">),&lt;/span> &lt;span style="color:#111">target&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#d88200">:&lt;/span>&lt;span style="color:#d88200">.4f&lt;/span>&lt;span style="color:#d88200">}&lt;/span>&lt;span style="color:#d88200">&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">print&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#d88200">f&lt;/span>&lt;span style="color:#d88200">&amp;#34;nll low confidence: &lt;/span>&lt;span style="color:#8045ff">\t&lt;/span>&lt;span style="color:#d88200">{&lt;/span>&lt;span style="color:#111">loss_fn&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">log_softmax&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">logits_l&lt;/span>&lt;span style="color:#111">),&lt;/span> &lt;span style="color:#111">target&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#d88200">:&lt;/span>&lt;span style="color:#d88200">.4f&lt;/span>&lt;span style="color:#d88200">}&lt;/span>&lt;span style="color:#d88200">&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">print&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#d88200">f&lt;/span>&lt;span style="color:#d88200">&amp;#34;nll high confidence: &lt;/span>&lt;span style="color:#8045ff">\t&lt;/span>&lt;span style="color:#d88200">{&lt;/span>&lt;span style="color:#111">loss_fn&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">log_softmax&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">logits_h&lt;/span>&lt;span style="color:#111">),&lt;/span> &lt;span style="color:#111">target&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#d88200">:&lt;/span>&lt;span style="color:#d88200">.4f&lt;/span>&lt;span style="color:#d88200">}&lt;/span>&lt;span style="color:#d88200">&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;em>Output&lt;/em>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>nll uniform: 1.0986
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nll low confidence: 0.6184
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nll high confidence: 0.0001
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>However, NNL also causes overconfidence in modern neural networks.&lt;/strong>
+They are purposely trained to minimize it by making high confidence predictions, which actually lowers the exponential sum of the soft max, as in our
+high_confidence example above.&lt;/p>
+&lt;p>This kind of behavior can be exhibited by drawing the calibration curve of the predictor.&lt;/p>
+&lt;h4 id="23-calibration-curves---reliability-diagrams">2.3. Calibration Curves - Reliability diagrams&lt;/h4>
+&lt;p>The calibration curves [Wilks, 1995] compare how well the probabilistic predictions of a
+binary classifier are calibrated. It shows the frequency of the predicted label against the
+predicted probability. It is easily drawn with the method &lt;code>model.predict_proba()&lt;/code> of scikit-learn.&lt;/p>
+&lt;p>&lt;a href="https://scikit-learn.org/stable/auto_examples/calibration/plot_compare_calibration.html#calibration-curves">Scikit-Learn&amp;rsquo;s documentation&lt;/a>
+provides a very insightful illustration to better understand these curves. They
+have fitted 4 different classifiers on a very small training set and plot the
+calibration curve along with the histogram showing the related distribution of
+the predicted probabilities on each of the 10 bins. On this specific example,
+we can observe the following behaviors:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Logistic Regression&lt;/strong>: not perfect, but well calibrated because the
+optimized log loss is also the scoring rule (as seen in previous section).&lt;/li>
+&lt;li>&lt;strong>Gaussian Naive Bayes&lt;/strong>: its tendency to push probabilities to 0 or 1 is well
+shown on histogram orange. This means an overconfident model.&lt;/li>
+&lt;li>&lt;strong>Support vector Classifier&lt;/strong> displays a typical sigmoid calibration curve.
+This under-confident result is typical of maximum-margin methods.&lt;/li>
+&lt;li>&lt;strong>Random Forest&lt;/strong> averages the predictions over a set of models, meaning exact predictions of 0 or 1 are rare, hence the shift towards 0.2 and 0.9. The whole
+model seems under-confident, but since each tree is fitted in minimizing a scoring
+rule (Brier score of log-loss) the pink calibration curve is pretty close to the dot line.&lt;/li>
+&lt;/ul>
+&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/sphx_glr_plot_compare_calibration_001.png"
+alt="Calibration plot comparison"
+width=600>
+&lt;/img>
+&lt;figcaption>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: Behavior of regular classifier on a standard task.
+Upper: Calibration curves with &lt;code>sklearn.calibration.CalibrationDisplay.from_estimator&lt;/code>.
+Bottom: Histograms of the number of samples per bins of &lt;code>predict_proba&lt;/code> values.&lt;/em>&lt;/p>
+&lt;p>Remember: a &lt;strong>perfectly calibrated estimator&lt;/strong> will get the doted diagonal line
+and its histogram will be flat.&lt;/p>
+&lt;h3 id="24-drawbacks">2.4 Drawbacks&lt;/h3>
+&lt;p>To provide an insight of the side effects of the calibration, we will study the
+impact of the provided method &lt;code>CalibratedClassifierCV&lt;/code> in Scikit-Learn.
+It uses cross-validation to obtain unbiased predictions, which are then used for calibration.
+The sigmoid method here is a simple logistic regression model. We experiment
+the effect of the calibration on the accuracy and the Brier Score of 4 classifiers
+fitted on the titanic dataset. We will only display the code to instantiate and
+calibrate the models.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">from&lt;/span> &lt;span style="color:#111">sklearn.linear_model&lt;/span> &lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#111">LogisticRegression&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">from&lt;/span> &lt;span style="color:#111">sklearn.naive_bayes&lt;/span> &lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#111">GaussianNB&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">from&lt;/span> &lt;span style="color:#111">sklearn.svm&lt;/span> &lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#111">SVC&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">from&lt;/span> &lt;span style="color:#111">sklearn.ensemble&lt;/span> &lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#111">RandomForestClassifier&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">from&lt;/span> &lt;span style="color:#111">sklearn.calibration&lt;/span> &lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#111">CalibratedClassifierCV&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># [...] load titanic dataset, split data, Skub automatically the data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">X_train&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">X_test&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">y_train&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">y_test&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">train_test_split&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#f92672">...&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Initialize classifiers&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">classifiers&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#d88200">&amp;#34;Logistic Regression&amp;#34;&lt;/span>&lt;span style="color:#111">:&lt;/span> &lt;span style="color:#111">LogisticRegression&lt;/span>&lt;span style="color:#111">(),&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#d88200">&amp;#34;Naive Bayes&amp;#34;&lt;/span>&lt;span style="color:#111">:&lt;/span> &lt;span style="color:#111">GaussianNB&lt;/span>&lt;span style="color:#111">(),&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#d88200">&amp;#34;Support Vector Classifier&amp;#34;&lt;/span>&lt;span style="color:#111">:&lt;/span> &lt;span style="color:#111">SVC&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">probability&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#d88200">&amp;#34;Random Forest&amp;#34;&lt;/span>&lt;span style="color:#111">:&lt;/span> &lt;span style="color:#111">RandomForestClassifier&lt;/span>&lt;span style="color:#111">(),&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Calibrate with the simgmoid regression&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">calibrated_classifiers&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">calibrated_proba&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#00a8c8">for&lt;/span> &lt;span style="color:#111">name&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">classifier&lt;/span> &lt;span style="color:#f92672">in&lt;/span> &lt;span style="color:#111">classifiers&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">items&lt;/span>&lt;span style="color:#111">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">calibrated_classifiers&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#111">name&lt;/span>&lt;span style="color:#111">]&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">CalibratedClassifierCV&lt;/span>&lt;span style="color:#111">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">classifier&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">cv&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">3&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">method&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;sigmoid&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">)&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">fit&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">X_train&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">y_train&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">calibrated_proba&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#111">name&lt;/span>&lt;span style="color:#111">]&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">classifier&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">predict_proba&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">X_test&lt;/span>&lt;span style="color:#111">)[:,&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># [...] Compute metrics and display as bar plots&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/Calibration_side_effect.png"
+alt="Calibration effect on metrics"
+width=600>
+&lt;/img>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: effect of calibration on classifiers&amp;rsquo; metrics. We expect a small drop in
+accuracy and a reduction (improvement) of the Brier Score. But our method is not
+efficient here.&lt;/em>&lt;/p>
+&lt;p>We can see that this method has moderate and sometimes counterintuitive effects.
+&lt;strong>This suggests that the training set is not sufficient to
+fit a calibrated estimator.&lt;/strong>&lt;/p>
+&lt;hr>
+&lt;h1 id="3-best-of-both-worlds-tailoring-mixup-to-data-for-calibration">3. Best of Both Worlds: Tailoring Mixup to Data for Calibration&lt;/h1>
+&lt;p>We have reached the core of the paper of Bouniot et al. They show that, by
+&lt;strong>taking the distance of points into account when sampling the coefficients&lt;/strong> in the
+second phase of Mixup, we can (i) avoid a loss in diversity, and (ii) reduce manifold intrusion and label noise.&lt;/p>
+&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/Mixup-ours.png"
+alt="Similarity Mixup"
+width=300>
+&lt;/img>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: Illustration of a Blouniot et al.&amp;rsquo;s process of &lt;strong>similarity&lt;/strong> in interpolation. New point $\tilde{\mathrm{x}}_2$ have to be closer to $\mathrm{x}_1$ because $\mathrm{x}_3$ has a different label but still preserve diversity.&lt;/em>&lt;/p>
+&lt;p>If we had only used a selection of samples with similar labels, we would have
+lost the possible exploration of new directions of the latent space.
+&lt;strong>With this similarity process, at the end of the day, we have avoided restricting&lt;/strong>
+&lt;strong>possible direction of mixing while staying in the vicinity of original points,&lt;/strong>
+&lt;strong>hence preventing manifold intrusion.&lt;/strong>&lt;/p>
+&lt;h2 id="31-linear-interpolation-of-training-samples-mixup">3.1 Linear interpolation of training samples: Mixup&lt;/h2>
+&lt;p>Mixing samples through linear interpolation is the easiest and most efficient way
+to create new data from a computational point of view. Combining data from the same
+batch also avoids additional sampling during training.&lt;/p>
+&lt;p>Specific techniques have been proposed since 2018 to compute linear interpolation
+but often at the cost of more complex training or loss of diversity.
+The selection process of samples to interpolate from may be computationally
+expensive.
+Furthermore
+such studies have been conducted with the aim of improving models&amp;rsquo; generalization, not their calibration, and will not solve our issue.&lt;/p>
+&lt;p>In the original mixup method of [Zhang et al. 2018]&lt;sup id="fnref1:4">&lt;a href="#fn:4" class="footnote-ref" role="doc-noteref">4&lt;/a>&lt;/sup>, at each training iteration
+of the model, each input is mixed with another input randomly selected from the
+same batch, with a random strength drawn form a Beta law.&lt;/p>
+&lt;p>But how can we be sure of the label of these new datapoints?&lt;/p>
+&lt;h2 id="32-weighting-to-prevent-manifold-intrusion">3.2 Weighting to prevent manifold intrusion&lt;/h2>
+&lt;p>The real danger of mixup is &lt;strong>manifold intrusion&lt;/strong>, where the interpolated
+sample between two identical label points falls into an other class.&lt;/p>
+&lt;blockquote>
+&lt;p>The likelihood of conflict in the synthetic label
+increases with the distance between the two points. As
+data live in manifolds of the representation space, the linear combination of
+two points far from each other can lie in a different manifold than the linear
+combination of the labels. The further away the
+points are, the more manifolds can exist in between.&lt;/p>&lt;/blockquote>
+&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/Manifold_mixup.png"
+alt="Risk of manifold intrusion when mixing samples"
+width=600>
+&lt;/img>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: Illustration from [Baena, 2022]&lt;sup id="fnref:9">&lt;a href="#fn:9" class="footnote-ref" role="doc-noteref">9&lt;/a>&lt;/sup> of a &lt;strong>manifold intrusion&lt;/strong> (right) when drawing samples as mixup existing points. The linear interpolation (red line) crosses the blue classe leading to conflict.&lt;/em>&lt;/p>
+&lt;p>Bouniot et al. have conduct extensive experiments to show that there is a
+&lt;strong>trade-off between adding diversity&lt;/strong> by increasing the proportion
+of elements to mix, &lt;strong>and uncertainty&lt;/strong> by mixing elements far from each other.
+Furthermore, it shows that we cannot restrict pairs to mix by selecting data
+solely based on distance, as &lt;strong>it can degrade performance by reducing diversity of synthetic samples&lt;/strong>.&lt;/p>
+&lt;p>To better control this trade-off with Mixup, they suggest to tailor interpolation
+coefficients based on the distance of training data. The final part will detail this process.&lt;/p>
+&lt;h2 id="33-the-power-of-the-similarity-kernel">3.3 The power of the similarity kernel&lt;/h2>
+&lt;p>Bouniot et al. &lt;strong>used a similarity kernel to mix more strongly
+similar data and avoid mixing less similar ones&lt;/strong>, to preserve label
+quality and confidence of the network.&lt;/p>
+&lt;p>To do so, &lt;strong>they needed to change the interpolation coefficient depending on the
+similarity between the points&lt;/strong>. They have found a way to preserve the type of
+distribution of samples by warping these coefficients at every iteration to
+govern the strength and direction of the mixup. Curious readers can refer
+to section 3.2 of &lt;sup id="fnref1:6">&lt;a href="#fn:6" class="footnote-ref" role="doc-noteref">6&lt;/a>&lt;/sup> for technical details. In summary, they only
+need the parameter $\tau$ of a Beta distribution $B(\tau, \tau)$ that behaves
+logarithmically with this parameter. Hence, $\tau$ should be exponentially
+correlated with the distance of points to finally obtain a linear interpolation.&lt;/p>
+&lt;p>&lt;strong>To this end, they define a class of similarity kernels, based on a normalized and
+centered Gaussian kernel, that outputs the correct warping parameter $\tau$ for the given pair of points.&lt;/strong>
+This similarity kernel is defined by the amplitude and the standard derivation
+of the Gaussian, two additional parameters to tune separately. The computation
+of $\tau$ also depends on the average distance of samples in the same batch.
+More specifically, for classification
+tasks, they use the $L_2$ distance between embeddings, while for regression
+tasks, they use the distance between labels.&lt;/p>
+&lt;p>The algorithm to compute this parameter is described bellow in pseudo-code:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-code" data-lang="code">Input: (Batch (x_i, y_i) of size n, kernel similarity parameters, current model parameters)
+Sample random permutation sigma
+For i in [1, n], do
+# Compute the interpolated points from x_i and x_sigma(i):
+Compute warping parameter tau using a Beta coefficient and the similarity kernel
+Generate new point x_tilde as a linear interpolation of x_i and x_sigma(i), weighted by tau
+Generate new label y_tilde as a linear interpolation of y_i and y_sigma(i), weighted by tau
+Aggregate new data to batch
+Optimize loss over this augmented batch
+Output: the updated model parameters
+&lt;/code>&lt;/pre>&lt;p align="center">
+&lt;figure>
+&lt;img src="./images/MixUpDataCalibration/heatmap_density_dist_inverse_warp_v2.png"
+alt="Evolution of the similarity kernel"
+width=300>
+&lt;/img>
+&lt;/figure>
+&lt;/p>
+&lt;p>&lt;em>Figure: Illustration of the effect of the similarity kernel on two points $x_i$ and $x_{\sigma{(i)}}$, additional description bellow. Figure from [Bouniot, 2024]&lt;sup id="fnref2:6">&lt;a href="#fn:6" class="footnote-ref" role="doc-noteref">6&lt;/a>&lt;/sup>.&lt;/em>&lt;/p>
+&lt;blockquote>
+&lt;p>The motivation behind this kernel is to have $\tau &amp;gt;1$ when the two points to mix are similar, i.e., the
+distance is lower than average, to increase the mixing effect, and $\tau &amp;lt; 1$ otherwise, to reduce the
+mixing. Above Figure illustrates the evolution of the density of warped interpolation coefficients $ω_τ(λ)$,
+depending on the distance between the points to mix. Close distances (left part of the heatmap)
+induce strong interpolations, while far distances (right part of the heatmap) reduce interpolation.
+&lt;strong>Using this similarity kernel to find the correct τ to parameterize the Beta distribution defines our full&lt;/strong>
+&lt;strong>Similarity Kernel Mixup framework.&lt;/strong>&lt;/p>&lt;/blockquote>
+&lt;h2 id="34-going-further">3.4 Going further&lt;/h2>
+&lt;p>Extensive experiments have been conducted by the authors on image classification and regression tasks.
+They have reproduced the protocol of the literature and &lt;strong>their framework displays an improvement in
+both accuracy and calibration across the 3 metrics described above (ECE, Brier and NLL)&lt;/strong>.&lt;/p>
+&lt;p>It is important to note, however, that the hyper-parameters have been tuned, and
+the best results across different metrics do not share the same values for the kernel standard deviation.&lt;/p>
+&lt;p>During the experiment process, the authors have compared the final results after
+&lt;em>temperature scaling&lt;/em>, following [Guo, 2017]&lt;sup id="fnref2:5">&lt;a href="#fn:5" class="footnote-ref" role="doc-noteref">5&lt;/a>&lt;/sup> process. This temperature
+is also a learnable parameter that have been optimized during
+the training of the models.&lt;/p>
+&lt;p>In addition to improving calibration and performance, this approach demonstrates &lt;strong>greater frugality&lt;/strong> by reducing computational overhead compared to other calibration-driven data augmentation methods. By efficiently tailoring the interpolation process, it lowers the number of unnecessary computations and memory usage, contributing to &lt;strong>more sustainable and energy-efficient&lt;/strong> machine learning practices.&lt;/p>
+&lt;h1 id="conclusion">Conclusion&lt;/h1>
+&lt;p>With similarity kernel, we get a more accurate and better calibrated model because
+the coefficients governing the interpolation are warped to change their underlying distribution
+depending on the similarity between the points to mix, so that
+&lt;strong>similar datapoints are mixed more strongly than less similar ones&lt;/strong>,
+&lt;strong>preserving calibration by avoiding manifold intrusion and label noise&lt;/strong>.&lt;/p>
+&lt;p>As seen in the pseudo-code, this provides a more efficient data augmentation
+approach than Calibration-driven Mixup methods, both in
+terms of time and memory, offering a &lt;strong>better trade-off between performance and calibration improvement&lt;/strong>, while promoting frugality by reducing unnecessary computational resources.&lt;/p>
+&lt;p>Concurrently, [Verma et al. 2018]&lt;sup id="fnref:10">&lt;a href="#fn:10" class="footnote-ref" role="doc-noteref">10&lt;/a>&lt;/sup> have proposed the &lt;strong>Manifold Mixup&lt;/strong>
+framework that encourages neural networks to predict less confidently on
+interpolations of hidden representation via a simple regularizer. This
+training method leads to class-representations with fewer directions of variance.
+But even with the actual purpose the reduce the over confidence, the word
+&amp;ldquo;Calibration&amp;rdquo; never occurs in the paper&amp;hellip;&lt;/p>
+&lt;p>&lt;strong>This highlights the necessity of raising awareness about calibration and establishing a standard process for evaluating models.&lt;/strong>&lt;/p>
+&lt;div class="footnotes" role="doc-endnotes">
+&lt;hr>
+&lt;ol>
+&lt;li id="fn:1">
+&lt;p>P.Y. Simard, D. Steinkraus, and J.C. Platt. Best practices for convolutional neural networks applied to
+visual document analysis. In Proceedings of the Seventh International Conference on Document Analysis
+and Recognition, volume 2, pages 958–962, 2003.&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:2">
+&lt;p>Ekin D. Cubuk, Barret Zoph , Dandelion Mané, Vijay Vasudevan, Quoc V. Le, Google Brain (2018).
+AutoAugment: Learning Augmentation Strategies from Data &lt;a href="https://arxiv.org/abs/1805.09501">arXiv&lt;/a>&amp;#160;&lt;a href="#fnref:2" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:3">
+&lt;p>Ting Chen, Simon Kornblith, Mohammad Norouzi, Geoffrey Hinton, (2020).
+A Simple Framework for Contrastive Learning of Visual Representations &lt;a href="https://arxiv.org/abs/2002.05709">arXiv&lt;/a>&amp;#160;&lt;a href="#fnref:3" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:4">
+&lt;p>Zhang, H., Cisse, M., Dauphin, Y. N., and Lopez-Paz, D. (2018). mixup: Beyond empirical risk
+minimization. In International Conference on Learning Representations.&amp;#160;&lt;a href="#fnref:4" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&amp;#160;&lt;a href="#fnref1:4" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:5">
+&lt;p>Guo, Chuan, et al. “On calibration of modern neural networks.” International Conference on Machine Learning. PMLR, 2017.&amp;#160;&lt;a href="#fnref:5" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&amp;#160;&lt;a href="#fnref1:5" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&amp;#160;&lt;a href="#fnref2:5" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:6">
+&lt;p>Bouniot, Q., Mozharovskyi P., d&amp;rsquo;Alché-Buc, F. (2023).
+Tailoring Mixup to Data for Calibration &lt;a href="https://arxiv.org/abs/2311.01434">arXiv&lt;/a>&amp;#160;&lt;a href="#fnref:6" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&amp;#160;&lt;a href="#fnref1:6" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&amp;#160;&lt;a href="#fnref2:6" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:7">
+&lt;p>Cameron R. Wolfe, Ph.D. Confidence Calibration for Deep Networks: Why and How? &lt;a href="https://medium.com/towards-data-science/confidence-calibration-for-deep-networks-why-and-how-e2cd4fe4a086">medium/TowardsDataScience blogpost&lt;/a>&amp;#160;&lt;a href="#fnref:7" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&amp;#160;&lt;a href="#fnref1:7" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:8">
+&lt;p>Maja Pavlovicic, Expected Calibration Error (ECE): A Step-by-Step Visual Explanation &lt;a href="https://towardsdatascience.com/expected-calibration-error-ece-a-step-by-step-visual-explanation-with-python-code-c3e9aa12937d/">link&lt;/a>&amp;#160;&lt;a href="#fnref:8" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:9">
+&lt;p>Raphael Baena, Lucas Drumetz, Vincent Gripon (2022)
+Preventing Manifold Intrusion with Locality: Local Mixup &lt;a href="https://arxiv.org/abs/2201.04368">arXiv&lt;/a>&amp;#160;&lt;a href="#fnref:9" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:10">
+&lt;p>Verma, V., Lamb, A., Beckham, C., Najafi, A., Mitliagkas, I., Lopez-Paz, D., and Bengio, Y. (2019).
+Manifold mixup: Better representations by interpolating hidden states. In Chaudhuri, K. and
+Salakhutdinov, R., editors, Proceedings of the 36th International Conference on Machine Learning,
+volume 97 of Proceedings of Machine Learning Research, pages 6438–6447. PMLR.&amp;#160;&lt;a href="#fnref:10" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;/div></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</guid><pubDate>Sun, 09 Mar 2025 21:03:13 +0100</pubDate></item><item><title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link><description>&lt;style
 TYPE="text/css">
 code.has-jax {font:
 inherit;
@@ -267,7 +769,7 @@ Formally, and to introduce some probabilities, which we will delve into further 
 &lt;p>The proposed algorithms are based on &lt;strong>full decentralization&lt;/strong>, and &lt;strong>newtork differential privacy (DP)&lt;/strong>, two notions that we will explain right below.&lt;/p>
 &lt;br />
 &lt;h1 id="section-2">&lt;h1 style="font-size: 20px;">Theoretical Aspects on Differential Privacy&lt;/h1>&lt;/h1>
-&lt;h2 id="h1-stylefont-size-18pxmathematical-contexth1">&lt;h1 style="font-size: 18px;">Mathematical context&lt;/h1>&lt;/h2>
+&lt;h2 id="mathematical-context">&lt;h1 style="font-size: 18px;">Mathematical context&lt;/h1>&lt;/h2>
 &lt;p>We must introduce some key mathematical definitions to understand the problem we want to tackle.&lt;/p>
 &lt;h2 id="users-space">Users space&lt;/h2>
 &lt;p>We consider a set of $n$ users (e.g. a population responding to a survey), each holding a private dataset that we note $D_u$ (e.g. their answer to the questions of the survey).&lt;/p>
@@ -294,7 +796,7 @@ For two datasets $D$ and $D&amp;rsquo;$ of the same size, we denote by $D \sim_u
 &lt;p>The aim of decentralization in this representation, is to give users the fewer information possible, i.e. only the messages they are involved in, and not the full transcript $A(D)$.&lt;/p>
 &lt;p>We introduce this view of a user $u$: $\mathcal{O}_u(\mathcal{A}(D))=\left(\left(v, m, v^{\prime}\right) \in \mathcal{A}(D): v=u \text { or } v^{\prime}=u\right)$&lt;/p>
 &lt;br />
-&lt;h2 id="h1-stylefont-size-18pxdifferential-privacyh1">&lt;h1 style="font-size: 18px;">Differential Privacy&lt;/h1>&lt;/h2>
+&lt;h2 id="differential-privacy">&lt;h1 style="font-size: 18px;">Differential Privacy&lt;/h1>&lt;/h2>
 &lt;p>We will take a step back on this representation to introduce in a more global way the mathematical notion of Differential Privacy (DP).&lt;/p>
 &lt;p>Let us consider a randomised algorithm $M$. $M$ is said to be &amp;ldquo;$\alpha$-differentially private&amp;rdquo; if, for any event $A$:&lt;/p>
 &lt;p>$$\mathbb{P}[M(D)\in A]\leq e^{\alpha} \cdot \mathbb{P}[M(D&amp;rsquo;)\in A]$$&lt;/p>
@@ -3295,7 +3797,7 @@ all[i].SourceElement().parentNode.className += ' has-jax';
 &lt;li>Mohammed Jawhar&lt;/li>
 &lt;li>Aymane Rahmoune&lt;/li>
 &lt;/ul>
-&lt;h3 id="paper--optimal-transport-based-adversarial-based-patch-to-leverage-large-scale-attack-transferabilityhttpsopenreviewnetforumidnzp10evtkv">Paper : &lt;a href="https://openreview.net/forum?id=nZP10evtkV">Optimal Transport Based Adversarial Based Patch To Leverage Large Scale Attack Transferability&lt;/a>&lt;/h3>
+&lt;h3 id="paper--optimal-transport-based-adversarial-based-patch-to-leverage-large-scale-attack-transferability">Paper : &lt;a href="https://openreview.net/forum?id=nZP10evtkV">Optimal Transport Based Adversarial Based Patch To Leverage Large Scale Attack Transferability&lt;/a>&lt;/h3>
 &lt;h1 id="table-of-contents-">Table of contents :&lt;/h1>
 &lt;ul>
 &lt;li>&lt;a href="#section-0">Introduction&lt;/a>&lt;/li>
@@ -3449,7 +3951,7 @@ where TV is the total variation loss discouraging high-frequency patterns.&lt;/p
 &lt;/body>
 &lt;/html>
 &lt;h2 id="section-4">Experiments&lt;/h2>
-&lt;h3 id="experimental-setup-a-namesubsection-41a">Experimental setup &lt;a name="subsection-41">&lt;/a>&lt;/h3>
+&lt;h3 id="experimental-setup">Experimental setup &lt;a name="subsection-41">&lt;/a>&lt;/h3>
 &lt;p>To confirm the theoretical results and assumptions, several experiments were conducted under different conditions and settings. For the sake of simplicity, we will not delve into the exhaustive details of the experimental setup, procedures, and results. In summary:&lt;/p>
 &lt;ul>
 &lt;li>
@@ -3468,9 +3970,9 @@ where TV is the total variation loss discouraging high-frequency patterns.&lt;/p
 &lt;p>&lt;strong>Targeted success rate (tSuc)&lt;/strong> metric was used for evaluating transferability. It consists of the percentage of instances where the network, when presented with an image containing the adversarial patch, incorrectly classifies the image as the attacker&amp;rsquo;s intended target class, out of the total number of attempts.&lt;/p>
 &lt;/li>
 &lt;/ul>
-&lt;h3 id="results-and-findings--a-namesubsection-42a">Results and Findings : &lt;a name="subsection-42">&lt;/a>&lt;/h3>
+&lt;h3 id="results-and-findings-">Results and Findings : &lt;a name="subsection-42">&lt;/a>&lt;/h3>
 &lt;p>The experiments are structured into three main categories:&lt;/p>
-&lt;h4 id="digital-experiments--a-namesubsection-421a">Digital experiments : &lt;a name="subsection-421">&lt;/a>&lt;/h4>
+&lt;h4 id="digital-experiments-">Digital experiments : &lt;a name="subsection-421">&lt;/a>&lt;/h4>
 &lt;h5 id="simple-configuration-">Simple configuration :&lt;/h5>
 &lt;p>In this configuration, the patches efficacy was tested in a purely digital environment, using images from the ImageNet-1K dataset, which was used also for training. Patches were first designed to attack one of the source models, then tested on other target models to measure the attacking transferability. The table below summarizes for each APA method, the best transferring attack performance achieved :&lt;/p>
 &lt;p align="center">
@@ -3497,13 +3999,13 @@ where TV is the total variation loss discouraging high-frequency patterns.&lt;/p
 &lt;p align="center">
 &lt;img src="./images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
 &lt;/p>
-&lt;h4 id="hybrid-experiments-a-namesubsection-422a">Hybrid experiments: &lt;a name="subsection-422">&lt;/a>&lt;/h4>
+&lt;h4 id="hybrid-experiments">Hybrid experiments: &lt;a name="subsection-422">&lt;/a>&lt;/h4>
 &lt;p>In order to simulate real-world applications more closely, the hybrid experiments conducted within this section involved printing adversarial patches trained with Swin, placing them in physical environments, capturing the images, and then digitally analyzing the results, for simple, and robustified models.&lt;/p>
 &lt;p>The table below shows the criticality of the $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ giving very large tSuc in comparison with the other methods, for all settings:&lt;/p>
 &lt;p align="center">
 &lt;img src="./images/image_optimal_transport_patch/Digital_robustified.png" alt="Digital robustified">
 &lt;/p>
-&lt;h4 id="physical-experiments-a-namesubsection-423a">Physical experiments: &lt;a name="subsection-423">&lt;/a>&lt;/h4>
+&lt;h4 id="physical-experiments">Physical experiments: &lt;a name="subsection-423">&lt;/a>&lt;/h4>
 &lt;p>In this last experiments category, we get closer to the real world situations, by recording a video of some ImageNet-1K objects (banana, cup , keyboard) while moving a designed patch in the set. This aims to quantify the severity of each attack, for realistic scenarios (as the example provided above about the autonomous vehicule not detecting the stop sign while driving due to an adversarial patch designed without knowing the AI system at all).&lt;/p>
 &lt;p>All APA methods failed to transfer properly on all architectures except for L2 with a modest tSuc(9.3%) and $(W_2^2)^{(1)} / (SW_2^2)_{500}^{(1)}$ that gave much better results (23.4% and 29.3%)&lt;/p>
 &lt;h2 id="section-5">Reproducibility&lt;/h2>
