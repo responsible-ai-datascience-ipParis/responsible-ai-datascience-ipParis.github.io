@@ -68,8 +68,6 @@
   </url><url>
     <loc>http://localhost:1313/pages/</loc>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
-  </url><url>
     <loc>http://localhost:1313/tutorial/</loc>
   </url>
 </urlset>
