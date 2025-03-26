@@ -1,4 +1,425 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2025, Calvin Tran</copyright><lastBuildDate>Sun, 09 Mar 2025 21:03:13 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>Get a calibrated and efficient model with tailored data augmentation.</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</link><description>&lt;style TYPE="text/css">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2025, Calvin Tran</copyright><lastBuildDate>Sat, 15 Mar 2025 12:16:21 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>Knowledge Distillation: Boosting Interpretability in Deep Learning Models</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/impact-knowledge-distillation-model-interpretability/</link><description>&lt;style TYPE="text/css">
+code.has-jax {font:inherit;
+font-size:100%;
+background: inherit;
+border: inherit;}
+&lt;/style>
+&lt;script TYPE="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$','$'], ['\$','\$']],
+skipTags: ['script','noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+}
+});
+MathJax.Hub.Queue(function() {
+var all = MathJax.Hub.getAllJax(), i;
+for(i = 0; i &lt; all.length; i += 1) {
+all[i].SourceElement().parentNode.className += ' has-jax';
+}
+});
+&lt;/script>
+&lt;script TYPE="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">
+&lt;/script>
+&lt;!DOCTYPE html>
+&lt;html lang="fr">
+&lt;head>
+&lt;meta charset="UTF-8">
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0">
+&lt;/head>
+&lt;h1 style="font-size: 28px;">Interpretability, the hidden power of knowledge distillation&lt;/h1>
+&lt;p>Published March 15, 2025&lt;/p>
+&lt;div>
+&lt;a href="https://github.com/BryanBradfo/responsible-ai-datascience-ipParis.github.io" class="btn" style="text-decoration: none; display: inline-block; padding: 8px 16px; background-color: #f1f1f1; border: 1px solid #ddd; border-radius: 4px; color: black;">Update on GitHub&lt;/a>
+&lt;/div>
+&lt;div style="display: flex; margin-top: 20px;">
+&lt;div style="display: flex; align-items: center; margin-right: 20px;">
+&lt;img src="./images/Bryan_Remi/bryan.jpeg" alt="Bryan Chen" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+&lt;div>
+&lt;a href="https://github.com/BryanBradfo" style="text-decoration: none; color: #0366d6;">bryanbradfo&lt;/a>
+&lt;p style="margin: 0;">Bryan Chen&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;div style="display: flex; align-items: center; margin-right: 20px;">
+&lt;img src="./images/Bryan_Remi/remi.jpg" alt="Rémi Calvet" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+&lt;div>
+&lt;a href="https://github.com/RemiCSK" style="text-decoration: none; color: #0366d6;">remicsk&lt;/a>
+&lt;p style="margin: 0;">Rémi Calvet&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>Knowledge distillation is a powerful technique to transfer the knowledge from a large &amp;ldquo;teacher&amp;rdquo; model to a &amp;ldquo;student&amp;rdquo; model. While it&amp;rsquo;s commonly used to improve performance and reduce computational costs by compressing large models, this blog post explores a fascinating discovery: knowledge distillation can also enhance model interpretability. We&amp;rsquo;ll dive into the paper &lt;a href="https://arxiv.org/abs/2305.15734">On the Impact of Knowledge Distillation for Model Interpretability&amp;quot;&lt;/a> (ICML 2023) by H. Han et al., which sheds light on this novel perspective.&lt;/p>
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/better_meme.png" alt="Introduction" style="width: 60%; max-width: 500px; height: auto;">
+&lt;/p>
+&lt;p>Interpretability in AI allows researchers, engineers, and decision-makers to trust and control machine learning models. Recent models show impressive performance on many different tasks and often rely on deep learning models. Unfortunately, deep learning models are also know for the difficulty to interprete them and understand how they come to a result wich can be problematic in highly sensitive applications like autonomous driving or healthcare. The article we present in this blog shows that knowledge distillation can improve the interpretability of deep learning models.&lt;/p>
+&lt;p>When AI is a black box, you&amp;rsquo;re just hoping for the best. But when you understand it, you become unstoppable.&lt;/p>
+&lt;h2 style="font-size: 21px; display: flex; align-items: center;"> 0. Table of Contents &lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="#i-crash-course-on-knowledge-distillation">I. Crash Course on Knowledge Distillation and Label Smoothing&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#ii-defining-interpretability-through-network-dissection">II. Defining Interpretability Through Network Dissection&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#iii-logit-distillation-feature-distillation">III. Logit Distillation &amp;amp; Feature Distillation: A Powerful Duo for Interpretability&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#iv-why-knowledge-distillation-enhances-interpretability">IV. Why Knowledge Distillation Enhances Interpretability&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#v-experimental-results-and-reproduction">V. Experimental Results and Reproduction&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#vi-beyond-network-dissection-other-interpretability-metrics">VI. Beyond Network Dissection: Other Interpretability Metrics&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#conclusion">Conclusion&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#join-the-discussion">Join the Discussion&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="i-crash-course-on-knowledge-distillation" style="font-size: 21px; display: flex; align-items: center;"> I. Crash Course on Knowledge Distillation and Label Smoothing &lt;/h2>
+&lt;h3 id="what-is-knowledge-distillation">What is Knowledge Distillation?&lt;/h3>
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/knowledge_distillation.png" alt="Knowledge Distillation Overview" style="width: 70%; max-width: 500px; height: auto;">
+&lt;/p>
+&lt;p>&lt;a href="https://arxiv.org/pdf/1503.02531">Knowledge distillation (KD)&lt;/a> is a model compression technique introduced by Hinton et al. (2015) that transfers knowledge from a complex teacher model to a simpler student model. Unlike traditional training where models learn directly from hard labels (one-hot encodings), KD allows the student to learn from the teacher&amp;rsquo;s soft probability distributions.&lt;/p>
+&lt;h3 id="the-key-mechanics-of-knowledge-distillation">The Key Mechanics of Knowledge Distillation&lt;/h3>
+&lt;p>The standard KD loss function combines the standard cross-entropy loss with a distillation loss term:&lt;/p>
+&lt;p>$$\mathcal{L}_{KD}=(1-\alpha)\mathrm{CE}(y,\sigma(z_s))+\alpha T^2 \mathrm{CE}(\sigma(z_t^T),\sigma(z_s^T))$$&lt;/p>
+&lt;p>Where:&lt;/p>
+&lt;ul>
+&lt;li>$z_s$ and $z_t$ are the logits from the student and teacher models&lt;/li>
+&lt;li>$T$ is the temperature parameter that controls softening of probability distributions&lt;/li>
+&lt;li>$z_s^T \mathrel{:}= \frac{z_s}{T}$ and $z_t^T \mathrel{:}= \frac{z_t}{T}$&lt;/li>
+&lt;li>$\sigma$ is the softmax function&lt;/li>
+&lt;li>$\sigma(z_s^T) \mathrel{:}= \frac{\exp(z_s^T)}{\sum_j \exp(z_j^T)}$ and $\sigma(z_t^T) \mathrel{:}= \frac{\exp(z_t^T)}{\sum_j \exp(z_j^T)}$&lt;/li>
+&lt;li>$\mathrm{CE}$ is cross-entropy loss&lt;/li>
+&lt;li>$\alpha$ balances the importance of each loss component.&lt;/li>
+&lt;/ul>
+&lt;p>The first part of the loss $(1-\alpha)\mathrm{CE}(y,\sigma(z_s))$ is to incitate the student model to learn from one hot encoded ground truth label.&lt;/p>
+&lt;p>The second part of the loss $\alpha T^2 \mathrm{CE}(\sigma(z_t^T),\sigma(z_s^T))$ is to incitate the student model to try to reproduce the ouputs of the teacher model. This is what permits the student to learn from the teacher.
+The larger $\alpha$ is, the more the student will try to replicate the teacher model&amp;rsquo;s outputs and ignore the one hot encoded groundtruth and vice versa.&lt;/p>
+&lt;h3 id="label-smoothing">Label Smoothing&lt;/h3>
+&lt;p>Label smoothing (LS) is another technique that smooths hard targets by mixing them with a uniform distribution. In the cross entropy loss we replace the one hot encoded $y$ by $y_{LS} \mathrel{:}= (1-\alpha)y + \frac{\alpha}{K}$, where $K$ is the number of classes and $\alpha$ the smoothing parameter:&lt;/p>
+&lt;script type="math/tex; mode=display">
+\begin{align}
+CE(y_{LS},\sigma(z)) &amp;= - \sum_{i=1}^{K} \left( (1 - \alpha) y_i + \frac{\alpha}{K} \right) \log \sigma(z_i) \\
+&amp;= -(1 - \alpha) \sum_{i=1}^{K} y_i \log \sigma(z_i) - \alpha \sum_{i=1}^{K} \frac{1}{K}\log \sigma(z_i) \\
+\end{align}
+&lt;/script>
+&lt;p>We obtain a loss that is similar to knowledge diffusion but there is a key difference important for interpretability that we will discuss later.
+From the equation above, we get the label smoothing loss equation:
+$$L_{LS} = (1-\alpha)\mathrm{CE}(y,\sigma(z)) + \alpha\mathrm{CE}(u,\sigma(z)) $$
+Where $u$ is a uniform distribution over all the possible $K$ classes.&lt;/p>
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/label_smoothing.jpg" alt="Label Smoothing" width="700">
+&lt;/p>
+&lt;h2 id="ii-defining-interpretability-through-network-dissection" style="font-size: 21px; display: flex; align-items: center;"> II. Defining Interpretability Through Network Dissection &lt;/h2>
+&lt;p>The first thing to know is that there are different approaches to define and measure interpretability in machine learning.&lt;/p>
+&lt;p>For image classification, the authors use &lt;a href="https://arxiv.org/pdf/1711.05611v2">network dissection&lt;/a> to quantitatively measure interpretability. The idea is to compare activation maps and see if areas with high activation correspond to an object or a meaningful concept on the image.&lt;/p>
+&lt;p>The process can be better understood through the following illustration:&lt;/p>
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/network_dissection.png" alt="Network Dissection Process" width="700">
+&lt;/p>
+&lt;p>Feed a neural network model an image, pick a deep layer and count the number of neurons that detects a concept like &amp;ldquo;cat&amp;rdquo; or &amp;ldquo;dog&amp;rdquo;.
+We call those neurons concept detectors and will define them more precisely. The &lt;strong>number of concept detectors will be the primary metric to define the interpretability of a model&lt;/strong>, the higher the more we will consider it interpretable.&lt;/p>
+&lt;p>&lt;strong>The easiest way to understand what is a concept detector is to look at the following pseudo code to compute the number of concept detectors:&lt;/strong>&lt;/p>
+&lt;style>
+body {
+font-family: 'Arial', sans-serif;
+line-height: 1.6;
+}
+.steps-container {
+background: #f8f9fa;
+border-left: 5px solid #007bff;
+padding: 15px 20px;
+margin: 20px 0;
+border-radius: 5px;
+}
+.step {
+font-weight: bold;
+color: #007bff;
+margin-top: 15px;
+}
+.math-expression {
+font-family: 'Courier New', Courier, monospace;
+background: #e9ecef;
+padding: 5px;
+border-radius: 3px;
+}
+.important {
+background: #fff3cd;
+color: #856404;
+padding: 10px;
+border-left: 4px solid #ffc107;
+border-radius: 3px;
+margin: 10px 0;
+}
+&lt;/style>
+&lt;div class="steps-container">
+&lt;h3 id="1-selecting-the-layer">&lt;span class="step">1. Selecting the Layer&lt;/span>&lt;/h3>
+&lt;p>First, we need to choose a layer $\mathcal{l}$ to &lt;strong>dissect&lt;/strong>, typically deep in the network.&lt;/p>
+&lt;h3 id="2-processing-each-image">&lt;span class="step">2. Processing Each Image&lt;/span>&lt;/h3>
+&lt;p>For each image &lt;strong>x&lt;/strong> in the dataset:&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>Feedforward Pass&lt;/strong>:&lt;/p>
+&lt;ul>
+&lt;li>Input an image &lt;strong>x&lt;/strong> of shape $ (n,n) $ into the neural network.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Activation Extraction&lt;/strong>:&lt;/p>
+&lt;ul>
+&lt;li>For each neuron in layer $\mathcal{l}$, collect the activation maps:
+&lt;div class="math-expression">
+\[ A_i(x) \in \mathbb{R}^{d \times d}, \quad \text{where } d &lt; n \text{ and } i \text{ is the neuron index.} \]
+&lt;/div>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="3-defining-activation-distribution">&lt;span class="step">3. Defining Activation Distribution&lt;/span>&lt;/h3>
+&lt;p>For each neuron &lt;strong>i&lt;/strong> in the layer $\mathcal{l}$:&lt;/p>
+&lt;ul>
+&lt;li>Define &lt;strong>a&lt;sub>i&lt;/sub>&lt;/strong> as the empirical distribution of activation values across different images &lt;strong>x&lt;/strong>.&lt;/li>
+&lt;/ul>
+&lt;h3 id="4-computing-activation-threshold">&lt;span class="step">4. Computing Activation Threshold&lt;/span>&lt;/h3>
+&lt;ul>
+&lt;li>Compute a threshold &lt;strong>T&lt;sub>i&lt;/sub>&lt;/strong> such that:
+&lt;div class="math-expression">
+\[ P(a_i \geq T_i) = 0.005 \]
+&lt;/div>
+- This ensures only the **top 0.5%** activations are retained.
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="5-resizing-activation-maps">&lt;span class="step">5. Resizing Activation Maps&lt;/span>&lt;/h3>
+&lt;ul>
+&lt;li>Interpolate &lt;strong>A&lt;sub>i&lt;/sub>&lt;/strong> to match the dimension $ (n,n) $ for direct comparison with input images.&lt;/li>
+&lt;/ul>
+&lt;h3 id="6-creating-binary-masks">&lt;span class="step">6. Creating Binary Masks&lt;/span>&lt;/h3>
+&lt;p>For each image &lt;strong>x&lt;/strong>:&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>Generating Activation Masks&lt;/strong>:&lt;/p>
+&lt;ul>
+&lt;li>Create a &lt;strong>binary mask&lt;/strong> $ A_i^{\text{mask}}(x) $ of shape $ (n,n) $:
+&lt;div class="math-expression">
+\[ A_i^{\text{mask}}(x)[j,k] = \begin{cases} 1, &amp; \text{if } A_i(x)[j,k] \geq T_i \\ 0, &amp; \text{otherwise} \end{cases} \]
+&lt;/div>
+&lt;/li>
+&lt;li>This retains only the highest activations.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Using Ground Truth Masks&lt;/strong>:&lt;/p>
+&lt;ul>
+&lt;li>Given a &lt;strong>ground truth mask&lt;/strong> $ M_c(x) $ of shape $ (n,n) $, where:
+&lt;ul>
+&lt;li>$ M_c(x)[j,k] = 1 $ if the pixel in &lt;strong>x&lt;/strong> belongs to class &lt;strong>c&lt;/strong>, otherwise &lt;strong>0&lt;/strong>.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Computing Intersection over Union (IoU)&lt;/strong>:&lt;/p>
+&lt;ul>
+&lt;li>Calculate the IoU between &lt;strong>A&lt;sub>i&lt;/sub>&lt;sup>mask&lt;/sup>(x)&lt;/strong> and &lt;strong>M&lt;sub>c&lt;/sub>(x)&lt;/strong>:
+&lt;div class="math-expression">
+\[ \text{IoU}_{i,c} = \frac{|A_i^{\text{mask}}(x) \cap M_c(x)|}{|A_i^{\text{mask}}(x) \cup M_c(x)|} \]
+&lt;/div>
+&lt;/li>
+&lt;li>If $\text{IoU}_{i,c} &amp;gt; 0.05$, the neuron &lt;strong>i&lt;/strong> is considered a &lt;strong>concept detector&lt;/strong> for concept &lt;strong>c&lt;/strong>.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;/div>
+&lt;h3 id="if-you-prefer-to-understand-with-code-here-is-an-implementation-of-the-procedure-described-above">If you prefer to understand with code, here is an implementation of the procedure described above:&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#00a8c8">def&lt;/span> &lt;span style="color:#75af00">identify_concept_detectors&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">model&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">layer_name&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">dataset&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">concept_masks&lt;/span>&lt;span style="color:#111">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#d88200">&amp;#34;&amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200"> Identify neurons that act as concept detectors in a specific layer.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200"> Args:
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200"> model: Neural network model
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200"> layer_name: Name of the layer to analyze
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200"> dataset: Dataset with images
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200"> concept_masks: Dictionary mapping images to concept segmentation masks
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200"> Returns:
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200"> Dictionary mapping neurons to detected concepts
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d88200"> &amp;#34;&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Step 1: Collect activation maps for each image&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">activation_maps&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">for&lt;/span> &lt;span style="color:#111">image&lt;/span> &lt;span style="color:#f92672">in&lt;/span> &lt;span style="color:#111">dataset&lt;/span>&lt;span style="color:#111">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Forward pass and extract activation at specified layer&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">activations&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">get_layer_activation&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">model&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">layer_name&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">image&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">for&lt;/span> &lt;span style="color:#111">neuron_idx&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">activation&lt;/span> &lt;span style="color:#f92672">in&lt;/span> &lt;span style="color:#111">enumerate&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">activations&lt;/span>&lt;span style="color:#111">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">if&lt;/span> &lt;span style="color:#111">neuron_idx&lt;/span> &lt;span style="color:#f92672">not&lt;/span> &lt;span style="color:#f92672">in&lt;/span> &lt;span style="color:#111">activation_maps&lt;/span>&lt;span style="color:#111">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">activation_maps&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#111">neuron_idx&lt;/span>&lt;span style="color:#111">]&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">[]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">activation_maps&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#111">neuron_idx&lt;/span>&lt;span style="color:#111">]&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">append&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">activation&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Step 2: Compute threshold for top 0.5% activations for each neuron&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">thresholds&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">for&lt;/span> &lt;span style="color:#111">neuron_idx&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">activations&lt;/span> &lt;span style="color:#f92672">in&lt;/span> &lt;span style="color:#111">activation_maps&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">items&lt;/span>&lt;span style="color:#111">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Flatten all activations for this neuron&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">all_activations&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">cat&lt;/span>&lt;span style="color:#111">([&lt;/span>&lt;span style="color:#111">act&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">flatten&lt;/span>&lt;span style="color:#111">()&lt;/span> &lt;span style="color:#00a8c8">for&lt;/span> &lt;span style="color:#111">act&lt;/span> &lt;span style="color:#f92672">in&lt;/span> &lt;span style="color:#111">activations&lt;/span>&lt;span style="color:#111">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Compute threshold for top 0.5%&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">threshold&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">quantile&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">all_activations&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#ae81ff">0.995&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">thresholds&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#111">neuron_idx&lt;/span>&lt;span style="color:#111">]&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">threshold&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Step 3: Create binary masks and compute IoU with concept masks&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">concept_detectors&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">for&lt;/span> &lt;span style="color:#111">image_idx&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">image&lt;/span> &lt;span style="color:#f92672">in&lt;/span> &lt;span style="color:#111">enumerate&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">dataset&lt;/span>&lt;span style="color:#111">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">image_concepts&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">concept_masks&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#111">image_idx&lt;/span>&lt;span style="color:#111">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">for&lt;/span> &lt;span style="color:#111">neuron_idx&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">activations&lt;/span> &lt;span style="color:#f92672">in&lt;/span> &lt;span style="color:#111">activation_maps&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">items&lt;/span>&lt;span style="color:#111">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Get activation for this neuron on this image&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">activation&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">activations&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#111">image_idx&lt;/span>&lt;span style="color:#111">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Create binary mask using threshold&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">binary_mask&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">activation&lt;/span> &lt;span style="color:#f92672">&amp;gt;=&lt;/span> &lt;span style="color:#111">thresholds&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#111">neuron_idx&lt;/span>&lt;span style="color:#111">])&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">float&lt;/span>&lt;span style="color:#111">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Resize to match image dimensions&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">binary_mask&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">F&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">interpolate&lt;/span>&lt;span style="color:#111">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">binary_mask&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">unsqueeze&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">unsqueeze&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#111">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">size&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">image&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">shape&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">:],&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">mode&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#39;bilinear&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">)&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">squeeze&lt;/span>&lt;span style="color:#111">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Compute IoU with each concept mask&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">for&lt;/span> &lt;span style="color:#111">concept&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">mask&lt;/span> &lt;span style="color:#f92672">in&lt;/span> &lt;span style="color:#111">image_concepts&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">items&lt;/span>&lt;span style="color:#111">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">intersection&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">sum&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">binary_mask&lt;/span> &lt;span style="color:#f92672">*&lt;/span> &lt;span style="color:#111">mask&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">union&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">sum&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">binary_mask&lt;/span>&lt;span style="color:#111">)&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">sum&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">mask&lt;/span>&lt;span style="color:#111">)&lt;/span> &lt;span style="color:#f92672">-&lt;/span> &lt;span style="color:#111">intersection&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">iou&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">intersection&lt;/span> &lt;span style="color:#f92672">/&lt;/span> &lt;span style="color:#111">union&lt;/span> &lt;span style="color:#00a8c8">if&lt;/span> &lt;span style="color:#111">union&lt;/span> &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#00a8c8">else&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># If IoU exceeds threshold (typically 0.05), consider it a detector&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">if&lt;/span> &lt;span style="color:#111">iou&lt;/span> &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0.05&lt;/span>&lt;span style="color:#111">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">if&lt;/span> &lt;span style="color:#111">neuron_idx&lt;/span> &lt;span style="color:#f92672">not&lt;/span> &lt;span style="color:#f92672">in&lt;/span> &lt;span style="color:#111">concept_detectors&lt;/span>&lt;span style="color:#111">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">concept_detectors&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#111">neuron_idx&lt;/span>&lt;span style="color:#111">]&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">set&lt;/span>&lt;span style="color:#111">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">concept_detectors&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#111">neuron_idx&lt;/span>&lt;span style="color:#111">]&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">add&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">concept&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">return&lt;/span> &lt;span style="color:#111">concept_detectors&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="iii-logit-distillation-feature-distillation" style="font-size: 21px; display: flex; align-items: center;"> III. Logit Distillation &amp; Feature Distillation: A Powerful Duo for Interpretability &lt;/h2>
+&lt;p>Combining logit distillation with feature distillation not only boosts performance but also enhances the interpretability of student models. This improvement is measured by an increase in the number of concept detectors, which represent units aligned with human-interpretable concepts.&lt;/p>
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/feature_logit_distillation.png" alt="Feature_Logit_Distillation" width="700">
+&lt;/p>
+&lt;p>where Attention Transfer (AT), Factor Transfer (FT), Contrastive Representation Distillation (CRD), and Self-Supervised Knowledge Distillation (SSKD) are all variations of knowledge distillation techniques, each designed to transfer knowledge from teacher models to student models in unique ways.&lt;/p>
+&lt;h3 id="how-they-work-together">How they work together?&lt;/h3>
+&lt;ol>
+&lt;li>&lt;strong>Logit Distillation:&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>Transfers class-similarity information from the teacher to the student through softened logits.&lt;/li>
+&lt;li>Helps the student model understand the relationships between semantically similar classes, making activation maps more object-centric.&lt;/li>
+&lt;/ul>
+&lt;ol start="2">
+&lt;li>&lt;strong>Feature Distillation:&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>Focuses on aligning intermediate layer features between the teacher and student.&lt;/li>
+&lt;li>Improves the student model&amp;rsquo;s ability to replicate the teacher’s feature representations, supporting richer internal representations.&lt;/li>
+&lt;/ul>
+&lt;h2 id="iv-why-knowledge-distillation-enhances-interpretability" style="font-size: 21px; display: flex; align-items: center;"> IV. Why Knowledge Distillation Enhances Interpretability &lt;/h2>
+&lt;p>The key insight from the paper is that knowledge distillation transfers not just the ability to classify correctly, but also class-similarity information that makes the model focus on more interpretable features.&lt;/p>
+&lt;h3 id="transfer-of-class-similarities">Transfer of Class Similarities&lt;/h3>
+&lt;p>When a teacher model sees an image of a dog, it might assign:&lt;/p>
+&lt;ul>
+&lt;li>85% probability to &amp;ldquo;Golden Retriever&amp;rdquo;&lt;/li>
+&lt;li>10% probability to other dog breeds&lt;/li>
+&lt;li>5% probability to other animals and objects&lt;/li>
+&lt;/ul>
+&lt;p>These &amp;ldquo;soft targets&amp;rdquo; (consequence of logit distillation) encode rich hierarchical information about how classes relate. The student model distilling this knowledge learns to focus on features that are common to similar classes (e.g., general &amp;ldquo;dog&amp;rdquo; features).&lt;/p>
+&lt;h3 id="label-smoothing-vs-knowledge-distillation">Label Smoothing vs. Knowledge Distillation&lt;/h3>
+&lt;p>By looking at the KD and label smoothing losses, we can see that they are similar. When $T=1$ they only differ in the second member where we have a $\sigma(z_t^T)$ that contains class-similarity information instead of $u$ that doesn&amp;rsquo;t contain any information.&lt;/p>
+&lt;ul>
+&lt;li>$\mathcal{L}_{KD}=(1-\alpha)\mathrm{CE}(y,\sigma(z_s))+\alpha T^2 \mathrm{CE}(\sigma(z_t^T),\sigma(z_s^T))$&lt;/li>
+&lt;li>$L_{LS} = (1-\alpha)\mathrm{CE}(y,\sigma(z)) + \alpha\mathrm{CE}(u,\sigma(z)) $&lt;/li>
+&lt;/ul>
+&lt;p>So, if there is a difference in interpretability, it is likely that it comes from the fact that distillation permits to get class similarity knowledge from the teacher model. This is exactly what is shown in the figure below. Knowledge distillation guides student models to focus on more object-centric features rather than background or contextual features. This results in activation maps that better align with the actual objects in images.&lt;/p>
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/comparisons_dog.png" alt="ObjectCentricActivation" width="700">
+&lt;/p>
+&lt;p>The next figure also highlights the loss of interpretability (less concept detectors) when using label smoothing and the improvement of interpretability (more concept detectors) for KD:&lt;/p>
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/NbConceptDetDiffModels.png" alt="KD vs LS Distributions" width="600">
+&lt;/p>
+&lt;p>While label smoothing can improve accuracy, it often reduces interpretability by erasing valuable class relationships while KD keeps class relationship information and improves both accuracy and interpretability.&lt;/p>
+&lt;h2 id="v-experimental-results-and-reproduction" style="font-size: 21px; display: flex; align-items: center;"> V. Experimental Results and Reproduction &lt;/h2>
+&lt;p>Let&amp;rsquo;s implement a reproduction of one of the paper&amp;rsquo;s key experiments to see knowledge distillation&amp;rsquo;s effect on interpretability in action.&lt;/p>
+&lt;h3 id="setting-up-the-experiment">Setting Up the Experiment&lt;/h3>
+&lt;p>We are going to replicate the experiment by using the &lt;a href="https://github.com/Rok07/KD_XAI">GitHub repository provided by the authors&lt;/a>. The repository contains the code to train the models, compute the concept detectors, and evaluate the interpretability of the models.&lt;/p>
+&lt;p>As it is often the case with a machine learning paper, running the code to reproduce results requires some struggle.
+To reproduce the results, you could use a virtual environment (e.g. &lt;a href="https://datalab.sspcloud.fr/">SSP Cloud Datalab&lt;/a>) and then do the following:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>git clone https://github.com/Rok07/KD_XAI.git
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">cd&lt;/span> torchdistill
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>pip install -e .
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">cd&lt;/span> ..
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>bash script/dlbroden.sh
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nano torchdistill/torchdistill/models/custom/bottleneck/__init__.py
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>~ comment the first line
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>pip install opencv-python
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>pip install imageio
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo apt update
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo apt install -y libgl1-mesa-glx
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nano util/vecquantile.py
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>~ change NaN by nan
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nano loader/data_loader.py
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>~ add out&lt;span style="color:#f92672">[&lt;/span>i&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#f92672">=&lt;/span> rgb&lt;span style="color:#f92672">[&lt;/span>:,:,0&lt;span style="color:#f92672">]&lt;/span> + &lt;span style="color:#f92672">(&lt;/span>rgb&lt;span style="color:#f92672">[&lt;/span>:,:,1&lt;span style="color:#f92672">]&lt;/span>.astype&lt;span style="color:#f92672">(&lt;/span>np.uint16&lt;span style="color:#f92672">)&lt;/span> * 256&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">cd&lt;/span> ..
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nano settings.py
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>~ change &lt;span style="color:#111">TEST_MODE&lt;/span> &lt;span style="color:#f92672">=&lt;/span> False to True
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">cd&lt;/span> dataset/broden1_224
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cp index.csv index_sm.csv
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>~ keep the &lt;span style="color:#ae81ff">4000&lt;/span> first lines
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">cd&lt;/span> ../..
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nano visualize/bargraph.py
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>~ change parameter threshold of bar_graph_svg&lt;span style="color:#f92672">()&lt;/span> to 0.001
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>python main.py
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Network Dissection quantifies the interpretability of hidden units by measuring their alignment with human-interpretable concepts. The following results reveal several interesting findings:&lt;/p>
+&lt;h4 id="1-concept-distribution-from-bargraphsvg">1. Concept Distribution (from bargraph.svg):&lt;/h4>
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/class_distribution.png" alt="Class Distribution" width="600">
+&lt;/p>
+&lt;ul>
+&lt;li>~6 units detecting object concepts&lt;/li>
+&lt;li>~2 units detecting scene concepts&lt;/li>
+&lt;li>1 unit detecting material properties&lt;/li>
+&lt;li>~13 units detecting textures&lt;/li>
+&lt;li>~6 units detecting colors&lt;/li>
+&lt;/ul>
+&lt;h4 id="2-specific-units-layer4-0xxxjpg">2. Specific Units: (layer4-0xxx.jpg)&lt;/h4>
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/unit_grid.png" alt="Unit Grid" width="1600">
+&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Unit 330&lt;/strong> has specialized in detecting grid and regular pattern textures&lt;/li>
+&lt;/ul>
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/unit_sky.png" alt="Unit Sky" width="1600">
+&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Unit 202&lt;/strong> detects sky regions in images&lt;/li>
+&lt;/ul>
+&lt;p>The network dissection approach reveals interpretable neurons of a distilled ResNet18.&lt;/p>
+&lt;h2 id="vi-beyond-network-dissection-other-interpretability-metrics" style="font-size: 21px; display: flex; align-items: center;"> VI. Beyond Network Dissection: Other Interpretability Metrics &lt;/h2>
+&lt;p>While the paper emphasizes the use of &lt;strong>Network Dissection&lt;/strong> to measure model interpretability by quantifying concept detectors, it also explores several additional metrics to confirm the broader impact of &lt;strong>Knowledge Distillation (KD)&lt;/strong> on interpretability:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>&lt;a href="https://arxiv.org/pdf/2009.02899">Five-Band Scores&lt;/a>, proposed by Tjoah &amp; Guan (2020):&lt;/strong> This metric assesses interpretability by evaluating pixel accuracy (accuracy of saliency maps in identifying critical features), precision (how well the saliency maps match the actual distinguishing features), recall, and false positive rates (FPR, lower FPR indicates better interpretability) using a synthesized dataset with heatmap ground truths. KD-trained models consistently show higher accuracy and lower FPR compared to other methods.&lt;/li>
+&lt;li>&lt;strong>&lt;a href="https://arxiv.org/pdf/2102.12781">DiffROAR Scores&lt;/a>, proposed by Shah et al. (2021):&lt;/strong> This evaluates the difference in predictive power on a model trained on a dataset and a model trained on a version of the dataset where we removed top and bottom x% of the pixel according to their importance for the task. The authors find that KD has a higher DiffROAR score than a model trained from scratch. It means that KD makes the model use more relevant features and thus more interpretable in that sense.
+&lt;li>&lt;strong>Loss Gradient Alignment:&lt;/strong> This metric measures the alignment of model gradients with human-perceived important features. KD models exhibit better alignment, indicating greater interpretability as we can see on this figure:
+&lt;p align="center">
+&lt;img src="./images/Bryan_Remi/gradient_interpre.png" alt="ObjectCentricActivation" width="700">
+&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>
+&lt;p>These metrics collectively show that KD can enhance interpretability. The consistent results showing that knowledge distillation can enhance interpretability for different metrics of interpretability provide strong arguments to believe that KD could be broadly used for better interpretability of deep learning models. &lt;/p>
+&lt;h2 id="conclusion" style="font-size: 21px; display: flex; align-items: center;"> Conclusion &lt;/h2>
+&lt;p align="center"> &lt;img src="./images/Bryan_Remi/pinguins_studying.gif" alt="Feeling strong with interpretable AI" style="width: 30%; max-width: 500px; height: auto;"> &lt;/p>
+&lt;p>The article showed that knowledge distillation can improve both accuracy and interpretability. They attribute the improvement in interpretability to the transfer of class similarity knowledge from the teacher to the student model. They compare label smoothing (LS) that is similar to KD but LS does not benefit from class-similarity information. The empirical experiments shows better accuracy for LS and KD but the interpretability of LS decreases whereas it increases for KD confirming the hypothesis that class similarity knowledge has a role in interpretability. The authors obtain consistent results when using other metrics than the number of concept detectors for interpretability showing that their approach is robust to different definitions of interpretability.&lt;/p>
+&lt;p>Those encouraging results could lead to applications of knowledge distillation to improve the interpretability of deep learning models in highly sensitive areas like autonomous systems and healthcare.&lt;/p>
+&lt;h2 id="join-the-discussion" style="font-size: 21px; display: flex; align-items: center;"> Join the Discussion &lt;/h2>
+&lt;p>We’d love to hear your thoughts! What are your experiences with Knowledge Distillation (KD)? Have you found it to improve not just performance but also interpretability in your projects? Feel free to share your ideas, questions, or insights in the comments section or engage with us on &lt;a href="https://github.com/BryanBradfo/responsible-ai-datascience-ipParis.github.io">GitHub&lt;/a>!&lt;/p>
+&lt;h2 id="references">References&lt;/h2>
+&lt;ul>
+&lt;li>Hinton, G., Vinyals, O., &amp;amp; Dean, J. (2015). &lt;a href="https://arxiv.org/abs/1503.02531">Distilling the knowledge in a neural network.&lt;/a> arXiv:1503.02531.&lt;/li>
+&lt;li>Han, H., Kim, S., Choi, H.-S., &amp;amp; Yoon, S. (2023). &lt;a href="https://arxiv.org/pdf/2305.15734">On the Impact of Knowledge Distillation for Model Interpretability.&lt;/a> arXiv:2305.15734.&lt;/li>
+&lt;li>Bau, D., Zhou, B., Khosla, A., Oliva, A., &amp;amp; Torralba, A. (2017). &lt;a href="https://arxiv.org/pdf/1704.05796">Network dissection: Quantifying interpretability of deep visual representations.&lt;/a> arXiv:1704.05796.&lt;/li>
+&lt;li>Tjoa, E., &amp;amp; Guan, M. Y. (2020). &lt;a href="https://arxiv.org/pdf/2009.02899"> Quantifying explainability of saliency methods in deep neural networks.&lt;/a> arXiv:2009.02899.&lt;/li>
+&lt;li>Shah, H., Jain, P., &amp;amp; Netrapalli, P. (2021). &lt;a href="https://arxiv.org/pdf/2102.12781">Do input gradients highlight discriminative features?&lt;/a> arXiv:2102.12781, NeurIPS 2021.&lt;/li>
+&lt;/ul>
+&lt;/html></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/impact-knowledge-distillation-model-interpretability/</guid><pubDate>Sat, 15 Mar 2025 12:16:21 +0100</pubDate></item><item><title>Get a calibrated and efficient model with tailored data augmentation.</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</link><description>&lt;style TYPE="text/css">
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style>
 &lt;script type="text/x-mathjax-config">
