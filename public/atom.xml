@@ -269,6 +269,7 @@ Without S3D, certain communities miss job postings entirely in some scenarios.&l
     </item>
     
     <item>
+
       <title>How to augment my dataset?</title>
       <link>http://localhost:1313/posts/mixupdatacalibration/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
@@ -294,23 +295,54 @@ MathJax.Hub.Queue(function() {
 &lt;h3 id=&#34;paper-comment-on-the-research-paper-tailoring-mixup-to-data-for-calibrationhttpsarxivorgabs231101434-written-by-quentin-bouniot-pavlo-mozharovskyi--florence-dalché-buc-from-ltci-télécom-paris-institut-polytechnique-de-paris-france&#34;&gt;Paper: Comment on the research paper: &lt;a href=&#34;https://arxiv.org/abs/2311.01434&#34;&gt;&lt;strong&gt;Tailoring Mixup to Data for Calibration&lt;/strong&gt;&lt;/a&gt;, written by &lt;em&gt;Quentin Bouniot, Pavlo Mozharovskyi &amp;amp; Florence d’Alché-Buc&lt;/em&gt;, from LTCI, Télécom Paris, Institut Polytechnique de Paris, France&lt;/h3&gt;
 &lt;p&gt;TODO: insert table of contents&lt;/p&gt;
 &lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
-&lt;p&gt;&lt;img
-  src=&#34;./images/MixUpDataCalibration/AI_introvert.png&#34;
-  alt=&#34;Test image Mkdown&#34;
-  loading=&#34;lazy&#34;
-  decoding=&#34;async&#34;
-  class=&#34;full-width&#34;
-/&gt;
 
-
-Let&amp;rsquo;s do it.&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
-  &lt;img src=&#34;./images/MixUpDataCalibration/AI_introvert.png&#34; alt=&#34;Test image mathematical&#34;&gt;
+  &lt;figure&gt;
+  &lt;img src=&#34;./images/MixUpDataCalibration/AI_introvert.png&#34; 
+    alt=&#34;Test image mathematical&#34;
+    width=300&gt;
+    &lt;/img&gt;
+  &lt;figcaption&gt;The power of AI.&lt;/figcaption&gt;
+  &lt;/figure&gt;
 &lt;/p&gt;
-&lt;h1 id=&#34;main-part&#34;&gt;Main part&lt;/h1&gt;
+# Main part
 &lt;p&gt;Test LaTeX : $\sigma \left( \frac{1}{2}\right)$&lt;/p&gt;
 &lt;p&gt;$$\mathbb{R}^3 $$&lt;/p&gt;
-&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;h2 id=&#34;code-test&#34;&gt;Code Test&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;numpy&lt;/span&gt; &lt;span style=&#34;color:#00a8c8&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;ones&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;ones&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;print&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;ones&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;output:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&amp;gt;&amp;gt;&amp;gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt;1&lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;To explain&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Similarity kernel&lt;/li&gt;
+&lt;li&gt;Beta distributions&lt;/li&gt;
+&lt;li&gt;different procedures of data augmentation&lt;/li&gt;
+&lt;li&gt;produce images of augmentation&lt;/li&gt;
+&lt;li&gt;compare with other methodes : results and computing power&lt;/li&gt;
+&lt;li&gt;Why &amp;ldquo;calibration&amp;rdquo;?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Further idea: Compare with CutMix&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; and Manifold Mixup&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;h1 id=&#34;references&#34;&gt;References&lt;/h1&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;Yun, S., Han, D., Chun, S., Oh, S. J., Yoo, Y., and Choe, J. (2019). Cutmix: Regularization strategy
+to train strong classifiers with localizable features. In 2019 IEEE/CVF International Conference
+on Computer Vision, ICCV 2019, Seoul, Korea (South), October 27 - November 2, 2019, pages
+6022–6031. IEEE.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;Verma, V., Lamb, A., Beckham, C., Najafi, A., Mitliagkas, I., Lopez-Paz, D., and Bengio, Y. (2019).
+Manifold mixup: Better representations by interpolating hidden states. In Chaudhuri, K. and
+Salakhutdinov, R., editors, Proceedings of the 36th International Conference on Machine Learning,
+volume 97 of Proceedings of Machine Learning Research, pages 6438–6447. PMLR.&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
       <guid>http://localhost:1313/posts/mixupdatacalibration/</guid>
