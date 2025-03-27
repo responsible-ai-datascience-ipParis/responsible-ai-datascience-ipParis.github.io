@@ -60,7 +60,6 @@ This blog explores how fairness in machine learning, despite its good intentions
 ---
 
 ## 2. Algorithmic Fairness: A Noble Goal That Cuts Both Ways
-
 Fairness in AI is like forging a perfect sword—it must be balanced, precise, and just. Researchers have developed **in-processing fairness interventions**, which modify the training process to remove biases in model predictions. These methods act like master swordsmiths, hammering out the unwanted imperfections in AI decision-making.
 
 However, every sword has two edges. These fairness techniques do not just eliminate biases—they also alter how models respond to data. This change in behavior can create exploitable patterns that adversaries can use to infer whether a specific individual was part of the training data. In short, while fairness dulls one blade (bias), it sharpens another (privacy risk).
