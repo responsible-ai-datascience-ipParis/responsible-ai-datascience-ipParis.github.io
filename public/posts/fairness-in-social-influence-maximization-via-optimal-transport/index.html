@@ -154,7 +154,7 @@
 <li><a href="#references">References</a></li>
 </ul>
 <p>This is a blog post about the article “Fairness in Social Influence Maximization via Optimal Transport” published by Shubham Chowdhary et al. in 2024 and available <a href="https://neurips.cc/virtual/2024/poster/94521"><strong>here</strong></a>.</p>
-<h3 id="1-introductionintroduction"><a href="#introduction">1. Introduction</a></h3>
+<h3 id="1-introduction"><a href="#introduction">1. Introduction</a></h3>
 <p>In today’s digital society, social networks play a major role in how information spreads. Whether it is a public health campaign, a political message, or viral marketing, the ability to maximize influence is crucial. Companies, governments, and organizations leverage Influence Maximization (IM) algorithms to strategically select key individuals—called seeds—who will initiate a diffusion process, ensuring that information reaches the largest possible audience.</p>
 <p>Imagine a scenario where a job-matching platform uses an Influence Maximization (IM) strategy to promote career opportunities to young professionals. The goal is to spread job postings efficiently across different professional communities. However, due to the structure of the social network, the algorithm selects key individuals (seeds) in such a way that:</p>
 <ul>
@@ -174,7 +174,7 @@
 <li><strong>Mutual Fairness</strong>: A better way to measure fairness, inspired by Optimal Transport. Instead of just looking at how much information each group gets in total, it ensures they receive the message at the same time.</li>
 <li><strong>S3D Algorithm</strong>: A smarter way to choose influencers, balancing fairness and efficiency. It adjusts seed selection dynamically to improve fairness while still reaching as many people as possible.</li>
 </ol>
-<h3 id="2-mutual-fairness-a-new-metricmutual-fairness"><a href="#mutual-fairness">2. Mutual Fairness: A New Metric</a></h3>
+<h3 id="2-mutual-fairness-a-new-metric"><a href="#mutual-fairness">2. Mutual Fairness: A New Metric</a></h3>
 <h5 id="why-make-a-new-metric"><strong>Why make a new metric?</strong></h5>
 <p>To understand why a new metric is necessary, let’s examine two situations where information propagation appears fair,we take the example of the introduction.</p>
 <p>Consider two groups, C1 and C2, each with an outreach probability distribution:</p>
@@ -272,7 +272,7 @@ In the <a href="#fig3">Figure 3</a> below, we observe the transition from a dist
   <br>
   <i>Figure 7 : Fairness Scores for Different Distributions: γ, γex, and γ∗</i>
 </p>
-<h3 id="3-metric-in-practicefairness-evaluation"><a href="#fairness-evaluation">3. Metric in practice</a></h3>
+<h3 id="3-metric-in-practice"><a href="#fairness-evaluation">3. Metric in practice</a></h3>
 <h4 id="mutual-fairness-in-practice"><strong>Mutual fairness in practice</strong></h4>
 <p>We apply this metric to different datasets, which include social networks and communities partitioned into two groups. To do this, we load the dataset as a graph (V, E) and select a seedset S of size varying between 2 and 90. To diffuse the information, we use a probability p in the interval [0,1]. Since the process is stochastic, we repeat the operation 1000 times.</p>
 <p>The results in <a href="#fig8">Figure 8</a> illustrate how information propagation varies depending on the probability p. In <a href="#fig8">Figure 8</a>(a), with p = 0.5, the information is disseminated in a way that is both efficient and equitable, with the groups being highly connected. The behavior is deterministic, with similar results in each iteration. In <a href="#fig8">Figure 8</a>(b), when p is reduced to 0.1, the propagation remains equitable but becomes less efficient, reaching on average only 20% of each group instead of nearly 100% as in (a).</p>
@@ -295,7 +295,7 @@ In the <a href="#fig3">Figure 3</a> below, we observe the transition from a dist
   <i>Figure 9 : Impact of β on Outreach Probability Distributions: Balancing Fairness and Efficiency</i>
 </p>
 <p>Now that we have our metric to determine if a distribution is fair and efficient, we want to focus on an algorithm to select the right seeds.</p>
-<h3 id="4-improving-fairness-with-s3ds3d-algorithm"><a href="#s3d-algorithm">4. Improving Fairness with S3D</a></h3>
+<h3 id="4-improving-fairness-with-s3d"><a href="#s3d-algorithm">4. Improving Fairness with S3D</a></h3>
 <h4 id="stochastic-seed-selection-descent-s3d">Stochastic Seed Selection Descent (S3D)</h4>
 <p>While Mutual Fairness provides a way to measure fairness, Influence Maximization (IM) algorithms still need a method to optimize it without sacrificing outreach. S3D addresses this by dynamically adjusting seed selection to ensure a balanced information spread across all communities.</p>
 <p>Instead of selecting influential nodes solely based on popularity, S3D explores alternative seed sets, optimizing both fairness and outreach through an iterative process:</p>
@@ -366,7 +366,7 @@ Without S3D, certain communities miss job postings entirely in some scenarios.</
 </ul>
 <h4 id="impact-of-s3d">Impact of S3D</h4>
 <p>S3D improves information dissemination by ensuring a more equitable distribution between different groups, without sacrificing efficiency. In our job-matching example, it allows graduates of professional schools to access the same opportunities as those from prestigious universities, thus leading to inequalities linked to the social network. Thanks to its adaptive approach, S3D stands out as an effective solution to correct the biases of traditional algorithms while maintaining a broad reach.</p>
-<h3 id="5-conclusionconclusion"><a href="#conclusion">5. Conclusion</a></h3>
+<h3 id="5-conclusion"><a href="#conclusion">5. Conclusion</a></h3>
 <p>As a conclusion, we can say that fairness in Social Influence Maximization is crucial to prevent systemic exclusion in information dissemination. Traditional methods often favor well-connected individuals, reinforcing existing inequalities. By introducing Mutual Fairness and the S3D algorithm, we provide a framework that balances fairness and efficiency, ensuring a more equitable outreach. Through our job-matching case study for example, we demonstrated that S3D significantly reduces bias while maintaining high influence spread. These results confirm that fairness-aware approaches can be both practical and impactful, making them essential for real-world applications such as hiring, education, or public awareness campaigns.</p>
 <h3 id="references">References</h3>
 <ol>
