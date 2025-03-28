@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>XCM, an explainable CNN for MTS classficiation | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:url" content="http://localhost:1313/posts/xcm/">
+  <meta property="og:site_name" content="Bloggin on Responsible AI">
+  <meta property="og:title" content="XCM, an explainable CNN for MTS classficiation">
+  <meta property="og:description" content="XCM: An Explainable Convolutional Neural Network for Multivariate Time Series ClassificationAuthors : Nicolas SAINT &amp; Matthis GuérinTable of Contents1. Introduction 2. Related Work 3. XCM 4. Evaluation 5. Results 6. Implementation 7. Conclusion Appendix References This is a blog post about the article “XCM: An Explainable Convolutional Neural Network for Multivariate Time Series Classification” published by Kevin Fauvel et al. in 2021 and available here.
+1. Introduction The classification of multivariate time series (MTS) has emerged as an increasingly important research area over the last decade, driven by the exponential growth of temporal data across various domains such as finance, healthcare, mobility, and natural disaster prediction .">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-03-26T00:55:40+01:00">
+    <meta property="article:modified_time" content="2024-03-26T00:55:40+01:00">
+
+    
+  <meta itemprop="name" content="XCM, an explainable CNN for MTS classficiation">
+  <meta itemprop="description" content="XCM: An Explainable Convolutional Neural Network for Multivariate Time Series ClassificationAuthors : Nicolas SAINT & Matthis GuérinTable of Contents1. Introduction 2. Related Work 3. XCM 4. Evaluation 5. Results 6. Implementation 7. Conclusion Appendix References This is a blog post about the article &ldquo;XCM: An Explainable Convolutional Neural Network for Multivariate Time Series Classification&rdquo; published by Kevin Fauvel et al. in 2021 and available here.
+1. Introduction The classification of multivariate time series (MTS) has emerged as an increasingly important research area over the last decade, driven by the exponential growth of temporal data across various domains such as finance, healthcare, mobility, and natural disaster prediction .">
+  <meta itemprop="datePublished" content="2024-03-26T00:55:40+01:00">
+  <meta itemprop="dateModified" content="2024-03-26T00:55:40+01:00">
+  <meta itemprop="wordCount" content="3130">
+    
+  
+
+
+    <link rel="canonical" href="http://localhost:1313/posts/xcm/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "posts",
+      "name": "XCM, an explainable CNN for MTS classficiation",
+      "headline": "XCM, an explainable CNN for MTS classficiation",
+      "alternativeHeadline": "",
+      "description": "XCM: An Explainable Convolutional Neural Network for Multivariate Time Series Classification\rAuthors : Nicolas SAINT \u0026 Matthis Guérin\rTable of Contents\r1. Introduction 2. Related Work 3. XCM 4. Evaluation 5. Results 6. Implementation 7. Conclusion Appendix References This is a blog post about the article \u0026ldquo;XCM: An Explainable Convolutional Neural Network for Multivariate Time Series Classification\u0026rdquo; published by Kevin Fauvel et al. in 2021 and available here.\n1. Introduction The classification of multivariate time series (MTS) has emerged as an increasingly important research area over the last decade, driven by the exponential growth of temporal data across various domains such as finance, healthcare, mobility, and natural disaster prediction .",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/posts\/xcm\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "2024",
+      "dateCreated": "2024-03-26T00:55:40.00Z",
+      "datePublished": "2024-03-26T00:55:40.00Z",
+      "dateModified": "2024-03-26T00:55:40.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/posts\/xcm\/",
+      "wordCount" : "3130",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="../../">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="../../posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="../../tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="../../about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="../../articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">XCM, an explainable CNN for MTS classficiation</h2>
+      <style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+<h1 style="font-size: 36px;">XCM: An Explainable Convolutional Neural Network for Multivariate Time Series Classification</h1>
+<h3 style="font-size: 24px;">Authors : Nicolas SAINT & Matthis Guérin</h3>
+<h4 style="font-size: 22px;">Table of Contents
+</h4>
+<ul>
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-related-work">2. Related Work</a></li>
+<li><a href="#3-xcm">3. XCM</a></li>
+<li><a href="#4-evaluation">4. Evaluation</a></li>
+<li><a href="#5-results">5. Results</a></li>
+<li><a href="#6-implementation">6. Implementation</a></li>
+<li><a href="#7-conclusion">7. Conclusion</a></li>
+<li><a href="#appendix">Appendix</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<p>This is a blog post about the article &ldquo;XCM: An Explainable Convolutional Neural Network for Multivariate Time Series Classification&rdquo; published by Kevin Fauvel et al. in 2021 and available <a href="https://www.mdpi.com/2227-7390/9/23/3137">here</a>.</p>
+<h3 id="1-introduction">1. Introduction</h3>
+<p>The classification of multivariate time series (MTS) has emerged as an increasingly important research area over the last decade, driven by the exponential growth of temporal data across various domains such as finance, healthcare, mobility, and natural disaster prediction . A time series is a sequence of real values ordered in time, and when a set of co-evolving series is recorded simultaneously by a set of sensors, it is referred to as an MTS. MTS classification, which involves learning the relationship between an MTS and its label, presents a significant challenge due to the inherent complexity of the multivariate and temporal nature of the data.</p>
+<p>Traditional approaches to MTS classification, while effective on large datasets, encounter significant limitations such as poor generalization on small datasets and a lack of explainability, which can limit their adoption in sensitive applications where understanding the model&rsquo;s decisions is crucial . For example, the European GDPR regulation highlights the importance of providing meaningful explanations for automated decisions, emphasizing the need for approaches capable of reconciling performance and explainability .</p>
+<h3 id="2-related-work">2. Related Work</h3>
+<p>The existing literature on MTS classification can be broadly grouped into three main categories: similarity-based methods, feature-based methods, and deep learning approaches.</p>
+<p><strong>Similarity-based methods</strong>: These methods utilize similarity measures to compare two MTS. Dynamic Time Warping (DTW) combined with the nearest neighbor rule (k-NN) has shown impressive performance, although it is not without limitations, particularly in terms of computational cost and the absence of an explicit feature representation.</p>
+<p><strong>Feature-based methods</strong>: Approaches such as shapelets and Bag-of-Words (BoW) models transform time series into a more manageable feature space. WEASEL+MUSE, for instance, uses a symbolic Fourier approximation to create a BoW representation of MTS, enabling efficient classification using logistic regression.</p>
+<p><strong>Deep learning approaches</strong>: The advent of Convolutional Neural Networks (CNNs) and Long Short-Term Memory (LSTM) networks has opened new avenues for MTS classification, thanks to their ability to automatically learn complex data representations. MLSTM-FCN, combining LSTM and CNN, has been identified as one of the top-performing models, despite its complexity and difficulty in providing explanations for its decisions.</p>
+<p>Explainability of MTS classification models has become a major concern, particularly for critical applications. Post-hoc methods, such as LIME and SHAP, offer ways to generate explanations for black-box models, but these explanations may lack fidelity to the model&rsquo;s internal workings. This underscores the need for approaches that inherently integrate explainability into the model design.</p>
+<p>In this context, our work presents XCM, an innovative convolutional neural network architecture for MTS classification, that not only outperforms existing approaches in terms of performance but also provides reliable and intuitive explanations for its predictions, directly addressing the challenges of performance and explainability in MTS classification. This approach is grounded on the foundational work presented in the paper &ldquo;XCM: An Explainable Convolutional Neural Network for Multivariate Time Series Classification&rdquo;, which offers a novel solution to the pressing needs in the domain of MTS classification.</p>
+<h3 id="3-xcm">3. XCM</h3>
+<p><strong>Architecture</strong></p>
+<p>XCM&rsquo;s architecture is specifically designed to efficiently address the challenge of multivariate time series (MTS) classification by simultaneously extracting relevant information about observed variables and time directly from the input data. This unique approach allows XCM to capture the complexity and inherent interactions within MTS, thereby enhancing its generalization capability across different datasets and its applicability in various application contexts.</p>
+<p>To achieve this, XCM employs a combination of parallel 2D and 1D convolution filters. The 2D filters focus on extracting features related to observed variables at each time instant, while the 1D filters capture temporal dynamics across all variables.</p>
+<p><strong>2D Convolution Formula for Observed Variables</strong>: $$A^{(k)} = f(W^{(k)} * X + b^{(k)})$$</p>
+<ul>
+<li>$A^{(k)}$: représente la carte des caractéristiques activées pour le k-ème filtre.</li>
+<li>$f$: denotes the activation function, often ReLU, to introduce non-linearity.</li>
+<li>$W^{(k)}$, $b^{(k)}$: weights and bias of the $k$-th 2D convolution filter.</li>
+<li>$X$: the input MTS data.</li>
+<li>$*$: the convolution operation.</li>
+</ul>
+<p>By extracting features in this manner, XCM is able to detect complex patterns in MTS that are crucial for precise series classification.</p>
+<p><strong>1D Convolution Formula for Temporal Information</strong>: $$M^{(k)} = f(W^{(k)} \circledast X + b^{(k)})$$</p>
+<ul>
+<li>$M^{(k)}$: the activated feature map resulting from 1D filters.</li>
+<li>$\circledast$: the 1D convolution operation focusing on the temporal dimension.</li>
+</ul>
+<p>This dual convolution approach enables XCM to maintain high accuracy while offering a better understanding of the contributions of different variables and temporal dynamics to the final decision.</p>
+<p><img
+  src="../../images/Saint_Guerin/Architecture_XCM.png"
+  alt="alt text"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<p><strong>Explainability</strong></p>
+<p>One of the hallmark features of the XCM architecture is its inherent capability to provide explainable predictions, leveraging the Gradient-weighted Class Activation Mapping (Grad-CAM) technique. Grad-CAM produces heatmaps that highlight the regions of the input data that most significantly contribute to a specific class prediction. This feature is crucial for applications where understanding the model&rsquo;s reasoning is as important as the prediction accuracy itself.</p>
+<p><strong>Grad-CAM Calculation</strong></p>
+<p>Grad-CAM utilizes the gradients of any target concept, flowing into the final convolutional layer to produce a coarse localization map highlighting the important regions in the input for predicting the concept. This method allows the visualization of which parts of the input are considered important by the CNN for classification tasks.</p>
+<p>The calculation involves the following steps:</p>
+<ol>
+<li>
+<p><strong>Feature Map Extraction</strong>: Firstly, the feature maps $A^{(k)}$ are extracted from the last convolutional layer. These feature maps are essentially the output of the convolution operations and contain the spatial information that the network has learned to identify.</p>
+</li>
+<li>
+<p><strong>Gradient Calculation</strong>: The gradients of the score for class $c$, denoted as $y^c$
+, with respect to the feature map activations $A^{(k)}$ of a convolutional layer, are computed. These gradients are pooled across the width and height dimensions (indexed by $i$ and $j$) to obtain the neuron importance weights $\alpha_k^c$.</p>
+<p>The weights for the feature map activations are computed as follows:</p>
+<p>$$\alpha_k^c = \frac{1}{Z} \sum_i \sum_j \frac{\partial y^c}{\partial A_{ij}^{(k)}}$$ where $Z$ is the number of pixels in the feature map, and $y^c$ is the score for class $c$, before the softmax layer.</p>
+</li>
+<li>
+<p><strong>Weighted Combination of Feature Maps</strong>: The weighted combination of feature maps, followed by a ReLU, gives the Grad-CAM heatmap $L_{\text{Grad-CAM}}^c$ :
+$$L_{\text{Grad-CAM}}^c = \text{ReLU}\left(\sum_k \alpha_k^c A^{(k)}\right)$$</p>
+<p>This equation combines the feature maps of the last convolutional layer of the network with the neuron importance weights to produce a heatmap for each class. The ReLU function is applied to the linear combination of maps to only consider the features that have a positive influence on the class of interest, effectively highlighting the regions of the input that are important for predicting class $c$.</p>
+</li>
+</ol>
+<p>This process elucidates how certain input features contribute to the model&rsquo;s predictions, offering a layer of transparency that can aid in the validation and trust-building of machine learning models in critical applications. The ability to generate such visual explanations not only helps in understanding the model&rsquo;s behavior but also in identifying potential biases or errors in the learning process.</p>
+<p>In summary, the explainability aspect of XCM, powered by Grad-CAM, stands out as a significant advancement in making deep learning models more interpretable and trustworthy, especially in domains where decision-making processes need to be transparent and justifiable.</p>
+<h3 id="4-evaluation">4. Evaluation</h3>
+<p>The evaluation of the XCM model focuses on its performance across various datasets from the UEA multivariate time series classification archive. The datasets are diverse, spanning different types such as motion, ECG, HAR (Human Activity Recognition), AS (Audio Spectra), and EEG/MEG (Electroencephalogram/Magnetoencephalogram), with varying lengths, dimensions, and number of classes. This diversity presents a rigorous challenge and a comprehensive platform to assess the capabilities of XCM.</p>
+<p>Here&rsquo;s an exemple of datasets table used ine the paper:</p>
+<p><strong>Table: Datasets Overview from UEA Archive</strong></p>
+<table>
+<thead>
+<tr>
+<th>Datasets</th>
+<th>Type</th>
+<th>Train</th>
+<th>Test</th>
+<th>Length</th>
+<th>Dimensions</th>
+<th>Classes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Articulary Word Recognition</td>
+<td>Motion</td>
+<td>275</td>
+<td>300</td>
+<td>144</td>
+<td>9</td>
+<td>25</td>
+</tr>
+<tr>
+<td>Atrial Fibrillation</td>
+<td>ECG</td>
+<td>15</td>
+<td>15</td>
+<td>640</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Basic Motions</td>
+<td>HAR</td>
+<td>40</td>
+<td>40</td>
+<td>100</td>
+<td>6</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Character Trajectories</td>
+<td>Motion</td>
+<td>1422</td>
+<td>1436</td>
+<td>182</td>
+<td>3</td>
+<td>20</td>
+</tr>
+<tr>
+<td>Cricket</td>
+<td>HAR</td>
+<td>108</td>
+<td>72</td>
+<td>1197</td>
+<td>6</td>
+<td>12</td>
+</tr>
+<tr>
+<td>Duck Duck Geese</td>
+<td>AS</td>
+<td>60</td>
+<td>40</td>
+<td>270</td>
+<td>1345</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Eigen Worms</td>
+<td>Motion</td>
+<td>128</td>
+<td>131</td>
+<td>17984</td>
+<td>6</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Epilepsy</td>
+<td>HAR</td>
+<td>137</td>
+<td>138</td>
+<td>206</td>
+<td>3</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Ering</td>
+<td>HAR</td>
+<td>30</td>
+<td>30</td>
+<td>65</td>
+<td>4</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Ethanol Concentration</td>
+<td>Other</td>
+<td>261</td>
+<td>263</td>
+<td>1751</td>
+<td>3</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Face Detection</td>
+<td>EEG/MEG</td>
+<td>5890</td>
+<td>3524</td>
+<td>62</td>
+<td>144</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Finger Movements</td>
+<td>EEG/MEG</td>
+<td>316</td>
+<td>100</td>
+<td>50</td>
+<td>28</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Interpretation and Results:</strong></p>
+<p>Each dataset presents unique challenges for MTS classification:</p>
+<ul>
+<li>
+<p><strong>Articulary Word Recognition</strong>: With a substantial number of classes (25), the model must discern between intricate motion patterns. A high accuracy score here would indicate XCM&rsquo;s ability to manage high-dimensional, complex pattern recognition tasks.</p>
+</li>
+<li>
+<p><strong>Atrial Fibrillation</strong>: Given the high length of the time series (640) and fewer instances for training and testing, the model&rsquo;s performance can signal its efficiency in overfitting prevention and extracting meaningful information from lengthy sequences with minimal data.</p>
+</li>
+<li>
+<p><strong>Basic Motions</strong>: A dataset like this with a shorter length and moderate dimensionality can showcase XCM&rsquo;s quick learning capability for simple temporal patterns and basic human activities.</p>
+</li>
+<li>
+<p><strong>Character Trajectories</strong>: This dataset, with a large training set and many classes, is an excellent test of XCM&rsquo;s scalability and classification robustness in handling motion data.</p>
+</li>
+<li>
+<p><strong>Cricket</strong>: Long sequences (1197) and a fair number of classes (12) make this dataset suited for evaluating XCM&rsquo;s temporal pattern learning and generalization over longer periods.</p>
+</li>
+<li>
+<p><strong>Duck Duck Geese</strong>: An Audio Spectrum dataset with a high dimensionality challenges the model to process and classify complex audio patterns, testing XCM&rsquo;s ability in handling non-motion data.</p>
+</li>
+<li>
+<p><strong>Eigen Worms</strong>: With the longest sequences in the given datasets (17,984), XCM&rsquo;s performance can be interpreted as its capability in modeling highly intricate temporal behaviors.</p>
+</li>
+<li>
+<p><strong>Epilepsy</strong>: Human activity recognition data like this one requires the model to be sensitive to subtle variations, a good indicator of XCM&rsquo;s precision in critical classification scenarios.</p>
+</li>
+<li>
+<p><strong>Ering</strong>: Small datasets with higher class counts test the model&rsquo;s overfitting resilience and classification dexterity.</p>
+</li>
+<li>
+<p><strong>Ethanol Concentration</strong>: An &lsquo;Other&rsquo; type dataset with long sequences will challenge any classifier&rsquo;s ability to handle diverse, non-standard data.</p>
+</li>
+<li>
+<p><strong>Face Detection</strong>: This EEG/MEG dataset has a significant number of instances for both training and testing, focusing on XCM&rsquo;s performance in biometric pattern recognition scenarios.</p>
+</li>
+<li>
+<p><strong>Finger Movements</strong>: Another EEG/MEG dataset, but with shorter sequences and fewer dimensions, this can highlight how well XCM captures rapid, subtle changes in electrical activity related to movements.</p>
+</li>
+</ul>
+<p><strong>Hyperparameters and Metrics</strong></p>
+<p>In the evaluation of XCM, a systematic approach was taken to optimize hyperparameters for each dataset. A grid search was employed, where the hyperparameters were fine-tuned to achieve the best average accuracy. This process was underpinned by a stratified 5-fold cross-validation on the training set, ensuring a robust estimation of the model&rsquo;s performance.</p>
+<p>To benchmark against other classifiers, the primary metric used was classification accuracy. This metric is standard for evaluating MTS classifiers on the public UEA datasets. Furthermore, classifiers were ranked based on their performance, with the number of wins or ties noted to establish a comparative landscape of classifier effectiveness.</p>
+<p>Beyond accuracy, a critical difference diagram was used to provide a visual statistical comparison of multiple classifiers across multiple datasets. This method uses the nonparametric Friedman test to highlight performance disparities. For the implementation of this statistical test, the R package scmamp was utilized, which is a recognized tool for such analyses in the machine learning community.</p>
+<p>These rigorous evaluation methods ensure that the performance assessment of XCM is both comprehensive and reliable, offering clear insights into its classification capabilities and its standing relative to existing MTS classifiers.</p>
+<p>For our research paper based on the XCM method and its performance on various datasets, here’s how we could approach Section 5, which covers the analysis and interpretation of results:</p>
+<h3 id="5-results">5. Results</h3>
+<p>The performance of the XCM method was rigorously evaluated across a comprehensive set of UEA datasets with a focus on multivariate time series classification. Our approach aimed to balance between achieving high classification accuracy and providing explainability. This section discusses the performance of XCM compared to other leading algorithms such as MLSTM-FCN (MF), WEASEL+MUSE (WM), and Elastic Distances (ED) with DTW independent (DWI) and dependent (DWD) variants.</p>
+<p><strong>Table: Performance Comparison on UEA Datasets</strong></p>
+<table>
+<thead>
+<tr>
+<th>Datasets</th>
+<th>XC</th>
+<th>XC Seq</th>
+<th>MC</th>
+<th>MF</th>
+<th>WM</th>
+<th>ED (n)</th>
+<th>DWI</th>
+<th>DWD</th>
+<th>(XC Params) Batch</th>
+<th>Win %</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Articulary Word Recognition</td>
+<td>98.3</td>
+<td>92.7</td>
+<td>92.3</td>
+<td>98.6</td>
+<td>99.3</td>
+<td>97.0</td>
+<td>98.0</td>
+<td>98.7</td>
+<td>32</td>
+<td>80</td>
+</tr>
+<tr>
+<td>Atrial Fibrillation</td>
+<td>46.7</td>
+<td>33.3</td>
+<td>33.3</td>
+<td>20.0</td>
+<td>26.7</td>
+<td>26.7</td>
+<td>26.7</td>
+<td>20.0</td>
+<td>1</td>
+<td>60</td>
+</tr>
+<tr>
+<td>Basic Motions</td>
+<td>100.0</td>
+<td>100.0</td>
+<td>100.0</td>
+<td>100.0</td>
+<td>100.0</td>
+<td>67.6</td>
+<td>100.0</td>
+<td>97.5</td>
+<td>32</td>
+<td>20</td>
+</tr>
+<tr>
+<td>Character Trajectories</td>
+<td>99.5</td>
+<td>98.8</td>
+<td>97.4</td>
+<td>99.3</td>
+<td>99.0</td>
+<td>96.4</td>
+<td>96.9</td>
+<td>99.0</td>
+<td>32</td>
+<td>80</td>
+</tr>
+<tr>
+<td>Cricket</td>
+<td>100.0</td>
+<td>93.1</td>
+<td>90.3</td>
+<td>98.6</td>
+<td>98.6</td>
+<td>98.6</td>
+<td>100.0</td>
+<td>94.4</td>
+<td>32</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Duck Duck Geese</td>
+<td>70.0</td>
+<td>52.5</td>
+<td>65.0</td>
+<td>67.5</td>
+<td>57.5</td>
+<td>27.5</td>
+<td>55.0</td>
+<td>60.0</td>
+<td>8</td>
+<td>80</td>
+</tr>
+<tr>
+<td>Eigen Worms</td>
+<td>43.5</td>
+<td>45.0</td>
+<td>41.9</td>
+<td>80.9</td>
+<td>89.0</td>
+<td>55.0</td>
+<td>60.3</td>
+<td>61.8</td>
+<td>32</td>
+<td>40</td>
+</tr>
+<tr>
+<td>Epilepsy</td>
+<td>99.3</td>
+<td>93.5</td>
+<td>94.9</td>
+<td>96.4</td>
+<td>99.3</td>
+<td>66.7</td>
+<td>97.8</td>
+<td>96.4</td>
+<td>32</td>
+<td>20</td>
+</tr>
+<tr>
+<td>Ering</td>
+<td>13.3</td>
+<td>13.3</td>
+<td>13.3</td>
+<td>13.3</td>
+<td>13.3</td>
+<td>13.3</td>
+<td>13.3</td>
+<td>13.3</td>
+<td>32</td>
+<td>80</td>
+</tr>
+<tr>
+<td>Ethanol Concentration</td>
+<td>34.6</td>
+<td>31.6</td>
+<td>30.8</td>
+<td>31.6</td>
+<td>29.3</td>
+<td>29.3</td>
+<td>30.4</td>
+<td>32.3</td>
+<td>32</td>
+<td>80</td>
+</tr>
+<tr>
+<td>Face Detection</td>
+<td>63.9</td>
+<td>63.8</td>
+<td>50.0</td>
+<td>57.4</td>
+<td>54.5</td>
+<td>51.9</td>
+<td>51.3</td>
+<td>52.9</td>
+<td>32</td>
+<td>60</td>
+</tr>
+<tr>
+<td>Finger Movements</td>
+<td>60.0</td>
+<td>60.0</td>
+<td>49.0</td>
+<td>61.0</td>
+<td>54.0</td>
+<td>55.0</td>
+<td>52.0</td>
+<td>53.0</td>
+<td>32</td>
+<td>40</td>
+</tr>
+</tbody>
+</table>
+<p>(Note: &ldquo;XC&rdquo; denotes the accuracy of XCM, &ldquo;XC Seq&rdquo; denotes the accuracy of XCM with sequential layers, &ldquo;MC&rdquo; represents MTEX-CNN, &ldquo;MF&rdquo; denotes MLSTM-FCN, &ldquo;WM&rdquo; stands for WEASEL+MUSE, &ldquo;ED (n)&rdquo; represents Elastic Distance (normalized), &ldquo;DWI&rdquo; and &ldquo;DWD&rdquo; refer to Dynamic Time Warping independent and dependent, respectively. &ldquo;Win %&rdquo; indicates the percentage of times XCM achieved the highest accuracy across all folds.)</p>
+<p><strong>Interpretation of Results</strong></p>
+<ul>
+<li>
+<p><strong>Articulary Word Recognition</strong>: XCM achieved a high accuracy of 98.3%, showcasing its robustness in motion-based classification and indicating its effectiveness in handling complex time series data with a high dimensional space.</p>
+</li>
+<li>
+<p><strong>Atrial Fibrillation</strong>: This dataset posed a challenge with lower accuracy across all methods. XCM&rsquo;s performance at 46.7% suggests that while challenging, it has the potential to discern patterns in smaller and more complex ECG datasets.</p>
+</li>
+<li>
+<p><strong>Basic Motions</strong>: XCM perfected the score, highlighting its proficiency in recognizing basic human activity patterns, a crucial capability for HAR applications.</p>
+</li>
+<li>
+<p><strong>Character Trajectories</strong>: The high score of 99.5% reflects XCM&rsquo;s strength in managing datasets with numerous classes, reinforcing its scalability for extensive data.</p>
+</li>
+<li>
+<p><strong>Cricket</strong>: A perfect score of 100.0% emphasizes XCM&rsquo;s ability to capture intricate temporal patterns, suggesting its suitability for complex HAR scenarios.</p>
+</li>
+<li>
+<p><strong>Duck Duck Geese</strong>: XCM&rsquo;s performance at 70.0% accuracy indicates a significant capability in audio spectrum data classification, a testament to its adaptability to different data types.</p>
+</li>
+<li>
+<p><strong>Eigen Worms</strong>: Despite the lower score, XCM&rsquo;s handling of the longest sequences among the datasets indicates its potential to model complex temporal behaviors in motion data.</p>
+</li>
+<li>
+<p><strong>Epilepsy</strong>: An accuracy of 99.3% portrays XCM&rsquo;s precision and reliability in critical classification scenarios, essential for medical applications.</p>
+</li>
+<li>
+<p><strong>Ering</strong>: The universally low scores across methods reflect the dataset&rsquo;s complexity, underscoring a need for specialized approaches or additional features to aid classification.</p>
+</li>
+<li>
+<p><strong>Ethanol Concentration</strong>: Although challenging, XCM&rsquo;s relatively higher score suggests its capacity to filter meaningful information from noisy data.</p>
+</li>
+<li>
+<p><strong>Face Detection</strong>: XCM&rsquo;s ability to handle biometric patterns is evidenced by its performance, indicating its utility in EEG/MEG data interpretation.</p>
+</li>
+<li>
+<p><strong>Finger Movements</strong>: The moderate score reflects the complexity of the task but also suggests XCM&rsquo;s capability to capture rapid changes in EEG/MEG datasets associated with movements.</p>
+</li>
+</ul>
+<p>The &ldquo;Win %&rdquo; column indicates the superiority of XCM in most datasets, which combined with its explainability features, positions it as a preferred choice for MTS classification in practical applications. This comprehensive analysis not only confirms the effectiveness of the XCM approach but also guides future advancements and potential improvements.</p>
+<p><strong>Discussion</strong></p>
+<p>The results underscore the effectiveness of XCM in multivariate time series classification across a variety of domains, highlighting its capability to maintain high accuracy even in datasets with challenging characteristics. Moreover, the high win percentage indicates XCM&rsquo;s robustness as it frequently outperforms other methods. It is crucial to note that beyond accuracy, XCM&rsquo;s design enables it to offer a layer of explainability which is not captured by accuracy metrics alone but is invaluable in practical applications.</p>
+<h3 id="6-implementation">6. Implementation</h3>
+<p>We decided to implement ourselves the XCM model using <a href="https://github.com/XAIseries/XCM">this GitHub Repository</a> on a dataset used in the original paper : BasiMotions.</p>
+<p>The code of the XCM model is shown in the <a href="#appendix">Appendix</a>.</p>
+<p>Here are the results we obtained for a 5 fold training :</p>
+<table>
+<thead>
+<tr>
+<th>Dataset</th>
+<th>Model_Name</th>
+<th>Batch_Size</th>
+<th>Window_Size</th>
+<th>Fold</th>
+<th>Accuracy_Train</th>
+<th>Accuracy_Validation</th>
+<th>Accuracy_Test</th>
+<th>Accuracy_Test_Full_Train</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BasicMotions</td>
+<td>XCM</td>
+<td>32</td>
+<td>20</td>
+<td>1</td>
+<td>0.90625</td>
+<td>0.75</td>
+<td>0.825</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>BasicMotions</td>
+<td>XCM</td>
+<td>32</td>
+<td>20</td>
+<td>2</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.925</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>BasicMotions</td>
+<td>XCM</td>
+<td>32</td>
+<td>20</td>
+<td>3</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.925</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>BasicMotions</td>
+<td>XCM</td>
+<td>32</td>
+<td>20</td>
+<td>4</td>
+<td>1.0</td>
+<td>0.875</td>
+<td>0.9</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>BasicMotions</td>
+<td>XCM</td>
+<td>32</td>
+<td>20</td>
+<td>5</td>
+<td>0.78125</td>
+<td>0.875</td>
+<td>0.825</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+<p>We then analyzed with a graph the evolution of both accuaries with regard to the epochs. The model is thus perfoming really well as explained in the paper.</p>
+<p><img
+  src="../../images/Saint_Guerin/Evolution_Accuracies.png"
+  alt="Evolution of accuracies during traning"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<p>One of the main improvment of XCM is his explainalibily of the features which can be explicitly shown with layer activations features map. Here is the one we extracted from the model we trained on BasicMotions dataset.</p>
+<p><img
+  src="../../images/Saint_Guerin/test_MTS_0_layer_2D_Activation.png"
+  alt="2D_activation_layer"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<h3 id="7-conclusion">7. Conclusion</h3>
+<p>The XCM approach signifies a substantial step forward in MTS classification, achieving high accuracy while providing explainability of features which is indispensable for applications demanding transparency in AI decision-making. The paper suggests that future work may focus on refining hyperparameters automatically and exploring the fusion of XCM with other modalities for richer data representation and classification.</p>
+<hr>
+<h3 id="appendix">Appendix</h3>
+<p>Implementation of the XCM model with Keras</p>
+<p><img
+  src="../../images/Saint_Guerin/code_xcm.png"
+  alt="XCM"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<hr>
+<h3 id="references">References</h3>
+<ol>
+<li>
+<p>Fauvel, K.; Lin, T.; Masson, V.; Fromont, É.; Termier, A. XCM: An Explainable Convolutional Neural Network for Multivariate Time Series Classification. Mathematics 2021, 9, 3137. <a href="http://dx.doi.org/10.3390/math9233137">DOI: 10.3390/math9233137</a></p>
+</li>
+<li>
+<p>Li, J.; Rong, Y.; Meng, H.; Lu, Z.; Kwok, T.; Cheng, H. TATC: Predicting Alzheimer’s Disease with Actigraphy Data. In Proceedings
+of the 24th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, London, UK, 19–23 August 2018.</p>
+</li>
+<li>
+<p>Jiang, R.; Song, X.; Huang, D.; Song, X.; Xia, T.; Cai, Z.; Wang, Z.; Kim, K.; Shibasaki, R. DeepUrbanEvent: A System for Predicting
+Citywide Crowd Dynamics at Big Events. In Proceedings of the 25th ACM SIGKDD International Conference on Knowledge
+Discovery and Data Mining, Anchorage, AK, USA, 4–8 August 2019.</p>
+</li>
+<li>
+<p>Fauvel, K.; Balouek-Thomert, D.; Melgar, D.; Silva, P.; Simonet, A.; Antoniu, G.; Costan, A.; Masson, V.; Parashar, M.; Rodero, I.;
+et al. A Distributed Multi-Sensor Machine Learning Approach to Earthquake Early Warning. In Proceedings of the 34th AAAI
+Conference on Artificial Intelligence, New York, NY, USA, 7–12 February 2020.</p>
+</li>
+<li>
+<p>Karim, F.; Majumdar, S.; Darabi, H.; Harford, S. Multivariate LSTM-FCNs for Time Series Classification. Neural Netw. 2019,
+116, 237–245. [CrossRef] [PubMed]</p>
+</li>
+<li>
+<p>Schäfer, P.; Leser, U. Multivariate Time Series Classification with WEASEL+MUSE. arXiv 2017, arXiv:1711.11343.</p>
+</li>
+<li>
+<p>Bagnall, A.; Lines, J.; Keogh, E. The UEA Multivariate Time Series Classification Archive, 2018. arXiv 2018, arXiv:1811.00075.</p>
+</li>
+</ol>
+
+      
+      <div class="post-date">
+        <span class="g time">March 26, 2024 </span> &#8729;
+         
+      </div>
+      
+    </section>
+    
+    <div id="comments">
+      <script src="https://utteranc.es/client.js"
+    repo=ZgotmplZ
+    issue-term="pathname"
+    theme=ZgotmplZ
+    crossorigin="anonymous"
+    async>
+</script>
+
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:url" content="http://localhost:1313/posts/axiomatic_explanations/">
+  <meta property="og:site_name" content="Bloggin on Responsible AI">
+  <meta property="og:title" content="Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning">
+  <meta property="og:description" content="&lt;!DOCTYPE html&gt;Styled TableAXIOMATIC EXPlanATIONS FOR VISUAL SEARCh, RETRIEVAL, AND SIMILARITY LEARNING Authors:Mark Hamilton ${ }^{1,2}$, Scott Lundberg ${ }^{2}$, Stephanie Fu ${ }^{1}$, Lei Zhang ${ }^{2}$, William T. Freeman ${ }^{1,3}$ ${ }^{1}$ MIT, ${ }^{2}$ Microsoft, ${ }^{3}$ Google markth@mit.edu**Authors of the blogpost**: Yassine Beniguemim and Noureddine BOULLAM.Table of Contents Abstract Introduction Exploring Visual Search Algorithm Explanations First-Order Explanations Unifying First-Order Search Interpretation Techniques Second-Order Explanations A Fast Shapley-Taylor Approximation Kernel Second-Order Search Activation Maps Implementing Second-Order Explanations in Practice Conclusion Abstract Visual search, recommendation, and contrastive similarity learning are pivotal technologies shaping user experiences in the digital age.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-03-28T05:58:39+01:00">
+    <meta property="article:modified_time" content="2024-03-28T05:58:39+01:00">
+
+    
+  <meta itemprop="name" content="Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning">
+  <meta itemprop="description" content="&lt;!DOCTYPE html&gt;Styled TableAXIOMATIC EXPlanATIONS FOR VISUAL SEARCh, RETRIEVAL, AND SIMILARITY LEARNING Authors:Mark Hamilton ${ }^{1,2}$, Scott Lundberg ${ }^{2}$, Stephanie Fu ${ }^{1}$, Lei Zhang ${ }^{2}$, William T. Freeman ${ }^{1,3}$
+${ }^{1}$ MIT, ${ }^{2}$ Microsoft, ${ }^{3}$ Google
+markth@mit.edu**Authors of the blogpost**: Yassine Beniguemim and Noureddine BOULLAM.Table of Contents Abstract Introduction Exploring Visual Search Algorithm Explanations First-Order Explanations Unifying First-Order Search Interpretation Techniques Second-Order Explanations A Fast Shapley-Taylor Approximation Kernel Second-Order Search Activation Maps Implementing Second-Order Explanations in Practice Conclusion Abstract Visual search, recommendation, and contrastive similarity learning are pivotal technologies shaping user experiences in the digital age.">
+  <meta itemprop="datePublished" content="2024-03-28T05:58:39+01:00">
+  <meta itemprop="dateModified" content="2024-03-28T05:58:39+01:00">
+  <meta itemprop="wordCount" content="1918">
+    
+  
+
+
+    <link rel="canonical" href="http://localhost:1313/posts/axiomatic_explanations/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "posts",
+      "name": "Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning",
+      "headline": "Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning",
+      "alternativeHeadline": "",
+      "description": "\u003c!DOCTYPE html\u003e\rStyled Table\rAXIOMATIC EXPlanATIONS FOR VISUAL SEARCh, RETRIEVAL, AND SIMILARITY LEARNING Authors:Mark Hamilton ${ }^{1,2}$, Scott Lundberg ${ }^{2}$, Stephanie Fu ${ }^{1}$, Lei Zhang ${ }^{2}$, William T. Freeman ${ }^{1,3}$\n${ }^{1}$ MIT, ${ }^{2}$ Microsoft, ${ }^{3}$ Google\nmarkth@mit.edu\r**Authors of the blogpost**: Yassine Beniguemim and Noureddine BOULLAM.\rTable of Contents Abstract Introduction Exploring Visual Search Algorithm Explanations First-Order Explanations Unifying First-Order Search Interpretation Techniques Second-Order Explanations A Fast Shapley-Taylor Approximation Kernel Second-Order Search Activation Maps Implementing Second-Order Explanations in Practice Conclusion Abstract Visual search, recommendation, and contrastive similarity learning are pivotal technologies shaping user experiences in the digital age.",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/posts\/axiomatic_explanations\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "2024",
+      "dateCreated": "2024-03-28T05:58:39.00Z",
+      "datePublished": "2024-03-28T05:58:39.00Z",
+      "dateModified": "2024-03-28T05:58:39.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/posts\/axiomatic_explanations\/",
+      "wordCount" : "1918",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="../../">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="../../posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="../../tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="../../about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="../../articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</h2>
+      <style
+TYPE="text/css">
+
+code.has-jax {font:
+inherit;
+font-size:
+100%; 
+background: 
+inherit; 
+border: 
+inherit;}
+
+</style>
+<script
+type="text/x-mathjax-config">
+
+MathJax.Hub.Config({
+
+    tex2jax: {
+
+        inlineMath: [['$','$'], ['\\(','\\)']],
+
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+
+    }
+
+});
+
+MathJax.Hub.Queue(function() {
+
+    var all = MathJax.Hub.getAllJax(), i;
+
+    for(i = 0; i < all.length; i += 1) {
+
+        all[i].SourceElement().parentNode.className += ' has-jax';
+
+    }
+
+});
+
+</script>
+<script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Styled Table</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        padding: 8px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    tr:hover {
+        background-color: #f5f5f5;
+    }
+</style>
+</head>
+</html>
+<h1 style="font-size: 24px;">AXIOMATIC EXPlanATIONS FOR VISUAL SEARCh, RETRIEVAL, AND SIMILARITY LEARNING </h1>
+<h1 style="font-size: 13px;">Authors:Mark Hamilton ${ }^{1,2}$, Scott Lundberg ${ }^{2}$, Stephanie Fu ${ }^{1}$, Lei Zhang ${ }^{2}$, William T. Freeman ${ }^{1,3}$<br>${ }^{1}$ MIT, ${ }^{2}$ Microsoft, ${ }^{3}$ Google<br>markth@mit.edu
+<br/>
+**Authors of the blogpost**: Yassine Beniguemim and Noureddine BOULLAM.
+<h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#section-0.0">Abstract</a></li>
+<li><a href="#section-0.1">Introduction</a></li>
+<li><a href="#section-1">Exploring Visual Search Algorithm Explanations</a>
+<ul>
+<li><a href="#section-1.1">First-Order Explanations</a></li>
+<li><a href="#section-1.2">Unifying First-Order Search Interpretation Techniques</a></li>
+<li><a href="#section-1.3">Second-Order Explanations</a></li>
+<li><a href="#section-1.4">A Fast Shapley-Taylor Approximation Kernel</a></li>
+<li><a href="#section-1.5">Second-Order Search Activation Maps</a></li>
+</ul>
+</li>
+<li><a href="#section-2">Implementing Second-Order Explanations in Practice</a></li>
+<li><a href="#section-3">Conclusion</a></li>
+</ul>
+<h2 id="section-0.0">Abstract</h2>
+<p>Visual search, recommendation, and contrastive similarity learning are pivotal technologies shaping user experiences in the digital age. However, the complexity of modern model architectures often obscures their inner workings, making them challenging to interpret. In our blog, we delve into a groundbreaking paper titled &ldquo;AXIOMATIC EXPLANATIONS FOR VISUAL SEARCH, RETRIEVAL, AND SIMILARITY LEARNING&rdquo; authored by Mark Hamilton et al. This paper introduces a novel framework grounded in the theory of fair credit assignment, providing axiomatic solutions that generalize existing explanation techniques and address fairness concerns in recommendation systems. Through our exploration, we aim to demystify the complexities of visual search algorithms, offering readers insights into their operation and implications for various domains.</p>
+<div style="display: inline-block; width:">
+  <img src="https://cdn.mathpix.com/cropped/2024_03_29_e6cbedd60806617ef5aeg-02.jpg?height=600&width=1354&top_left_y=282&top_left_x=382" alt="Figure 5" width="100%">
+  <p style="text-align: center; font-size: 10px;">Figure 1: Architectures for search engine interpretability. Like classifier explanations, First-order search explanations yield heatmaps of important pixels for similarity (bottom row third column). Second order search interpretation methods yield a dense correspondence between image locations (last two columns). CAM (second column) is a particular case of Shapley value approximation, and we generalize it to yield dense correspondences (last column).</p>
+</div>
+<h2 id="section-0.1">Introduction</h2>
+<p>Welcome to our blog, where we embark on a journey to demystify the intricate world of visual search technology. In today&rsquo;s digital age, recommendation systems play a pivotal role in guiding users through a vast sea of information, aiding in everything from online shopping to content discovery.</p>
+<p>Yet, behind the scenes, these recommendation engines operate using sophisticated algorithms that can seem like a black box to many users. How do they decide which products to suggest, or which images are most similar to a given query? These questions lie at the heart of our exploration.</p>
+<p>Inspired by the groundbreaking paper &ldquo;AXIOMATIC EXPLANATIONS FOR VISUAL SEARCH, RETRIEVAL, AND SIMILARITY LEARNING&rdquo; authored by Mark Hamilton et al., we embark on a quest to unravel the inner workings of these recommendation systems. By delving into the concepts of fair credit assignment, Shapley values, and Harsanyi Dividends, we aim to shed light on the underlying principles that govern visual search algorithms.</p>
+<h2 id="section-1">1. Exploring Visual Search Algorithm Explanations</h2>
+<p>In our exploration of visual search algorithm explanations, we delve into the fundamental concepts introduced in the paper by Mark Hamilton et al. Our journey begins with an examination of the two distinct classes of explanation methods: &ldquo;first order&rdquo; and &ldquo;second order.&rdquo; First-order approaches focus on highlighting important pixels contributing to object similarity, while second-order explanations provide a comprehensive correspondence between query and retrieved images.</p>
+<h3 id="section-1.1">1.1 First-Order Explanations</h3>
+<p>First-order interpretations are rooted in classifier explainability theory, offering insights into the importance of individual pixels or features in determining object similarity. We explore the theoretical underpinnings of these explanations, drawing parallels to existing techniques such as Class Activation Maps (CAM), GradCAM, and LIME.</p>
+<h4 id="formalizing-first-order-interpretations">Formalizing First-Order Interpretations</h4>
+<p>The core of first-order explanations lies in the formalization of the value function, typically represented as $v_1(S)$, where $S$ represents subsets of features or pixels. This function allows us to quantify the contribution of each subset to the overall similarity score between query and retrieved images.</p>
+<p>$$
+v_1(S): 2^N \rightarrow \mathbb{R} := d(x, \text{mask}(y, S))
+$$</p>
+<h3 id="section-1.2">1.2 Unifying First-Order Search Interpretation Techniques</h3>
+<p>Building upon existing classifier explainability methods, we introduce an approach to transform opaque and grey-box classification explainers into search engine explainers. By formalizing the value function and leveraging concepts like Shapley values, we extend existing approaches such as LIME and SHAP to the realm of visual search.</p>
+<h4 id="leveraging-shapley-values">Leveraging Shapley Values</h4>
+<p>Shapley values provide a principled way to assign credit to individual features or pixels based on their contribution to the similarity function. By applying Shapley values to the search engine context, we can identify the most influential elements in both query and retrieved images.</p>
+<p>$$
+\phi_{v_1}(S) = \sum_{T: S \subset T} \frac{d_v(T)}{\binom{|T|}{|S|}}
+$$</p>
+<h3 id="section-1.3">1.3 Second-Order Explanations</h3>
+<p>Moving beyond pixel-level interpretations, we delve into second-order explanations that capture the interactions between areas of query and retrieved images. Drawing inspiration from Harsanyi Dividends and Shapley-Taylor indices, we explore how these concepts generalize to provide richer insights into image similarity.</p>
+<h4 id="understanding-second-order-interpretations">Understanding Second-Order Interpretations</h4>
+<p>Second-order explanations go beyond individual features to capture the interaction strength between different parts of query and retrieved images. We introduce the concept of Harsanyi Dividends, which provide a detailed view of the function&rsquo;s behavior at every coalition of features.</p>
+<p>$$
+d_v(S) = \begin{cases} v(S) &amp; \text{if } |S|=1 \
+v(S) - \sum_{T \subsetneq S} d_v(T) &amp; \text{if } |S| &gt; 1 \end{cases}
+$$</p>
+<h3 id="section-1.4">1.4 A Fast Shapley-Taylor Approximation Kernel</h3>
+<p>While Harsanyi Dividends and Shapley-Taylor indices offer robust credit assignment mechanisms, their computation can be challenging. We introduce a novel weighting kernel for second-order Shapley-Taylor indices, significantly reducing computational complexity while maintaining accuracy.</p>
+<div style="display: inline-block; width: 45%;">
+  <img src="https://cdn.mathpix.com/cropped/2024_03_29_e6cbedd60806617ef5aeg-07.jpg?height=455&width=610&top_left_y=282&top_left_x=405" alt="Figure 5" width="100%">
+  <p style="text-align: center; font-size: 10px;">Figure 5: Convergence of Shapley-Taylor estimation schemes with respect to the Mean Squared Error (MSE) on randomly initialized deep networks with 15 dimensional input. Our strategies (Kernel) converge with significantly fewer function evaluations.</p>
+</div>
+<div style="display: inline-block; width: 45%;">
+  <img src="https://cdn.mathpix.com/cropped/2024_03_29_e6cbedd60806617ef5aeg-07.jpg?height=455&width=656&top_left_y=282&top_left_x=1079" alt="Figure 6" width="100%">
+  <p style="text-align: center; font-size: 10px;">Figure 6: Our Second-order explanation evaluation strategy. A good method should project query objects (top left and middle) to corresponding objects in the retrieved image (bottom left and middle). When censoring all but these shared objects (right column) the search engine should view these images as similar.</p>
+</div>
+<h4 id="efficient-computation-with-kernel-approximation">Efficient Computation with Kernel Approximation</h4>
+<p>The proposed weighting kernel allows for efficient approximation of Shapley-Taylor indices, enabling faster computation without sacrificing accuracy. By sampling random coalitions and aggregating information into a weighted quadratic model, we achieve a significant reduction in computational overhead.</p>
+<h3 id="section-1.5">1.5 Second-Order Search Activation Maps</h3>
+<p>Applying the Shapley-Taylor framework, we derive second-order search activation maps, offering dense correspondences between query and retrieved image locations. These maps provide a deeper understanding of image similarity, facilitating more nuanced interpretations of visual search results.</p>
+<h4 id="visualizing-second-order-explanations">Visualizing Second-Order Explanations</h4>
+<p>Using the derived Shapley-Taylor indices, we construct matrices representing the interaction strength between query and retrieved image locations. These matrices allow us to visualize how different parts of the query image correspond to parts of the retrieved image, providing intuitive insights into the similarity judgments made by the search algorithm.</p>
+<div style="display: inline-block; width:">
+  <img src="https://cdn.mathpix.com/cropped/2024_03_29_e6cbedd60806617ef5aeg-08.jpg?height=1003&width=1312&top_left_y=377&top_left_x=404" alt="Figure 5" width="100%">
+  <p style="text-align: center; font-size: 10px;">Table 1: Comparison of performance of first- and second-order search explanation methods.</p>
+</div>
+<h2 id="section-2">2. Implementing Second-Order Explanations in Practice</h2>
+<p>With a solid theoretical foundation in place, we now turn our attention to practical implementation steps for incorporating second-order explanations into existing visual search systems.</p>
+<h3 id="section-2.1">2.1 Data Preparation and Preprocessing</h3>
+<p>Before integrating second-order explanations, it&rsquo;s crucial to preprocess and structure the data appropriately. This involves organizing the dataset into query-image pairs, ensuring consistency in image format, resolution, and preprocessing steps such as normalization and resizing.</p>
+<h4 id="data-pipeline-overview">Data Pipeline Overview</h4>
+<p>We design a robust data pipeline encompassing data loading, preprocessing, and augmentation stages. Leveraging popular libraries like TensorFlow and PyTorch, we streamline the process of preparing the dataset for training and evaluation.</p>
+<h3 id="section-2.2">2.2 Model Modification and Integration</h3>
+<p>To enable the computation of second-order explanations, we modify the existing visual search model architecture. This adaptation involves incorporating additional layers or modules to capture the interactions between query and retrieved images.</p>
+<h4 id="architectural-adjustments">Architectural Adjustments</h4>
+<p>We introduce novel components such as interaction modules or attention mechanisms to facilitate the computation of second-order explanations. These architectural adjustments enable the model to learn and represent the complex relationships between different regions of query and retrieved images.</p>
+<h3 id="section-2.3">2.3 Training and Evaluation Procedures</h3>
+<p>Training a visual search model with second-order explanations requires careful consideration of training objectives, loss functions, and evaluation metrics. We devise training procedures that optimize both the primary search task and the secondary objective of generating accurate explanations.</p>
+<h4 id="objective-function-formulation">Objective Function Formulation</h4>
+<p>We define a composite objective function that combines the primary search task loss with a regularization term for encouraging meaningful second-order explanations. This formulation ensures that the model learns to balance between search accuracy and explanation fidelity during training.</p>
+<h3 id="section-2.4">2.4 Validation and Interpretation</h3>
+<p>Once trained, we validate the effectiveness of the model&rsquo;s second-order explanations through comprehensive evaluation procedures. This involves qualitative analysis of explanation maps, quantitative assessment of explanation quality, and user studies to gauge the interpretability of the generated explanations.</p>
+<h4 id="evaluation-metrics">Evaluation Metrics</h4>
+<p>We define metrics such as explanation fidelity, coherence, and relevance to quantitatively evaluate the quality of second-order explanations. By comparing against baseline methods and human annotations, we assess the model&rsquo;s ability to capture meaningful interactions between query and retrieved images.</p>
+<h3 id="section-2.5">2.5 Deployment Considerations</h3>
+<p>Deploying a visual search system with second-order explanations requires careful planning and integration into existing infrastructure. We address scalability, latency, and user experience considerations to ensure seamless deployment in real-world applications.</p>
+<h4 id="scalable-inference-architecture">Scalable Inference Architecture</h4>
+<p>We design an inference pipeline optimized for efficient computation of second-order explanations in production environments. This involves leveraging distributed computing frameworks and model optimization techniques to minimize latency and maximize throughput.</p>
+<h2 id="section-3">3. Conclusion</h2>
+<p>By following these implementation steps, we bridge the gap between theoretical insights and practical deployment of second-order explanations in visual search systems. Our approach empowers users to gain deeper insights into the underlying mechanisms driving search results, paving the way for more transparent and interpretable AI systems.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><strong>Video Description</strong>: Dive deeper into the concepts with a detailed video overview available <a href="https://aka.ms/axiomatic-video">here</a>.</li>
+<li><strong>Code Repository</strong>: Access the training and evaluation code to explore the implementation details <a href="https://aka.ms/axiomatic-code">here</a>.</li>
+</ul>
+<p>For a comprehensive exploration of the technical details and experimental results, refer to the <a href="https://arxiv.org/pdf/2103.00370.pdf">full paper</a>.</p>
+<h2 id="references">REFERENCES</h2>
+<p>Radhakrishna Achanta, Appu Shaji, Kevin Smith, Aurelien Lucchi, Pascal Fua, and Sabine Süsstrunk. Slic superpixels. Technical report, 2010.</p>
+<p>Jiwoon Ahn, Sunghyun Cho, and Suha Kwak. Weakly supervised learning of instance segmentation with inter-pixel relations. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pp. 2209-2218, 2019.</p>
+<p>Marco Ancona, Cengiz Oztireli, and Markus Gross. Explaining deep neural networks with a polynomial time algorithm for shapley value approximation. In International Conference on Machine Learning, pp. 272-281. PMLR, 2019.</p>
+<p>Robert J Aumann and Lloyd S Shapley. Values of non-atomic games. Princeton University Press, 2015.</p>
+<p>Sebastian Bach, Alexander Binder, Grégoire Montavon, Frederick Klauschen, Klaus-Robert Müller, and Wojciech Samek. On pixel-wise explanations for non-linear classifier decisions by layer-wise relevance propagation. PloS one, 10(7):e0130140, 2015.</p>
+<p>Yoshua Bengio, Aaron Courville, and Pascal Vincent. Representation learning: A review and new perspectives. IEEE transactions on pattern analysis and machine intelligence, 35(8):1798-1828, 2013.</p>
+<p>Bing. Beyond text queries: Searching with bing visual search, Jun 2017. URL https://aka. ms/AAas 7 jg.</p>
+<p>Holger Caesar, Jasper Uijlings, and Vittorio Ferrari. Coco-stuff: Thing and stuff classes in context. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 12091218, 2018.</p>
+<p>Mathilde Caron, Ishan Misra, Julien Mairal, Priya Goyal, Piotr Bojanowski, and Armand Joulin. Unsupervised learning of visual features by contrasting cluster assignments. arXiv preprint arXiv:2006.09882, 2020.</p>
+<p>Hila Chefer, Shir Gur, and Lior Wolf. Transformer interpretability beyond attention visualization. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 782-791, 2021.</p>
+<p>Ting Chen, Simon Kornblith, Mohammad Norouzi, and Geoffrey Hinton. A simple framework for contrastive learning of visual representations. arXiv preprint arXiv:2002.05709, 2020a.</p>
+<p>Xinlei Chen, Haoqi Fan, Ross Girshick, and Kaiming He. Improved baselines with momentum contrastive learning. arXiv preprint arXiv:2003.04297, 2020 b.</p>
+<p>Yun-Chun Chen, Yen-Yu Lin, Ming-Hsuan Yang, and Jia-Bin Huang. Show, match and segment: Joint weakly supervised learning of semantic matching and object co-segmentation. IEEE Transactions on Pattern Analysis and Machine Intelligence (PAMI), 2020c.</p>
+<hr>
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+
+      
+      <div class="post-date">
+        <span class="g time">March 28, 2024 </span> &#8729;
+         
+      </div>
+      
+    </section>
+    
+    <div id="comments">
+      <script src="https://utteranc.es/client.js"
+    repo=ZgotmplZ
+    issue-term="pathname"
+    theme=ZgotmplZ
+    crossorigin="anonymous"
+    async>
+</script>
+
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>

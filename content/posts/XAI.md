@@ -156,7 +156,7 @@ Without conservation, explanations can be misleading—either missing important 
 For example, if a neural network classifies an image as a cat with a confidence score of 0.9, a well-designed attribution method should distribute this score among relevant pixels (e.g., 0.6 for the cat’s face and 0.3 for its body). If the attributions sum to a different value (e.g., 0.7 or 1.1), it means some contributions were lost or artificially added, making the explanation unreliable. Conservation ensures that every contributing input is accounted for properly, leading to meaningful and trustworthy explanations. 
 </p>
 
-<iframe src="/relevance_sankey.html" width="100%" height="500" frameborder="0"></iframe>
+<iframe src="/illustrations_XAI/relevance_sankey.html" width="100%" height="500" frameborder="0"></iframe>
 
 <h3 id="LRP">3. Layer-wise Relevance Propagation (LRP) method</h3>
 <p>The Layer-wise Relevance Propagation (LRP) method is designed to ensure proper conservation not only at the global level but also between each pair of layers, by redistributing the output of the model layer after layer until reaching the input layer. This method was previously designed for deep neural networks. The challenge is to extend these techniques to Transformers, whose complexity (e.g. due to attention mechanisms) requires adjustments to ensure reliable explanations while respecting this conservation axiom. But first, let’s have a look at how the default LRP method works. </p>

@@ -37,8 +37,9 @@ canonifyURLs = true
     weight = -200
 
 [markup]
-  [markup.goldmark.renderer]
-    unsafe = true
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
   [markup.highlight]
     anchorLineNos = false
     codeFences = true
@@ -72,3 +73,4 @@ canonifyURLs = true
 ignoreErrors = ["error-remote-getjson"]
 
 mainSections = ["posts"]
+
