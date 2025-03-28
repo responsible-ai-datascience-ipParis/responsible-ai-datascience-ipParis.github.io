@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>Breaking Privacy Barriers: Nonparametric Testing in Federated Learning | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:url" content="http://localhost:1313/posts/breaking-privacy-barriers-nonparametric-testing-in-federated-learning/">
+  <meta property="og:site_name" content="Bloggin on Responsible AI">
+  <meta property="og:title" content="Breaking Privacy Barriers: Nonparametric Testing in Federated Learning">
+  <meta property="og:description" content="Author: Idriss Lakas
+What if we could test complex statistical hypotheses on sensitive data without ever accessing the data itself?
+In an era where data privacy regulations like GDPR and HIPAA are reshaping the digital landscape, the tension between data utility and confidentiality has never been greater. Nowhere is this conflict more pronounced than in federated learning, a framework enabling multiple institutions to collaboratively analyze data without exchanging raw data.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-03-27T18:45:26+01:00">
+    <meta property="article:modified_time" content="2025-03-27T18:45:26+01:00">
+
+    
+  <meta itemprop="name" content="Breaking Privacy Barriers: Nonparametric Testing in Federated Learning">
+  <meta itemprop="description" content="Author: Idriss Lakas
+What if we could test complex statistical hypotheses on sensitive data without ever accessing the data itself?
+In an era where data privacy regulations like GDPR and HIPAA are reshaping the digital landscape, the tension between data utility and confidentiality has never been greater. Nowhere is this conflict more pronounced than in federated learning, a framework enabling multiple institutions to collaboratively analyze data without exchanging raw data.">
+  <meta itemprop="datePublished" content="2025-03-27T18:45:26+01:00">
+  <meta itemprop="dateModified" content="2025-03-27T18:45:26+01:00">
+  <meta itemprop="wordCount" content="1898">
+    
+    <link rel="canonical" href="http://localhost:1313/posts/breaking-privacy-barriers-nonparametric-testing-in-federated-learning/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "posts",
+      "name": "Breaking Privacy Barriers: Nonparametric Testing in Federated Learning",
+      "headline": "Breaking Privacy Barriers: Nonparametric Testing in Federated Learning",
+      "alternativeHeadline": "",
+      "description": "\u003cstyle\u003e\r\ncode.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}\r\n\u003c\/style\u003e\r\n\u003cscript type=\u0022text\/x-mathjax-config\u0022\u003e\r\nMathJax.Hub.Config({\r\n    tex2jax: {\r\n        inlineMath: [[\u0027$\u0027,\u0027$\u0027], [\u0027\\\\(\u0027,\u0027\\\\)\u0027]],\r\n        skipTags: [\u0027script\u0027, \u0027noscript\u0027, \u0027style\u0027, \u0027textarea\u0027, \u0027pre\u0027]\r\n    }\r\n});\r\nMathJax.Hub.Queue(function() {\r\n    var all = MathJax.Hub.getAllJax(), i;\r\n    for(i = 0; i \u003c all.length; i \u002b= 1) {\r\n        all[i].SourceElement().parentNode.className \u002b= \u0027 has-jax\u0027;\r\n    }\r\n});\r\n\u003c\/script\u003e\r\n\u003cscript type=\u0022text\/javascript\u0022 src=\u0022https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/mathjax\/2.7.4\/MathJax.js?config=TeX-AMS_HTML-full\u0022\u003e\u003c\/script\u003e\r\n\u003cp\u003e\u003cstrong\u003eAuthor: Idriss Lakas\u003c\/strong\u003e\u003c\/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cem\u003eWhat if we could test complex statistical hypotheses on sensitive data without ever accessing the data itself?\u003c\/em\u003e\u003c\/p\u003e\u003c\/blockquote\u003e\n\u003cp\u003eIn an era where data privacy regulations like GDPR and HIPAA are reshaping the digital landscape, the tension between data utility and confidentiality has never been greater. Nowhere is this conflict more pronounced than in federated learning, a framework enabling multiple institutions to collaboratively analyze data without exchanging raw data.\u003c\/p\u003e",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/posts\/breaking-privacy-barriers-nonparametric-testing-in-federated-learning\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": "Idriss Lakas"
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": "Idriss Lakas"
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": "Idriss Lakas"
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "2025",
+      "dateCreated": "2025-03-27T18:45:26.00Z",
+      "datePublished": "2025-03-27T18:45:26.00Z",
+      "dateModified": "2025-03-27T18:45:26.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/posts\/breaking-privacy-barriers-nonparametric-testing-in-federated-learning\/",
+      "wordCount" : "1898",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="../../">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="../../posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="../../tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="../../about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="../../articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">Breaking Privacy Barriers: Nonparametric Testing in Federated Learning</h2>
+      <style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+<p><strong>Author: Idriss Lakas</strong></p>
+<blockquote>
+<p><em>What if we could test complex statistical hypotheses on sensitive data without ever accessing the data itself?</em></p></blockquote>
+<p>In an era where data privacy regulations like GDPR and HIPAA are reshaping the digital landscape, the tension between data utility and confidentiality has never been greater. Nowhere is this conflict more pronounced than in federated learning, a framework enabling multiple institutions to collaboratively analyze data without exchanging raw data.</p>
+<p>This blog explores the paper:</p>
+<p><strong>&ldquo;Federated Nonparametric Hypothesis Testing with Differential Privacy Constraints: Optimal Rates and Adaptive Tests&rdquo;</strong><br>
+by T. Tony Cai, Abhinav Chakraborty, and Lasse Vuursteen (2024).<br>
+<a href="https://arxiv.org/abs/2406.06749">Read the paper</a></p>
+<h3 id="table-of-contents">Table of Contents</h3>
+<ul>
+<li><a href="#context">1. Setting the Scene: Privacy Meets Federated Testing</a></li>
+<li><a href="#testing">2. The Statistical Challenge: Minimax Testing in a Noisy World</a></li>
+<li><a href="#protocols">3. Three Protocols to the Rescue</a></li>
+<li><a href="#adaptivity">4. Going Adaptive: Testing Without Knowing the Smoothness</a></li>
+<li><a href="#reproducibility">5. Reproducibility: A Hands-On Attempt</a></li>
+<li><a href="#conclusion">6. Conclusion and Outlook</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<h3 id="context">1. Setting the Scene: Privacy Meets Federated Testing</h3>
+<p>Imagine a network of hospitals, each holding sensitive patient data. They want to collaborate to detect whether a new biomarker has any statistical effect without ever sharing raw data due to strict privacy laws.</p>
+<p align="center">
+  <img src="../../images/idriss-lakas/federated_intro.png" alt="Federated Learning Overview" width="600"/>
+  <br>
+  <i>Figure 1: In federated learning, data remains local. Only privatized updates or models are sent to the server, preserving user privacy.</i>
+</p>
+<p>Let’s zoom in:<br>
+Suppose 12 cancer research centers want to determine whether a treatment biomarker affects survival. They can’t pool data due to GDPR. Can they still collaborate without privacy leaks?</p>
+<p>This is where federated nonparametric testing under differential privacy becomes essential.</p>
+<p>The paper addresses the problem of testing:</p>
+<p>$$
+H_0: f = 0 \quad \text{vs.} \quad H_1: f \ne 0
+$$</p>
+<p>This is a nonparametric goodness-of-fit test, where $f$ is an unknown function, observed through noisy measurements distributed across multiple users under strict differential privacy (DP) constraints.</p>
+<p>To model the data, the authors use the white noise model:</p>
+<p>$$
+dX_t^{(j);i} = f(t),dt + \sigma,dW_t^{(j);i}, \quad t \in [0,1]
+$$</p>
+<p>with:</p>
+<ul>
+<li>$f(t)$: the unknown signal,</li>
+<li>$\sigma$: the noise level,</li>
+<li>$W_t^{(j);i}$: Brownian motion for server $j$, observation $i$.</li>
+</ul>
+<h3 id="testing">2. The Statistical Challenge: Minimax Testing in a Noisy World</h3>
+<p>The central task in this scenario is to detect whether a function $f$ is zero or not. This requires addressing several obstacles. First, the data is distributed across multiple servers making direct access difficult. Secondly, both measurement errors and privacy noise significantly distort the observations. Finally, the smoothness of the function $f$ is unknown, adding further complexity to the detection process.</p>
+<p>To address these challenges, the authors introduce the concept of the minimax separation rate $\rho$. This rate represents the smallest norm $|f|_{L^2}$ for which testing can still reliably distinguish whether $f = 0$ or $f \neq 0$. In a centralized, non-private setting, the minimax rate is well understood and straightforward to calculate. However, once differential privacy constraints are applied in a federated environment, the situation becomes much more complicated.</p>
+<p>The authors present a theoretical result that provides the separation rate under shared randomness:</p>
+<p>$$
+\rho^2 \asymp \left( \frac{\sigma^2}{mn} \right)^{\frac{2s}{2s + 1/2}} + \left( \frac{\sigma^2}{mn^{3/2} \varepsilon (1 \wedge n \varepsilon^2)} \right)^{\frac{2s}{2s + 1}} + \frac{\sigma^2}{mn^2 \varepsilon^2}
+$$</p>
+<p>This equation breaks down into three distinct components:</p>
+<ol>
+<li>The first term represents classical noise, which is a fundamental part of the problem even without privacy constraints.</li>
+<li>The second term accounts for the degradation caused by privacy, particularly as the privacy budget $\varepsilon$ becomes smaller.</li>
+<li>The third term is a high-order correction that further refines the overall separation rate.</li>
+</ol>
+<p>One important takeaway from this result is that as privacy becomes stricter (when $\varepsilon$ gets smaller), it becomes more difficult to detect whether $f \ne 0$ even if we have access to more data.</p>
+<h3 id="protocols">3. Three Protocols to the Rescue</h3>
+<p>In order to put these results into practice, three protocols were introduced, each adapted to a different combination of confidentiality strength and server coordination capabilities.
+These protocols serve one goal: test whether $f \ne 0$ in a private, distributed world.<br>
+Let’s walk through each of them.</p>
+<h4 id="protocol-i---high-privacy-no-coordination">Protocol I :  High Privacy, No Coordination</h4>
+<p>This protocol is designed for scenarios with very tight privacy constraints: small $\varepsilon$ means each server must heavily obfuscate its data.</p>
+<p><strong>How it works</strong>:</p>
+<ul>
+<li>Each server applies a wavelet transform to its local signal and then adds calibrated noise (Laplace or Gaussian).</li>
+<li>The noisy coefficients are sent to the aggregator.</li>
+<li>The central server performs a global test by summing across servers.</li>
+</ul>
+<p><strong>Characteristics</strong>:</p>
+<ul>
+<li>Fully local and non-interactive</li>
+<li>Strong differential privacy guarantees</li>
+<li>Lower statistical power due to high noise</li>
+</ul>
+<p align="center">
+  <img src="../../images/idriss-lakas/protocol1.png" alt="Protocol I" width="480"/>
+  <br>
+  <i>Figure 1: Protocol I – Local privatization without coordination, suited for high privacy regimes.</i>
+</p>
+<h4 id="protocol-ii--moderate-privacy-still-decentralized">Protocol II : Moderate Privacy, Still Decentralized</h4>
+<p>When privacy is less strict (larger $\varepsilon$), servers can afford to transmit more accurate information while still operating independently.</p>
+<p><strong>How it works</strong>:</p>
+<ul>
+<li>Servers truncate their wavelet coefficients to reduce sensitivity.</li>
+<li>They apply lighter noise and send the result to the aggregator.</li>
+<li>The test statistic resembles a chi-squared test over the aggregated data.</li>
+</ul>
+<p><strong>Characteristics</strong>:</p>
+<ul>
+<li>Better trade-off between privacy and power</li>
+<li>No need for shared randomness</li>
+<li>Still suboptimal compared to centralized performance</li>
+</ul>
+<p align="center">
+  <img src="../../images/idriss-lakas/protocol2.png" alt="Protocol II" width="480"/>
+  <br>
+  <i>Figure 2: Protocol II – Looser privacy allows sharper signals, but still no coordination.</i>
+</p>
+<h4 id="protocol-iii--shared-randomness-shared-power">Protocol III : Shared Randomness, Shared Power</h4>
+<p>If servers can coordinate via a shared random seed, they can align their noise injection leading to much better aggregation.</p>
+<p><strong>How it works</strong>:</p>
+<ul>
+<li>Servers agree on a common random rotation (e.g., permuting coefficients).</li>
+<li>After this shared preprocessing, each adds noise and sends the result.</li>
+<li>The aggregator reconstructs the test statistic more effectively.</li>
+</ul>
+<p><strong>Characteristics</strong>:</p>
+<ul>
+<li>Best statistical performance</li>
+<li>Still privacy-preserving under DP</li>
+<li>Requires infrastructure for randomness synchronization</li>
+</ul>
+<p align="center">
+  <img src="../../images/idriss-lakas/protocol3.png" alt="Protocol III" width="480"/>
+  <br>
+  <i>Figure 3: Protocol III – Shared randomness unlocks optimal testing power.</i>
+</p>
+<h4 id="when-to-use-which-protocol">When to Use Which Protocol?</h4>
+<table>
+  <thead>
+      <tr>
+          <th>Scenario</th>
+          <th>Best Protocol</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Strong privacy, no coordination</td>
+          <td>Protocol I</td>
+      </tr>
+      <tr>
+          <td>Moderate privacy, no coordination</td>
+          <td>Protocol II</td>
+      </tr>
+      <tr>
+          <td>Moderate privacy, shared randomness</td>
+          <td>Protocol III</td>
+      </tr>
+  </tbody>
+</table>
+<p>These three protocols provide practical design blueprints depending on your real-world constraints whether you’re deploying federated health monitoring, smart grid anomaly detection, or collaborative sensor networks.</p>
+<h3 id="adaptivity">4. Going Adaptive: Testing Without Knowing the Smoothness</h3>
+<p>So far, we assumed that the unknown signal $f$ has a known smoothness parameter $s$, which controls how “wiggly” or complex it can be. But real-world signals rarely come with such information.</p>
+<p>This raises a key question:</p>
+<blockquote>
+<p><strong>Can we design a test that performs well even when we don’t know how smooth the signal is?</strong></p></blockquote>
+<p>This raises an essential question:</p>
+<p>Can we design a test that gives good results even when we don&rsquo;t know how fluent the signal is?</p>
+<p>The authors demonstrate that it&rsquo;s indeed possible to design such a test using an adaptive testing procedure.</p>
+<h4 id="what-is-adaptivity">What is Adaptivity?</h4>
+<p>Adaptivity means that the test automatically adjusts to an unknown regularity level $s$ the smoothness of $f$. Instead of committing to a single test tuned for one $s$, the adaptive test simultaneously considers many possibilities, and picks up the strongest signal.</p>
+<h4 id="how-does-it-work">How Does It Work?</h4>
+<p>The test proceeds in three steps:</p>
+<ol>
+<li>
+<p><strong>Grid Search Over Smoothness</strong><br>
+A discrete grid of smoothness levels $s \in {s_1, s_2, &hellip;, s_k}$ is selected.</p>
+</li>
+<li>
+<p><strong>Multiple Parallel Tests</strong><br>
+For each $s_j$, a dedicated wavelet-based test (as in the previous section) is applied to the privatized data.</p>
+</li>
+<li>
+<p><strong>Combination Rule</strong><br>
+A final decision is made using a multiple testing correction (like Bonferroni or max-statistics). If any test is significant, we reject $H_0$.</p>
+</li>
+</ol>
+<h4 id="whats-the-cost-of-being-adaptive">What’s the Cost of Being Adaptive?</h4>
+<p>One might think that adaptivity comes with a steep statistical price.<br>
+Surprisingly, the cost is very mild: only a logarithmic penalty.</p>
+<p>The adaptive test achieves a near-optimal separation rate:
+$$
+\rho_{\text{adaptive}} \asymp \rho^* \cdot \sqrt{\log\log(mn)},
+$$
+where $\rho^*$ is the minimax rate for the correct $s$, and $mn$ is the total sample size.</p>
+<p>This means we gain robustness across function classes with minimal loss in power an excellent trade-off in practical applications.</p>
+<h4 id="why-this-matters-">Why This Matters ?</h4>
+<p>In real data sets, we often have no prior knowledge of the fluidity of the underlying signal, whether it&rsquo;s a medical biomarker, a financial anomaly or a model of user behaviour. Adaptive testing makes sure that:</p>
+<ul>
+<li>You don’t need to guess $s$ ahead of time.</li>
+<li>You still achieve near-optimal detection rates.</li>
+<li>The method remains privacy-preserving and decentralized.</li>
+</ul>
+<p>This adaptability brings us one step closer to deploying these tools in real-world systems with minimal assumptions.</p>
+<h3 id="reproducibility">5. Reproducibility: A Hands-On Attempt</h3>
+<p>To validate the core insights of the paper, we implemented Protocol I, which performs federated nonparametric testing under local differential privacy constraints without any server coordination. The goal was to empirically examine how the level of privacy—controlled by the budget parameter ε affects the ability of the test to detect a signal.</p>
+<p>In our simulation, we used the white-noise-with-drift model, with $m = 5$ servers, each observing $n = 100$ samples. The underlying signal was defined as $f(t) = A \sin(2\pi t)$, with the amplitude $A$ controlling the strength of the signal. Each server computed a local $\ell^2$-based statistic and added Gaussian noise calibrated to the desired $(\varepsilon, \delta)$ differential privacy guarantee. The noisy statistics were then aggregated and compared to a threshold estimated under the null hypothesis.</p>
+<p>We repeated the experiment for four privacy budgets: $\varepsilon \in {0.5,\ 1.0,\ 2.0,\ 5.0}$. The empirical power of the test was evaluated as a function of the signal amplitude $A$, for each ε.</p>
+<p align="center">
+  <img src="../../images/idriss-lakas/dp_test_power_comparison.png" alt="Power comparison for multiple ε" width="520"/>
+  <br>
+  <i><b>Figure 5.1</b>: Empirical power vs signal amplitude for various ε. Higher ε (weaker privacy) leads to better detection.</i>
+</p>
+<p>The results show a clear phase transition in test performance. For strong privacy (ε = 0.5), the test remains almost blind, failing to detect even strong signals. As ε increases, the added noise diminishes and the test becomes more sensitive. With ε = 2.0, detection starts improving significantly for moderate signals. At ε = 5.0, the test performs nearly optimally, detecting signals with high probability for $A \geq 2.5$.</p>
+<p>These empirical results are in line with the theoretical findings of the paper which highlight the existence of distinct regimes in the minimax separation rate depending on ε. In high-privacy settings, the rate is dominated by the noise from the privacy mechanism, while in low-privacy settings, the test approaches the optimal detection rate of the non-private case.</p>
+<p>Although the paper did not provide full pseudocode, we were able to reproduce the key ideas using simplified assumptions. Threshold calibration was done via Monte Carlo simulation under the null, and sensitivity bounds were approximated based on the $\ell^2$ norm of Gaussian noise. We leave the implementation of Protocols II and III, which require shared randomness and wavelet transforms, for future work.</p>
+<p>This hands-on attempt provides concrete validation of the theory and illustrates the delicate balance between privacy and statistical power in federated hypothesis testing.</p>
+<h3 id="conclusion">6. Conclusion and Outlook</h3>
+<p>To conclude, this work shows that it’s possible to perform powerful hypothesis testing even when data is noisy, private, and distributed, which is a setting increasingly common in today’s world. By combining differential privacy, wavelet methods, and smart coordination protocols, we get a toolbox that balances privacy, accuracy, and decentralization. The adaptive test adds another layer of flexibility, working well even when we don’t know the signal&rsquo;s complexity.</p>
+<p>These results are promising for real-world applications like healthcare and finance, where privacy is key and collaboration is necessary.</p>
+<h3 id="references">References</h3>
+<ul>
+<li>
+<p>Cai, T. T., Chakraborty, A., &amp; Vuursteen, L. (2024). <em>Federated Nonparametric Hypothesis Testing with Differential Privacy Constraints: Optimal Rates and Adaptive Tests</em>. <a href="https://arxiv.org/abs/2403.01362">arXiv preprint</a></p>
+</li>
+<li>
+<p>Duchi, J., Jordan, M., &amp; Wainwright, M. (2013). <em>Local Privacy and Statistical Minimax Rates</em>. [FOCS 2013].</p>
+</li>
+<li>
+<p>Wasserman, L., &amp; Zhou, S. (2010). <em>A statistical framework for differential privacy</em>. [JASA].</p>
+</li>
+</ul>
+
+      
+      <div class="post-date">
+        <span class="g time">March 27, 2025 </span> &#8729;
+         
+      </div>
+      
+    </section>
+    
+    <div id="comments">
+      <script src="https://utteranc.es/client.js"
+    repo=ZgotmplZ
+    issue-term="pathname"
+    theme=ZgotmplZ
+    crossorigin="anonymous"
+    async>
+</script>
+
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>
