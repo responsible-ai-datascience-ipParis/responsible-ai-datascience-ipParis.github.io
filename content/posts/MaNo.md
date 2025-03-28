@@ -1,6 +1,6 @@
 +++
 title = "MaNo: A Smarter Way to Estimate Model Accuracy to Face Distribution Shifts Biais"
-date = 2025-02-10T18:25:03+01:00
+date = 2025-03-28
 draft = false
 authors = ["Alice Devilder", "Sibylle Degos"]
 affiliations = ["IP Paris, Responsible AI"]
@@ -70,7 +70,7 @@ MathJax.Hub.Queue(function() {
 
 <hr class="hr-line">
 
-<strong>Authors:</strong> Alice Devilder, Sibylle Degos | <strong>Affiliations:</strong> IP Paris, Responsible AI | <strong>Published:</strong> 2025-02-10
+<strong>Authors:</strong> Alice Devilder, Sibylle Degos | <strong>Affiliations:</strong> IP Paris, Responsible AI | <strong>Published:</strong> 2025-03-28
 
 <hr class="hr-line">
 
@@ -81,23 +81,25 @@ MathJax.Hub.Queue(function() {
 - [Introducing MANO: A Two-Step Approach](#section-1)
     - [Normalization with Softrun](#section-1.1)
     - [Aggregation Using Matrix Norms](#section-1.2)
-- [Empirical Success: MANO vs. Baselines](#section-2)
-- [Applications and Future Directions](#section-3)
-- [Conclusion](#section-4)
+- [Pseudo-Code of MANO and its implementation](#section-2)
+- [Empirical Success: MANO vs. Baselines](#section-3)
+- [Applications and Future Directions](#section-4)
+- [Conclusion](#section-5)
 
 This is a blog post about the paper ***MaNo: Exploiting Matrix Norm for Unsupervised Accuracy Estimation Under Distribution Shifts***, published by *Renchunzi Xie*, *Ambroise Odonnat*, *Vasilii Feofanov*, *Weijian Deng*, *Jianfeng Zhang* and *Bo An* in November 2024 and avalaible on [arXiv](https://arxiv.org/abs/2405.18979).
 
 ---
 
 Usually, in machine learning, data is divided into train/test sets. But you already know that! The problem is that there is often a shift in the way data is distributed or collected between train and test set. This shift distribution can disrupt predictive models, and can be a risk for AI safety.
+
 To illustrate, imagine a pedestrian image recognition model used for autonomous cars. Trained on images of pedestrians during the day, fails to detect pedestrians at night due to a shift in data distribution, leading to accidents.
+
 Traditional approaches to evaluate models rely on costly, computationally expensive ground-truth labels, making the evaluation difficult. Thanks to the solution in the paper “***MANO: Exploiting Matrix Norm for Unsupervised Accuracy Estimation Under Distribution Shifts***”, we can estimate model accuracy without labeled test data. MANO (Matrix Norm-based Accuracy Estimation) is presented as a novel solution, leveraging logits (the raw outputs of a model) to infer confidence and predict accuracy in an unsupervised manner. It is splitted in two steps: 
 - **Softrun** normalization to calibrate logits 
 - **Lp norm** to quantify decision boundary distances.
 
 Let’s deep into MANO ! You will understand the theoretical foundations and empirical success that make this method very interesting to estimate the accuracy in an unsupervised environment.
 
----
 
 ## **Introduction** {#section-0.0}
 A common method for estimating accuracy without labels is analyzing a model’s **logits**, the raw outputs before softmax. However, existing methods suffer from overconfidence issues and biased predictions under distribution shifts.
@@ -169,9 +171,9 @@ To recapitulate, there are 3 studied cases :
 
 **Case 1 - High Confidence, Low Bias** When the model is both confident and has a low bias, its logits are highly reliable. This is an ideal case where we can safely apply softmax normalization without worrying about introducing additional bias. The softmax probabilities will be well-calibrated, and no extra correction is needed.
 
-**Case 2 - Low Confidence, High Bias** If the model is not confident in its predictions and shows high bias, it means that its predictions are skewed but also uncertain. In this situation, we use the Taylor normalization. The smooth properties of Taylor normalization help mitigate bias while maintaining better uncertainty estimation.
+**Case 2 - Low Confidence, High Bias** If the model is not confident in its predictions and shows high bias, it means that the predictions are both uncertain and systematically inaccurate. In this situation, we use the Taylor normalization. The smooth properties of Taylor normalization help mitigate bias while maintaining better uncertainty estimation.
 
-**Case 3 - Grey zone** Sometimes, the model's behavior doesn’t fit neatly into one category. In this scenario, different examples fall into different cases, making it difficult to determine the best normalization method. In these cases, it is safer to use Taylor normalization because it avoids exacerbating bias in the same way softmax does.
+**Case 3 - Grey zone** Sometimes, the model's behavior doesn’t fit perfectly into one category. In this scenario, different examples fall into different cases, making it difficult to determine the best normalization method. In these cases, it is safer to use Taylor normalization because it avoids exacerbating bias in the same way softmax does.
 
 Besides, the output of this first step is scaled logits: $Q_i = \sigma(q_i) \in \Delta_K$.
 
@@ -210,9 +212,62 @@ In the formula, the parameter p controls the sensitivity of the metric to high-c
 
 In practice, the authors of the paper conducted a sensitivity analysis on 5 datasets using ResNet-18 and found that $p=4$ provides the best balance between capturing model confidence and maintaining robustness. This is illustrated in the experimental results on the right.
 
+Let's see now how to implement MANO in practice!
+
+
+## **Pseudo-Code of MANO and its implementation** {#section-2}
+
+Before diving into implementation, it’s important to understand the logic behind the MANO algorithm for unsupervised accuracy estimation. 
+
+![Algorithm 1: MANO Pseudocode](/images/Mano/algorithm_mano.png)
+
+The pseudocode above outlines the core procedure: given a model and an unlabeled test set, the method first determines the best way to normalize the model's logits, either using softmax or the novel alternative softrun on an entropy-based criterion (see [Section 1.1](#section-1.1)). Then, it iterates over each sample in the test set, collects the normalized predictions into a matrix, and finally computes an estimation score using the matrix’s normalized L_p norm (see [Section 1.2](#section-1.2)). This score correlates with the model's true accuracy, even without access to ground truth labels.
+
+
+```python
+import torch
+from algs.base_alg import Base_alg
+import torch.nn as nn
+
+# Define the MaNo class, inheriting from Base_alg
+class MaNo(Base_alg):
+    # Method to evaluate the model's performance
+    def evaluate(self):
+        # Set the base model to training mode
+        self.base_model.train()
+        # Initialize an empty list to store scores
+        score_list = []
+
+        # Iterate through the validation data loader
+        for batch_idx, batch_data in enumerate(self.val_loader):
+            # Extract inputs and labels from the batch
+            inputs, labels = batch_data[0], batch_data[1]
+            # Move inputs and labels to the specified device (e.g., GPU or CPU)
+            inputs, labels = inputs.to(self.device), labels.to(self.device)
+
+            # Disable gradient computation for evaluation
+            with torch.no_grad():
+                # Pass inputs through the base model to get raw outputs (logits)
+                outputs = self.base_model(inputs)
+                # Apply the scaling method (e.g., Softrun normalization) to logits
+                outputs = self.scaling_method(outputs)
+                # Compute the Lp norm of the scaled logits
+                score = torch.norm(outputs, p=self.args['norm_type']) / (
+                            (outputs.shape[0] * outputs.shape[1]) ** (1 / self.args['norm_type']))
+            # Append the computed score to the score list
+            score_list.append(score)
+
+        # Convert the list of scores to a NumPy array and compute the mean
+        scores = torch.Tensor(score_list).numpy()
+        return scores.mean()
+```
+
+The python implementation reflects this logic efficiently using PyTorch. In this code, the `MaNo` class inherits from a base algorithm class (`Base_alg`). The `evaluate` method is responsible for evaluating the model's performance on a validation dataset. It iterates through the validation data loader, processes the inputs through the model, applies the scaling method, computes the Lp norm of the scaled logits, and returns the mean score.
+The `scaling_method` function is where the normalization takes place, and the Lp norm is computed using the specified norm type (e.g., L2 norm). The code is designed to be efficient and leverages PyTorch for GPU acceleration.
+
 Now, let’s dive into the empirical results of MaNo across various datasets.
 
-## **Empirical Success: MANO vs. Baselines** {#section-2}
+## **Empirical Success: MANO vs. Baselines** {#section-3}
 MANO has been evaluated against **11 baseline methods**, including Rotation Prediction (Rotation) [[2]](#rotation), Averaged Confidence (ConfS core) [[3]](#confscore) and Entropy [[4]](#entropy) amongst others. To show the versatility of Mano across different architectures, it has been evaluated across 3 different neural network architectures: ResNet18, ResNet50 [[5]](#resnet50), and WRN-50-2. The experiments were conducted on a range of classification tasks, including image recognition benchmarks such as CIFAR-10, CIFAR-100, TinyImageNet, and ImageNet, as well as domain adaptation datasets like PACS and Office-Home.
 
 In this comprehensive evaluation, the authors have considered 3 types of distribution shifts: **synthetic shifts**, where models were tested against artificially corrupted images; **natural shifts**, which involved datasets collected from different distributions than the training data; and **subpopulation shifts**, where certain classes or groups were underrepresented in the training data. To evaluate Mano under synthetic shifts, the authors have used CIFAR-10C, CIFAR-100C, ImageNet-C, and TinyImageNet-C, covering various corruption types and severity levels. For natural shifts, they tested on OOD datasets from PACS, Office-Home, DomainNet, and RR1 WILDS. To assess subpopulation shifts, they used the BREEDS benchmark, including Living-17, Nonliving-26, Entity-13, and Entity-30 from ImageNet-C. 
@@ -235,7 +290,7 @@ We can observe that MANO scores demonstrate a robust linear relationship with gr
 
 Unlike traditional approaches that either rely on softmax probabilities or require retraining on new distributions, MANO provides a label-free and computation-efficient accuracy estimation method that scales well across different domains. By using **Softrun normalization and matrix norm aggregation**, MANO achieves a stronger correlation with actual accuracy, ensuring that model performance estimates remain reliable even when faced with extreme distribution shifts.
 
-## **Applications and Future Directions** {#section-3}
+## **Applications and Future Directions** {#section-4}
 
 Let's discuss now how MANO can be applied in practice, the benefit of combining Softrun with other estimation baselines, and the limitations of this approach.
 
@@ -246,13 +301,13 @@ Now, what is the impact of Softrun on other estimation baselines? The authors ha
 Despite its strong theoretical foundation and empirical performance, MANO has certain limitations. One challenge is its reliance on the selection criterion parameter $η$ in Equation <a href="#my-fig_eq_v">v</a>, which requires careful tuning. To overcome this dependency, future research will focus on developing an automated approach to selecting the optimal normalization function without manual hyperparameter adjustments. Additionally, if multiple validation sets are available, as suggested in previous works ([[5]](#nuclear); [[6]](#other)), the selection of $η$ could be refined based on these datasets, further improving MANO’s adaptability and robustness across different tasks.
 
 
-## **Conclusion** {#section-4}
+## **Conclusion** {#section-5}
 
 MANO represents a significant breakthrough in unsupervised accuracy estimation. By addressing logit overconfidence and introducing Softrun normalization, MANO provides a scalable, robust, and theoretically grounded approach for evaluating model accuracy under distribution shifts.
 
 🔗 **Code available at:** [MANO GitHub Repository](https://github.com/Renchunzi-Xie/MaNo)
 
-MANO isn’t just a step forward—it’s a leap toward trustworthy AI deployment in the wild!
+To sum up, MANO is a jump toward trustworthy AI deployment !
 
 ---
 
