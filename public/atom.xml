@@ -4462,7 +4462,7 @@ geometry. arXiv preprint arXiv:2208.05512.&lt;/p&gt;
     
     <item>
       <title></title>
-      <link>http://localhost:1313/posts/xai/</link>
+      <link>http://localhost:1313/posts/xai_transformers/</link>
       <description>&lt;!DOCTYPE html&gt;
 &lt;html lang=&#34;fr&#34;&gt;
 &lt;head&gt;
@@ -4534,7 +4534,7 @@ geometry. arXiv preprint arXiv:2208.05512.&lt;/p&gt;
 &lt;p style=&#34;text-align:center;&#34;&gt;Published March 28, 2025&lt;/p&gt;
 &lt;div class=&#34;author-section&#34;&gt;
    &lt;div class=&#34;author-box&#34;&gt;
-      &lt;img src=&#34;./images/ip-logo.png&#34; alt=&#34;Audrey Airaud&#34;&gt;
+      &lt;img src=&#34;./images/illustrations_XAI/audrey.png&#34; alt=&#34;Audrey Airaud&#34;&gt;
       &lt;div&gt;
          &lt;a href=&#34;https://github.com/odd2022&#34;&gt;odd2022&lt;/a&gt;&lt;br&gt;
          &lt;span&gt;Audrey Airaud&lt;/span&gt;
@@ -4548,7 +4548,7 @@ geometry. arXiv preprint arXiv:2208.05512.&lt;/p&gt;
       &lt;/div&gt;
    &lt;/div&gt;
    &lt;div class=&#34;author-box&#34;&gt;
-      &lt;img src=&#34;./images/ip-logo.png&#34; alt=&#34;Nathan Toumi&#34;&gt;
+      &lt;img src=&#34;./images/illustrations_XAI/nathan.png&#34; alt=&#34;Nathan Toumi&#34;&gt;
       &lt;div&gt;
          &lt;a href=&#34;https://github.com/N22Toumi&#34;&gt;N22Toumi&lt;/a&gt;&lt;br&gt;
          &lt;span&gt;Nathan Toumi&lt;/span&gt;
@@ -4604,7 +4604,7 @@ $&lt;/p&gt;
 &lt;p&gt;Without conservation, explanations can be misleading—either missing important contributions or artificially inflating irrelevant ones. This is particularly important for complex models like Transformers, where certain layers (e.g., attention mechanisms, normalization) can disrupt conservation, leading to unreliable explanations. The paper here does not present how the attributions are computed but focuses on building a propagation of these attributions that is &lt;strong&gt;conservative&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;For example, if a neural network classifies an image as a cat with a confidence score of 0.9, a well-designed attribution method should distribute this score among relevant pixels (e.g., 0.6 for the cat’s face and 0.3 for its body). If the attributions sum to a different value (e.g., 0.7 or 1.1), it means some contributions were lost or artificially added, making the explanation unreliable. Conservation ensures that every contributing input is accounted for properly, leading to meaningful and trustworthy explanations.&lt;/p&gt;
 &lt;/p&gt;
-&lt;iframe src=&#34;./illustrations_XAI/relevance_sankey.html&#34; width=&#34;100%&#34; height=&#34;500&#34; frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
+&lt;iframe src=&#34;./illustrations_XAI/blog_sankey.html&#34; width=&#34;100%&#34; height=&#34;500&#34; frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
 &lt;h3 id=&#34;LRP&#34;&gt;3. Layer-wise Relevance Propagation (LRP) method&lt;/h3&gt;
 &lt;p&gt;The Layer-wise Relevance Propagation (LRP) method is designed to ensure proper conservation not only at the global level but also between each pair of layers, by redistributing the output of the model layer after layer until reaching the input layer. This method was previously designed for deep neural networks. The challenge is to extend these techniques to Transformers, whose complexity (e.g. due to attention mechanisms) requires adjustments to ensure reliable explanations while respecting this conservation axiom. But first, let’s have a look at how the default LRP method works. &lt;/p&gt;
 &lt;h4 id=&#34;conservation-breaks&#34;&gt;3.1 How can we detect where the conservation breaks?&lt;/h4&gt;
@@ -4689,7 +4689,7 @@ AIRM: A new AI recruiting model for the Saudi Arabia labour market, Journal of I
 &lt;/html&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/xai/</guid>
+      <guid>http://localhost:1313/posts/xai_transformers/</guid>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
     </item>
     
