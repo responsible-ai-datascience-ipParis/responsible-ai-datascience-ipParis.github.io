@@ -148,16 +148,18 @@ While attention-based techniques may appear particularly suitable for Transforme
 </p>
 
 <p>
-This raises a critical question: are current attribution methods still appropriate for explaining Transformer models? One key property that any robust attribution technique should satisfy is <strong>conservation</strong> (also referred to as <em>completeness</em>) — the idea that the sum of attributions should equal the change in model output relative to a baseline input (e.g., a black image in vision tasks).
+This brings up a fundamental question: <strong>Are existing attribution methods truly suitable for interpreting Transformer models?</strong> 
+
+A crucial property that any reliable attribution technique should uphold is <strong>conservation</strong> (also known as <em>completeness</em>) — the principle that the sum of all attributions should match the difference in the model’s output between the actual input and a chosen baseline (a neutral or uninformative input, used as a reference point to isolate the effect of each input feature, such as a black image in image classification tasks).
 </p>
 
 
 <h3 id="why-conservation">2. Why conservation is crucial to build XAI?</h3>
 <p>
 
-Without conservation, explanations can be misleading—either missing important contributions or artificially inflating irrelevant ones. This is particularly important for complex models like Transformers, where certain layers (e.g., attention mechanisms, normalization) can disrupt conservation, leading to unreliable explanations. The paper here does not present how the attributions are computed but focuses on building a propagation of these attributions that is **conservative**. 
+Without enforcing conservation, attribution-based explanations can become misleading — either by missing important input contributions or by exaggerating the relevance of unimportant ones. This issue is especially critical for complex architectures like Transformers, where components such as attention mechanisms and layer normalization are known to distort the flow of relevance through the network. Rather than proposing a new attribution score, the paper focuses on how to propagate existing attributions through the model in a way that strictly preserves conservation. In other words, the authors study how to ensure that, at each layer of the Transformer, the total relevance is neither lost and not artificially created.
 
-For example, if a neural network classifies an image as a cat with a confidence score of 0.9, a well-designed attribution method should distribute this score among relevant pixels (e.g., 0.6 for the cat’s face and 0.3 for its body). If the attributions sum to a different value (e.g., 0.7 or 1.1), it means some contributions were lost or artificially added, making the explanation unreliable. Conservation ensures that every contributing input is accounted for properly, leading to meaningful and trustworthy explanations. 
+A MODIF QUAND J'AI LA CONFIRMATION For example, if a neural network classifies an image as a cat with a confidence score of 0.9, a well-designed attribution method should distribute this score among relevant pixels (e.g., 0.6 for the cat’s face and 0.3 for its body). If the attributions sum to a different value (e.g., 0.7 or 1.1), it means some contributions were lost or artificially added, making the explanation unreliable. Conservation ensures that every contributing input is accounted for properly, leading to meaningful and trustworthy explanations. 
 </p>
 
 <iframe src="/illustrations_XAI/blog_sankey.html" width="100%" height="500" frameborder="0"></iframe>
