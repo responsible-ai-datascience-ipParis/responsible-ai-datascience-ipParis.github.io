@@ -25,7 +25,7 @@ MathJax.Hub.Queue(function() {
 
 *Based on the paper “[Activation Map Compression through Tensor Decomposition for Deep Learning](https://arxiv.org/abs/2411.06346)” by Nguyen et al.*
 
-#### Authors: Akshita KUMARI, Florent BLANC  
+#### Authors: Akshita KUMAR, Florent BLANC  
 **Date:** 27 March 2025
 ---
 Have you ever wondered why you still distinctly remember the first time someone made fun of you at school or the birthday gift your parents gave you 15 to 20 years ago? The human brain is capable of storing countless pieces of information and memories in an intricate web of about 86 billion neurons, each consisting of thousands of connections! If it's difficult to grasp the magnitude of that number, consider this: if we tried to unwrap and lay out all that information, it would require about 2.5 petabytes of memory! Yet, somehow, all of it fits neatly inside our heads, in a space smaller than a watermelon!

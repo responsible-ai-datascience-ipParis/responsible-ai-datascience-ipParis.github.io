@@ -3,19 +3,19 @@
     
     <title>Bloggin on Responsible AI</title>
     <description>Bloggin on Responsible AI</description>
-    <link>http://localhost:1313/</link>
+    <link>https://responsible-ai-datascience-ipParis.github.io/</link>
     
     <language>en</language>
     <copyright>Copyright 2025, Calvin Tran</copyright>
     <lastBuildDate>Thu, 27 Mar 2025 21:10:41 +0100</lastBuildDate>
     <generator>Hugo - gohugo.io</generator>
     <docs>http://cyber.harvard.edu/rss/rss.html</docs>
-    <atom:link href="http://localhost:1313//atom.xml" rel="self" type="application/atom+xml"/>
+    <atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/>
     
     
     <item>
       <title>Neural Networks Forget to Forget: Fixing the Memory Problem With Tensor Decomposition</title>
-      <link>http://localhost:1313/posts/activation_compression/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/activation_compression/</link>
       <description>&lt;style&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style&gt;
@@ -310,13 +310,13 @@ Unlike SVD, which flattens activation tensors and loses spatial correlations, HO
 &lt;p&gt;Perhaps, one day, deep learning models will successfully bridge this gap to achieve the kind of seamless efficiency our brains naturally posses. Until then, activation compression is one giant leap toward making AI as frugal and intelligent as nature itself.&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/activation_compression/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/activation_compression/</guid>
       <pubDate>Thu, 27 Mar 2025 21:10:41 +0100</pubDate>
     </item>
     
     <item>
       <title>Fairness in Social Influence Maximization via Optimal Transport</title>
-      <link>http://localhost:1313/posts/fairness-in-social-influence-maximization-via-optimal-transport/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/fairness-in-social-influence-maximization-via-optimal-transport/</link>
       <description>&lt;h3 id=&#34;authors-guillaume-marin-bertin--jaishan-burton-elmo&#34;&gt;Authors: Guillaume MARIN-BERTIN &amp;amp; Jaishan BURTON ELMO&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -565,13 +565,13 @@ Without S3D, certain communities miss job postings entirely in some scenarios.&l
 &lt;/ol&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/fairness-in-social-influence-maximization-via-optimal-transport/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/fairness-in-social-influence-maximization-via-optimal-transport/</guid>
       <pubDate>Sat, 15 Mar 2025 17:27:56 +0100</pubDate>
     </item>
     
     <item>
       <title>Knowledge Distillation:  Boosting Interpretability in Deep Learning Models</title>
-      <link>http://localhost:1313/posts/impact-knowledge-distillation-model-interpretability/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/impact-knowledge-distillation-model-interpretability/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
    code.has-jax {font:inherit;
                   font-size:100%;
@@ -1000,13 +1000,13 @@ To reproduce the results, you could use a virtual environment (e.g. &lt;a href=&
 &lt;/ul&gt;
 &lt;/html&gt;</description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/impact-knowledge-distillation-model-interpretability/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/impact-knowledge-distillation-model-interpretability/</guid>
       <pubDate>Sat, 15 Mar 2025 12:16:21 +0100</pubDate>
     </item>
     
     <item>
       <title>Understanding Visual Feature Reliance Through the Lens of Complexity</title>
-      <link>http://localhost:1313/posts/understanding_visual_feature_reliance_through_the_lens_of_complexity/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/understanding_visual_feature_reliance_through_the_lens_of_complexity/</link>
       <description>&lt;hr&gt;&lt;/hr&gt;
 &lt;style TYPE=&#34;text/css&#34;&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
@@ -1222,13 +1222,13 @@ $$&lt;/p&gt;
 &lt;p&gt;Overall, our experiments support the paper’s conclusions: deep networks tend to favor simple, robust features while complex ones play a secondary, less stable role in the decision process.&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/understanding_visual_feature_reliance_through_the_lens_of_complexity/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/understanding_visual_feature_reliance_through_the_lens_of_complexity/</guid>
       <pubDate>Wed, 12 Mar 2025 16:28:12 +0100</pubDate>
     </item>
     
     <item>
       <title>Get a calibrated and efficient model with tailored data augmentation.</title>
-      <link>http://localhost:1313/posts/mixupdatacalibration/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style&gt;
@@ -1771,13 +1771,13 @@ volume 97 of Proceedings of Machine Learning Research, pages 6438–6447. PMLR.&
 &lt;/div&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/mixupdatacalibration/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</guid>
       <pubDate>Sun, 09 Mar 2025 21:03:13 +0100</pubDate>
     </item>
     
     <item>
       <title>BitFit: BIas-Term FIne-Tuning</title>
-      <link>http://localhost:1313/posts/bitfit/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</link>
       <description>&lt;style
 TYPE=&#34;text/css&#34;&gt;
 
@@ -1976,13 +1976,13 @@ Moreover, further analysis reveals that not all bias parameters are equally impo
 &lt;/ul&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/bitfit/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</guid>
       <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
     </item>
     
     <item>
       <title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title>
-      <link>http://localhost:1313/posts/axiomatic_explanations/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link>
       <description>&lt;style
 TYPE=&#34;text/css&#34;&gt;
 
@@ -2191,13 +2191,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/axiomatic_explanations/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</guid>
       <pubDate>Thu, 28 Mar 2024 05:58:39 +0100</pubDate>
     </item>
     
     <item>
       <title>Privacy Amplification by Decentralization</title>
-      <link>http://localhost:1313/posts/privacy-amplification/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Privacy Amplification by Decentralization&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 24px;&#34;&gt;Author: Sarah ABBANA BENNANI &lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -2488,13 +2488,13 @@ MathJax.Hub.Queue(function() {
 &lt;/script&gt;
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;</description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/privacy-amplification/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/</guid>
       <pubDate>Wed, 27 Mar 2024 12:05:50 +0100</pubDate>
     </item>
     
     <item>
       <title>Robust or Fair</title>
-      <link>http://localhost:1313/posts/robust-or-fair/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/robust-or-fair/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;To be Robust or to be Fair: Towards Fairness in Adversarial Training&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 24px;&#34;&gt;Authors: Maryem Hajji &amp; Cément Teulier&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -2651,13 +2651,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/robust-or-fair/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/robust-or-fair/</guid>
       <pubDate>Wed, 27 Mar 2024 11:37:03 +0100</pubDate>
     </item>
     
     <item>
       <title>XCM, an explainable CNN for MTS classficiation</title>
-      <link>http://localhost:1313/posts/xcm/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/xcm/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style&gt;
@@ -3290,13 +3290,13 @@ Conference on Artificial Intelligence, New York, NY, USA, 7–12 February 2020.&
 &lt;/ol&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/xcm/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/xcm/</guid>
       <pubDate>Tue, 26 Mar 2024 00:55:40 +0100</pubDate>
     </item>
     
     <item>
       <title>RobustAI_RegMixup</title>
-      <link>http://localhost:1313/posts/robustai_regmixup/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/robustai_regmixup/</link>
       <description>&lt;style
 TYPE=&#34;text/css&#34;&gt;
 
@@ -3637,13 +3637,13 @@ $$&lt;/p&gt;
 &lt;p&gt;As a conclusion, we have seen that RegMixup is a powerful method to regularize deep neural networks. Despite being very simple and cost-effective, it is important to specify that the paper does not provide a theoretical explanation of the method. These experimental grounds are very promising but it appears important to stay cautious while utilizing RegMixup.&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/robustai_regmixup/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/robustai_regmixup/</guid>
       <pubDate>Sun, 24 Mar 2024 12:38:16 +0100</pubDate>
     </item>
     
     <item>
       <title>Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints</title>
-      <link>http://localhost:1313/posts/lambert-davy/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/lambert-davy/</link>
       <description>&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 18px;&#34;&gt;Authors: Godefroy LAMBERT and Louise DAVY&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -3810,13 +3810,13 @@ MathJax.Hub.Queue(function() {
 &lt;/script&gt;
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;</description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/lambert-davy/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/lambert-davy/</guid>
       <pubDate>Sat, 23 Mar 2024 19:39:13 +0100</pubDate>
     </item>
     
     <item>
       <title>Label-Free Explainability</title>
-      <link>http://localhost:1313/posts/label-free-explainability/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/label-free-explainability/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Label-Free Explainability for Unsupervised Models&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 18px;&#34;&gt;Authors: &lt;a href=&#34;https://github.com/Valentinahxu&#34;&gt;Valentina Hu &lt;/a&gt; and  &lt;a href=&#34;https://github.com/selmazrg&#34;&gt; Selma Zarga&lt;/a&gt;&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -4040,13 +4040,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/label-free-explainability/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/label-free-explainability/</guid>
       <pubDate>Sun, 17 Mar 2024 15:31:34 +0100</pubDate>
     </item>
     
     <item>
       <title>Adversarially Reweighted Learning</title>
-      <link>http://localhost:1313/posts/adversarially_reweighted_learning/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/adversarially_reweighted_learning/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Fairness without Demographics through Adversarially Reweighted Learning&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 24px;&#34;&gt;Authors: Pierre Fihey &amp; Guerlain Messin&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -4161,13 +4161,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/adversarially_reweighted_learning/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/adversarially_reweighted_learning/</guid>
       <pubDate>Mon, 04 Mar 2024 18:35:12 +0100</pubDate>
     </item>
     
     <item>
       <title>Packed Ensembles</title>
-      <link>http://localhost:1313/posts/packed-ensembles/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/packed-ensembles/</link>
       <description>&lt;script
 type=&#34;text/x-mathjax-config&#34;&gt;
 
@@ -4440,13 +4440,13 @@ $$&lt;/p&gt;
 &lt;p&gt;A significant limitation of the tutorial is the lack of guidance on evaluating the model&amp;rsquo;s performance. Without a defined evaluation metric (e.g., accuracy, precision, recall), it&amp;rsquo;s challenging to determine the overall effectiveness of the trained Packed-Ensemble. While the provided test results show inconsistencies between ground truth labels and predictions, a quantitative evaluation metric is necessary to draw more concrete conclusions.&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/packed-ensembles/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/packed-ensembles/</guid>
       <pubDate>Tue, 27 Feb 2024 15:05:20 +0100</pubDate>
     </item>
     
     <item>
       <title>A Framework to Learn with Interpretation</title>
-      <link>http://localhost:1313/posts/a-framework-to-learn-with-interpretation/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/a-framework-to-learn-with-interpretation/</link>
       <description>&lt;hr&gt;&lt;/hr&gt;
 &lt;style
 TYPE=&#34;text/css&#34;&gt;
@@ -4636,13 +4636,13 @@ Where $g(x)=h(\Phi(\hat{f_I} (x)))$ for a given set of $I$ hidden layers and an 
 &lt;p&gt;In conclusion, FLINT offers a robust framework for enhancing the interpretability of machine learning models, particularly deep neural networks, in critical domains like healthcare, law, and defense. By jointly learning predictor and interpreter models, FLINT addresses the challenge of providing both global and local interpretations of model predictions. Through carefully designed loss functions, FLINT ensures fidelity to input and output, promotes concise and diverse interpretations, and facilitates the representation of intricate patterns associated with input data. Reproducing experiments on datasets such as CIFAR10 and QuickDRAW showcases FLINT&amp;rsquo;s effectiveness in providing interpretable insights into model predictions. Subjective evaluations affirm the understandability of FLINT&amp;rsquo;s learned attributes, reinforcing its potential for real-world applications. Moreover, FLINT&amp;rsquo;s adaptability for post-hoc interpretability underscores its versatility, enabling meaningful interpretations without extensive modification of the underlying classifier. Overall, FLINT emerges as a valuable tool for fostering transparency and trust in complex machine learning models, contributing to the development of interpretable AI systems across various domains.&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/a-framework-to-learn-with-interpretation/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/a-framework-to-learn-with-interpretation/</guid>
       <pubDate>Tue, 13 Feb 2024 16:56:04 +0100</pubDate>
     </item>
     
     <item>
       <title>NTK-SAP: IMPROVING NEURAL NETWORK PRUNING BY ALIGNING TRAINING DYNAMICS</title>
-      <link>http://localhost:1313/posts/ntk-sap/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/ntk-sap/</link>
       <description>&lt;p&gt;This is a blog post about the paper NTK-SAP: Improving neural network pruning by aligning training dynamics, published by Y. Wang et al. in 2023 and available &lt;a href=&#34;https://openreview.net/pdf?id=-5EWhW_4qWP&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Introduction:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;In a world increasingly driven by demand for data and computational resources, the narrative of artificial intelligence has been one of abundance: more data, more power, more precision. Yet, nestled within this grand tale, lies a quieter narrative - one that champions the concept of achieving more with less—Frugal AI.&lt;/p&gt;
@@ -5051,13 +5051,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/ntk-sap/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/ntk-sap/</guid>
       <pubDate>Wed, 07 Feb 2024 16:07:10 +0100</pubDate>
     </item>
     
     <item>
       <title>Do Perceptually Aligned Gradients imply Robustness?</title>
-      <link>http://localhost:1313/posts/robustness-and-pag-the-converse/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/robustness-and-pag-the-converse/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style&gt;
@@ -5272,13 +5272,13 @@ How can this be explained ? One should observe the decision boundaries.&lt;/p&gt
 &lt;/ol&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/robustness-and-pag-the-converse/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/robustness-and-pag-the-converse/</guid>
       <pubDate>Wed, 07 Feb 2024 16:06:43 +0100</pubDate>
     </item>
     
     <item>
       <title>To update or not to update? Neurons at equilibrium in deep models</title>
-      <link>http://localhost:1313/posts/neq/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/neq/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;To update or not to update? Neurons at equilibrium in deep models
 &lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 24px;&#34;&gt;Author: Alexis WINTER Augustin CREUSILLET&lt;/h1&gt;
@@ -5450,13 +5450,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/neq/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/neq/</guid>
       <pubDate>Wed, 07 Feb 2024 15:55:14 +0100</pubDate>
     </item>
     
     <item>
       <title>Optimal Transport Based Adversarial Patch Attacks</title>
-      <link>http://localhost:1313/posts/optimal_transport_based_adversarial_patch/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/optimal_transport_based_adversarial_patch/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style&gt;
@@ -5749,13 +5749,13 @@ where TV is the total variation loss discouraging high-frequency patterns.&lt;/p
 &lt;/ul&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/optimal_transport_based_adversarial_patch/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/optimal_transport_based_adversarial_patch/</guid>
       <pubDate>Sat, 03 Feb 2024 22:22:36 +0100</pubDate>
     </item>
     
     <item>
       <title>Statistical Minimax Rates Under Privacy</title>
-      <link>http://localhost:1313/posts/statistical_minimax_rates_under_privacy/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/statistical_minimax_rates_under_privacy/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Estimating Privacy in Data Science: A Comprehensive Guide&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 24px;&#34;&gt;Author: Antoine Klein &lt;a href=&#34;https://github.com/AntoineTSP&#34;&gt;Github Link&lt;/a&gt;&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -6182,13 +6182,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/statistical_minimax_rates_under_privacy/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/statistical_minimax_rates_under_privacy/</guid>
       <pubDate>Wed, 31 Jan 2024 17:22:02 +0100</pubDate>
     </item>
     
     <item>
       <title>Measuring the Transferability of Pre-trained Models: a link with Neural Collapse Distances on Target Datasets</title>
-      <link>http://localhost:1313/posts/transferability/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/transferability/</link>
       <description>&lt;script
 type=&#34;text/x-mathjax-config&#34;&gt;
 
@@ -6423,7 +6423,7 @@ geometry. arXiv preprint arXiv:2208.05512.&lt;/p&gt;
 &lt;p&gt;Start writing here !&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/transferability/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/transferability/</guid>
       <pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate>
     </item>
     
