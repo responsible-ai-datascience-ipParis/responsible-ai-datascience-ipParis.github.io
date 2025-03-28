@@ -3,10 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/</loc>
-    <lastmod>2025-02-05T15:34:21+01:00</lastmod>
+    <lastmod>2025-03-28T16:37:43+01:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/posts/</loc>
-    <lastmod>2025-02-05T15:34:21+01:00</lastmod>
+    <lastmod>2025-03-28T16:37:43+01:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/xai_transformers/</loc>
+    <lastmod>2025-03-28T16:37:43+01:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/posts/axiomatic_explanations/</loc>
     <lastmod>2024-03-28T05:58:39+01:00</lastmod>
@@ -55,8 +58,6 @@
   </url><url>
     <loc>http://localhost:1313/posts/transferability/</loc>
     <lastmod>2024-01-08T11:26:03+01:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/xai_transformers/</loc>
   </url><url>
     <loc>http://localhost:1313/about/</loc>
   </url><url>
