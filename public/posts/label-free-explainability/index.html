@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>Label-Free Explainability | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:url" content="http://localhost:1313/posts/label-free-explainability/">
+  <meta property="og:site_name" content="Bloggin on Responsible AI">
+  <meta property="og:title" content="Label-Free Explainability">
+  <meta property="og:description" content="Label-Free Explainability for Unsupervised ModelsAuthors: Valentina Hu and Selma ZargaTable of Contents Incentives Introduction Feature Importance Example Importance Experiment Conclusion This is a blog post about the paper Label-Free Explainability for Unsupervised Models, published by J. Crabbé et al. in 2022 and available here.
+Why do we need explainability ? Machine learning models are becoming increasingly capable of making advanced predictions. While models like linear regression are relatively easy to understand and explain, more complex models, often called “black boxes” due to their complexity, present challenges in explaining how they make predictions. These models can be problematic in highstakes applications such as healthcare, finance, and justice, where it’s crucial to justify decision-making. Additionally, in case of errors, it’s important to understand the origin in order to address and correct them.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-03-17T15:31:34+01:00">
+    <meta property="article:modified_time" content="2024-03-17T15:31:34+01:00">
+
+    
+  <meta itemprop="name" content="Label-Free Explainability">
+  <meta itemprop="description" content="Label-Free Explainability for Unsupervised ModelsAuthors: Valentina Hu and Selma ZargaTable of Contents Incentives Introduction Feature Importance Example Importance Experiment Conclusion This is a blog post about the paper Label-Free Explainability for Unsupervised Models, published by J. Crabbé et al. in 2022 and available here.
+Why do we need explainability ? Machine learning models are becoming increasingly capable of making advanced predictions. While models like linear regression are relatively easy to understand and explain, more complex models, often called “black boxes” due to their complexity, present challenges in explaining how they make predictions. These models can be problematic in highstakes applications such as healthcare, finance, and justice, where it’s crucial to justify decision-making. Additionally, in case of errors, it’s important to understand the origin in order to address and correct them.">
+  <meta itemprop="datePublished" content="2024-03-17T15:31:34+01:00">
+  <meta itemprop="dateModified" content="2024-03-17T15:31:34+01:00">
+  <meta itemprop="wordCount" content="2509">
+    
+    <link rel="canonical" href="http://localhost:1313/posts/label-free-explainability/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "posts",
+      "name": "Label-Free Explainability",
+      "headline": "Label-Free Explainability",
+      "alternativeHeadline": "",
+      "description": "\u003ch1 style=\u0022font-size: 36px;\u0022\u003eLabel-Free Explainability for Unsupervised Models\u003c\/h1\u003e\r\n\u003ch1 style=\u0022font-size: 18px;\u0022\u003eAuthors: \u003ca href=\u0022https:\/\/github.com\/Valentinahxu\u0022\u003eValentina Hu \u003c\/a\u003e and  \u003ca href=\u0022https:\/\/github.com\/selmazrg\u0022\u003e Selma Zarga\u003c\/a\u003e\u003c\/h1\u003e\r\n\u003ch1 id=\u0022table-of-contents\u0022\u003eTable of Contents\u003c\/h1\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\u0022#section-0\u0022\u003eIncentives\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-1\u0022\u003eIntroduction\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-2\u0022\u003eFeature Importance \u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-3\u0022\u003eExample Importance\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-5\u0022\u003eExperiment\u003c\/a\u003e\u003c\/li\u003e\n\u003cli\u003e\u003ca href=\u0022#section-6\u0022\u003eConclusion\u003c\/a\u003e\u003c\/li\u003e\n\u003c\/ul\u003e\n\u003cp\u003eThis is a blog post about the paper Label-Free Explainability for Unsupervised Models, published by J. Crabbé et al. in 2022 and available \u003ca href=\u0022https:\/\/proceedings.mlr.press\/v162\/crabbe22a\/crabbe22a.pdf\u0022\u003ehere\u003c\/a\u003e.\u003c\/p\u003e\n\u003ch2 id=\u0022section-0\u0022\u003eWhy do we need explainability ?\u003c\/h2\u003e\n\u003cp\u003eMachine learning models are becoming increasingly capable of making advanced predictions. While models like linear regression are relatively easy to understand and explain, more complex models, often called \u003cstrong\u003e\u0026ldquo;black boxes\u0026rdquo;\u003c\/strong\u003e due to their complexity, present challenges in explaining how they make predictions. These models can be problematic in highstakes applications such as healthcare, finance, and justice, where it\u0026rsquo;s crucial to justify decision-making. Additionally, in case of errors, it\u0026rsquo;s important to understand the origin in order to address and correct them.\u003c\/p\u003e",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/posts\/label-free-explainability\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "2024",
+      "dateCreated": "2024-03-17T15:31:34.00Z",
+      "datePublished": "2024-03-17T15:31:34.00Z",
+      "dateModified": "2024-03-17T15:31:34.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/posts\/label-free-explainability\/",
+      "wordCount" : "2509",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="../../">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="../../posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="../../tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="../../about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="../../articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">Label-Free Explainability</h2>
+      <h1 style="font-size: 36px;">Label-Free Explainability for Unsupervised Models</h1>
+<h1 style="font-size: 18px;">Authors: <a href="https://github.com/Valentinahxu">Valentina Hu </a> and  <a href="https://github.com/selmazrg"> Selma Zarga</a></h1>
+<h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#section-0">Incentives</a></li>
+<li><a href="#section-1">Introduction</a></li>
+<li><a href="#section-2">Feature Importance </a></li>
+<li><a href="#section-3">Example Importance</a></li>
+<li><a href="#section-5">Experiment</a></li>
+<li><a href="#section-6">Conclusion</a></li>
+</ul>
+<p>This is a blog post about the paper Label-Free Explainability for Unsupervised Models, published by J. Crabbé et al. in 2022 and available <a href="https://proceedings.mlr.press/v162/crabbe22a/crabbe22a.pdf">here</a>.</p>
+<h2 id="section-0">Why do we need explainability ?</h2>
+<p>Machine learning models are becoming increasingly capable of making advanced predictions. While models like linear regression are relatively easy to understand and explain, more complex models, often called <strong>&ldquo;black boxes&rdquo;</strong> due to their complexity, present challenges in explaining how they make predictions. These models can be problematic in highstakes applications such as healthcare, finance, and justice, where it&rsquo;s crucial to justify decision-making. Additionally, in case of errors, it&rsquo;s important to understand the origin in order to address and correct them.</p>
+<center>
+<p>&ldquo;<strong>Explainability is the cornerstone of trust in black box models; without it, they remain inscrutable and unreliable.</strong>&rdquo; - <em>Yoshua Bengio</em></p>
+</center>
+<p>To tackle this challenge, the field of Explainable Artificial Intelligence (XAI) has emerged, offering various methods to enhance <strong>model transparency</strong>. <strong>Post-Hoc explainability</strong> methods exist, which intervene after the model has generated its results, enabling users to comprehend the reasoning behind specific decisions or predictions. These methods supplement the predictions of black box models with diverse explanations of how they arrive at their predictions.</p>
+<p><img
+  src="../../images/explainability/Black-Box.png"
+  alt="XAI explainability"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<h2 id="section-1">I. Introduction</h2>
+<p>The entire post focuses on the quest for explainability of unsupervised models. In these models, no labels are assigned to the data, making understanding the model even more complicated due to the absence of explicit guidance on what the model is learning. In the supervised setting, users know the meaning of the black-box output they are trying to interpret. However, this clarity is not always available in machine learning. Therefore, elucidating concepts such as feature importance and example importance provides insights into why the model makes certain decisions or identifies specific patterns in the data.</p>
+<p>A recent research conducted by Crabbé and van der Schaar in 2022 explores the explainability of unsupervised models. They have developed two new methods to explain these complex models without labels. The first method highlights important features in the data, while the second identifies training examples that have the biggest impact on the model&rsquo;s construction of representations. In this post, we will attempt to explain these two methods.</p>
+<h2 id="section-2">II. Feature Importance</h2>
+<p>Feature importance aims to explain how the model arrives at its prediction for a given input by assigning an  importance scores to each feature (or attribute) of the input. This helps understand which features have the most influence on the model&rsquo;s predictions. This method is developed based on a linear reasoning that is extended to label-free settings.</p>
+<p>Given a model $( f : \mathcal{X} \rightarrow \mathcal{Y} )$, which maps an input space $( \mathcal{X} \subset \mathbb{R}^{d_X} )$ to an output space $( \mathcal{Y} \subset \mathbb{R}^{d_Y} )$. Where, $( d_X )$ and $( d_Y )$ is the dimensions of the input and output spaces.</p>
+<p>In the traditionnal method, the process requires selecting one component $( f_j(x) )$ of the model&rsquo;s output to compute the importance score for each feature $( i )$, denoted as $( a_i(f, x) )$. The selection is based on the ground-truth label, and $( j )$ corresponds to the class predicted with the highest probability.</p>
+<p>To understand how the label-free feature importance method works, let&rsquo;s start by looking at the labeled case:</p>
+<p><strong>1. Labelled Feature Importance</strong></p>
+<p>Authors introduces an alternative approach to calculate feature importance scores. The method proposes to combine the importance scores of different components of the model&rsquo;s output by weighting them with the associated class probabilities. For each component of the model&rsquo;s output, we multiply the importance score of the corresponding feature by the probability of that component.</p>
+<p>These weighted importance scores are then combined to obtain the final importance score of each feature.</p>
+<p>Let $a_i(f_j;x)$ be the importance score of feature $x_i$ calculated with respect to the component $f_j$ of the model&rsquo;s output. The method proposes to calculate the importance score $b_i(f;x)$ for feature $x_i$ as follows:</p>
+<p>$b_i(f;x) = \sum_{j=1}^{d_Y} f_j(x) \times a_i(f_j,x)$</p>
+<p>Here, $f_j(x)$ represents the probability of class $j$, and $a_i(f_j;x)$ is the importance score of feature $x_i$ for class $j$.</p>
+<p>Hovewer when the class probabilities are balanced, this method accounts for the contribution of each class to the feature importance score, rather than focusing only on the class with the highest probability, which is the usual practice.</p>
+<p>This method proves to be efficient predominantly when the significance scores exhibit linearity in relation to the model. To facilitate a streamlined computation of weighted importance scores, another method is to introduce an auxiliary function, denoted as $(g_x)$ :</p>
+<p>$\ g_x(z) = \sum_{j=1}^{d_Y} f_j(x) \cdot f_j(z) $</p>
+<p>With the function $(g_x)$, it becomes feasible to calculate the weighted importance score, $(b_i(f, x))$, for each feature $(i)$, by merely employing $(g_x)$. This technique significantly simplifies the computational process, obviating the need to calculate $(d_Y \times d_X)$ importance scores. Such a calculation becomes impractically cumbersome with the escalation of the number of classes, $(d_Y)$. With this trick, we can compute the weighted importance score by only calling the auxiliary function.</p>
+<p>We can see that in the labeled case, the method is quite clear. A similar reasoning is used in the label-free setting. Now, let&rsquo;s move on to the label-free setting.</p>
+<p><strong>2. Label-Free Feature Importance</strong></p>
+<p>In the context of the unlabelled setting, we consider a latent space $H$ of dimension $d_H$ where a black-box model $f : X \rightarrow H$ is given. The goal is to assign an importance score to each feature of the input $x$, even if the dimensions of the latent space have no clear relations with the labels.</p>
+<p>A similar weighting formula for importance scores is used, where the components $f_j(x)$ do not correspond to probabilities but to neuron activations. The weighted sum is considered as a inner product in the latent space.</p>
+<p>The method is developed using linear feature importance functions, and it retains the completeness property, meaning that the sum of importance scores equals the black-box prediction up to a baseline constant.</p>
+<p>Here is how the method operates:</p>
+<ul>
+<li>
+<p><strong>Presentation of the Latent Space:</strong> We consider a latent space $H$ of dimension $d_H$ where each input $x$ is mapped by the black-box model $f$ to obtain a representation $h = f(x)$.</p>
+</li>
+<li>
+<p><strong>Assignment of Importance Scores:</strong> The objective is to assign an importance score $b_i(f; x)$ to each feature $x_i$ of $x$. Unlike in the previous setting, where we had probabilities associated with each component, here, we do not have a clear method to choose a particular component $f_j$ in the latent space. Therefore, we use a similar approach to the one described previously.</p>
+</li>
+<li>
+<p><strong>Calculation of Importance Scores:</strong> We use a weighting method where the importance score is given by $b_i(f; x) = a_i(\sum_{j=1}^{d_H} f_j(x) \cdot f_j(x))$. The individual components $f_j(x)$ do not correspond to probabilities in this case; they generally correspond to neuron activation functions. Inactive neurons will have a corresponding component that vanishes ($f_j(x) = 0$), meaning they will not contribute to the weighted sum, while more activated neurons will contribute more.</p>
+</li>
+<li>
+<p><strong>Completeness:</strong> An important property shared by many feature importance methods is completeness. This means that the sum of importance scores equals the black-box prediction up to a baseline constant. This establishes a connection between importance scores and black-box predictions.</p>
+</li>
+</ul>
+<p>This method proposes an extension of linear feature importance methods to the unlabelled setting by defining an auxiliary scalar function $g_x$ that encapsulates the black-box function $f$. This extension is achieved by using a function $g_x$ that computes the inner product between the representation $f(x)$ and the representation $f(\tilde{x})$ for all $\tilde{x}$ in the input space.</p>
+<h2 id="section-3">III. Example Importance</h2>
+<p>In this section, we explain the approach to extending example importance methods to the label-free setting. Given that example importance methods vary significantly, they are separated into two families: loss-based and representation-based methods. The extension to the label-free setting differs for these two families, so we discuss them separately in distinct subsections.</p>
+<p><strong>1. Loss-Based Example Importance</strong></p>
+<p><strong>Supervised Setting</strong></p>
+<p>In supervised learning, loss-based example importance methods determine how important each training example is by assessing the impact of its removal on the model&rsquo;s performance on test data. This is measured by the change in the loss function, which quantifies how well the model&rsquo;s predictions match the true data.</p>
+<p>Mathematically, let $z$ represent the data of an example required to evaluate the loss, typically corresponding to a pair $(x, y)$ in supervised settings. The loss function $L(z; \theta)$ is optimized over a parameter space $\Theta$ to train the model. When an example $z_n$ is removed from the training set $D_{\text{train}}$, it results in a parameter shift $\theta_n - \theta&rsquo;_{-n}$, impacting the loss $L(z; \theta&rsquo;)$ on a test example $z$. This loss shift provides a meaningful measure of example importance.</p>
+<p>To estimate the loss shift without retraining the model, methods like the influence function and checkpoint evaluation are employed. For example, Koh &amp; Liang (2017) propose using the influence function:</p>
+<p><em>Influence Function Formula</em></p>
+<p>\begin{equation} \langle
+\delta_{\theta}^{n} L(z; \theta&rsquo;) \approx \frac{1}{N} \langle {\nabla L(z; \theta_{*})}, H^{-1} {\nabla L(z_{n}; \theta_{*}&rsquo;)} \rangle_{\theta} <br>
+\end{equation}</p>
+<p>Where:</p>
+<ul>
+<li>$( \nabla_{\theta} L(z, \theta^*) )$ is the gradient of the loss with respect to the parameters for the test example.</li>
+<li>$( H_{\theta^*} )$ is the Hessian matrix.</li>
+<li>$( \nabla_{\theta} L(z^n, \theta^*) )$ is the gradient of the loss for the removed training example.</li>
+<li>$( \langle \cdot, \cdot \rangle_{\theta} )$ denotes the inner product in the parameter space.</li>
+<li>$( N )$ is the number of training examples.</li>
+</ul>
+<p><strong>Label-Free Setting</strong></p>
+<p>In a label-free setting, the models are trained without explicit labels. Instead, they use a label-free loss function, which typically tries to capture the structure of the data itself rather than fitting to specific target labels.</p>
+<p>In the context of autoencoders, determining the importance of a training example can be tricky due to the loss function used during training (uses the encoder and decoder). When we are only interested in the encoder part and it is not sufficient to only use the model&rsquo;s loss function as this also include the influence of the decoder.</p>
+<p>To address this, we decompose the parameter space into relevant and irrelevant components. The proposed method computes the example importance scores by considering only the relevant parameters. The model to interpret, denoted as $f_r$, is parametrized only by the relevant parameters $\theta_r$.</p>
+<p>This motivates the definition of Label-Free Loss-Based Example Importance:</p>
+<p>\begin{equation}
+c_n(f_r; x) = \theta_n L(x; \theta&rsquo;)
+\end{equation}</p>
+<p>Label-Free Loss-Based Example Importance score $( c_n(f_{\theta_r}, x) )$ measures the impact of removing a training example $( x_n )$ from the training set on the learned latent representation $( f_{\theta_r}(x) )$ of a test example $( x )$. It uses $( \delta_{\theta_r} L )$ to denote the part of the loss shift that is only due to changes in the relevant parameters $(( \theta_r ))$.</p>
+<p>This definition extends any loss-based example importance method to the label-free setting, where the unsupervised loss $L$ is used to fit the model, and the gradients with respect to the parameters of the encoder are computed.</p>
+<p><strong>2. Representation-Based Example Importance</strong></p>
+<p>Representation-based example importance methods analyze the latent representations of examples to assign importance scores.</p>
+<p><strong>Supervised Setting</strong></p>
+<p>These methods quantify the affinity between a test example and the training set examples based on their latent representations. For instance, in a model $f_l \circ f_e: X \rightarrow Y$, where $f_e: X \rightarrow H$ maps inputs to latent representations and $f_l: H \rightarrow Y$ maps representations to labels, representation-based methods reconstruct the test example&rsquo;s latent representation using training representations. The reconstruction involves assigning weights to training representations, typically based on nearest neighbors or learned weights. For example, using a kernel function $\mathcal{K}$:</p>
+<p>\begin{equation}
+w_n(x) = \frac{1}{|KNN(x)|} \sum_{n&rsquo; \in KNN(x)} \mathcal{K}(\text{fe}(x_n), \text{fe}(x))
+\end{equation}</p>
+<p><strong>Label-Free Setting</strong></p>
+<p>Rrepresentation-based methods remain valid by replacing supervised representation maps with unsupervised ones. Hence, no additional modifications are needed.</p>
+<h2 id="section-5">IV. Experiments: Evaluation and Results</h2>
+<h3 id="section-111">Consistency Checks</h3>
+<p>Now, we are verifying the consistency of results obtained from different methods of assessing feature and example importance using the MNIST dataset.</p>
+<p>In MNIST, important features are the pixels of the images, and various methods can be employed to evaluate their importance. To assess feature importance, we can measure the impact of selectively removing the most important pixels on the latent representation constructed by the encoder, as described in the previous example. By comparing the results of different methods of importance assessment, such as perturbing the most important pixels according to various importance measures, we can check if the same pixels are identified as important and if their removal consistently affects the latent representation.</p>
+<p><em>We rerun the tests provided in the <a href="https://github.com/JonathanCrabbe/Label-Free-XAI">GitHub repository</a>:</em></p>
+<p>On the MNIST dataset, we perturb the most important pixels and observe how this perturbation affects the quality or relevance of the latent representation generated by the encoder.
+Here we can see the result of the experiment :</p>
+<p><img
+  src="../../images/explainability/mnist_consistency_features.png"
+  alt="XAI explainability"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<p>The results obtained from the representation shift curves as a function of the percentage of perturbed pixels demonstrate the effectiveness of Feature Importance methods on the MNIST dataset.</p>
+<p>We observe that Feature Importance methods such as Gradient Shap and Integrated Gradients show a significant increase in representation shift when the most important pixels are perturbed. This indicates that these methods successfully identify the most relevant pixels for constructing the latent representation. However, after perturbing approximately 20% of the most important pixels, we notice a stabilization of the representation shift, suggesting that adding additional perturbations does not necessarily lead to a significant increase in impact on the latent representation.</p>
+<p>On the other hand, the Saliency method appears to be less effective, with an almost linear representation shift curve, suggesting that it fails to selectively identify the most important pixels for the latent representation.</p>
+<p>Overall, this confirms the effectiveness of Feature Importance methods, particularly Integrated Gradients.</p>
+<p>Similarly, to evaluate the importance of examples in MNIST, we select training examples that have a significant influence on predicting the latent representation of test examples. By comparing the results obtained with different methods of assessing example importance, we can verify if the same examples are identified as important and if their relevance is consistent with the model&rsquo;s predictions.</p>
+<p><img
+  src="../../images/explainability/example.png"
+  alt="XAI explainability"
+  loading="lazy"
+  decoding="async"
+  class="full-width"
+/>
+
+</p>
+<p>For all example importance methods, we observe a decrease in similarity rates, with a consistent trend across all curves.</p>
+<p>This observation highlights that the similarity rate is significantly higher among the most similar examples compared to the least similar examples, confirming the effectiveness of label-free importance scores cn(fe; x) in identifying training examples related to the test example we wish to explain.</p>
+<p>In summary, these results affirm the capability of label-free importance scores in effectively selecting relevant training examples and distinguishing between similar and dissimilar examples.</p>
+<h2 id="section-6">V. Conclusion</h2>
+<p>In this post you learned about label-free explainability a new framework developped by Crabbé and van der Schaar in 2022, wich extend linear feature importance and example importance
+methods to the unsupervised setting with a focus on the MNIST dataset.</p>
+<h3 id="references">References</h3>
+<ol>
+<li>Crabbé, J. &amp; van der Schaar, M.. (2022). Label-Free Explainability for Unsupervised Models. <i>Proceedings of the 39th International Conference on Machine Learning</i>, in <i>Proceedings of Machine Learning Research</i> 162:4391-4420 Available from <a href="https://proceedings.mlr.press/v162/crabbe22a.html">https://proceedings.mlr.press/v162/crabbe22a.html</a>.</li>
+</ol>
+<style>
+.highlight {
+  background-color: red;
+}
+.highlight-on-hover:hover {
+        background-color: yellow;
+    }
+/* Quiz form styles */
+.quiz-form {
+        max-width: 500px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+}
+
+.quiz-question {
+        margin-bottom: 20px;
+}
+
+.quiz-options label {
+        display: block;
+        margin-bottom: 10px;
+}
+
+.quiz-submit {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+}
+
+.quiz-submit:hover {
+        background-color: #45a049;
+}
+
+/* Quiz results styles */
+.quiz-results {
+        margin-top: 20px;
+        font-weight: bold;
+}
+.quiz-options label {
+        display: block;
+        margin-bottom: 10px;
+    }
+.quiz-options label.correct {
+        color: green;
+}
+.quiz-options label.incorrect {
+        color: red;
+}
+a[name]:hover {
+        background-color: yellow; /* Change to the same color as normal state to maintain yellow highlight */
+        text-decoration: none; /* Optionally remove underline on hover */
+}
+</style>
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+
+      
+      <div class="post-date">
+        <span class="g time">March 17, 2024 </span> &#8729;
+         
+      </div>
+      
+    </section>
+    
+    <div id="comments">
+      <script src="https://utteranc.es/client.js"
+    repo=ZgotmplZ
+    issue-term="pathname"
+    theme=ZgotmplZ
+    crossorigin="anonymous"
+    async>
+</script>
+
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>
