@@ -1,17 +1,16 @@
 <!doctype html>
 <html lang="en">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="Liste - http://localhost:1313/">
+    <meta name="author" content="Liste - https://responsible-ai-datascience-ipParis.github.io/">
     <title>Privacy Amplification by Decentralization | Bloggin on Responsible AI</title>
     <meta name="description" content="Bloggin on Responsible AI">
-    <meta property="og:url" content="http://localhost:1313/posts/privacy-amplification/">
+    <meta property="og:url" content="https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/">
   <meta property="og:site_name" content="Bloggin on Responsible AI">
   <meta property="og:title" content="Privacy Amplification by Decentralization">
-  <meta property="og:description" content="Privacy Amplification by Decentralization
-Author: Sarah ABBANA BENNANI Table of Contents Introduction - the challenge of data privacy Theoretical Aspects on Differential Privacy First Case: walk on a ring Generalisation: walk on a complete graph Experiments Perspectives This is a blogpost about the paper Privacy Amplification by Decentralization, published by E. Cyffers et al. in 2022 and available here.
+  <meta property="og:description" content="Privacy Amplification by DecentralizationAuthor: Sarah ABBANA BENNANI Table of Contents Introduction - the challenge of data privacy Theoretical Aspects on Differential Privacy First Case: walk on a ring Generalisation: walk on a complete graph Experiments Perspectives This is a blogpost about the paper Privacy Amplification by Decentralization, published by E. Cyffers et al. in 2022 and available here.
 Introduction - the challenge of data privacy In recent years, the concept of privacy has gained significant attention due to the proliferation of data collection practices and the need to safeguard individuals’ personal information. There has been a notable shift towards implementing regulations to govern the gathering of data from individuals, underscoring the pressing demand for privacy measures that are not only effective and robust against potential attacks but also transparent and firmly grounded in logic and mathematics.">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
@@ -21,19 +20,18 @@ Introduction - the challenge of data privacy In recent years, the concept of pri
 
     
   <meta itemprop="name" content="Privacy Amplification by Decentralization">
-  <meta itemprop="description" content="Privacy Amplification by Decentralization
-Author: Sarah ABBANA BENNANI Table of Contents Introduction - the challenge of data privacy Theoretical Aspects on Differential Privacy First Case: walk on a ring Generalisation: walk on a complete graph Experiments Perspectives This is a blogpost about the paper Privacy Amplification by Decentralization, published by E. Cyffers et al. in 2022 and available here.
+  <meta itemprop="description" content="Privacy Amplification by DecentralizationAuthor: Sarah ABBANA BENNANI Table of Contents Introduction - the challenge of data privacy Theoretical Aspects on Differential Privacy First Case: walk on a ring Generalisation: walk on a complete graph Experiments Perspectives This is a blogpost about the paper Privacy Amplification by Decentralization, published by E. Cyffers et al. in 2022 and available here.
 Introduction - the challenge of data privacy In recent years, the concept of privacy has gained significant attention due to the proliferation of data collection practices and the need to safeguard individuals’ personal information. There has been a notable shift towards implementing regulations to govern the gathering of data from individuals, underscoring the pressing demand for privacy measures that are not only effective and robust against potential attacks but also transparent and firmly grounded in logic and mathematics.">
   <meta itemprop="datePublished" content="2024-03-27T12:05:50+01:00">
   <meta itemprop="dateModified" content="2024-03-27T12:05:50+01:00">
   <meta itemprop="wordCount" content="3329">
     
-    <link rel="canonical" href="http://localhost:1313/posts/privacy-amplification/">
-    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="canonical" href="https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/">
+    <link rel="icon" href="https://responsible-ai-datascience-ipParis.github.io//assets/favicon.ico">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
-    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
-    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="https://responsible-ai-datascience-ipParis.github.io//feed.json" />
     <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
     
     
@@ -55,7 +53,7 @@ Introduction - the challenge of data privacy In recent years, the concept of pri
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "http:\/\/localhost:1313\/posts\/privacy-amplification\/"
+          "@id": "https:\/\/responsible-ai-datascience-ipParis.github.io\/posts\/privacy-amplification\/"
       },
       "author" : {
           "@type": "Person",
@@ -77,16 +75,16 @@ Introduction - the challenge of data privacy In recent years, the concept of pri
       "publisher":{
           "@type":"Organization",
           "name": "Bloggin on Responsible AI",
-          "url": "http://localhost:1313/",
+          "url": "https://responsible-ai-datascience-ipParis.github.io/",
           "logo": {
               "@type": "ImageObject",
-              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "url": "https:\/\/responsible-ai-datascience-ipParis.github.io\/assets\/favicon.ico",
               "width":"32",
               "height":"32"
           }
       },
-      "image": "http://localhost:1313/assets/favicon.ico",
-      "url" : "http:\/\/localhost:1313\/posts\/privacy-amplification\/",
+      "image": "https://responsible-ai-datascience-ipParis.github.io/assets/favicon.ico",
+      "url" : "https:\/\/responsible-ai-datascience-ipParis.github.io\/posts\/privacy-amplification\/",
       "wordCount" : "3329",
       "genre" : [ ],
       "keywords" : [ ]
@@ -198,7 +196,6 @@ For two datasets $D$ and $D&rsquo;$ of the same size, we denote by $D \sim_u D^{
 <p>The aim of decentralization in this representation, is to give users the fewer information possible, i.e. only the messages they are involved in, and not the full transcript $A(D)$.</p>
 <p>We introduce this view of a user $u$: $\mathcal{O}_u(\mathcal{A}(D))=\left(\left(v, m, v^{\prime}\right) \in \mathcal{A}(D): v=u \text { or } v^{\prime}=u\right)$</p>
 <br />
-
 <h2 id="differential-privacy"><h1 style="font-size: 18px;">Differential Privacy</h1></h2>
 <p>We will take a step back on this representation to introduce in a more global way the mathematical notion of Differential Privacy (DP).</p>
 <p>Let us consider a randomised algorithm $M$. $M$ is said to be &ldquo;$\alpha$-differentially private&rdquo; if, for any event $A$:</p>
