@@ -28,6 +28,7 @@ MathJax.Hub.Queue(function() {
 #### Authors: Akshita KUMAR, Florent BLANC  
 **Date:** 27 March 2025
 ---
+
 Have you ever wondered why you still distinctly remember the first time someone made fun of you at school or the birthday gift your parents gave you 15 to 20 years ago? The human brain is capable of storing countless pieces of information and memories in an intricate web of about 86 billion neurons, each consisting of thousands of connections! If it's difficult to grasp the magnitude of that number, consider this: if we tried to unwrap and lay out all that information, it would require about 2.5 petabytes of memory! Yet, somehow, all of it fits neatly inside our heads, in a space smaller than a watermelon!
 
 Now, imagine if our brains tried to save space the way Mr. Bean packs his suitcase—randomly tossing out items, keeping only one shoe, or draining half the toothpaste into the sink. In that case, you might end up remembering your best friend’s birthday but confusing it with a dramatic event from Elon Musk’s life that was all over the news two months ago. Clearly, our brains have mastered compression in a way that doesn’t compromise accuracy (or mix up childhood nostalgia with internet chaos).
