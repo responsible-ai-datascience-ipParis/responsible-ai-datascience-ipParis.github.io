@@ -117,15 +117,23 @@ While models relying on Transformers have shown impressive performance, their be
 <!-- TABLE OF CONTENTS -->
 <div class="toc">
    <strong>Table of Contents</strong>
-   <ul>
-      <li><a href="#attribution-methods">1. Attribution methods: how to identify important features?</a></li>
-      <li><a href="#why-conservation">2. Why conservation is crucial to build XAI?</a></li>
-      <li><a href="#LRP">3. Layer-wise Relevance Propagation (LRP) method</a>
-         <ul>
-            <li><a href="#conservation-breaks">3.1 How can we detect where the conservation breaks?</a></li>
-            <li><a href="#apply-transformers">3.2 Apply directly to transformer architectures?</a></li>
+                    <li><a href="#apply-transformers">3.2 Apply directly to transformer architectures?</a></li>
          </ul>
       </li>
+      <li><a href="#fixing-breaks">4. Fixing conservation breaks: a simple but effective trick</a>
+         <ul>
+            <li><a href="#Attention-Heads">4.1 Locally linear expansion for Attention Heads</a></li>
+            <li><a href="#LayerNorm">4.2 Locally linear expansion for LayerNorm</a></li>
+            <li><a href="#implementation">4.3 Implementation made easy</a></li>
+         </ul>
+      </li>
+      <li><a href="#experiments">5. Confirmation with Experiments</a>
+         <ul>
+            <li><a href="#quantitative-results">5.1 Quantitative Results</a></li>
+            <li><a href="#qualitative-results">5.2 Qualitative Comparison</a></li>
+         </ul>
+      </li>
+      <li><a href="#conclusion">6. Key Takeaway</a></li>
       <li><a href="#references">References</a></li>
    </ul>
 </div>
