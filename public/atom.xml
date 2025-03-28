@@ -4541,7 +4541,7 @@ geometry. arXiv preprint arXiv:2208.05512.&lt;/p&gt;
       &lt;/div&gt;
    &lt;/div&gt;
    &lt;div class=&#34;author-box&#34;&gt;
-      &lt;img src=&#34;./images/ip-logo.png&#34; alt=&#34;Foucauld Estignard&#34;&gt;
+      &lt;img src=&#34;./images/illustrations_XAI/foucauld.png&#34; alt=&#34;Foucauld Estignard&#34;&gt;
       &lt;div&gt;
          &lt;a href=&#34;https://github.com/FoucauldE&#34;&gt;FoucauldE&lt;/a&gt;&lt;br&gt;
          &lt;span&gt;Foucauld Estignard&lt;/span&gt;
@@ -4560,7 +4560,7 @@ geometry. arXiv preprint arXiv:2208.05512.&lt;/p&gt;
 Sure, here is a new version of your article on XAI for Transformers with a more adapted tone:
 &lt;/blockquote&gt;
 &lt;p&gt;You’ve probably encountered similar sentences before — they are characteristic of recent language models. These models are built on a specific architecture known as the Transformer, which has extended far beyond Natural Language Processing (NLP) to fields like computer vision, graph analysis, and audio signal processing. 
-&lt;p&gt;While models relying on Transformers have shown impressive performance, their behavior remains hard to explain, raising questions about their use in sensitive domains like healthcare &lt;a href=&#34;#health1&#34;&gt;[health1]&lt;/a&gt;, &lt;a href=&#34;#health2&#34;&gt;[health2]&lt;/a&gt;, cybersecurity [cyber1, cyber2], recruitment [recr.] or education [edu]. Understanding their decisions therefore becomes a major challenge, to ensure that they do not discriminate on unwanted features (eg. gender, ethnicity). &lt;/p&gt;&lt;/p&gt;
+&lt;p&gt;While models relying on Transformers have shown impressive performance, their behavior remains hard to explain, raising questions about their use in sensitive domains like healthcare &lt;a href=&#34;#health1&#34;&gt;[1]&lt;/a&gt;, &lt;a href=&#34;#health2&#34;&gt;[2]&lt;/a&gt;, cybersecurity [cyber1, cyber2], recruitment [recr.] or education [edu]. Understanding their decisions therefore becomes a major challenge, to ensure that they do not discriminate on unwanted features (eg. gender, ethnicity). &lt;/p&gt;&lt;/p&gt;
 &lt;!-- TABLE OF CONTENTS --&gt;
 &lt;div class=&#34;toc&#34;&gt;
    &lt;strong&gt;Table of Contents&lt;/strong&gt;
@@ -4578,35 +4578,38 @@ Sure, here is a new version of your article on XAI for Transformers with a more 
 &lt;/div&gt;
 &lt;!-- ARTICLE CONTINUES AS-IS --&gt;
 &lt;h3 id=&#34;attribution-methods&#34;&gt;1. Attribution methods: how to identify important features?&lt;/h3&gt;
-&lt;p&gt; 
-&lt;p&gt;Suppose we have a function $ F: \mathbb{R}^n \rightarrow [0, 1] $ that represents a deep network, and an input $ x = (x_1, \dots, x_n) \in \mathbb{R}^n $.&lt;/p&gt;
-&lt;p&gt;An &lt;strong&gt;attribution&lt;/strong&gt; of the prediction at input $ x $ relative to a baseline input $ x&amp;rsquo; $ is a vector:&lt;/p&gt;
-&lt;p&gt;$
-A_F(x, x&amp;rsquo;) = (a_1, \dots, a_n) \in \mathbb{R}^n
-$&lt;/p&gt;
-&lt;p&gt;where $ a_i $ is the contribution of $ x_i $ to the prediction $ F(x) $.&lt;/p&gt;
-&lt;p&gt;Many work has been done to develop &lt;strong&gt;attribution techniques&lt;/strong&gt;, i.e., methods designed to identify the input features responsible for a given prediction. As defined in &lt;a href=&#34;#integrated-gradients&#34;&gt;Integrated Gradients&lt;/a&gt;, there exist several types of attribution methods exist:&lt;/p&gt;
+&lt;p&gt;
+In order to make deep learning models more interpretable, especially in critical applications, it is crucial to understand which input features contribute the most to a model’s prediction. This has given rise to a class of techniques known as &lt;strong&gt;attribution methods&lt;/strong&gt;, whose goal is to assign relevance scores to input features based on their influence on the model’s output.
+&lt;/p&gt;
+&lt;p&gt;
+Formally, consider a function $F: \mathbb{R}^n \rightarrow [0, 1]$ representing a deep network, and an input $x = (x_1, \dots, x_n) \in \mathbb{R}^n$. An &lt;strong&gt;attribution&lt;/strong&gt; of the prediction at input $x$ relative to a baseline input $x&#39;$ is a vector: 
+$A_F(x, x&#39;) = (a_1, \dots, a_n) \in \mathbb{R}^n$,
+where each $a_i$ represents the contribution of feature $x_i$ to the prediction $F(x)$.
+&lt;/p&gt;
+&lt;p&gt;
+Numerous attribution techniques have been proposed, each relying on different strategies to assess feature importance. As defined in &lt;a href=&#34;#integrated-gradients&#34;&gt;Integrated Gradients&lt;/a&gt;, these methods generally fall into three categories:
+&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Gradient-based&lt;/strong&gt; methods: e.g. locally evaluate the gradient of (F) at the input point (x) (&lt;a href=&#34;#gradient-input&#34;&gt;Gradient × Input&lt;/a&gt;).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Perturbation-based&lt;/strong&gt; methods: comparing the variation of the prediction when altering the input (&lt;a href=&#34;#shapley-values&#34;&gt;SHAP&lt;/a&gt;).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Attention-based&lt;/strong&gt; methods: propagating the attention coefficients from shallow layers to deeper layers, for instance, by performing a simple multiplication (also known as &lt;strong&gt;Attention Rollout&lt;/strong&gt;).&lt;/p&gt;
-&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Gradient-based methods&lt;/strong&gt;: estimate importance using local gradients (e.g., &lt;a href=&#34;#gradient-input&#34;&gt;Gradient × Input&lt;/a&gt;).&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Perturbation-based methods&lt;/strong&gt;: assess how the prediction changes when individual input features are modified (e.g., &lt;a href=&#34;#shapley-values&#34;&gt;SHAP&lt;/a&gt;).&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Attention-based methods&lt;/strong&gt;: use attention weights to trace how information flows through the model (e.g., &lt;em&gt;Attention Rollout&lt;/em&gt;).&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;While the latter technique could seem to be the most adapted for Transformers, research has highlighted that attention was not necessarily source of interpretability (&lt;a href=&#34;#att1&#34;&gt;att1&lt;/a&gt;), (&lt;a href=&#34;#att2&#34;&gt;att2&lt;/a&gt;), leading to the importance still given to gradient-based methods for interpretations, avoiding the high computational cost of perturbation-based ones. However, since these gradient-based techniques had not been designed for Transformers, are these methods still adapted for this architecture?&lt;/p&gt;
-&lt;p&gt;In particular, one desirable property for an attribution method is its conservation (or completeness), meaning that the sum of the attributions at x must equal the difference between F(x) and F(x’), x’ being the selected baseline input (eg. a completely black image in the case of image classification). &lt;p&gt;&lt;/p&gt;
+&lt;p&gt;
+While attention-based techniques may appear particularly suitable for Transformers, research has shown that attention weights are not always reliable indicators of feature importance &lt;a href=&#34;#att1&#34;&gt;[att1]&lt;/a&gt;, &lt;a href=&#34;#att2&#34;&gt;[att2]&lt;/a&gt;. As a result, gradient-based techniques remain among the most widely used approaches, largely due to their computational efficiency compared to perturbation-based techniques. Yet, it&#39;s worth noting that these methods were originally designed for simpler architectures, and may not be fully adequate when applied to Transformers.
+&lt;/p&gt;
+&lt;p&gt;
+This brings up a fundamental question: &lt;strong&gt;Are existing attribution methods truly suitable for interpreting Transformer models?&lt;/strong&gt; 
+&lt;p&gt;A crucial property that any reliable attribution technique should uphold is &lt;strong&gt;conservation&lt;/strong&gt; (also known as &lt;em&gt;completeness&lt;/em&gt;) — the principle that the sum of all attributions should match the difference in the model’s output between the actual input and a chosen baseline (a neutral or uninformative input, used as a reference point to isolate the effect of each input feature, such as a black image in image classification tasks).&lt;/p&gt;
+&lt;/p&gt;
 &lt;h3 id=&#34;why-conservation&#34;&gt;2. Why conservation is crucial to build XAI?&lt;/h3&gt;
 &lt;p&gt;
-&lt;p&gt;Without conservation, explanations can be misleading—either missing important contributions or artificially inflating irrelevant ones. This is particularly important for complex models like Transformers, where certain layers (e.g., attention mechanisms, normalization) can disrupt conservation, leading to unreliable explanations. The paper here does not present how the attributions are computed but focuses on building a propagation of these attributions that is &lt;strong&gt;conservative&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;For example, if a neural network classifies an image as a cat with a confidence score of 0.9, a well-designed attribution method should distribute this score among relevant pixels (e.g., 0.6 for the cat’s face and 0.3 for its body). If the attributions sum to a different value (e.g., 0.7 or 1.1), it means some contributions were lost or artificially added, making the explanation unreliable. Conservation ensures that every contributing input is accounted for properly, leading to meaningful and trustworthy explanations.&lt;/p&gt;
+&lt;p&gt;Without enforcing conservation, attribution-based explanations can become misleading — either by missing important input contributions or by exaggerating the relevance of unimportant ones. This issue is especially critical for complex architectures like Transformers, where components such as attention mechanisms and layer normalization are known to distort the flow of relevance through the network. Rather than proposing a new attribution score, the paper focuses on how to propagate existing attributions through the model in a way that strictly preserves conservation. In other words, the authors study how to ensure that, at each layer of the Transformer, the total relevance is neither lost and not artificially created.&lt;/p&gt;
+&lt;p&gt;A MODIF QUAND J&amp;rsquo;AI LA CONFIRMATION For example, if a neural network classifies an image as a cat with a confidence score of 0.9, a well-designed attribution method should distribute this score among relevant pixels (e.g., 0.6 for the cat’s face and 0.3 for its body). If the attributions sum to a different value (e.g., 0.7 or 1.1), it means some contributions were lost or artificially added, making the explanation unreliable. Conservation ensures that every contributing input is accounted for properly, leading to meaningful and trustworthy explanations.&lt;/p&gt;
 &lt;/p&gt;
 &lt;iframe src=&#34;./illustrations_XAI/blog_sankey.html&#34; width=&#34;100%&#34; height=&#34;500&#34; frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
 &lt;h3 id=&#34;LRP&#34;&gt;3. Layer-wise Relevance Propagation (LRP) method&lt;/h3&gt;
-&lt;p&gt;The Layer-wise Relevance Propagation (LRP) method is designed to ensure proper conservation not only at the global level but also between each pair of layers, by redistributing the output of the model layer after layer until reaching the input layer. This method was previously designed for deep neural networks. The challenge is to extend these techniques to Transformers, whose complexity (e.g. due to attention mechanisms) requires adjustments to ensure reliable explanations while respecting this conservation axiom. But first, let’s have a look at how the default LRP method works. &lt;/p&gt;
+&lt;p&gt;The Layer-wise Relevance Propagation (LRP) method is designed to ensure proper conservation not only at the global level but also between each pair of layers, by redistributing the output of the model layer after layer until reaching the input layer. Originally developed for standard deep neural networks, LRP must be adapted to handle the specific challenges posed by Transformers, such as attention mechanisms. Before addressing these adaptations, let’s first review how the basic version of LRP works.
+ &lt;/p&gt;
 &lt;h4 id=&#34;conservation-breaks&#34;&gt;3.1 How can we detect where the conservation breaks?&lt;/h4&gt;
 &lt;p&gt;
 &lt;p&gt;To ensure proper conservation, we start by setting to 0 all the non-predicted scores, defining $ r^{(L)} $, the vector of relevance scores of the deepest layer $ L $, as a vector with a single non-zero component:&lt;/p&gt;
@@ -4652,9 +4655,9 @@ It has been shown mathematically in the paper that conservation rule breaks in m
 &lt;h3 id=&#34;designed-solutions&#34;&gt;4. Designed solutions&lt;/h3&gt;
 &lt;p&gt;Authors then proposed propagation rules that are conservative by design, taking as a starting point the [formula](chain-rule).&lt;/p&gt;
 &lt;h3 id=&#34;references&#34;&gt;References&lt;/h3&gt;
-&lt;p id=&#34;health1&#34;&gt;[health1] Hörst et al. (2023). CellViT: Vision Transformers for Precise Cell Segmentation and Classification. 
+&lt;p id=&#34;health1&#34;&gt;[1] Hörst et al. (2023). CellViT: Vision Transformers for Precise Cell Segmentation and Classification. 
 Available &lt;a href=&#34;https://arxiv.org/abs/2306.15350&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p id=&#34;health2&#34;&gt;[health2] Boulanger et al. (2024). Using Structured Health Information for Controlled Generation of Clinical Cases in French. 
+&lt;p id=&#34;health2&#34;&gt;[2] Boulanger et al. (2024). Using Structured Health Information for Controlled Generation of Clinical Cases in French. 
 Available &lt;a href=&#34;https://aclanthology.org/2024.clinicalnlp-1.14.pdf&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p id=&#34;cyber1&#34;&gt;[cyber1] Seneviratne et al. (2022). Self-Supervised Vision Transformers for Malware Detection. 
 Available &lt;a href=&#34;https://arxiv.org/abs/2208.07049&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;

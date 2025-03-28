@@ -79,7 +79,7 @@
       </div>
    </div>
    <div class="author-box">
-      <img src="/images/ip-logo.png" alt="Foucauld Estignard">
+      <img src="/images/illustrations_XAI/foucauld.png" alt="Foucauld Estignard">
       <div>
          <a href="https://github.com/FoucauldE">FoucauldE</a><br>
          <span>Foucauld Estignard</span>
@@ -165,7 +165,8 @@ A MODIF QUAND J'AI LA CONFIRMATION For example, if a neural network classifies a
 <iframe src="/illustrations_XAI/blog_sankey.html" width="100%" height="500" frameborder="0"></iframe>
 
 <h3 id="LRP">3. Layer-wise Relevance Propagation (LRP) method</h3>
-<p>The Layer-wise Relevance Propagation (LRP) method is designed to ensure proper conservation not only at the global level but also between each pair of layers, by redistributing the output of the model layer after layer until reaching the input layer. This method was previously designed for deep neural networks. The challenge is to extend these techniques to Transformers, whose complexity (e.g. due to attention mechanisms) requires adjustments to ensure reliable explanations while respecting this conservation axiom. But first, let’s have a look at how the default LRP method works. </p>
+<p>Layer-wise Relevance Propagation (LRP) is a method developed to explain the predictions of neural networks by attributing relevance scores to input features. It works by propagating the model’s output backward through the network, redistributing the prediction layer by layer until the input is reached. One of its main advantages is that it satisfies the conservation principle: the total relevance remains constant at each step of the propagation. Originally developed for standard deep neural networks, LRP must be adapted to handle the specific challenges posed by Transformers, such as attention mechanisms. Before addressing these adaptations, let’s first review how the basic version of LRP works.
+ </p>
 
 <h4 id="conservation-breaks">3.1 How can we detect where the conservation breaks?</h4>
 <p>
