@@ -104,6 +104,10 @@ Sure, here is a new version of your article on XAI for Transformers with a more 
 
 While models relying on Transformers have shown impressive performance, their behavior remains hard to explain, raising questions about their use in sensitive domains like healthcare <a href="#health1">[1]</a>, <a href="#health2">[2]</a>, cybersecurity [cyber1, cyber2], recruitment [recr.] or education [edu]. Understanding their decisions therefore becomes a major challenge, to ensure that they do not discriminate on unwanted features (eg. gender, ethnicity). </p>
 
+<p align="center">
+  <img src="/images/illustrations_XAI/illustration_intro.png" alt="illustration_intro">
+</p>
+
 <!-- TABLE OF CONTENTS -->
 <div class="toc">
    <strong>Table of Contents</strong>
@@ -168,58 +172,80 @@ The diagram below shows how different students contributed to a group blog proje
 <p>Layer-wise Relevance Propagation (LRP) is a method developed to explain the predictions of neural networks by attributing relevance scores to input features. It works by propagating the model’s output backward through the network, redistributing the prediction layer by layer until the input is reached. One of its main advantages is that it satisfies the conservation principle: the total relevance remains constant at each step of the propagation. Originally developed for standard deep neural networks, LRP must be adapted to handle the specific challenges posed by Transformers, such as attention mechanisms. Before addressing these adaptations, let’s first review how the basic version of LRP works.
  </p>
 
-<h4 id="conservation-breaks">3.1 How can we detect where the conservation breaks?</h4>
+<h4 id="conservation-breaks">3.1 Understanding how relevance is propagated and where conservation fails</h4>
 <p>
-
-To ensure proper conservation, we start by setting to 0 all the non-predicted scores, defining $ r^{(L)} $, the vector of relevance scores of the deepest layer $ L $, as a vector with a single non-zero component:
+<p>
+To understand whether a model satisfies conservation, we must analyze how relevance flows through each layer. The process begins by assigning all the output relevance to the predicted class only. Formally, we define the relevance vector at the final layer $L$, denoted $r^{(L)}$, such that:
+</p>
 
 $$
 r_i^{(L)} = 
 \begin{cases}
-F_i(x) & \text{if } i \text{ is the target class}, \\
+F_i(x) & \text{if } i \text{ is the predicted class}, \\\\
 0 & \text{otherwise}
 \end{cases}
 $$
 
-Then, the redistribution is done by following a predefined propagation rule (e.g., LRP-γ, LRP-ε, LRP-0). One possible rule is to use **Gradient × Input (GI)**, which defines attributions as:
+<p>
+From there, the relevance is redistributed backward through the network, following specific propagation rules (e.g., LRP-γ, LRP-ε, or LRP-0). One common example is the <strong>Gradient × Input</strong> method, which attributes relevance based on the gradient of the output with respect to each input, scaled by the input itself:
+</p>
 
 $$
 R(x_i) = x_i \frac{\partial f}{\partial x_i}, \quad R(y_j) = y_j \frac{\partial f}{\partial y_j}
 $$
 
-Using the [chain rule](#chain-rule), we have:
+<p>
+By applying the chain rule, this becomes:
+</p>
 
 $$
 R(x_i) = \sum_{j} y_j \frac{\partial y_j}{\partial x_i} R(y_j)
 $$
 
-By reformulating GI (Gradient*Input) as a relevance propagation method, we can identify where conservation breaks down in the network. Once these weaknesses have been identified, it is possible to develop better rules to ensure a more accurate explanation. The conservation axiom is respected if the sum of the relevance attributed to the inputs is equal to the sum of the relevance attributed to the outputs: 
+<p>
+This formulation allows us to analyze the propagation of relevance and check whether conservation holds at each layer. Specifically, we say that a propagation rule is <strong>locally conservative</strong> if the sum of relevance scores remains constant from one layer to the next:
+</p>
 
 $$
 \sum_i R(x_i) = \sum_j R(y_j)
 $$
 
-If this equality is respected at each layer/component, then GI is **locally conservative**, if the equality is respected at all layers, then GI is **globally conservative**.</p>
+<p>
+If this equality is maintained throughout the entire network — from the output all the way back to the input — then the method is said to be <strong>globally conservative</strong>. When the rule fails to preserve this equality at any layer, we say that conservation breaks, and the explanation becomes less trustworthy.
+</p>
+
 
 <h4 id="apply-transformers">3.2 Apply directly to transformer architectures?</h4>
-<p>For transformers architecture, it appears that two components break the conservation rule and require an improvement in the propagation rule.
+<p>
+When applying relevance propagation to Transformer architectures, the conservation principle is not always preserved. The paper identifies two key components where conservation systematically fails and where standard propagation rules require adaptation: Attention Heads and Layer Normalization.
+</p>
 
-- Propagation in Attention Heads: 
+<!-- Attention Heads -->
+<p><strong>Propagation through Attention Heads:</strong></p>
+
+<p>
+The figure below illustrates a standard attention head, where relevance \( \mathcal{R}(y) \) is propagated backward through the attention mechanism. This includes a bilinear transformation followed by a softmax over the key-query scores. The authors demonstrate that conservation typically breaks in this setting: some attention heads receive too much relevance, while others are undervalued. This leads to distorted explanations that do not faithfully reflect the model’s true internal computations.
+</p>
+
 <p align="center">
-  <img src="/images/ip-logo.png" alt="ip paris logo">
+  <img src="/images/illustrations_XAI/attention_heads.png" alt="Attention head propagation">
 </p>
-It has been shown mathematically in the paper that conservation rule breaks in most cases. This means that some attention heads can be over or under represented in the explanation, which is regrettable. 
 
-- Propagation in LayerNorm:
+<!-- LayerNorm -->
+<p><strong>Propagation through Layer Normalization:</strong></p>
+
+<p>
+In the case of Layer Normalization, the focus is on the centering and scaling operations applied to the inputs. These include subtracting the mean and dividing by the norm of the input — operations that inherently distort the distribution of relevance. The authors show that, regardless of the propagation rule used, conservation is systematically violated when passing through this layer. In other words, relevance is either lost or created during normalization, which undermines the reliability of the explanation.
+</p>
+
 <p align="center">
-  <img src="/images/ip-logo.png" alt="ip paris logo">
+  <img src="/images/illustrations_XAI/layer_norm.png" alt="LayerNorm propagation">
 </p>
 
-Here authors only focused on the centering and standardization parts. They showed that for this component, conservation is never satisfied. 
+<p>
+These findings show that classical LRP rules cannot be directly applied to Transformers without modification. Addressing these structural issues is necessary for building explanation methods that preserve conservation and provide trustworthy insights into model behavior.
 </p>
 
-<img src="/images/ip-logo.png" alt="Attention Head diagram" class="centered">
-<img src="/images/ip-logo.png" alt="LayerNorm diagram" class="centered">
 
 <h3 id="designed-solutions">4. Designed solutions</h3>
 <p>Authors then proposed propagation rules that are conservative by design, taking as a starting point the [formula](chain-rule).</p>
