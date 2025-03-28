@@ -4559,8 +4559,8 @@ geometry. arXiv preprint arXiv:2208.05512.&lt;/p&gt;
 &lt;blockquote&gt;
 Sure, here is a new version of your article on XAI for Transformers with a more adapted tone:
 &lt;/blockquote&gt;
-&lt;p&gt;You’ve probably already seen the previous sentence before, that is typical of recent language models. These models rely on a specific architecture called Transformer, whose usage has been expanded to many domains other than Natural Language Processing (NLP), including computer vision, graphs or audio signal processing. 
-&lt;p&gt;While models relying on Transformers have shown impressive performance, their behavior remains hard to explain, raising questions about their use in sensitive domains like healthcare [health1, health2], cybersecurity [cyber1, cyber2], recruitment [recr.] or education [edu]. Understanding their decisions therefore becomes a major challenge, to ensure that they do not discriminate on unwanted features (eg. gender, ethnicity). &lt;/p&gt;&lt;/p&gt;
+&lt;p&gt;You’ve probably encountered similar sentences before — they are characteristic of recent language models. These models are built on a specific architecture known as the Transformer, which has extended far beyond Natural Language Processing (NLP) to fields like computer vision, graph analysis, and audio signal processing. 
+&lt;p&gt;While models relying on Transformers have shown impressive performance, their behavior remains hard to explain, raising questions about their use in sensitive domains like healthcare &lt;a href=&#34;#health1&#34;&gt;[health1]&lt;/a&gt;, &lt;a href=&#34;#health2&#34;&gt;[health2]&lt;/a&gt;, cybersecurity [cyber1, cyber2], recruitment [recr.] or education [edu]. Understanding their decisions therefore becomes a major challenge, to ensure that they do not discriminate on unwanted features (eg. gender, ethnicity). &lt;/p&gt;&lt;/p&gt;
 &lt;!-- TABLE OF CONTENTS --&gt;
 &lt;div class=&#34;toc&#34;&gt;
    &lt;strong&gt;Table of Contents&lt;/strong&gt;
@@ -4652,25 +4652,15 @@ It has been shown mathematically in the paper that conservation rule breaks in m
 &lt;h3 id=&#34;designed-solutions&#34;&gt;4. Designed solutions&lt;/h3&gt;
 &lt;p&gt;Authors then proposed propagation rules that are conservative by design, taking as a starting point the [formula](chain-rule).&lt;/p&gt;
 &lt;h3 id=&#34;references&#34;&gt;References&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;[health1] Hörst et al. (2023). CellViT: Vision Transformers for Precise Cell Segmentation and Classification. arXiv preprint arXiv:2306.15350. Available &lt;a href=&#34;https://arxiv.org/abs/2306.15350&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;[health2] Boulanger et al. (2024). Using Structured Health Information for Controlled Generation of Clinical Cases in French. Proceedings of ClinicalNLP Workshop 2024. Available &lt;a href=&#34;https://aclanthology.org/2024.clinicalnlp-1.14.pdf&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;[cyber1] Seneviratne et al. (2022). Self-Supervised Vision Transformers for Malware Detection. arXiv preprint arXiv:2208.07049. Available &lt;a href=&#34;https://arxiv.org/abs/2208.07049&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;[cyber2] Omar and Shiaeles. (2024). VulDetect: A Novel Technique for Detecting Software Vulnerabilities Using Language Models. IEEE Access. Available &lt;a href=&#34;https://pure.port.ac.uk/ws/portalfiles/portal/80445773/VulDetect_A_novel_technique_for_detecting_software_vulnerabilities_using_Language_Models.pdf&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;[recr.] Aleisa, Monirah Ali; Beloff, Natalia; White, Martin (2023). EImplementing
-AIRM: A new AI recruiting model for the Saudi Arabia labour market, Journal of Innovation and Entrepreneursh&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;
+&lt;p id=&#34;health1&#34;&gt;[health1] Hörst et al. (2023). CellViT: Vision Transformers for Precise Cell Segmentation and Classification. 
+Available &lt;a href=&#34;https://arxiv.org/abs/2306.15350&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p id=&#34;health2&#34;&gt;[health2] Boulanger et al. (2024). Using Structured Health Information for Controlled Generation of Clinical Cases in French. 
+Available &lt;a href=&#34;https://aclanthology.org/2024.clinicalnlp-1.14.pdf&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p id=&#34;cyber1&#34;&gt;[cyber1] Seneviratne et al. (2022). Self-Supervised Vision Transformers for Malware Detection. 
+Available &lt;a href=&#34;https://arxiv.org/abs/2208.07049&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p id=&#34;cyber2&#34;&gt;[cyber2] Omar and Shiaeles. (2024). VulDetect: A Novel Technique for Detecting Software Vulnerabilities Using Language Models. 
+Available &lt;a href=&#34;https://pure.port.ac.uk/ws/portalfiles/portal/80445773/VulDetect_A_novel_technique_for_detecting_software_vulnerabilities_using_Language_Models.pdf&#34;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p id=&#34;recr&#34;&gt;[recr.] Aleisa, Monirah Ali; Beloff, Natalia; White, Martin (2023). Implementing AIRM: A new AI recruiting model for the Saudi Arabia labour market, Journal of Innovation and Entrepreneurship.&lt;/p&gt;
 &lt;script type=&#34;text/x-mathjax-config&#34;&gt;
    MathJax.Hub.Config({
        tex2jax: {

@@ -100,9 +100,9 @@
 Sure, here is a new version of your article on XAI for Transformers with a more adapted tone:
 </blockquote>
 
-<p>You’ve probably already seen the previous sentence before, that is typical of recent language models. These models rely on a specific architecture called Transformer, whose usage has been expanded to many domains other than Natural Language Processing (NLP), including computer vision, graphs or audio signal processing. 
+<p>You’ve probably encountered similar sentences before — they are characteristic of recent language models. These models are built on a specific architecture known as the Transformer, which has extended far beyond Natural Language Processing (NLP) to fields like computer vision, graph analysis, and audio signal processing. 
 
-While models relying on Transformers have shown impressive performance, their behavior remains hard to explain, raising questions about their use in sensitive domains like healthcare [health1, health2], cybersecurity [cyber1, cyber2], recruitment [recr.] or education [edu]. Understanding their decisions therefore becomes a major challenge, to ensure that they do not discriminate on unwanted features (eg. gender, ethnicity). </p>
+While models relying on Transformers have shown impressive performance, their behavior remains hard to explain, raising questions about their use in sensitive domains like healthcare <a href="#health1">[1]</a>, <a href="#health2">[2]</a>, cybersecurity [cyber1, cyber2], recruitment [recr.] or education [edu]. Understanding their decisions therefore becomes a major challenge, to ensure that they do not discriminate on unwanted features (eg. gender, ethnicity). </p>
 
 <!-- TABLE OF CONTENTS -->
 <div class="toc">
@@ -123,30 +123,34 @@ While models relying on Transformers have shown impressive performance, their be
 <!-- ARTICLE CONTINUES AS-IS -->
 
 <h3 id="attribution-methods">1. Attribution methods: how to identify important features?</h3>
-<p> 
+<p>
+In order to make deep learning models more interpretable, especially in critical applications, it is crucial to understand which input features contribute the most to a model’s prediction. This has given rise to a class of techniques known as <strong>attribution methods</strong>, whose goal is to assign relevance scores to input features based on their influence on the model’s output.
+</p>
 
-Suppose we have a function $ F: \mathbb{R}^n \rightarrow [0, 1] $ that represents a deep network, and an input $ x = (x_1, \dots, x_n) \in \mathbb{R}^n $.
+<p>
+Formally, consider a function $F: \mathbb{R}^n \rightarrow [0, 1]$ representing a deep network, and an input $x = (x_1, \dots, x_n) \in \mathbb{R}^n$. An <strong>attribution</strong> of the prediction at input $x$ relative to a baseline input $x'$ is a vector: 
+$A_F(x, x') = (a_1, \dots, a_n) \in \mathbb{R}^n$,
+where each $a_i$ represents the contribution of feature $x_i$ to the prediction $F(x)$.
+</p>
 
-An **attribution** of the prediction at input $ x $ relative to a baseline input $ x' $ is a vector:
+<p>
+Numerous attribution techniques have been proposed, each relying on different strategies to assess feature importance. As defined in <a href="#integrated-gradients">Integrated Gradients</a>, these methods generally fall into three categories:
+</p>
 
-$
-A_F(x, x') = (a_1, \dots, a_n) \in \mathbb{R}^n
-$
+<ul>
+  <li><strong>Gradient-based methods</strong>: estimate importance using local gradients (e.g., <a href="#gradient-input">Gradient × Input</a>).</li>
+  <li><strong>Perturbation-based methods</strong>: assess how the prediction changes when individual input features are modified (e.g., <a href="#shapley-values">SHAP</a>).</li>
+  <li><strong>Attention-based methods</strong>: use attention weights to trace how information flows through the model (e.g., <em>Attention Rollout</em>).</li>
+</ul>
 
-where $ a_i $ is the contribution of $ x_i $ to the prediction $ F(x) $.
+<p>
+While attention-based techniques may appear particularly suitable for Transformers, research has shown that attention weights are not always reliable indicators of feature importance <a href="#att1">[att1]</a>, <a href="#att2">[att2]</a>. As a result, gradient-based techniques remain among the most widely used approaches, largely due to their computational efficiency compared to perturbation-based techniques. Yet, it's worth noting that these methods were originally designed for simpler architectures, and may not be fully adequate when applied to Transformers.
+</p>
 
-Many work has been done to develop **attribution techniques**, i.e., methods designed to identify the input features responsible for a given prediction. As defined in [Integrated Gradients](#integrated-gradients), there exist several types of attribution methods exist:
+<p>
+This raises a critical question: are current attribution methods still appropriate for explaining Transformer models? One key property that any robust attribution technique should satisfy is <strong>conservation</strong> (also referred to as <em>completeness</em>) — the idea that the sum of attributions should equal the change in model output relative to a baseline input (e.g., a black image in vision tasks).
+</p>
 
-- **Gradient-based** methods: e.g. locally evaluate the gradient of \(F\) at the input point \(x\) ([Gradient × Input](#gradient-input)).
-
-- **Perturbation-based** methods: comparing the variation of the prediction when altering the input ([SHAP](#shapley-values)).
-
-- **Attention-based** methods: propagating the attention coefficients from shallow layers to deeper layers, for instance, by performing a simple multiplication (also known as **Attention Rollout**).
-
-
-While the latter technique could seem to be the most adapted for Transformers, research has highlighted that attention was not necessarily source of interpretability ([att1](#att1)), ([att2](#att2)), leading to the importance still given to gradient-based methods for interpretations, avoiding the high computational cost of perturbation-based ones. However, since these gradient-based techniques had not been designed for Transformers, are these methods still adapted for this architecture? 
-
-In particular, one desirable property for an attribution method is its conservation (or completeness), meaning that the sum of the attributions at x must equal the difference between F(x) and F(x’), x’ being the selected baseline input (eg. a completely black image in the case of image classification). <p>
 
 <h3 id="why-conservation">2. Why conservation is crucial to build XAI?</h3>
 <p>
@@ -219,17 +223,20 @@ Here authors only focused on the centering and standardization parts. They showe
 
 <h3 id="references">References</h3>
 
-1. [health1] Hörst et al. (2023). CellViT: Vision Transformers for Precise Cell Segmentation and Classification. arXiv preprint arXiv:2306.15350. Available <a href="https://arxiv.org/abs/2306.15350"><strong>here</strong></a>.</p>
+<p id="health1">[1] Hörst et al. (2023). CellViT: Vision Transformers for Precise Cell Segmentation and Classification. 
+Available <a href="https://arxiv.org/abs/2306.15350"><strong>here</strong></a>.</p>
 
-2. [health2] Boulanger et al. (2024). Using Structured Health Information for Controlled Generation of Clinical Cases in French. Proceedings of ClinicalNLP Workshop 2024. Available <a href="https://aclanthology.org/2024.clinicalnlp-1.14.pdf"><strong>here</strong></a>.</p>
+<p id="health2">[2] Boulanger et al. (2024). Using Structured Health Information for Controlled Generation of Clinical Cases in French. 
+Available <a href="https://aclanthology.org/2024.clinicalnlp-1.14.pdf"><strong>here</strong></a>.</p>
 
-3. [cyber1] Seneviratne et al. (2022). Self-Supervised Vision Transformers for Malware Detection. arXiv preprint arXiv:2208.07049. Available <a href="https://arxiv.org/abs/2208.07049"><strong>here</strong></a>.</p>
+<p id="cyber1">[cyber1] Seneviratne et al. (2022). Self-Supervised Vision Transformers for Malware Detection. 
+Available <a href="https://arxiv.org/abs/2208.07049"><strong>here</strong></a>.</p>
 
-4. [cyber2] Omar and Shiaeles. (2024). VulDetect: A Novel Technique for Detecting Software Vulnerabilities Using Language Models. IEEE Access. Available <a href="https://pure.port.ac.uk/ws/portalfiles/portal/80445773/VulDetect_A_novel_technique_for_detecting_software_vulnerabilities_using_Language_Models.pdf"><strong>here</strong></a>.</p>
+<p id="cyber2">[cyber2] Omar and Shiaeles. (2024). VulDetect: A Novel Technique for Detecting Software Vulnerabilities Using Language Models. 
+Available <a href="https://pure.port.ac.uk/ws/portalfiles/portal/80445773/VulDetect_A_novel_technique_for_detecting_software_vulnerabilities_using_Language_Models.pdf"><strong>here</strong></a>.</p>
 
-5. [recr.] Aleisa, Monirah Ali; Beloff, Natalia; White, Martin (2023). EImplementing
-AIRM: A new AI recruiting model for the Saudi Arabia labour market, Journal of Innovation and Entrepreneursh
-<p>
+<p id="recr">[recr.] Aleisa, Monirah Ali; Beloff, Natalia; White, Martin (2023). Implementing AIRM: A new AI recruiting model for the Saudi Arabia labour market, Journal of Innovation and Entrepreneurship.</p>
+
 
 
 <script type="text/x-mathjax-config">
