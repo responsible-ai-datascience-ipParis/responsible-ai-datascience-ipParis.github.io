@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Liste - http://localhost:1313/">
+    <title>Neural Networks Forget to Forget: Fixing the Memory Problem With Tensor Decomposition | Bloggin on Responsible AI</title>
+    <meta name="description" content="Bloggin on Responsible AI">
+    <meta property="og:url" content="http://localhost:1313/posts/activation_compression/">
+  <meta property="og:site_name" content="Bloggin on Responsible AI">
+  <meta property="og:title" content="Neural Networks Forget to Forget: Fixing the Memory Problem With Tensor Decomposition">
+  <meta property="og:description" content="Based on the paper “Activation Map Compression through Tensor Decomposition for Deep Learning” by Nguyen et al.
+Authors: Akshita KUMARI, Florent BLANC Date: 27 March 2025 Have you ever wondered why you still distinctly remember the first time someone made fun of you at school or the birthday gift your parents gave you 15 to 20 years ago? The human brain is capable of storing countless pieces of information and memories in an intricate web of about 86 billion neurons, each consisting of thousands of connections! If it’s difficult to grasp the magnitude of that number, consider this: if we tried to unwrap and lay out all that information, it would require about 2.5 petabytes of memory! Yet, somehow, all of it fits neatly inside our heads, in a space smaller than a watermelon!">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-03-27T21:10:41+01:00">
+    <meta property="article:modified_time" content="2025-03-27T21:10:41+01:00">
+
+    
+  <meta itemprop="name" content="Neural Networks Forget to Forget: Fixing the Memory Problem With Tensor Decomposition">
+  <meta itemprop="description" content="Based on the paper “Activation Map Compression through Tensor Decomposition for Deep Learning” by Nguyen et al.
+Authors: Akshita KUMARI, Florent BLANC Date: 27 March 2025 Have you ever wondered why you still distinctly remember the first time someone made fun of you at school or the birthday gift your parents gave you 15 to 20 years ago? The human brain is capable of storing countless pieces of information and memories in an intricate web of about 86 billion neurons, each consisting of thousands of connections! If it’s difficult to grasp the magnitude of that number, consider this: if we tried to unwrap and lay out all that information, it would require about 2.5 petabytes of memory! Yet, somehow, all of it fits neatly inside our heads, in a space smaller than a watermelon!">
+  <meta itemprop="datePublished" content="2025-03-27T21:10:41+01:00">
+  <meta itemprop="dateModified" content="2025-03-27T21:10:41+01:00">
+  <meta itemprop="wordCount" content="3739">
+    
+    <link rel="canonical" href="http://localhost:1313/posts/activation_compression/">
+    <link rel="icon" href="http://localhost:1313//assets/favicon.ico">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
+    <link rel="alternate" type="application/atom+xml" title="Bloggin on Responsible AI" href="http://localhost:1313//atom.xml" />
+    <link rel="alternate" type="application/json" title="Bloggin on Responsible AI" href="http://localhost:1313//feed.json" />
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=">
+    
+    
+    <style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%} </style>
+  
+    
+  
+  
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "BlogPosting",
+      "articleSection": "posts",
+      "name": "Neural Networks Forget to Forget: Fixing the Memory Problem With Tensor Decomposition",
+      "headline": "Neural Networks Forget to Forget: Fixing the Memory Problem With Tensor Decomposition",
+      "alternativeHeadline": "",
+      "description": "\u003cstyle\u003e\r\ncode.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}\r\n\u003c\/style\u003e\r\n\u003cscript type=\u0022text\/x-mathjax-config\u0022\u003e\r\nMathJax.Hub.Config({\r\n    tex2jax: {\r\n        inlineMath: [[\u0027$\u0027,\u0027$\u0027], [\u0027\\\\(\u0027,\u0027\\\\)\u0027]],\r\n        skipTags: [\u0027script\u0027, \u0027noscript\u0027, \u0027style\u0027, \u0027textarea\u0027, \u0027pre\u0027]\r\n    }\r\n});\r\nMathJax.Hub.Queue(function() {\r\n    var all = MathJax.Hub.getAllJax(), i;\r\n    for(i = 0; i \u003c all.length; i \u002b= 1) {\r\n        all[i].SourceElement().parentNode.className \u002b= \u0027 has-jax\u0027;\r\n    }\r\n});\r\n\u003c\/script\u003e\r\n\u003cscript type=\u0022text\/javascript\u0022 src=\u0022https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/mathjax\/2.7.4\/MathJax.js?config=TeX-AMS_HTML-full\u0022\u003e\u003c\/script\u003e\r\n\u003cp\u003e\u003cem\u003eBased on the paper “\u003ca href=\u0022https:\/\/arxiv.org\/abs\/2411.06346\u0022\u003eActivation Map Compression through Tensor Decomposition for Deep Learning\u003c\/a\u003e” by Nguyen et al.\u003c\/em\u003e\u003c\/p\u003e\n\u003ch4 id=\u0022authors-akshita-kumari-florent-blanc\u0022\u003eAuthors: Akshita KUMARI, Florent BLANC\u003c\/h4\u003e\n\u003ch2 id=\u0022date-27-march-2025\u0022\u003e\u003cstrong\u003eDate:\u003c\/strong\u003e 27 March 2025\u003c\/h2\u003e\n\u003cp\u003eHave you ever wondered why you still distinctly remember the first time someone made fun of you at school or the birthday gift your parents gave you 15 to 20 years ago? The human brain is capable of storing countless pieces of information and memories in an intricate web of about 86 billion neurons, each consisting of thousands of connections! If it\u0026rsquo;s difficult to grasp the magnitude of that number, consider this: if we tried to unwrap and lay out all that information, it would require about 2.5 petabytes of memory! Yet, somehow, all of it fits neatly inside our heads, in a space smaller than a watermelon!\u003c\/p\u003e",
+      "inLanguage": "en-us",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http:\/\/localhost:1313\/posts\/activation_compression\/"
+      },
+      "author" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "creator" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "accountablePerson" : {
+          "@type": "Person",
+          "name": ""
+      },
+      "copyrightHolder" : "Bloggin on Responsible AI",
+      "copyrightYear" : "2025",
+      "dateCreated": "2025-03-27T21:10:41.00Z",
+      "datePublished": "2025-03-27T21:10:41.00Z",
+      "dateModified": "2025-03-27T21:10:41.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "Bloggin on Responsible AI",
+          "url": "http://localhost:1313/",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http:\/\/localhost:1313\/assets\/favicon.ico",
+              "width":"32",
+              "height":"32"
+          }
+      },
+      "image": "http://localhost:1313/assets/favicon.ico",
+      "url" : "http:\/\/localhost:1313\/posts\/activation_compression\/",
+      "wordCount" : "3739",
+      "genre" : [ ],
+      "keywords" : [ ]
+  }
+  </script>
+  
+  
+  </head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+  <main id="main">
+  <div class="content">
+    <header>
+<p style="padding: 0;margin: 0;">
+  <a href="../../">
+    <b>Bloggin on Responsible AI</b>
+    <span class="text-stone-500 animate-blink">▮</span>
+  </a>
+</p>
+<ul style="padding: 0;margin: 0;">
+  
+  
+  <li class="">
+    <a href="../../posts/"><span>Post</span></a>
+    
+  <li class="">
+    <a href="../../tutorial/"><span>Tutorial</span></a>
+    
+  <li class="">
+    <a href="../../about/"><span>About</span></a>
+    
+  <li class="">
+    <a href="../../articles/"><span>Articles</span></a>
+    
+  </li>
+</ul>
+</header>
+<hr class="hr-list" style="padding: 0;margin: 0;">
+    <section>
+      <h2 class="post">Neural Networks Forget to Forget: Fixing the Memory Problem With Tensor Decomposition</h2>
+      <style>
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script>
+<p><em>Based on the paper “<a href="https://arxiv.org/abs/2411.06346">Activation Map Compression through Tensor Decomposition for Deep Learning</a>” by Nguyen et al.</em></p>
+<h4 id="authors-akshita-kumari-florent-blanc">Authors: Akshita KUMARI, Florent BLANC</h4>
+<h2 id="date-27-march-2025"><strong>Date:</strong> 27 March 2025</h2>
+<p>Have you ever wondered why you still distinctly remember the first time someone made fun of you at school or the birthday gift your parents gave you 15 to 20 years ago? The human brain is capable of storing countless pieces of information and memories in an intricate web of about 86 billion neurons, each consisting of thousands of connections! If it&rsquo;s difficult to grasp the magnitude of that number, consider this: if we tried to unwrap and lay out all that information, it would require about 2.5 petabytes of memory! Yet, somehow, all of it fits neatly inside our heads, in a space smaller than a watermelon!</p>
+<p>Now, imagine if our brains tried to save space the way Mr. Bean packs his suitcase—randomly tossing out items, keeping only one shoe, or draining half the toothpaste into the sink. In that case, you might end up remembering your best friend’s birthday but confusing it with a dramatic event from Elon Musk’s life that was all over the news two months ago. Clearly, our brains have mastered compression in a way that doesn’t compromise accuracy (or mix up childhood nostalgia with internet chaos).</p>
+<iframe width="560" height="315" 
+ src="https://www.youtube.com/embed/bEJ8V_Cnx6I?start=20&end=64" 
+ frameborder="0" allowfullscreen>
+</iframe>
+<p>Deep learning models, in many ways, attempt to emulate this incredible ability of the human brain by mimicking the complex web of connections to enable the sharing of information. Neural networks have revolutionized everything from image recognition to natural language processing by learning complex data patterns. However, one challenge they have conventionally faced is storing all this information in a limited space—they require an enormous amount of memory and computational power. Training deep networks can take terabytes of storage, and running them efficiently demands specialized hardware.</p>
+<p>Neural networks consist primarily of two backbones: network weights and neuron activations, which are sufficient to define and distinguish between a simple network making a random guess about whether I am likely to be involved in money laundering and one that carefully considers years of my financial records to decide whether I am a safe candidate for a bank loan. While the size of weight matrices might seem daunting for deep neural networks, the major bottleneck in terms of memory size is actually the storage of activations, which, as per backpropagation <a href="#eq2">Equation (2)</a>, is required for weight updates. If you&rsquo;re a first-time reader, you might be wondering: why not just eliminate these non-linear activation functions and try to make the weights and architecture universal enough to model every imaginable scenario? To answer this, picture yourself driving on a winding mountain road filled with sharp turns and steep inclines. If you were to drive in a straight line, no matter how beautiful the scenery is, you’d quickly find yourself off the road and tumbling down into the valley. Since life doesn&rsquo;t give you a chance to backpropagate to correct your mistakes, perhaps in your next life, you might learn to navigate the terrain better! Similarly, a network devoid of activation functions is no more capable of surviving the complexities of real-world data than a simplistic linear logistic regression model, no matter how deep the architecture is.</p>
+<p>Now, if you were to try to fit this dreadfully large memory-requiring activation map into a microcontroller, you would be no different from Mr. Bean frantically trying to pack his suitcase. The indispensability and large memory requirements of these nonlinear activations have paved the way for research into compressing activation maps when computational resources are limited. Just like our brains optimize memory storage without losing vital details, researchers are exploring ways to shrink deep learning models without making them as absurdly dysfunctional as cutting a pair of trousers into shorts. In this post, we’ll dive into activation map compression through tensor decomposition, a method (Nguyen et al., \url{https://arxiv.org/abs/2411.06346}) that enables deep networks to fit into small devices while maintaining their performance. We&rsquo;ll start by gradually explaining all concepts required to understand the idea, building up from the motivation and proceeding into the technical details. Let’s unpack this and explore how deep learning is learning to travel light!</p>
+<h2 id="1-memory-bottleneck-in-backpropagation">1/ Memory Bottleneck in Backpropagation</h2>
+<p>Training a deep neural network is a bit like learning to drive. You don&rsquo;t just memorize how to turn the steering wheel — you constantly adjust based on feedback. If you overshoot a turn, your brain registers the mistake, corrects your hand movements, and hopefully, you don’t end up in a ditch. In deep learning, this feedback loop is called backpropagation, a process where the network tweaks its internal parameters to minimize errors over time. In this section, we explore in a bit more detail, the reason behind the huge increase in memory requirements when performing this parameter correction.</p>
+<p>The primary idea behind backpropagation is simple — use the <strong>chain rule</strong> for updating model parameters.<br>
+In Convolutional Neural Networks (CNNs), each layer takes in an activation tensor $A_i$, applies a linear transformation followed by the non-linear activation function, and finally produces an output activation $A_{i+1}$.</p>
+<p>During training, backpropagation employs convolution operations to compute the gradients, which determine how much each weight $W_i$ and activation $A_i$ contributes to the final loss. Mathematically, we can express it as:</p>
+<p><a id="eq1"></a></p>
+<p>$$
+\frac{\partial \mathcal{L}}{\partial W_i} =
+\frac{\partial \mathcal{L}}{\partial A_{i+1}} \cdot
+\frac{\partial A_{i+1}}{\partial W_i} =
+\text{conv} \left( A_i,\ \frac{\partial \mathcal{L}}{\partial A_{i+1}} \right)
+\tag{1}
+$$</p>
+<p><a id="eq2"></a></p>
+<div>
+$$
+\frac{\partial \mathcal{L}}{\partial A_i} = 
+\frac{\partial \mathcal{L}}{\partial A_{i+1}} \cdot 
+\frac{\partial A_{i+1}}{\partial A_i} = 
+\text{conv}_{\text{full}} \left( 
+\frac{\partial \mathcal{L}}{\partial A_{i+1}},\ \text{rot}(W_i) 
+\right)
+\tag{2}
+$$
+</div>
+<p>where $ \mathcal{L} $ represents the loss function, and $ \text{conv}(\cdot) $ and $ \text{conv}_{\text{full}}(\cdot) $ are convolution operations.</p>
+<figure style="text-align: center;">
+  <img src="../../images/backprop2.jpg" alt="Backpropagation" style="width:80%;">
+  <figcaption><em>Figure 1:</em> Illustration of backpropagation — activations and gradients must be stored at every layer.</figcaption>
+</figure>
+<p>We make an important observation from these formulas: to update a weight, we need both the original activation and the gradient of the next layer, which means that we must store all these tensors - the primary difference between backpropagation and inference. And that is exactly where things get messy, leading to a memory crunch during backpropagation.</p>
+<p>Now, let’s think about this in a different light. Imagine you’re a movie director. Instead of keeping only the final version of each scene, you save every take, every angle, and every tiny adjustment in full resolution. Your hard drive fills up within hours! This is similar to what happens with deep neural networks—they store all activations for potential gradient calculations, even though not all of them are equally important. And not surprisingly, activations are high-dimensional tensors, meaning they can grow in size ridiculously fast. A single activation map has dimensions $ B \times C \times H \times W $ (batch size × channels × height × width). If a network has dozens of layers, storing all these activations at once quickly overflows memory, especially on small, low-power devices like smartphones or IoT sensors. This is why deep networks are often trained in the cloud — but sending data to external servers brings its own headaches, like privacy risks and latency issues.<br>
+So, what is a good way to fix this digital hoarding problem and pack our network efficiently into a small storage space? There are two main strategies:</p>
+<ol>
+<li>
+<p><strong>Weight compression</strong> – Reducing the size of the model itself.</p>
+</li>
+<li>
+<p><strong>Activation compression</strong> – Cutting down the size or the number of activations stored during training.</p>
+</li>
+</ol>
+<figure style="text-align: center;">
+  <img src="../../images/backprop.png" alt="Backpropagation" style="width:80%;">
+  <figcaption><em>Figure 2:</em> Flow of Forward and Backward Pass Using Compression Techniques.</figcaption>
+</figure>
+<p>While there have been several exciting efforts towards reducing the space occupied by the network weights - sparsification (dropping a fraction of less significant weights), quantization (reducing parameter precision to save memory), knowledge distillation (using pretrained large networks as &ldquo;teachers&rdquo; that guide the training of smaller and more compact &ldquo;student&rdquo; networks) etc, the authors of this paper focus on the second approach, and the following sections will allow you to discover the intricacies of how exactly they do so.</p>
+<h2 id="2-tensor-decomposition">2/ Tensor Decomposition</h2>
+<p>Among different compression techniques, tensor decomposition is emerging as a promising solution. It reduces large activation maps to smaller and structured representations, by storing only the most informative parts of the map while discarding redundant or uninformative components. This is based on a mathematical concept called low-rank approximation, which was originally developed for signal processing but is now making waves in deep learning.</p>
+<h3 id="21-breaking-down-a-matrix-the-svd-trick">2.1/ Breaking Down a Matrix: the SVD trick</h3>
+<p>Let&rsquo;s first look at the (second) simplest version of a tensor - a 2D matrix. The technique called Singular Value Decomposition (SVD) breaks down a matrix $A$ into three parts:</p>
+<div>$$
+A = U \Sigma V^T
+$$</div>
+where $ U $ and $ V^T $ are orthogonal matrices, and $ \Sigma $ is a diagonal matrix of singular values. $ \Sigma $ then represents the importance of each component of A. 
+ The trick here is that not all singular values are equally important. Many of them contribute little to the overall structure, so we can safely ignore them without losing much information. So, we retain only the top $K$ singular values and the corresponding columns from $U$ and $V$.
+<p>Now, before you get too excited about SVD, take a step back! SVD works only for 2D matrices! And activation maps in CNNs are in fact 4D tensors (batch size × channels × height × width), i.e $A \in \mathbb{R}^{B \times C \times H \times W}$.</p>
+<p>To apply SVD, we first have to reshape our activation tensor into a 2D matrix: $A \in \mathbb{R}^{B \times (CHW)}$. Then, we obtain:</p>
+<div>$$
+A = U \Sigma V^T
+$$</div>
+with:
+<div>$$
+U \in \mathbb{R}^{B \times B}, \quad \Sigma \in \mathbb{R}^{B \times (CHW)}, \quad V^T \in \mathbb{R}^{(CHW) \times (CHW)}
+$$</div>
+<p>Truncating each decomposed component to only the top $ K $ values, we obtain a low-rank approximation of $ A $:</p>
+<div>$$
+\tilde{A} = U_K \Sigma_K V_K^T
+$$</div>
+where $ U_K $ and $ V_K $ retain only the first $ K $ columns and $ \Sigma_K $ retains the top $ K $ singular values.
+\vspace{0.2cm}
+<p>Did you realise what just happened? We significantly reduced the amount of storage space required, from $\mathcal{O}(BCHW) \text{ to } \mathcal{O}(K(B + CHW))$.</p>
+<p>Well, this is a bit like stuffing a big fat McD burger into a small tiffin box. It surely allows you to savour your favorite meal wherever you want, but ends up mixing the sauces and popping out veggies.<br>
+Similarly, in CNNs, this reshaping operation destroys spatial patterns and mixes information from different dimensions, leading to inefficiency.</p>
+<h3 id="22-towards-hosvd-the-higher-dimensional-packing-strategy">2.2/ Towards HOSVD: The Higher-Dimensional Packing Strategy</h3>
+<p>To avoid this, we turn to Higher-Order Singular Value Decomposition (HOSVD)—the tensor-ified sister of SVD, that works directly on multi-dimensional tensors without flattening them. Instead of trying to squish everything into a single matrix, HOSVD compresses each dimension separately, maintaining important spatial relationships.</p>
+<p>Given an activation tensor $ T $ of shape $ M_1 \times M_2 \times \cdots \times M_n $, HOSVD decomposes it as follows:</p>
+<div>$$
+T \approx S \times_1 U^{(1)} \times_2 U^{(2)} \times_3 \dots \times_n U^{(n)}
+$$</div>
+where:
+<ul>
+<li>$ S $ is the core tensor, which represents a compressed version of $ T $,</li>
+<li>$ U^{(j)} $ are orthogonal factor matrices that capture the most significant variations along each dimension $ j $,</li>
+<li>$ \times_j $ denotes the mode-$ j $ product, which multiplies the tensor $ S $ by the factor matrix $ U^{(j)} $ along the $ j $th individual dimension instead of treating the tensor as a giant matrix.
+Since different dimensions (batch, channels, height, width) carry different types of information, HOSVD allows us to compress each dimension optimally.</li>
+</ul>
+<p>We truncate both the core tensor S and the factor matrices along each mode to retain only the most significant components:</p>
+<div>$$
+\tilde{T} = \hat{S} \times_1 U^{(1)}_{(K_1)} \times_2 \cdots \times_n U^{(n)}_{(K_n)} \approx T
+$$</div>
+where:
+- $ U^{(j)}_{(K_j)} \in \mathbb{R}^{M_j \times K_j} $ represents the first $ K_j $ columns of the factor matrix $ U^{(j)} $,
+- $ \hat{S} \in \mathbb{R}^{K_1 \times K_2 \times \dots \times K_n} $ is the truncated version of the core tensor $ S $.
+<p>In practice, we limit ourselves to the 4-mode decomposition (i.e $n=4$). This approach helps achieve higher compression, reducing the memory requirement while preserving the network’s ability to learn effectively, implying that deep learning models can run with less memory without becoming as dysfunctional as a half-packed Mr. Bean suitcase!</p>
+<video controls style="display: block; margin: auto; width: 80%;">
+  <source src="../../images/animation.mp4" type="video/mp4">
+</video>
+<h3 id="23-unpacking-the-math-how-backpropagation-works-with-tensor-decomposition">2.3/ Unpacking the Math: How Backpropagation Works with Tensor Decomposition</h3>
+<p>Now that we&rsquo;ve seen how tensor decomposition helps reduce memory usage, let us now address the secrets of how this dreadful-looking $i$-mode product can be backpropagated. Equations 1 and 2 show that the activation tensors appear only in the computation of gradient with respect to the weights.
+To express it in a single line, the gradient of the loss function with respect to weight matrix $W_i$ can be written as:</p>
+<div>$$
+\frac{\partial \mathcal{L}}{\partial \mathcal{W}_i} = \operatorname{conv}_{1\times1} \left\{ \operatorname{conv}_* \left[ \operatorname{conv}_{1\times1} \left( \operatorname{conv}_{1\times1} \left( \hat{S}, U^{(3)}_{(K_3)} \right), U^{(4)}_{(K_4)} \right), \operatorname{conv}_{1\times1} \left( \frac{\partial \mathcal{L}}{\partial \mathcal{A}_{i+1}}, U^{(1)}_{(K_1)} \right) \right], U^{(2)}_{(K_2)} \right\}
+$$</div>
+where $ \operatorname{conv}_* $ is a 2D convolution, and $ \operatorname{conv}_{1\times1} $ represents efficient 1x1 convolutions.
+<p>If you&rsquo;re feeling brave enough to dive into the depths of how this formula is derived, buckle up for some gradient magic and expand the following section. But if you&rsquo;re just here for the big picture and don’t want to dream of summations and convolutions tonight, feel free to continue to the next section!</p>
+<h4 id="step-1-the-usual-backprop-formula">Step 1: The Usual Backprop Formula</h4>
+<details onclick="MathJax.Hub.Queue(['Typeset', MathJax.Hub, this])">
+  <summary>Click to see the math of this step!</summary>
+<p>The standard weight update rule for a convolutional layer requires computing the gradient of the loss with respect to the weights:</p>
+  <div>$$
+  \Delta \mathcal{W}_{c', c, k, l} = \sum_{b=1}^{B} \sum_{h' = 1}^{H'} \sum_{w' = 1}^{W'} \mathcal{I}_{b, c_g, h, w} \Delta \mathcal{Y}_{b, c', h', w'}
+  $$</div>
+<p>where $ \mathcal{I} $ is the padded input and $ \Delta \mathcal{Y} $ is the gradient of the output.</p>
+</details>
+<h4 id="step-2-tensor-decomposition--breaking-it-down">Step 2: Tensor Decomposition – Breaking It Down</h4>
+<details onclick="MathJax.Hub.Queue(['Typeset', MathJax.Hub, this])">
+  <summary>Click to see the math of this step!</summary>
+  The following equation looks daunting, but it is nothing more than the matrix product expression of what \ref{eq:4}) refers to! 
+  <div>$$
+  \tilde{\mathcal{I}}_{b, c_g, h, w} = \sum_{k_1=1}^{K_1} \sum_{k_2=1}^{K_2} \sum_{k_3=1}^{K_3} \sum_{k_4=1}^{K_4} \hat{S}_{k_1, k_2, k_3, k_4} U^{(1)}_{(K_1), b, k_1} U^{(2)}_{(K_2), c_g, k_2} U^{(3)}_{(K_3), h, k_3} U^{(4)}_{(K_4), w, k_4}
+  $$</div>
+<p>This means that instead of storing $ \mathcal{I} $ directly, we store its compressed components $ U^{(j)} $ and $ \hat{S} $.</p>
+</details>
+<h4 id="step-3-restoring-the-input-in-backward-pass">Step 3: Restoring the Input in Backward Pass</h4>
+<details onclick="MathJax.Hub.Queue(['Typeset', MathJax.Hub, this])">
+  <summary>Click to see the math of this step!</summary>
+  Coming to the part of the algorithm that allows the network to go back and corrrect it mistakes, we now put together the decomposed components to reconstruct the input:
+  <div>$$
+  \tilde{\mathcal{I}}_{b, c_g, h, w} = \sum_{k_1=1}^{K_1} \sum_{k_2=1}^{K_2} \sum_{k_3=1}^{K_3} \sum_{k_4=1}^{K_4} \hat{S}_{k_1, k_2, k_3, k_4} U^{(1)}_{(K_1), b, k_1} U^{(2)}_{(K_2), c_g, k_2} \underline{U}^{(3)}_{(K_3), h, k_3} \underline{U}^{(4)}_{(K_4), w, k_4}
+  $$</div>
+<p>Here, $ U^{(3)} $ and $ U^{(4)} $ undergo vertical padding. This step ensures that we reconstruct the original shape needed for backpropagation.</p>
+</details>
+<h4 id="step-4-rewriting-the-gradient-computation">Step 4: Rewriting the Gradient Computation</h4>
+<details onclick="MathJax.Hub.Queue(['Typeset', MathJax.Hub, this])">
+  <summary>Click to see the math of this step!</summary>
+  We now substitute this back into the weight update equation and reorganize terms:
+  <div>$$
+  Z^{(1)}_{k_1, c_g', h', w'} = \sum_{b=1}^{B} \Delta \mathcal{Y}_{b, c', h', w'} U^{(1)}_{(K_1), b, k_1}
+  $$</div>
+  <div>$$
+  Z^{(2)}_{k_1, k_2, h, k_4} = \sum_{k_3=1}^{K_3} \hat{S}_{k_1, k_2, k_3, k_4} U^{(3)}_{(K_3), h, k_3}
+  $$</div>
+  <div>$$
+  Z^{(3)}_{k_1, k_2, h, w} = \sum_{k_4=1}^{K_4} Z^{(2)}_{k_1, k_2, h, k_4} U^{(4)}_{(K_4), w, k_4}
+  $$</div>
+  <div>$$
+  Z^{(4)}_{c_g', k_2, k, l} = \sum_{h'=1}^{H'} \sum_{w'=1}^{W'} \sum_{k_1=1}^{K_1} Z^{(3)}_{k_1, k_2, h, w} Z^{(1)}_{k_1, c_g', h', w'}
+  $$</div>
+  <div>$$
+  \Delta \mathcal{W}_{c', c, k, l} = \sum_{k_2=1}^{K_2} Z^{(4)}_{c_g', k_2, k, l} U^{(2)}_{(K_2), c_g, k_2}
+  $$</div>
+</details>
+<p>At this stage, we have effectively transformed the weight update process into a series of smaller matrix multiplications and convolutions, reducing the computational burden.</p>
+<p>This entire derivation ultimately leads to the final gradient computation in equation 3.</p>
+<h2 id="3-experimental-validation">3/ Experimental Validation</h2>
+<p>It’s one thing to talk about activation compression in theory, but does it actually work in practice? To find out and test the authors&rsquo; claims, the authors put HOSVD to the test across multiple deep learning architectures — MobileNetV2, ResNet18, ResNet34, and MCUNet — and compared its performance with other activation compression strategies. These models vary in depth, design, and computational footprint, making them ideal test subjects to see how activation compression affects memory, computation, and accuracy.</p>
+<h3 id="31-experimental-setup">3.1/ Experimental Setup</h3>
+<p>To make the evaluation structured and fair, compression techniques were tested on both classification and segmentation tasks.</p>
+<p><strong>Classification:</strong> Fine-tuning pre-trained models using two strategies:</p>
+<ul>
+<li><em>Full fine-tuning:</em> Fully fine-tuning models pre-trained on ImageNet (&ldquo;teachers&rdquo;) on downstream datasets.</li>
+<li><em>Half fine-tuning:</em> Splitting ImageNet into non-i.i.d. partitions and training in a federated learning framework — using one partition each for pre-training and fine-tuning.</li>
+</ul>
+<p><strong>Semantic Segmentation:</strong> Models trained on Cityscapes (an urban streets view dataset) were fine-tuned to work on Pascal-VOC12 (a 20-category image dataset for pixel-level segmentation tasks), a task that requires fine-grained spatial details.</p>
+<p>Instead of setting compression levels arbitrarily, the explained variance was controlled, which is the direct &ldquo;remote control&rdquo; for the amount of information that is retained while reducing the activation size. This ensures that memory vs. accuracy trade-offs are compared on equal terms across different techniques.</p>
+<h3 id="32-how-much-can-we-compress-without-hurting-accuracy">3.2/ How Much Can We Compress Without Hurting Accuracy?</h3>
+<p>When compressing activations using HOSVD, one of the key decisions is choosing how much variance to retain. Too little variance makes the network lose crucial details, and too much of it makes the memory reductions negligible.</p>
+<p><strong>Key Findings on Explained Variance</strong>:</p>
+<ul>
+<li>Less than 20% of components capture more than 80% of the variance. This means we can throw away a lot of redundant data while keeping performance intact.</li>
+<li>Compression scales non-linearly: keeping 80–90% of variance gives a huge reduction in storage while maintaining accuracy.</li>
+<li>Below 80% variance, accuracy drops fast. Beyond 90%, we hit diminishing returns — almost no accuracy gain, but memory costs start rising.</li>
+</ul>
+<p><strong>What&rsquo;s the best trade-off between accuracy and compression?</strong><br>
+An explained variance of 0.8 and 0.9 was settled on as the sweet spot.</p>
+<h3 id="33-main-results-what-the-authors-say">3.3/ Main Results: What the Authors Say</h3>
+<ul>
+<li>HOSVD consistently outperforms SVD and gradient filtering — better accuracy and smaller memory requirement; so for accurate classification, the multi-modal structure of the activation tensor must be preserved.</li>
+<li>At the same level of memory consumption, HOSVD reduces the amount of activation storage by 18.87 times on average.</li>
+<li>As compared to SVD, HOSVD enhances accuracy by up to 19.11%, which validates that preserving the multi-dimensional activation structure is indeed crucial.</li>
+</ul>
+<figure style="text-align: center;">
+  <img src="../../images/results-table.png" alt="Comparison of classification accuracy and activation memory usage for different compression strategies" style="width:100%; max-width:1400px;">
+  <figcaption style="margin-top: 0.5em;"><em>Figure 3:</em> Comparison of classification accuracy and activation memory usage for different compression strategies across MobileNetV2 and MCUNet</figcaption>
+</figure>
+<figure style="text-align: center;">
+  <img src="../../images/barplot.png" alt="Bar plot showing memory-accuracy tradeoff" style="width:80%;">
+  <figcaption><em>Figure 4:</em> Memory consumption of different methods on CIFAR-10 </figcaption>
+</figure>
+<p>In fact, HOSVD works great not just for classification — it also maintains performance across <strong>segmentation</strong> tasks while significantly reducing memory use! This makes it a great candidate for memory-constrained applications that still require fine-grained spatial details (e.g., medical imaging, autonomous driving).</p>
+<h3 id="34-main-results-our-attempt-at-replication">3.4/ Main Results: Our Attempt at Replication</h3>
+<p>To verify the authors&rsquo; claims, we rolled up our sleeves and conducted an independent test on a system equipped with a 12th Gen Intel(R) Core(TM) i7-1255U processor, 16 GB RAM, and 4 memory cores. We chose MobileNetV2—the lightest of the architectures—and fine-tuned it using HOSVD on CIFAR-10 for 5 epochs, setting the explained variance to 0.8. The results? Surprisingly strong with an interesting trend:</p>
+<ul>
+<li>Going from 2 to 4 layers increased validation accuracy by 4% but also raised peak memory by 0.3MB — a reasonable trade-off.</li>
+<li>However, increasing to 6 layers actually hurt accuracy, despite consuming more memory! This suggests that excessive compression led to information loss propagating across layers — similar to the degradation seen in gradient filtering techniques. In other words, there is a fine balance between compression and performance.</li>
+</ul>
+<figure style="text-align: center;">
+  <img src="../../images/plot_acc_mem.png" alt="Accuracy vs memory tradeoff" style="width:6x0%;">
+  <figcaption><em>Figure 5:</em> Activation Memory vs Accuracy over epochs for 3 levels of finetune </figcaption>
+</figure>
+<h4 style="text-align: center;">Reproduction Table</h4>
+<table style="border-collapse: collapse; width: 100%; text-align: center;">
+  <thead>
+    <tr style="background-color: #f2f2f2;">
+      <th style="border: 1px solid #000; padding: 8px;">Num Finetune</th>
+      <th style="border: 1px solid #000; padding: 8px;">Val Acc</th>
+      <th style="border: 1px solid #000; padding: 8px;">Peak Mem</th>
+      <th style="border: 1px solid #000; padding: 8px;">Mean Mem</th>
+      <th style="border: 1px solid #000; padding: 8px;">Std Mem</th>
+      <th style="border: 1px solid #000; padding: 8px;">Mean ± Std</th>
+      <th style="border: 1px solid #000; padding: 8px;">Total Mem</th>
+      <th style="border: 1px solid #000; padding: 8px;">Time/Epoch</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border: 1px solid #000; padding: 8px;">2</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.7721</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.1227</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.1082</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.0142</td>
+      <td style="border: 1px solid #000; padding: 8px;">$0.11 \pm 0.01$</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.5409</td>
+      <td style="border: 1px solid #000; padding: 8px;">40 min</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #000; padding: 8px;">4</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.8154</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.4034</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.3864</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.0189</td>
+      <td style="border: 1px solid #000; padding: 8px;">$0.39 \pm 0.02$</td>
+      <td style="border: 1px solid #000; padding: 8px;">1.9322</td>
+      <td style="border: 1px solid #000; padding: 8px;">50 min</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #000; padding: 8px;">6</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.7592</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.3254</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.3078</td>
+      <td style="border: 1px solid #000; padding: 8px;">0.0234</td>
+      <td style="border: 1px solid #000; padding: 8px;">$0.31 \pm 0.02$</td>
+      <td style="border: 1px solid #000; padding: 8px;">1.5390</td>
+      <td style="border: 1px solid #000; padding: 8px;">90 min</td>
+    </tr>
+  </tbody>
+</table>
+<p style="text-align: center;"><strong>Table 1:</strong> Reproduction Experiments — Memory usage and validation accuracy for different number of layers fine-tuned.</p>
+<h3 id="35-key-takeaways-what-we-learned">3.5/ Key Takeaways: What We Learned</h3>
+<ul>
+<li>HOSVD beats SVD and gradient filtering in terms of the tradeoff between memory and accuracy for activation compression.</li>
+<li>Compression beyond 90% explained variance isn’t worth it; accuracy stops improving, but memory costs continue to grow exponentially.</li>
+<li>Our reproduction experiments were feasible on a CPU only because HOSVD drastically reduces peak memory usage — down to 0.3MB compared to 30MB required for vanilla training — allowing us to bypass the need for high-end hardware while still yielding meaningful results — showing just how well this approach can work in more resource-constrained environments.</li>
+</ul>
+<p><strong>Why does HOSVD win?</strong><br>
+Unlike SVD, which flattens activation tensors and loses spatial correlations, HOSVD keeps tensor relationships intact, resulting in higher accuracy for the same memory budget.</p>
+<p><strong>Still skeptical? Try it yourself! Check out our <a href="https://github.com/florentblnc/NeurIPS2024-ActivationCompression">CPU-friendly implementation</a> :</strong><br>
+<em>Beware! The original code may not work with newer versions of PyTorch Lightning; several functionalities have deprecated. Our version resolves the compatibility issues.</em></p>
+<h3 id="4-embedded-ai-what-lies-ahead">4/ Embedded AI: What Lies Ahead?</h3>
+<p>The results are clear: HOSVD-based activation compression is a game changer for making deep learning models more memory-efficient without compromising their accuracy. By keeping the most essential information while trimming away redundancy, we’ve seen how compression can reduce activation storage drastically, making it possible to run complex models even on resource-limited devices.</p>
+<p>But what’s next? AI models are already pushing the limits of what’s possible on embedded hardware. Today, deep learning runs on devices as small as a few millimeters in size - Edge TPUs, MCUs with less than 1MB of RAM, and smartphones packing neural processing units (NPUs). And it’s not just about running models efficiently—compression techniques like this are making on-device learning a reality. Instead of relying on massive cloud servers, models can now adapt and learn locally, whether it’s a smartwatch fine-tuning its activity tracking, a smartphone enhancing its voice recognition, or an AI assistant getting smarter without sending personal data to the cloud. The ability to learn on the go, without bloated memory requirements, brings AI one step closer to mimicking the adaptability of the human brain.</p>
+<p>Perhaps, one day, deep learning models will successfully bridge this gap to achieve the kind of seamless efficiency our brains naturally posses. Until then, activation compression is one giant leap toward making AI as frugal and intelligent as nature itself.</p>
+
+      
+      <div class="post-date">
+        <span class="g time">March 27, 2025 </span> &#8729;
+         
+      </div>
+      
+    </section>
+    
+    <div id="comments">
+      <script src="https://utteranc.es/client.js"
+    repo=ZgotmplZ
+    issue-term="pathname"
+    theme=ZgotmplZ
+    crossorigin="anonymous"
+    async>
+</script>
+
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>

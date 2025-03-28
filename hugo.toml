@@ -37,8 +37,10 @@ canonifyURLs = true
     weight = -200
 
 [markup]
-  [markup.goldmark.renderer]
-    unsafe = true
+  defaultMarkdownHandler = "goldmark"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
   [markup.highlight]
     anchorLineNos = false
     codeFences = true
