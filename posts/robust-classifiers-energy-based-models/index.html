@@ -1,0 +1,248 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=author content="Liste - https://responsible-ai-datascience-ipParis.github.io/"><title>Robust Classifiers Energy Based Models | Bloggin on Responsible AI</title>
+<meta name=description content="Bloggin on Responsible AI"><meta property="og:url" content="https://responsible-ai-datascience-ipParis.github.io/posts/robust-classifiers-energy-based-models/"><meta property="og:site_name" content="Bloggin on Responsible AI"><meta property="og:title" content="Robust Classifiers Energy Based Models"><meta property="og:description" content="Unlocking the Secrets of Robust AI: How Energy-Based Models Are Revolutionizing Adversarial Training Authors: Lucas ALJANCIC, Solal DANAN, Maxime APPERT Introduction: The Hidden World of Adversarial Attacks ===================================================== Imagine you’ve built a state-of-the-art AI model that can classify images with near-perfect accuracy. But then, someone adds a tiny, almost invisible perturbation to an image, and suddenly your model confidently misclassifies it. This is the world of adversarial attacks, where small, carefully crafted changes can fool some advanced AI systems."><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2025-03-27T18:53:17+01:00"><meta property="article:modified_time" content="2025-03-27T18:53:17+01:00"><meta itemprop=name content="Robust Classifiers Energy Based Models"><meta itemprop=description content="Unlocking the Secrets of Robust AI: How Energy-Based Models Are Revolutionizing Adversarial Training Authors: Lucas ALJANCIC, Solal DANAN, Maxime APPERT Introduction: The Hidden World of Adversarial Attacks ===================================================== Imagine you’ve built a state-of-the-art AI model that can classify images with near-perfect accuracy. But then, someone adds a tiny, almost invisible perturbation to an image, and suddenly your model confidently misclassifies it. This is the world of adversarial attacks, where small, carefully crafted changes can fool some advanced AI systems."><meta itemprop=datePublished content="2025-03-27T18:53:17+01:00"><meta itemprop=dateModified content="2025-03-27T18:53:17+01:00"><meta itemprop=wordCount content="2405"><link rel=canonical href=https://responsible-ai-datascience-ipParis.github.io/posts/robust-classifiers-energy-based-models/><link rel=icon href=https://responsible-ai-datascience-ipParis.github.io//assets/favicon.ico><link rel=dns-prefetch href=https://www.google-analytics.com><link href=https://www.google-analytics.com rel=preconnect crossorigin><link rel=alternate type=application/atom+xml title="Bloggin on Responsible AI" href=https://responsible-ai-datascience-ipParis.github.io//atom.xml><link rel=alternate type=application/json title="Bloggin on Responsible AI" href=https://responsible-ai-datascience-ipParis.github.io//feed.json><link rel="shortcut icon" type=image/png href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="><style>*,:after,:before{box-sizing:border-box;padding:0}body{font:1rem/1.5 '-apple-system',BlinkMacSystemFont,avenir next,avenir,helvetica,helvetica neue,ubuntu,roboto,noto,segoe ui,arial,sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:2rem;background:#f5f5f5;color:#000}.skip-link{position:absolute;top:-40px;left:0;background:#eee;z-index:100}.skip-link:focus{top:0}h1,h2,h3,h4,h5,strong,b{font-size:inherit;font-weight:600}header{line-height:2;padding-bottom:1.5rem}.link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}.time{font-variant-numeric:tabular-nums;white-space:nowrap}blockquote{border-left:5px solid #eee;padding-left:1rem;margin:0}a,a:visited{color:inherit}a:hover,a.heading-link{text-decoration:none}pre{padding:.5rem;overflow:auto;overflow-x:scroll;overflow-wrap:normal}code,pre{font-family:San Francisco Mono,Monaco,consolas,lucida console,dejavu sans mono,bitstream vera sans mono,monospace;font-size:normal;font-size:small;background:#eee}code{margin:.1rem;border:none}ul{list-style-type:square}ul,ol{padding-left:1.2rem}.list{line-height:2;list-style-type:none;padding-left:0}.list li{padding-bottom:.1rem}.meta{color:#777}.content{max-width:70ch;margin:0 auto}header{line-height:2;display:flex;justify-content:space-between;padding-bottom:1rem}header a{text-decoration:none}header ul{list-style-type:none;padding:0}header li,header a{display:inline}h2.post{padding-top:.5rem}header ul a:first-child{padding-left:1rem}.nav{height:1px;background:#000;content:'';max-width:10%}.list li{display:flex;align-items:baseline}.list li time{flex:initial}.hr-list{margin-top:0;margin-bottom:0;margin-right:.5rem;margin-left:.5rem;height:1px;border:0;border-bottom:1px dotted #ccc;flex:1 0 1rem}.m,hr{border:0;margin:3rem 0}img{max-width:100%;height:auto}.post-date{margin:5% 0}.index-date{color:#9a9a9a}.animate-blink{animation:opacity 1s infinite;opacity:1}@keyframes opacity{0%{opacity:1}50%{opacity:.5}100%{opacity:0}}.tags{display:flex;justify-content:space-between}.tags ul{padding:0;margin:0}.tags li{display:inline}.avatar{height:120px;width:120px;position:relative;margin:-10px 0 0 15px;float:right;border-radius:50%}</style><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","articleSection":"posts","name":"Robust Classifiers Energy Based Models","headline":"Robust Classifiers Energy Based Models","alternativeHeadline":"","description":"\u003ch1 style=\u0022font-size: 36px;\u0022\u003eUnlocking the Secrets of Robust AI: How Energy-Based Models Are\n  Revolutionizing Adversarial Training\u003c\/h1\u003e\n\u003ch1 style=\u0022font-size: 20px;\u0022\u003eAuthors: Lucas ALJANCIC, Solal DANAN, Maxime APPERT\u003c\/h1\u003e\n\u003ch1 style=\u0022font-size: 24px;\u0022\u003eIntroduction: The Hidden World of Adversarial Attacks \u003c\/h1\u003e\n=====================================================\n\u003cp\u003eImagine you\u0026rsquo;ve built a state-of-the-art AI model that can classify\nimages with near-perfect accuracy. But then, someone adds a tiny, almost\ninvisible perturbation to an image, and suddenly your model confidently\nmisclassifies it. This is the world of \u003cstrong\u003eadversarial attacks\u003c\/strong\u003e, where\nsmall, carefully crafted changes can fool some advanced AI systems.\u003c\/p\u003e","inLanguage":"en-us","isFamilyFriendly":"true","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/responsible-ai-datascience-ipParis.github.io\/posts\/robust-classifiers-energy-based-models\/"},"author":{"@type":"Person","name":""},"creator":{"@type":"Person","name":""},"accountablePerson":{"@type":"Person","name":""},"copyrightHolder":"Bloggin on Responsible AI","copyrightYear":"2025","dateCreated":"2025-03-27T18:53:17.00Z","datePublished":"2025-03-27T18:53:17.00Z","dateModified":"2025-03-27T18:53:17.00Z","publisher":{"@type":"Organization","name":"Bloggin on Responsible AI","url":"https://responsible-ai-datascience-ipParis.github.io/","logo":{"@type":"ImageObject","url":"https:\/\/responsible-ai-datascience-ipParis.github.io\/assets\/favicon.ico","width":"32","height":"32"}},"image":"https://responsible-ai-datascience-ipParis.github.io/assets/favicon.ico","url":"https:\/\/responsible-ai-datascience-ipParis.github.io\/posts\/robust-classifiers-energy-based-models\/","wordCount":"2405","genre":[],"keywords":[]}</script></head><body><a class=skip-link href=#main>Skip to main</a><main id=main><div class=content><header><p style=padding:0;margin:0><a href=../../><b>Bloggin on Responsible AI</b>
+<span class="text-stone-500 animate-blink">▮</span></a></p><ul style=padding:0;margin:0><li><a href=../../posts/><span>Post</span></a><li><a href=../../tutorial/><span>Tutorial</span></a><li><a href=../../about/><span>About</span></a><li><a href=../../articles/><span>Articles</span></a></li></ul></header><hr class=hr-list style=padding:0;margin:0><section><h2 class=post>Robust Classifiers Energy Based Models</h2><h1 style=font-size:36px>Unlocking the Secrets of Robust AI: How Energy-Based Models Are
+Revolutionizing Adversarial Training</h1><h1 style=font-size:20px>Authors: Lucas ALJANCIC, Solal DANAN, Maxime APPERT</h1><h1 style=font-size:24px>Introduction: The Hidden World of Adversarial Attacks</h1>=====================================================<p>Imagine you&rsquo;ve built a state-of-the-art AI model that can classify
+images with near-perfect accuracy. But then, someone adds a tiny, almost
+invisible perturbation to an image, and suddenly your model confidently
+misclassifies it. This is the world of <strong>adversarial attacks</strong>, where
+small, carefully crafted changes can fool some advanced AI systems.</p><p>In this post, we&rsquo;ll dive into a groundbreaking research paper that
+rethinks how we train AI models to resist these attacks. By leveraging
+<strong>Energy-Based Models (EBMs)</strong>, the authors propose a novel approach
+called <strong>Weighted Energy Adversarial Training (WEAT)</strong> that not only
+makes models more robust but also unlocks surprising generative
+capabilities. Let&rsquo;s break it down step by step, from the basics to the
+big picture.</p><h1 style=font-size:24px>Understanding Adversarial Attacks and Robust AI</h1>===============================================<h2 id=what-are-adversarial-attacks>What Are Adversarial Attacks?</h2><p>Adversarial attacks can be thought of as carefully crafted optical
+illusions for AI. By making tiny changes to an input, attackers can
+manipulate the model&rsquo;s output, causing incorrect predictions. These
+perturbations are often imperceptible to the human eye but can
+significantly impact AI decision-making.</p><h4 id=technical-explanation>Technical Explanation:</h4><p>Mathematically, an adversarial example $x&rsquo;$ is generated by adding a
+small perturbation $\delta$ to an original input $x$, such that:
+$$x&rsquo; = x + \delta,$$ where $\delta$ is chosen to maximize the model&rsquo;s
+prediction error, often by solving:
+$$\arg\max_{\delta} ; L\bigl(f(x+\delta), y\bigr) \quad \text{subject to} \quad |\delta| \le \epsilon,$$
+ensuring that the perturbation remains small. Here, $f(x)$ represents
+the model&rsquo;s prediction, $y$ is the true label, and $L$ is the loss
+function.</p><h4 id=schematic-explanation>Schematic Explanation:</h4><p>A simple visualization consists of two decision boundaries: one for
+clean samples and another distorted by adversarial perturbations. The
+adversarial example, though close to the clean sample in the input
+space, crosses the decision boundary, leading to a misclassification.
+This is illustrated in the following image, which showcases the
+adversarial perturbation technique. For example, a small amount of
+noise&mdash;imperceptible to humans&mdash;can be added to an image of a panda,
+changing its classification to a different label (e.g., from "panda"
+to "gibbon") with high confidence, even though the image still looks
+exactly like a panda to the human eye. This occurs because the noise is
+specifically designed to fool the model by maximizing the prediction
+error.</p><p><img src=../../images/Robust_Classifiers_EBM/AA.png alt="Adversarial Example: A small perturbation (middle) is added to a
+correctly classified image (left), causing a deep neural network to
+misclassify it with high confidence (right)." loading=lazy decoding=async class=full-width></p><p><strong>Figure 1:</strong> A small perturbation (middle) is added to a
+correctly classified image (left), causing a deep neural network to
+misclassify it with high confidence (right).</p><p>These adversarial attacks can also be used maliciously in what is known
+as a backdoor attack, where mislabeling during training leads to
+misclassification at test time. For instance, a stop sign with a slight
+alteration may be classified as a speed limit sign due to adversarial
+manipulation of the training data.</p><p><img src=../../images/Robust_Classifiers_EBM/stop.png alt="Backdoor Attack: Poisoning the training data by mislabeling
+specific inputs (top right) forces the model to associate a manipulated
+stop sign with a speed limit sign (bottom), leading to targeted
+misclassification at test time." loading=lazy decoding=async class=full-width></p><p><strong>Figure 2:</strong> Poisoning the training data by mislabeling
+specific inputs (top right) forces the model to associate a manipulated
+stop sign with a speed limit sign (bottom), leading to targeted
+misclassification at test time.</p><p>We can easily imagine scenarios in which an adversarial attack can be
+critical. For example, a self-driving car misinterpreting a slightly
+modified stop sign as a yield sign due to adversarial perturbations
+could lead to catastrophic consequences.</p><p>To counteract these risks, engineers strive to build robust models where
+adversarial attacks are ineffective. Techniques such as feature
+squeezing or input transformations can sometimes remove adversarial
+perturbations, reducing their effectiveness.</p><h2 id=the-quest-for-robust-ai-adversarial-training>The Quest for Robust AI: Adversarial Training</h2><p>To combat adversarial attacks, researchers have developed Adversarial
+Training. The idea is simple: train the model on both normal data and
+adversarial examples (data modified to fool the model). This way, the
+model learns to recognize and resist these attacks.</p><p>During training, adversarial examples are generated using algorithms
+like Projected Gradient Descent (PGD) or the Fast Gradient Sign Method
+(FGSM). The model is then trained to correctly classify both clean and
+adversarial examples, thereby improving its resilience.</p><p>Mathematically, adversarial training involves solving the following
+optimization problem:
+$$\underbrace{\min_{\theta} E_{(x,y) \sim \mathcal{D}} \left[ \overbrace{\max_{\delta: |\delta| \le \epsilon} L\bigl(f(x+\delta;\theta), y\bigr)}^{\text{Adversarial Attack}} \right]}_{\text{Adversarial Training}}.$$
+Here, the inner maximization aims to generate the worst-case
+perturbation $\delta$, while the outer minimization updates the model
+parameters $\theta$ to minimize the loss on these adversarial examples.
+This iterative process enhances the model&rsquo;s robustness against
+adversarial attacks.</p><p>A schematic representation helps visualize this concept. The image below
+shows how a labeled or unlabeled image is used to generate an
+adversarial example, which is then processed by a model. The predictions
+of both the original and adversarial images are compared using KL
+divergence, with a weighted sum incorporating cross-entropy loss (for
+labeled images) to compute the final loss.</p><p><img src=../../images/Robust_Classifiers_EBM/schema.png alt="Adversarial Training with Consistency Loss: A model processes both
+clean and adversarial examples, minimizing cross-entropy loss for
+labeled images and KL divergence between predictions to improve
+robustness. The final loss is a weighted sum of both
+terms." loading=lazy decoding=async class=full-width></p><p><strong>Figure 3:</strong> Representation of Adversarial Training, a model processes both
+clean and adversarial examples, minimizing cross-entropy loss for
+labeled images and KL divergence between predictions.</p><p>A useful analogy is training a security system against burglary
+attempts. Imagine a house protected against intruders. A basic security
+system might work well against naive burglars but fail against
+sophisticated thieves who exploit specific vulnerabilities. To
+strengthen the system, the homeowner continuously updates it by testing
+against simulated break-in attempts&mdash;much like adversarial training
+tests the model against simulated attacks. However, if the security
+system memorizes these specific attack patterns, it may remain
+vulnerable to novel intrusion techniques. This weakness highlights what
+is known as robust overfitting: the model learns to defend against the
+training attacks but generalizes poorly to new, unseen attacks.</p><p>To truly address robust overfitting, we must understand why it occurs.
+One way to do this is to analyze adversarial training through an
+energy-based perspective. In the next section, we explore how
+energy-based models offer critical insights that can help address this
+problem.</p><h1 style=font-size:24px>Energy-Based Models (EBMs) -- A New Perspective</h1>===============================================<p>Inspired by previous works linking adversarial training (AT) and
+energy-based models&mdash;which reveal a shared contrastive approach&mdash;the
+authors reinterpret robust discriminative classifiers as EBMs. This new
+perspective provides fresh insights into the dynamics of AT.</p><h2 id=what-are-energy-based-models>What Are Energy-Based Models?</h2><p>In traditional classification, a neural network is trained to output the
+most likely label for an input. However, when recast as an EBM, the
+classifier assigns an <em>energy</em> to each input-label pair,
+$E_\theta(x,y)$, which reflects how &ldquo;plausible&rdquo; that combination is. In
+this framework, lower energy indicates that the model is more confident
+the input belongs to that class. EBMs rely on the assumption that any
+probability density function $p(x)$ can be represented via a Boltzmann
+distribution:
+$$p_\theta(x) = \frac{\exp\bigl(-E_\theta(x)\bigr)}{Z(\theta)}$$,</p><p>where $E_\theta(x)$ is the energy function mapping each input $x$ to a
+scalar value, and $Z(\theta) = \int \exp\bigl(-E_\theta(x)\bigr) , dx,$
+is the normalizing constant ensuring that $p_\theta(x)$ is a valid
+probability distribution.</p><p>Similarly, the joint probability of an input and a label can be defined
+as:
+$$p_\theta(x,y) = \frac{\exp\bigl(-E_\theta(x,y)\bigr)}{Z&rsquo;(\theta)}$$,</p><p>which leads to the formulation of a discriminative classifier:
+$$p_\theta(y \mid x) = \frac{\exp\bigl(-E_\theta(x,y)\bigr)}{\sum_{k=1}^{K} \exp\bigl(-E_\theta(x,k)\bigr)}.$$</p><p>In this context, <strong>energy serves as a measure of confidence</strong> for both
+the input-label pair and, when marginalized over labels, the input
+itself:</p><h2 id=adversarial-attacks-through-the-energy-lens>Adversarial Attacks Through the Energy Lens</h2><p>An intriguing insight from the paper is that adversarial attacks can be
+interpreted by examining how they alter the energy landscape. Recall
+that the cross-entropy loss can be written in terms of energy as:
+$$L_{CE}(x,y;\theta) = -\log p_\theta(y\mid x)
+;=; E_\theta(x,y) - E_\theta(x),$$ implying that an attack impact the
+loss&mdash;by modifying both $E_\theta(x,y)$ and $E_\theta(x)$.</p><h4 id=untargeted-attacks>Untargeted Attacks.</h4><p>These attacks aim to make the classifier output <em>any</em> incorrect label.
+They raise the joint energy $E_\theta(x,y)$ (making the model to
+"dislike" the correct label) while lowering the marginal energy
+$E_\theta(x)$. Consequently, the adversarial example looks very
+&ldquo;natural&rdquo; (low $E_\theta(x)$) yet becomes unrecognizable for the true
+label (high energy).</p><p><img src=../../images/Robust_Classifiers_EBM/pgd1.png alt="PGD Untargeted attacks: (Left) Distributions of (E_\theta(x)); (Right) Distributions of (E_\theta(x, y)). Blue indicates natural data, red indicates adversarial data." loading=lazy decoding=async class=full-width></p><p><img src=../../images/Robust_Classifiers_EBM/pgd2.png alt="PGD Untargeted attacks: (Left) Distributions of (E_\theta(x)); (Right) Distributions of (E_\theta(x, y)). Blue indicates natural data, red indicates adversarial data." loading=lazy decoding=async class=full-width></p><p><strong>Figure 4:</strong> PGD Untargeted attacks: (Above) Distributions of $(E_\theta(x))$; (Below) Distributions of $(E_\theta(x, y))$. Blue indicates natural data, red indicates adversarial data.</p><h4 id=targeted-attacks>Targeted Attacks.</h4><p>These attacks force the classifier to predict a specific (incorrect)
+label $t$. The adversary perturbs $x$ to <em>minimize</em> the energy for the
+target label $E_\theta(x,t)$, thereby steering the classifier&rsquo;s decision
+toward $t$ but raise $E_\theta(x)$ overall, making the input look
+out-of-distribution despite being confidently misclassified as $t$.</p><p><img src=../../images/Robust_Classifiers_EBM/apgd1.png alt="APGD Targeted attacks: (Left) Distributions of $E_\theta(x)$;
+(Right) Distributions of $E_\theta(x,y)$. Blue indicates natural data,
+red indicates adversarial data." loading=lazy decoding=async class=full-width>
+<img src=../../images/Robust_Classifiers_EBM/apgd2.png alt="APGD Targeted attacks: (Left) Distributions of $E_\theta(x)$; (Right)
+Distributions of $E_\theta(x,y)$. Blue indicates natural data, red
+indicates adversarial data." loading=lazy decoding=async class=full-width></p><p><strong>Figure 5:</strong> APGD Targeted attacks: (Above) Distributions of $(E_\theta(x))$; (Below) Distributions of $(E_\theta(x, y))$. Blue indicates natural data, red indicates adversarial data.</p><p>By revealing how each attack reshapes the energies of clean vs.
+adversarial examples, the authors highlight distinct patterns for
+untargeted and targeted strategies&mdash;informing more effective defenses.</p><h2 id=energy-based-insights-on-robust-overfitting>Energy-Based Insights on Robust Overfitting</h2><p>Overfitting means a model excels on training data but falters on unseen
+examples. In the robust setting, this manifests when a network memorizes
+the specific adversarial perturbations seen during training, yet
+struggles with new adversarial attacks. The authors reveal that robust
+overfitting is closely linked to a widening <em>energy gap</em> between clean
+and adversarial samples. As adversarial training progresses, the energy
+$E_\theta(x)$ of natural (clean) examples and the energy $E_\theta(x^\ast)$
+associated with their adversarially perturbed versions diverge
+significantly. Surprisingly, even if a sample is &ldquo;easy&rdquo; (i.e., it has a
+low loss and the model is highly confident), only minimal perturbations
+are needed to flip its label due to the model&rsquo;s over-confidence. These
+weaker perturbations, paradoxically, cause a larger distortion in the
+energy landscape, so that a slight adversarial change on a low-loss
+sample can result in a substantial discrepancy between the natural and
+adversarial energies.</p><h2 id=trades-aligning-clean-and-adversarial-energies>TRADES: Aligning Clean and Adversarial Energies</h2><p>TRADES (<em>TRadeoff-inspired Adversarial DEfense via Surrogate-loss
+minimization</em>) is a refined adversarial training approach that adds a
+term to the standard loss, ensuring that a model&rsquo;s predictions on a
+clean input $x$ remain close to those on its adversarially perturbed
+version $x+\delta$. When expressed in energy terms, this extra term
+aligns the energies of natural and adversarial samples, thereby reducing
+robust overfitting. In essence, TRADES enforces similar energy values
+for $x$ and $x+\delta$, creating a smoother energy landscape and helping
+the model generalize more effectively against unseen attacks.</p><p><img src=../../images/Robust_Classifiers_EBM/trades.png alt="Energy alignment in TRADES vs. SAT (another AT approach). While
+SAT (line curve) experiences a steep divergence between clean and
+adversarial energies ($\Delta E_\theta(x)$ = $E_\theta(x)$ -
+$E_\theta(x^\ast)$ ) in the 3rd phase (leading to robust overfitting),
+TRADES (dashed curve) maintains a relatively constant energy gap. This
+smoother alignment mitigates overfitting and improves
+robustness." loading=lazy decoding=async class=full-width></p><p><strong>Figure 6:</strong> While
+SAT (line curve) experiences a steep divergence between clean and
+adversarial energies ($\Delta E_\theta(x)$ = $E_\theta(x)$ -
+$E_\theta(x^\ast)$ ) in the 3rd phase (leading to robust overfitting),
+TRADES (dashed curve) maintains a relatively constant energy gap. This
+smoother alignment mitigates overfitting and improves
+robustness.</p><p>One of the key empirical observations is that top-performing robust
+classifiers tend to exhibit a smooth energy landscape around natural
+data points. Concretely, the energies $E_\theta(x)$ and
+$E_\theta(x+\delta)$ remain closer in these models and this alignment
+strongly correlates with improved adversarial defense.<br><br>To sum up, these insights clarify that robust overfitting is not merely
+about memorizing specific adversarial examples, but rather about how the
+model&rsquo;s internal energy representation becomes distorted. When the gap
+between $E_\theta(x)$ and $E_\theta(x+\delta)$ grows, the model&rsquo;s
+ability to generalize its robustness to new attacks is compromised.
+These observations deepen our understanding of adversarial dynamics and
+informed the strategy for effective robust training methods WEAT, as
+described in the following section.</p><h1 style=font-size:24px>Weighted Energy Adversarial Training (WEAT)</h1>===============================================<h2 id=main-principle-of-weat>Main Principle of WEAT</h2><p>The authors propose <strong>WEAT</strong>, a novel method that weights training
+samples based on their energy. WEAT relies on <strong>Energy-Based Models
+(EBMs)</strong> to measure the model&rsquo;s "confidence":</p><ul><li><p><strong>Marginal Energy</strong> $E_\theta(x) = -\log \sum_k \exp(\theta(x)[k])$:
+The lower it is, the more "probable" the input $x$ is according to
+the model.</p></li><li><p><strong>Joint Energy</strong> $E_\theta(x, y) = -\log \exp(\theta(x)[y])$:
+Measures the confidence for a specific class $y$.</p></li></ul><p>The article classifies samples according to their energy into three
+categories:</p><ol><li><p><strong>High-energy samples</strong> ($E_\theta (x) > -3.87$): These are
+difficult examples, close to decision boundaries. WEAT gives them
+more weight because they help the model learn better.</p></li><li><p><strong>Low-energy samples</strong> ($E_\theta (x) \leq -11.47$): These are easy
+examples. WEAT gives them less weight to prevent overfitting.</p></li><li><p><strong>Intermediate samples</strong> (between these two thresholds)</p></li></ol><p><strong>Key Idea:</strong> Samples with <strong>high energy</strong> (hard to classify) are
+crucial for robustness, while those with <strong>low energy</strong> (easy) risk
+causing overfitting. Therefore, WEAT weights them differently:</p><p>$$\text{weight}(x) = \frac{1}{\log(1 + \exp(|E_\theta(x)|))}$$</p><p><img src=../../images/Robust_Classifiers_EBM/weighting.png alt="Weighting Visualization" loading=lazy decoding=async class=full-width></p><p><strong>Figure 7:</strong> Weighting Visualization.</p><h2 id=weat-in-details>WEAT in details</h2><p>The core formula of WEAT is an improvement of TRADES by introducing a
+<strong>dynamic weighting weight$(x)$</strong> based on the energy $E_\theta(x)$.
+WEAT combines:</p><ul><li><p><strong>Cross-entropy loss (CE)</strong>: Standard classification performance
+measure. It contains
+$E_{\boldsymbol{\theta}}(\mathbf{x}, y) - E_{\boldsymbol{\theta}}(\mathbf{x})$.
+When this term is minimized, it allows to "dig" the valleys
+representing the good predictions (low energy = high confidence).
+For the correct class y, $E_{\boldsymbol{\theta}}(\mathbf{x}, y)$
+becomes "lower" than $E_{\boldsymbol{\theta}}(\mathbf{x})$.</p></li><li><p><strong>KL divergence</strong>: Controls the gap between predictions on natural
+data $p(y|x)$ and adversarial data $p(y|x^\ast)$ with the marginal term
+$E_{\boldsymbol{\theta}}(\mathbf{x}) - E_{\boldsymbol{\theta}}(\mathbf{x}^\ast)$.
+By minimizing this gap, the model smooths the energy landscape and
+flattens out disturbed areas.</p></li></ul><p><strong>WEAT formula</strong>:</p><p>$$L_{\text{WEAT}} = \underset{\text{Weighting}}{\boxed{\text{weight}(x)}} \cdot \left[
+\underset{\text{Standard Loss}}{\boxed{L_{\text{CE}}(x, y)}} +
+\beta \cdot \underset{\text{Robust Regularization}}{\boxed{\text{KL}(p(y|x) || p(y|x^\ast))}}
+\right]
+$$</p><p><img src=../../images/Robust_Classifiers_EBM/valley1.png alt="Diagram of WEAT dynamics" loading=lazy decoding=async class=full-width></p><p><img src=../../images/Robust_Classifiers_EBM/valley2.png alt="Diagram of WEAT dynamics" loading=lazy decoding=async class=full-width></p><p><img src=../../images/Robust_Classifiers_EBM/valley3.png alt="Diagram of WEAT dynamics" loading=lazy decoding=async class=full-width></p><p><strong>Figure 8</strong>: Diagram of WEAT dynamics</p><p>The figure above highlights the trade-off with the $\beta$ coefficient
+for regularization to maintain a smooth energy landscape despite
+adversarial attacks.</p><p>While not the main focus of this article (to avoid technical overload),
+WEAT also demonstrates remarkable performance in image generation
+through its integration with Stochastic Gradient Langevin Dynamics
+(SGLD). On standard benchmarks like CIFAR-10, WEAT matches the
+performance of hybrid models such as JEM while offering superior
+robustness (see Table 2c in the paper).</p><h1 style=font-size:24px>Conclusion: A New Era for Robust AI</h1>===============================================<h2 id=why-this-matters>Why This Matters</h2><p>This research isn&rsquo;t just about making AI models more robust. It&rsquo;s about
+fundamentally understanding how these models work and how we can improve
+them. By rethinking adversarial training through the lens of EBMs, the
+authors have opened up new possibilities for both robustness and
+generative modeling. As AI continues to evolve, approaches like WEAT
+will be crucial for building models that are both accurate and secure.
+Surely, this type of model will play a key role in improving trust in
+critical technologies such as autonomous vehicles.</p><h2 id=potential-societal-impact>Potential Societal Impact</h2><p>Although robust models are often considered safe from adversarial
+attacks, their susceptibility to inversion poses a privacy risk. Because
+robust classifiers can be interpreted as energy-based models, they
+capture substantial information about their training data&mdash;including
+its distribution and structure. This makes it possible, using inversion
+techniques, to reconstruct or approximate the original training data. If
+sensitive information (e.g., personal data, proprietary content, or
+other confidential details) is exposed, it could lead to significant
+privacy breaches with broader societal implications.</p><h1 id=references>References</h1><p>Sik-Ho Tsang. <em>Review: Virtual Adversarial Training (VAT)</em>. Apr 21,
+2022. Available at:
+<a href=https://sh-tsang.medium.com/review-virtual-adversarial-training-vat-4b3d8b7b2e92>https://sh-tsang.medium.com/review-virtual-adversarial-training-vat-4b3d8b7b2e92</a>.</p><p>Gaudenz Boesch. <em>Attack Methods: What Is Adversarial Machine Learning?</em>.
+December 2, 2023. Available at:
+<a href=https://viso.ai/deep-learning/adversarial-machine-learning/>https://viso.ai/deep-learning/adversarial-machine-learning/</a>.</p><p>Mujtaba Hussain Mirza1, Maria Rosaria Briglia, Senad Beadini, and Iacopo
+Masi. <em>Shedding More Light on Robust Classifiers under the lens of
+Energy-based Models</em>. 2025. Available at:
+<a href=https://arxiv.org/abs/2407.06315>https://arxiv.org/abs/2407.06315</a>.</p><p></style></p><script type=text/x-mathjax-config>
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script><script type=text/javascript src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full"></script><div class=post-date><span class="g time">March 27, 2025 </span>&#8729;</div></section><div id=comments><script src=https://utteranc.es/client.js repo=ZgotmplZ issue-term=pathname theme=ZgotmplZ crossorigin=anonymous async></script></div></div></main></body></html>
