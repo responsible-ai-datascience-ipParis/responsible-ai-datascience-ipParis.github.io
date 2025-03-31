@@ -3,23 +3,325 @@
     
     <title>Bloggin on Responsible AI</title>
     <description>Bloggin on Responsible AI</description>
-    <link>http://localhost:1313/</link>
+    <link>https://responsible-ai-datascience-ipParis.github.io/</link>
     
     <language>en</language>
     <copyright>Copyright 2025, Calvin Tran</copyright>
-    <lastBuildDate>Thu, 27 Mar 2025 18:53:17 +0100</lastBuildDate>
+    <lastBuildDate>Thu, 27 Mar 2025 21:10:41 +0100</lastBuildDate>
     <generator>Hugo - gohugo.io</generator>
     <docs>http://cyber.harvard.edu/rss/rss.html</docs>
-    <atom:link href="http://localhost:1313//atom.xml" rel="self" type="application/atom+xml"/>
+    <atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/>
     
     
     <item>
+      <title>Neural Networks Forget to Forget: Fixing the Memory Problem With Tensor Decomposition</title>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/activation_compression/</link>
+      <description>&lt;style&gt;
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+&lt;/style&gt;
+&lt;script type=&#34;text/x-mathjax-config&#34;&gt;
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+        skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;]
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i &lt; all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+    }
+});
+&lt;/script&gt;
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+&lt;p&gt;&lt;em&gt;Based on the paper “&lt;a href=&#34;https://arxiv.org/abs/2411.06346&#34;&gt;Activation Map Compression through Tensor Decomposition for Deep Learning&lt;/a&gt;” by Nguyen et al.&lt;/em&gt;&lt;/p&gt;
+&lt;h4 id=&#34;authors-akshita-kumar-florent-blanc&#34;&gt;Authors: Akshita KUMAR, Florent BLANC&lt;/h4&gt;
+&lt;h2 id=&#34;date-27-march-2025&#34;&gt;&lt;strong&gt;Date:&lt;/strong&gt; 27 March 2025&lt;/h2&gt;
+&lt;p&gt;Have you ever wondered why you still distinctly remember the first time someone made fun of you at school or the birthday gift your parents gave you 15 to 20 years ago? The human brain is capable of storing countless pieces of information and memories in an intricate web of about 86 billion neurons, each consisting of thousands of connections! If it&amp;rsquo;s difficult to grasp the magnitude of that number, consider this: if we tried to unwrap and lay out all that information, it would require about 2.5 petabytes of memory! Yet, somehow, all of it fits neatly inside our heads, in a space smaller than a watermelon!&lt;/p&gt;
+&lt;p&gt;Now, imagine if our brains tried to save space the way Mr. Bean packs his suitcase—randomly tossing out items, keeping only one shoe, or draining half the toothpaste into the sink. In that case, you might end up remembering your best friend’s birthday but confusing it with a dramatic event from Elon Musk’s life that was all over the news two months ago. Clearly, our brains have mastered compression in a way that doesn’t compromise accuracy (or mix up childhood nostalgia with internet chaos).&lt;/p&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; 
+ src=&#34;https://www.youtube.com/embed/bEJ8V_Cnx6I?start=20&amp;end=64&#34; 
+ frameborder=&#34;0&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;Deep learning models, in many ways, attempt to emulate this incredible ability of the human brain by mimicking the complex web of connections to enable the sharing of information. Neural networks have revolutionized everything from image recognition to natural language processing by learning complex data patterns. However, one challenge they have conventionally faced is storing all this information in a limited space—they require an enormous amount of memory and computational power. Training deep networks can take terabytes of storage, and running them efficiently demands specialized hardware.&lt;/p&gt;
+&lt;p&gt;Neural networks consist primarily of two backbones: network weights and neuron activations, which are sufficient to define and distinguish between a simple network making a random guess about whether I am likely to be involved in money laundering and one that carefully considers years of my financial records to decide whether I am a safe candidate for a bank loan. While the size of weight matrices might seem daunting for deep neural networks, the major bottleneck in terms of memory size is actually the storage of activations, which, as per backpropagation &lt;a href=&#34;#eq2&#34;&gt;Equation (2)&lt;/a&gt;, is required for weight updates. If you&amp;rsquo;re a first-time reader, you might be wondering: why not just eliminate these non-linear activation functions and try to make the weights and architecture universal enough to model every imaginable scenario? To answer this, picture yourself driving on a winding mountain road filled with sharp turns and steep inclines. If you were to drive in a straight line, no matter how beautiful the scenery is, you’d quickly find yourself off the road and tumbling down into the valley. Since life doesn&amp;rsquo;t give you a chance to backpropagate to correct your mistakes, perhaps in your next life, you might learn to navigate the terrain better! Similarly, a network devoid of activation functions is no more capable of surviving the complexities of real-world data than a simplistic linear logistic regression model, no matter how deep the architecture is.&lt;/p&gt;
+&lt;p&gt;Now, if you were to try to fit this dreadfully large memory-requiring activation map into a microcontroller, you would be no different from Mr. Bean frantically trying to pack his suitcase. The indispensability and large memory requirements of these nonlinear activations have paved the way for research into compressing activation maps when computational resources are limited. Just like our brains optimize memory storage without losing vital details, researchers are exploring ways to shrink deep learning models without making them as absurdly dysfunctional as cutting a pair of trousers into shorts. In this post, we’ll dive into activation map compression through tensor decomposition, a method (Nguyen et al., \url{https://arxiv.org/abs/2411.06346}) that enables deep networks to fit into small devices while maintaining their performance. We&amp;rsquo;ll start by gradually explaining all concepts required to understand the idea, building up from the motivation and proceeding into the technical details. Let’s unpack this and explore how deep learning is learning to travel light!&lt;/p&gt;
+&lt;h2 id=&#34;1-memory-bottleneck-in-backpropagation&#34;&gt;1/ Memory Bottleneck in Backpropagation&lt;/h2&gt;
+&lt;p&gt;Training a deep neural network is a bit like learning to drive. You don&amp;rsquo;t just memorize how to turn the steering wheel — you constantly adjust based on feedback. If you overshoot a turn, your brain registers the mistake, corrects your hand movements, and hopefully, you don’t end up in a ditch. In deep learning, this feedback loop is called backpropagation, a process where the network tweaks its internal parameters to minimize errors over time. In this section, we explore in a bit more detail, the reason behind the huge increase in memory requirements when performing this parameter correction.&lt;/p&gt;
+&lt;p&gt;The primary idea behind backpropagation is simple — use the &lt;strong&gt;chain rule&lt;/strong&gt; for updating model parameters.&lt;br&gt;
+In Convolutional Neural Networks (CNNs), each layer takes in an activation tensor $A_i$, applies a linear transformation followed by the non-linear activation function, and finally produces an output activation $A_{i+1}$.&lt;/p&gt;
+&lt;p&gt;During training, backpropagation employs convolution operations to compute the gradients, which determine how much each weight $W_i$ and activation $A_i$ contributes to the final loss. Mathematically, we can express it as:&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;eq1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;$$
+\frac{\partial \mathcal{L}}{\partial W_i} =
+\frac{\partial \mathcal{L}}{\partial A_{i+1}} \cdot
+\frac{\partial A_{i+1}}{\partial W_i} =
+\text{conv} \left( A_i,\ \frac{\partial \mathcal{L}}{\partial A_{i+1}} \right)
+\tag{1}
+$$&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;eq2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div&gt;
+$$
+\frac{\partial \mathcal{L}}{\partial A_i} = 
+\frac{\partial \mathcal{L}}{\partial A_{i+1}} \cdot 
+\frac{\partial A_{i+1}}{\partial A_i} = 
+\text{conv}_{\text{full}} \left( 
+\frac{\partial \mathcal{L}}{\partial A_{i+1}},\ \text{rot}(W_i) 
+\right)
+\tag{2}
+$$
+&lt;/div&gt;
+&lt;p&gt;where $ \mathcal{L} $ represents the loss function, and $ \text{conv}(\cdot) $ and $ \text{conv}_{\text{full}}(\cdot) $ are convolution operations.&lt;/p&gt;
+&lt;figure style=&#34;text-align: center;&#34;&gt;
+  &lt;img src=&#34;./images/backprop2.jpg&#34; alt=&#34;Backpropagation&#34; style=&#34;width:80%;&#34;&gt;
+  &lt;figcaption&gt;&lt;em&gt;Figure 1:&lt;/em&gt; Illustration of backpropagation — activations and gradients must be stored at every layer.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;We make an important observation from these formulas: to update a weight, we need both the original activation and the gradient of the next layer, which means that we must store all these tensors - the primary difference between backpropagation and inference. And that is exactly where things get messy, leading to a memory crunch during backpropagation.&lt;/p&gt;
+&lt;p&gt;Now, let’s think about this in a different light. Imagine you’re a movie director. Instead of keeping only the final version of each scene, you save every take, every angle, and every tiny adjustment in full resolution. Your hard drive fills up within hours! This is similar to what happens with deep neural networks—they store all activations for potential gradient calculations, even though not all of them are equally important. And not surprisingly, activations are high-dimensional tensors, meaning they can grow in size ridiculously fast. A single activation map has dimensions $ B \times C \times H \times W $ (batch size × channels × height × width). If a network has dozens of layers, storing all these activations at once quickly overflows memory, especially on small, low-power devices like smartphones or IoT sensors. This is why deep networks are often trained in the cloud — but sending data to external servers brings its own headaches, like privacy risks and latency issues.&lt;br&gt;
+So, what is a good way to fix this digital hoarding problem and pack our network efficiently into a small storage space? There are two main strategies:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Weight compression&lt;/strong&gt; – Reducing the size of the model itself.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Activation compression&lt;/strong&gt; – Cutting down the size or the number of activations stored during training.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;figure style=&#34;text-align: center;&#34;&gt;
+  &lt;img src=&#34;./images/backprop.png&#34; alt=&#34;Backpropagation&#34; style=&#34;width:80%;&#34;&gt;
+  &lt;figcaption&gt;&lt;em&gt;Figure 2:&lt;/em&gt; Flow of Forward and Backward Pass Using Compression Techniques.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;While there have been several exciting efforts towards reducing the space occupied by the network weights - sparsification (dropping a fraction of less significant weights), quantization (reducing parameter precision to save memory), knowledge distillation (using pretrained large networks as &amp;ldquo;teachers&amp;rdquo; that guide the training of smaller and more compact &amp;ldquo;student&amp;rdquo; networks) etc, the authors of this paper focus on the second approach, and the following sections will allow you to discover the intricacies of how exactly they do so.&lt;/p&gt;
+&lt;h2 id=&#34;2-tensor-decomposition&#34;&gt;2/ Tensor Decomposition&lt;/h2&gt;
+&lt;p&gt;Among different compression techniques, tensor decomposition is emerging as a promising solution. It reduces large activation maps to smaller and structured representations, by storing only the most informative parts of the map while discarding redundant or uninformative components. This is based on a mathematical concept called low-rank approximation, which was originally developed for signal processing but is now making waves in deep learning.&lt;/p&gt;
+&lt;h3 id=&#34;21-breaking-down-a-matrix-the-svd-trick&#34;&gt;2.1/ Breaking Down a Matrix: the SVD trick&lt;/h3&gt;
+&lt;p&gt;Let&amp;rsquo;s first look at the (second) simplest version of a tensor - a 2D matrix. The technique called Singular Value Decomposition (SVD) breaks down a matrix $A$ into three parts:&lt;/p&gt;
+&lt;div&gt;$$
+A = U \Sigma V^T
+$$&lt;/div&gt;
+where $ U $ and $ V^T $ are orthogonal matrices, and $ \Sigma $ is a diagonal matrix of singular values. $ \Sigma $ then represents the importance of each component of A. 
+ The trick here is that not all singular values are equally important. Many of them contribute little to the overall structure, so we can safely ignore them without losing much information. So, we retain only the top $K$ singular values and the corresponding columns from $U$ and $V$.
+&lt;p&gt;Now, before you get too excited about SVD, take a step back! SVD works only for 2D matrices! And activation maps in CNNs are in fact 4D tensors (batch size × channels × height × width), i.e $A \in \mathbb{R}^{B \times C \times H \times W}$.&lt;/p&gt;
+&lt;p&gt;To apply SVD, we first have to reshape our activation tensor into a 2D matrix: $A \in \mathbb{R}^{B \times (CHW)}$. Then, we obtain:&lt;/p&gt;
+&lt;div&gt;$$
+A = U \Sigma V^T
+$$&lt;/div&gt;
+with:
+&lt;div&gt;$$
+U \in \mathbb{R}^{B \times B}, \quad \Sigma \in \mathbb{R}^{B \times (CHW)}, \quad V^T \in \mathbb{R}^{(CHW) \times (CHW)}
+$$&lt;/div&gt;
+&lt;p&gt;Truncating each decomposed component to only the top $ K $ values, we obtain a low-rank approximation of $ A $:&lt;/p&gt;
+&lt;div&gt;$$
+\tilde{A} = U_K \Sigma_K V_K^T
+$$&lt;/div&gt;
+where $ U_K $ and $ V_K $ retain only the first $ K $ columns and $ \Sigma_K $ retains the top $ K $ singular values.
+\vspace{0.2cm}
+&lt;p&gt;Did you realise what just happened? We significantly reduced the amount of storage space required, from $\mathcal{O}(BCHW) \text{ to } \mathcal{O}(K(B + CHW))$.&lt;/p&gt;
+&lt;p&gt;Well, this is a bit like stuffing a big fat McD burger into a small tiffin box. It surely allows you to savour your favorite meal wherever you want, but ends up mixing the sauces and popping out veggies.&lt;br&gt;
+Similarly, in CNNs, this reshaping operation destroys spatial patterns and mixes information from different dimensions, leading to inefficiency.&lt;/p&gt;
+&lt;h3 id=&#34;22-towards-hosvd-the-higher-dimensional-packing-strategy&#34;&gt;2.2/ Towards HOSVD: The Higher-Dimensional Packing Strategy&lt;/h3&gt;
+&lt;p&gt;To avoid this, we turn to Higher-Order Singular Value Decomposition (HOSVD)—the tensor-ified sister of SVD, that works directly on multi-dimensional tensors without flattening them. Instead of trying to squish everything into a single matrix, HOSVD compresses each dimension separately, maintaining important spatial relationships.&lt;/p&gt;
+&lt;p&gt;Given an activation tensor $ T $ of shape $ M_1 \times M_2 \times \cdots \times M_n $, HOSVD decomposes it as follows:&lt;/p&gt;
+&lt;div&gt;$$
+T \approx S \times_1 U^{(1)} \times_2 U^{(2)} \times_3 \dots \times_n U^{(n)}
+$$&lt;/div&gt;
+where:
+&lt;ul&gt;
+&lt;li&gt;$ S $ is the core tensor, which represents a compressed version of $ T $,&lt;/li&gt;
+&lt;li&gt;$ U^{(j)} $ are orthogonal factor matrices that capture the most significant variations along each dimension $ j $,&lt;/li&gt;
+&lt;li&gt;$ \times_j $ denotes the mode-$ j $ product, which multiplies the tensor $ S $ by the factor matrix $ U^{(j)} $ along the $ j $th individual dimension instead of treating the tensor as a giant matrix.
+Since different dimensions (batch, channels, height, width) carry different types of information, HOSVD allows us to compress each dimension optimally.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We truncate both the core tensor S and the factor matrices along each mode to retain only the most significant components:&lt;/p&gt;
+&lt;div&gt;$$
+\tilde{T} = \hat{S} \times_1 U^{(1)}_{(K_1)} \times_2 \cdots \times_n U^{(n)}_{(K_n)} \approx T
+$$&lt;/div&gt;
+where:
+- $ U^{(j)}_{(K_j)} \in \mathbb{R}^{M_j \times K_j} $ represents the first $ K_j $ columns of the factor matrix $ U^{(j)} $,
+- $ \hat{S} \in \mathbb{R}^{K_1 \times K_2 \times \dots \times K_n} $ is the truncated version of the core tensor $ S $.
+&lt;p&gt;In practice, we limit ourselves to the 4-mode decomposition (i.e $n=4$). This approach helps achieve higher compression, reducing the memory requirement while preserving the network’s ability to learn effectively, implying that deep learning models can run with less memory without becoming as dysfunctional as a half-packed Mr. Bean suitcase!&lt;/p&gt;
+&lt;video controls style=&#34;display: block; margin: auto; width: 80%;&#34;&gt;
+  &lt;source src=&#34;./images/animation.mp4&#34; type=&#34;video/mp4&#34;&gt;
+&lt;/video&gt;
+&lt;h3 id=&#34;23-unpacking-the-math-how-backpropagation-works-with-tensor-decomposition&#34;&gt;2.3/ Unpacking the Math: How Backpropagation Works with Tensor Decomposition&lt;/h3&gt;
+&lt;p&gt;Now that we&amp;rsquo;ve seen how tensor decomposition helps reduce memory usage, let us now address the secrets of how this dreadful-looking $i$-mode product can be backpropagated. Equations 1 and 2 show that the activation tensors appear only in the computation of gradient with respect to the weights.
+To express it in a single line, the gradient of the loss function with respect to weight matrix $W_i$ can be written as:&lt;/p&gt;
+&lt;div&gt;$$
+\frac{\partial \mathcal{L}}{\partial \mathcal{W}_i} = \operatorname{conv}_{1\times1} \left\{ \operatorname{conv}_* \left[ \operatorname{conv}_{1\times1} \left( \operatorname{conv}_{1\times1} \left( \hat{S}, U^{(3)}_{(K_3)} \right), U^{(4)}_{(K_4)} \right), \operatorname{conv}_{1\times1} \left( \frac{\partial \mathcal{L}}{\partial \mathcal{A}_{i+1}}, U^{(1)}_{(K_1)} \right) \right], U^{(2)}_{(K_2)} \right\}
+$$&lt;/div&gt;
+where $ \operatorname{conv}_* $ is a 2D convolution, and $ \operatorname{conv}_{1\times1} $ represents efficient 1x1 convolutions.
+&lt;p&gt;If you&amp;rsquo;re feeling brave enough to dive into the depths of how this formula is derived, buckle up for some gradient magic and expand the following section. But if you&amp;rsquo;re just here for the big picture and don’t want to dream of summations and convolutions tonight, feel free to continue to the next section!&lt;/p&gt;
+&lt;h4 id=&#34;step-1-the-usual-backprop-formula&#34;&gt;Step 1: The Usual Backprop Formula&lt;/h4&gt;
+&lt;details onclick=&#34;MathJax.Hub.Queue([&#39;Typeset&#39;, MathJax.Hub, this])&#34;&gt;
+  &lt;summary&gt;Click to see the math of this step!&lt;/summary&gt;
+&lt;p&gt;The standard weight update rule for a convolutional layer requires computing the gradient of the loss with respect to the weights:&lt;/p&gt;
+  &lt;div&gt;$$
+  \Delta \mathcal{W}_{c&#39;, c, k, l} = \sum_{b=1}^{B} \sum_{h&#39; = 1}^{H&#39;} \sum_{w&#39; = 1}^{W&#39;} \mathcal{I}_{b, c_g, h, w} \Delta \mathcal{Y}_{b, c&#39;, h&#39;, w&#39;}
+  $$&lt;/div&gt;
+&lt;p&gt;where $ \mathcal{I} $ is the padded input and $ \Delta \mathcal{Y} $ is the gradient of the output.&lt;/p&gt;
+&lt;/details&gt;
+&lt;h4 id=&#34;step-2-tensor-decomposition--breaking-it-down&#34;&gt;Step 2: Tensor Decomposition – Breaking It Down&lt;/h4&gt;
+&lt;details onclick=&#34;MathJax.Hub.Queue([&#39;Typeset&#39;, MathJax.Hub, this])&#34;&gt;
+  &lt;summary&gt;Click to see the math of this step!&lt;/summary&gt;
+  The following equation looks daunting, but it is nothing more than the matrix product expression of what \ref{eq:4}) refers to! 
+  &lt;div&gt;$$
+  \tilde{\mathcal{I}}_{b, c_g, h, w} = \sum_{k_1=1}^{K_1} \sum_{k_2=1}^{K_2} \sum_{k_3=1}^{K_3} \sum_{k_4=1}^{K_4} \hat{S}_{k_1, k_2, k_3, k_4} U^{(1)}_{(K_1), b, k_1} U^{(2)}_{(K_2), c_g, k_2} U^{(3)}_{(K_3), h, k_3} U^{(4)}_{(K_4), w, k_4}
+  $$&lt;/div&gt;
+&lt;p&gt;This means that instead of storing $ \mathcal{I} $ directly, we store its compressed components $ U^{(j)} $ and $ \hat{S} $.&lt;/p&gt;
+&lt;/details&gt;
+&lt;h4 id=&#34;step-3-restoring-the-input-in-backward-pass&#34;&gt;Step 3: Restoring the Input in Backward Pass&lt;/h4&gt;
+&lt;details onclick=&#34;MathJax.Hub.Queue([&#39;Typeset&#39;, MathJax.Hub, this])&#34;&gt;
+  &lt;summary&gt;Click to see the math of this step!&lt;/summary&gt;
+  Coming to the part of the algorithm that allows the network to go back and corrrect it mistakes, we now put together the decomposed components to reconstruct the input:
+  &lt;div&gt;$$
+  \tilde{\mathcal{I}}_{b, c_g, h, w} = \sum_{k_1=1}^{K_1} \sum_{k_2=1}^{K_2} \sum_{k_3=1}^{K_3} \sum_{k_4=1}^{K_4} \hat{S}_{k_1, k_2, k_3, k_4} U^{(1)}_{(K_1), b, k_1} U^{(2)}_{(K_2), c_g, k_2} \underline{U}^{(3)}_{(K_3), h, k_3} \underline{U}^{(4)}_{(K_4), w, k_4}
+  $$&lt;/div&gt;
+&lt;p&gt;Here, $ U^{(3)} $ and $ U^{(4)} $ undergo vertical padding. This step ensures that we reconstruct the original shape needed for backpropagation.&lt;/p&gt;
+&lt;/details&gt;
+&lt;h4 id=&#34;step-4-rewriting-the-gradient-computation&#34;&gt;Step 4: Rewriting the Gradient Computation&lt;/h4&gt;
+&lt;details onclick=&#34;MathJax.Hub.Queue([&#39;Typeset&#39;, MathJax.Hub, this])&#34;&gt;
+  &lt;summary&gt;Click to see the math of this step!&lt;/summary&gt;
+  We now substitute this back into the weight update equation and reorganize terms:
+  &lt;div&gt;$$
+  Z^{(1)}_{k_1, c_g&#39;, h&#39;, w&#39;} = \sum_{b=1}^{B} \Delta \mathcal{Y}_{b, c&#39;, h&#39;, w&#39;} U^{(1)}_{(K_1), b, k_1}
+  $$&lt;/div&gt;
+  &lt;div&gt;$$
+  Z^{(2)}_{k_1, k_2, h, k_4} = \sum_{k_3=1}^{K_3} \hat{S}_{k_1, k_2, k_3, k_4} U^{(3)}_{(K_3), h, k_3}
+  $$&lt;/div&gt;
+  &lt;div&gt;$$
+  Z^{(3)}_{k_1, k_2, h, w} = \sum_{k_4=1}^{K_4} Z^{(2)}_{k_1, k_2, h, k_4} U^{(4)}_{(K_4), w, k_4}
+  $$&lt;/div&gt;
+  &lt;div&gt;$$
+  Z^{(4)}_{c_g&#39;, k_2, k, l} = \sum_{h&#39;=1}^{H&#39;} \sum_{w&#39;=1}^{W&#39;} \sum_{k_1=1}^{K_1} Z^{(3)}_{k_1, k_2, h, w} Z^{(1)}_{k_1, c_g&#39;, h&#39;, w&#39;}
+  $$&lt;/div&gt;
+  &lt;div&gt;$$
+  \Delta \mathcal{W}_{c&#39;, c, k, l} = \sum_{k_2=1}^{K_2} Z^{(4)}_{c_g&#39;, k_2, k, l} U^{(2)}_{(K_2), c_g, k_2}
+  $$&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;At this stage, we have effectively transformed the weight update process into a series of smaller matrix multiplications and convolutions, reducing the computational burden.&lt;/p&gt;
+&lt;p&gt;This entire derivation ultimately leads to the final gradient computation in equation 3.&lt;/p&gt;
+&lt;h2 id=&#34;3-experimental-validation&#34;&gt;3/ Experimental Validation&lt;/h2&gt;
+&lt;p&gt;It’s one thing to talk about activation compression in theory, but does it actually work in practice? To find out and test the authors&amp;rsquo; claims, the authors put HOSVD to the test across multiple deep learning architectures — MobileNetV2, ResNet18, ResNet34, and MCUNet — and compared its performance with other activation compression strategies. These models vary in depth, design, and computational footprint, making them ideal test subjects to see how activation compression affects memory, computation, and accuracy.&lt;/p&gt;
+&lt;h3 id=&#34;31-experimental-setup&#34;&gt;3.1/ Experimental Setup&lt;/h3&gt;
+&lt;p&gt;To make the evaluation structured and fair, compression techniques were tested on both classification and segmentation tasks.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Classification:&lt;/strong&gt; Fine-tuning pre-trained models using two strategies:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Full fine-tuning:&lt;/em&gt; Fully fine-tuning models pre-trained on ImageNet (&amp;ldquo;teachers&amp;rdquo;) on downstream datasets.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Half fine-tuning:&lt;/em&gt; Splitting ImageNet into non-i.i.d. partitions and training in a federated learning framework — using one partition each for pre-training and fine-tuning.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Semantic Segmentation:&lt;/strong&gt; Models trained on Cityscapes (an urban streets view dataset) were fine-tuned to work on Pascal-VOC12 (a 20-category image dataset for pixel-level segmentation tasks), a task that requires fine-grained spatial details.&lt;/p&gt;
+&lt;p&gt;Instead of setting compression levels arbitrarily, the explained variance was controlled, which is the direct &amp;ldquo;remote control&amp;rdquo; for the amount of information that is retained while reducing the activation size. This ensures that memory vs. accuracy trade-offs are compared on equal terms across different techniques.&lt;/p&gt;
+&lt;h3 id=&#34;32-how-much-can-we-compress-without-hurting-accuracy&#34;&gt;3.2/ How Much Can We Compress Without Hurting Accuracy?&lt;/h3&gt;
+&lt;p&gt;When compressing activations using HOSVD, one of the key decisions is choosing how much variance to retain. Too little variance makes the network lose crucial details, and too much of it makes the memory reductions negligible.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Key Findings on Explained Variance&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Less than 20% of components capture more than 80% of the variance. This means we can throw away a lot of redundant data while keeping performance intact.&lt;/li&gt;
+&lt;li&gt;Compression scales non-linearly: keeping 80–90% of variance gives a huge reduction in storage while maintaining accuracy.&lt;/li&gt;
+&lt;li&gt;Below 80% variance, accuracy drops fast. Beyond 90%, we hit diminishing returns — almost no accuracy gain, but memory costs start rising.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;What&amp;rsquo;s the best trade-off between accuracy and compression?&lt;/strong&gt;&lt;br&gt;
+An explained variance of 0.8 and 0.9 was settled on as the sweet spot.&lt;/p&gt;
+&lt;h3 id=&#34;33-main-results-what-the-authors-say&#34;&gt;3.3/ Main Results: What the Authors Say&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;HOSVD consistently outperforms SVD and gradient filtering — better accuracy and smaller memory requirement; so for accurate classification, the multi-modal structure of the activation tensor must be preserved.&lt;/li&gt;
+&lt;li&gt;At the same level of memory consumption, HOSVD reduces the amount of activation storage by 18.87 times on average.&lt;/li&gt;
+&lt;li&gt;As compared to SVD, HOSVD enhances accuracy by up to 19.11%, which validates that preserving the multi-dimensional activation structure is indeed crucial.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure style=&#34;text-align: center;&#34;&gt;
+  &lt;img src=&#34;./images/results-table.png&#34; alt=&#34;Comparison of classification accuracy and activation memory usage for different compression strategies&#34; style=&#34;width:100%; max-width:1400px;&#34;&gt;
+  &lt;figcaption style=&#34;margin-top: 0.5em;&#34;&gt;&lt;em&gt;Figure 3:&lt;/em&gt; Comparison of classification accuracy and activation memory usage for different compression strategies across MobileNetV2 and MCUNet&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;figure style=&#34;text-align: center;&#34;&gt;
+  &lt;img src=&#34;./images/barplot.png&#34; alt=&#34;Bar plot showing memory-accuracy tradeoff&#34; style=&#34;width:80%;&#34;&gt;
+  &lt;figcaption&gt;&lt;em&gt;Figure 4:&lt;/em&gt; Memory consumption of different methods on CIFAR-10 &lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;In fact, HOSVD works great not just for classification — it also maintains performance across &lt;strong&gt;segmentation&lt;/strong&gt; tasks while significantly reducing memory use! This makes it a great candidate for memory-constrained applications that still require fine-grained spatial details (e.g., medical imaging, autonomous driving).&lt;/p&gt;
+&lt;h3 id=&#34;34-main-results-our-attempt-at-replication&#34;&gt;3.4/ Main Results: Our Attempt at Replication&lt;/h3&gt;
+&lt;p&gt;To verify the authors&amp;rsquo; claims, we rolled up our sleeves and conducted an independent test on a system equipped with a 12th Gen Intel(R) Core(TM) i7-1255U processor, 16 GB RAM, and 4 memory cores. We chose MobileNetV2—the lightest of the architectures—and fine-tuned it using HOSVD on CIFAR-10 for 5 epochs, setting the explained variance to 0.8. The results? Surprisingly strong with an interesting trend:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Going from 2 to 4 layers increased validation accuracy by 4% but also raised peak memory by 0.3MB — a reasonable trade-off.&lt;/li&gt;
+&lt;li&gt;However, increasing to 6 layers actually hurt accuracy, despite consuming more memory! This suggests that excessive compression led to information loss propagating across layers — similar to the degradation seen in gradient filtering techniques. In other words, there is a fine balance between compression and performance.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure style=&#34;text-align: center;&#34;&gt;
+  &lt;img src=&#34;./images/plot_acc_mem.png&#34; alt=&#34;Accuracy vs memory tradeoff&#34; style=&#34;width:6x0%;&#34;&gt;
+  &lt;figcaption&gt;&lt;em&gt;Figure 5:&lt;/em&gt; Activation Memory vs Accuracy over epochs for 3 levels of finetune &lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;h4 style=&#34;text-align: center;&#34;&gt;Reproduction Table&lt;/h4&gt;
+&lt;table style=&#34;border-collapse: collapse; width: 100%; text-align: center;&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;background-color: #f2f2f2;&#34;&gt;
+      &lt;th style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;Num Finetune&lt;/th&gt;
+      &lt;th style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;Val Acc&lt;/th&gt;
+      &lt;th style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;Peak Mem&lt;/th&gt;
+      &lt;th style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;Mean Mem&lt;/th&gt;
+      &lt;th style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;Std Mem&lt;/th&gt;
+      &lt;th style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;Mean ± Std&lt;/th&gt;
+      &lt;th style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;Total Mem&lt;/th&gt;
+      &lt;th style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;Time/Epoch&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;2&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.7721&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.1227&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.1082&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.0142&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;$0.11 \pm 0.01$&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.5409&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;40 min&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;4&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.8154&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.4034&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.3864&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.0189&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;$0.39 \pm 0.02$&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;1.9322&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;50 min&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;6&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.7592&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.3254&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.3078&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;0.0234&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;$0.31 \pm 0.02$&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;1.5390&lt;/td&gt;
+      &lt;td style=&#34;border: 1px solid #000; padding: 8px;&#34;&gt;90 min&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p style=&#34;text-align: center;&#34;&gt;&lt;strong&gt;Table 1:&lt;/strong&gt; Reproduction Experiments — Memory usage and validation accuracy for different number of layers fine-tuned.&lt;/p&gt;
+&lt;h3 id=&#34;35-key-takeaways-what-we-learned&#34;&gt;3.5/ Key Takeaways: What We Learned&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;HOSVD beats SVD and gradient filtering in terms of the tradeoff between memory and accuracy for activation compression.&lt;/li&gt;
+&lt;li&gt;Compression beyond 90% explained variance isn’t worth it; accuracy stops improving, but memory costs continue to grow exponentially.&lt;/li&gt;
+&lt;li&gt;Our reproduction experiments were feasible on a CPU only because HOSVD drastically reduces peak memory usage — down to 0.3MB compared to 30MB required for vanilla training — allowing us to bypass the need for high-end hardware while still yielding meaningful results — showing just how well this approach can work in more resource-constrained environments.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Why does HOSVD win?&lt;/strong&gt;&lt;br&gt;
+Unlike SVD, which flattens activation tensors and loses spatial correlations, HOSVD keeps tensor relationships intact, resulting in higher accuracy for the same memory budget.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Still skeptical? Try it yourself! Check out our &lt;a href=&#34;https://github.com/florentblnc/NeurIPS2024-ActivationCompression&#34;&gt;CPU-friendly implementation&lt;/a&gt; :&lt;/strong&gt;&lt;br&gt;
+&lt;em&gt;Beware! The original code may not work with newer versions of PyTorch Lightning; several functionalities have deprecated. Our version resolves the compatibility issues.&lt;/em&gt;&lt;/p&gt;
+&lt;h3 id=&#34;4-embedded-ai-what-lies-ahead&#34;&gt;4/ Embedded AI: What Lies Ahead?&lt;/h3&gt;
+&lt;p&gt;The results are clear: HOSVD-based activation compression is a game changer for making deep learning models more memory-efficient without compromising their accuracy. By keeping the most essential information while trimming away redundancy, we’ve seen how compression can reduce activation storage drastically, making it possible to run complex models even on resource-limited devices.&lt;/p&gt;
+&lt;p&gt;But what’s next? AI models are already pushing the limits of what’s possible on embedded hardware. Today, deep learning runs on devices as small as a few millimeters in size - Edge TPUs, MCUs with less than 1MB of RAM, and smartphones packing neural processing units (NPUs). And it’s not just about running models efficiently—compression techniques like this are making on-device learning a reality. Instead of relying on massive cloud servers, models can now adapt and learn locally, whether it’s a smartwatch fine-tuning its activity tracking, a smartphone enhancing its voice recognition, or an AI assistant getting smarter without sending personal data to the cloud. The ability to learn on the go, without bloated memory requirements, brings AI one step closer to mimicking the adaptability of the human brain.&lt;/p&gt;
+&lt;p&gt;Perhaps, one day, deep learning models will successfully bridge this gap to achieve the kind of seamless efficiency our brains naturally posses. Until then, activation compression is one giant leap toward making AI as frugal and intelligent as nature itself.&lt;/p&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/activation_compression/</guid>
+      <pubDate>Thu, 27 Mar 2025 21:10:41 +0100</pubDate>
+    </item>
+    
+    <item>
       <title>Robust Classifiers Energy Based Models</title>
-      <link>http://localhost:1313/posts/robust-classifiers-energy-based-models/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/robust-classifiers-energy-based-models/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Unlocking the Secrets of Robust AI: How Energy-Based Models Are
   Revolutionizing Adversarial Training&lt;/h1&gt;
-&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Authors: Lucas ALJANCIC, Solal DANAN, Maxime APPERT&lt;/h1&gt;
-&lt;h1 id=&#34;introduction-the-hidden-world-of-adversarial-attacks&#34; class=&#34;unnumbered&#34;&gt;Introduction: The Hidden World of Adversarial Attacks&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 20px;&#34;&gt;Authors: Lucas ALJANCIC, Solal DANAN, Maxime APPERT&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Introduction: The Hidden World of Adversarial Attacks &lt;/h1&gt;
+=====================================================
 &lt;p&gt;Imagine you&amp;rsquo;ve built a state-of-the-art AI model that can classify
 images with near-perfect accuracy. But then, someone adds a tiny, almost
 invisible perturbation to an image, and suddenly your model confidently
@@ -32,7 +334,8 @@ called &lt;strong&gt;Weighted Energy Adversarial Training (WEAT)&lt;/strong&gt; 
 makes models more robust but also unlocks surprising generative
 capabilities. Let&amp;rsquo;s break it down step by step, from the basics to the
 big picture.&lt;/p&gt;
-&lt;h1 id=&#34;understanding-adversarial-attacks-and-robust-ai&#34;&gt;Understanding Adversarial Attacks and Robust AI&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Understanding Adversarial Attacks and Robust AI &lt;/h1&gt;
+===============================================
 &lt;h2 id=&#34;what-are-adversarial-attacks&#34;&gt;What Are Adversarial Attacks?&lt;/h2&gt;
 &lt;p&gt;Adversarial attacks can be thought of as carefully crafted optical
 illusions for AI. By making tiny changes to an input, attackers can
@@ -71,7 +374,10 @@ misclassify it with high confidence (right).&#34;
   class=&#34;full-width&#34;
 /&gt;
 
-{width=&amp;ldquo;50%&amp;rdquo;}&lt;/p&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Figure 1:&lt;/strong&gt; A small perturbation (middle) is added to a
+correctly classified image (left), causing a deep neural network to
+misclassify it with high confidence (right).&lt;/p&gt;
 &lt;p&gt;These adversarial attacks can also be used maliciously in what is known
 as a backdoor attack, where mislabeling during training leads to
 misclassification at test time. For instance, a stop sign with a slight
@@ -88,7 +394,11 @@ misclassification at test time.&#34;
   class=&#34;full-width&#34;
 /&gt;
 
-{width=&amp;ldquo;60%&amp;rdquo;}&lt;/p&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Figure 2:&lt;/strong&gt; Poisoning the training data by mislabeling
+specific inputs (top right) forces the model to associate a manipulated
+stop sign with a speed limit sign (bottom), leading to targeted
+misclassification at test time.&lt;/p&gt;
 &lt;p&gt;We can easily imagine scenarios in which an adversarial attack can be
 critical. For example, a self-driving car misinterpreting a slightly
 modified stop sign as a yield sign due to adversarial perturbations
@@ -108,8 +418,7 @@ like Projected Gradient Descent (PGD) or the Fast Gradient Sign Method
 adversarial examples, thereby improving its resilience.&lt;/p&gt;
 &lt;p&gt;Mathematically, adversarial training involves solving the following
 optimization problem:
-$$\min_{\theta} ; \mathbb{E}&lt;em&gt;{(x,y) \sim \mathcal{D}} \left[ \max&lt;/em&gt;{\delta: |\delta| \le \epsilon} L\left(f(x+\delta;\theta), y\right) \right]
-$$
+$$\underbrace{\min_{\theta} E_{(x,y) \sim \mathcal{D}} \left[ \overbrace{\max_{\delta: |\delta| \le \epsilon} L\bigl(f(x+\delta;\theta), y\bigr)}^{\text{Adversarial Attack}} \right]}_{\text{Adversarial Training}}.$$
 Here, the inner maximization aims to generate the worst-case
 perturbation $\delta$, while the outer minimization updates the model
 parameters $\theta$ to minimize the loss on these adversarial examples.
@@ -133,7 +442,10 @@ terms.&#34;
   class=&#34;full-width&#34;
 /&gt;
 
-{width=&amp;ldquo;50%&amp;rdquo;}&lt;/p&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Figure 3:&lt;/strong&gt; Representation of Adversarial Training, a model processes both
+clean and adversarial examples, minimizing cross-entropy loss for
+labeled images and KL divergence between predictions.&lt;/p&gt;
 &lt;p&gt;A useful analogy is training a security system against burglary
 attempts. Imagine a house protected against intruders. A basic security
 system might work well against naive burglars but fail against
@@ -150,7 +462,8 @@ One way to do this is to analyze adversarial training through an
 energy-based perspective. In the next section, we explore how
 energy-based models offer critical insights that can help address this
 problem.&lt;/p&gt;
-&lt;h1 id=&#34;energy-based-models-ebms--a-new-perspective&#34;&gt;Energy-Based Models (EBMs) &amp;ndash; A New Perspective&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Energy-Based Models (EBMs) -- A New Perspective &lt;/h1&gt;
+===============================================
 &lt;p&gt;Inspired by previous works linking adversarial training (AT) and
 energy-based models&amp;mdash;which reveal a shared contrastive approach&amp;mdash;the
 authors reinterpret robust discriminative classifiers as EBMs. This new
@@ -192,27 +505,24 @@ $E_\theta(x)$. Consequently, the adversarial example looks very
 &amp;ldquo;natural&amp;rdquo; (low $E_\theta(x)$) yet becomes unrecognizable for the true
 label (high energy).&lt;/p&gt;
 &lt;p&gt;&lt;img
-  src=&#34;pgd1.png&#34;
-  alt=&#34;PGD Untargeted attacks: (Left) Distributions of $E_\theta(x)$;
-(Right) Distributions of $E_\theta(x,y)$. Blue indicates natural data,
-red indicates adversarial data.&#34;
+  src=&#34;./images/Robust_Classifiers_EBM/pgd1.png&#34;
+  alt=&#34;PGD Untargeted attacks: (Left) Distributions of (E_\theta(x)); (Right) Distributions of (E_\theta(x, y)). Blue indicates natural data, red indicates adversarial data.&#34;
   loading=&#34;lazy&#34;
   decoding=&#34;async&#34;
   class=&#34;full-width&#34;
 /&gt;
 
-{width=&amp;ldquo;30%&amp;rdquo;} &lt;img
+&lt;/p&gt;
+&lt;p&gt;&lt;img
   src=&#34;./images/Robust_Classifiers_EBM/pgd2.png&#34;
-  alt=&#34;PGD
-Untargeted attacks: (Left) Distributions of $E_\theta(x)$; (Right)
-Distributions of $E_\theta(x,y)$. Blue indicates natural data, red
-indicates adversarial data.&#34;
+  alt=&#34;PGD Untargeted attacks: (Left) Distributions of (E_\theta(x)); (Right) Distributions of (E_\theta(x, y)). Blue indicates natural data, red indicates adversarial data.&#34;
   loading=&#34;lazy&#34;
   decoding=&#34;async&#34;
   class=&#34;full-width&#34;
 /&gt;
 
-{width=&amp;ldquo;30%&amp;rdquo;}&lt;/p&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Figure 4:&lt;/strong&gt; PGD Untargeted attacks: (Above) Distributions of $(E_\theta(x))$; (Below) Distributions of $(E_\theta(x, y))$. Blue indicates natural data, red indicates adversarial data.&lt;/p&gt;
 &lt;h4 id=&#34;targeted-attacks&#34;&gt;Targeted Attacks.&lt;/h4&gt;
 &lt;p&gt;These attacks force the classifier to predict a specific (incorrect)
 label $t$. The adversary perturbs $x$ to &lt;em&gt;minimize&lt;/em&gt; the energy for the
@@ -220,7 +530,7 @@ target label $E_\theta(x,t)$, thereby steering the classifier&amp;rsquo;s decisi
 toward $t$ but raise $E_\theta(x)$ overall, making the input look
 out-of-distribution despite being confidently misclassified as $t$.&lt;/p&gt;
 &lt;p&gt;&lt;img
-  src=&#34;apgd1.png&#34;
+  src=&#34;./images/Robust_Classifiers_EBM/apgd1.png&#34;
   alt=&#34;APGD Targeted attacks: (Left) Distributions of $E_\theta(x)$;
 (Right) Distributions of $E_\theta(x,y)$. Blue indicates natural data,
 red indicates adversarial data.&#34;
@@ -229,10 +539,10 @@ red indicates adversarial data.&#34;
   class=&#34;full-width&#34;
 /&gt;
 
-{width=&amp;ldquo;30%&amp;rdquo;} &lt;img
+
+&lt;img
   src=&#34;./images/Robust_Classifiers_EBM/apgd2.png&#34;
-  alt=&#34;APGD
-Targeted attacks: (Left) Distributions of $E_\theta(x)$; (Right)
+  alt=&#34;APGD Targeted attacks: (Left) Distributions of $E_\theta(x)$; (Right)
 Distributions of $E_\theta(x,y)$. Blue indicates natural data, red
 indicates adversarial data.&#34;
   loading=&#34;lazy&#34;
@@ -240,7 +550,8 @@ indicates adversarial data.&#34;
   class=&#34;full-width&#34;
 /&gt;
 
-{width=&amp;ldquo;30%&amp;rdquo;}&lt;/p&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Figure 5:&lt;/strong&gt; APGD Targeted attacks: (Above) Distributions of $(E_\theta(x))$; (Below) Distributions of $(E_\theta(x, y))$. Blue indicates natural data, red indicates adversarial data.&lt;/p&gt;
 &lt;p&gt;By revealing how each attack reshapes the energies of clean vs.
 adversarial examples, the authors highlight distinct patterns for
 untargeted and targeted strategies&amp;mdash;informing more effective defenses.&lt;/p&gt;
@@ -251,7 +562,7 @@ the specific adversarial perturbations seen during training, yet
 struggles with new adversarial attacks. The authors reveal that robust
 overfitting is closely linked to a widening &lt;em&gt;energy gap&lt;/em&gt; between clean
 and adversarial samples. As adversarial training progresses, the energy
-$E_\theta(x)$ of natural (clean) examples and the energy $E_\theta(x^*)$
+$E_\theta(x)$ of natural (clean) examples and the energy $E_\theta(x^\ast)$
 associated with their adversarially perturbed versions diverge
 significantly. Surprisingly, even if a sample is &amp;ldquo;easy&amp;rdquo; (i.e., it has a
 low loss and the model is highly confident), only minimal perturbations
@@ -275,7 +586,7 @@ the model generalize more effectively against unseen attacks.&lt;/p&gt;
   alt=&#34;Energy alignment in TRADES vs. SAT (another AT approach). While
 SAT (line curve) experiences a steep divergence between clean and
 adversarial energies ($\Delta E_\theta(x)$ = $E_\theta(x)$ -
-$E_\theta(x^*)$ ) in the 3rd phase (leading to robust overfitting),
+$E_\theta(x^\ast)$ ) in the 3rd phase (leading to robust overfitting),
 TRADES (dashed curve) maintains a relatively constant energy gap. This
 smoother alignment mitigates overfitting and improves
 robustness.&#34;
@@ -284,7 +595,14 @@ robustness.&#34;
   class=&#34;full-width&#34;
 /&gt;
 
-{width=&amp;ldquo;40%&amp;rdquo;}&lt;/p&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Figure 6:&lt;/strong&gt; While
+SAT (line curve) experiences a steep divergence between clean and
+adversarial energies ($\Delta E_\theta(x)$ = $E_\theta(x)$ -
+$E_\theta(x^\ast)$ ) in the 3rd phase (leading to robust overfitting),
+TRADES (dashed curve) maintains a relatively constant energy gap. This
+smoother alignment mitigates overfitting and improves
+robustness.&lt;/p&gt;
 &lt;p&gt;One of the key empirical observations is that top-performing robust
 classifiers tend to exhibit a smooth energy landscape around natural
 data points. Concretely, the energies $E_\theta(x)$ and
@@ -299,7 +617,8 @@ ability to generalize its robustness to new attacks is compromised.
 These observations deepen our understanding of adversarial dynamics and
 informed the strategy for effective robust training methods WEAT, as
 described in the following section.&lt;/p&gt;
-&lt;h1 id=&#34;weighted-energy-adversarial-training-weat&#34;&gt;Weighted Energy Adversarial Training (WEAT)&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Weighted Energy Adversarial Training (WEAT) &lt;/h1&gt;
+===============================================
 &lt;h2 id=&#34;main-principle-of-weat&#34;&gt;Main Principle of WEAT&lt;/h2&gt;
 &lt;p&gt;The authors propose &lt;strong&gt;WEAT&lt;/strong&gt;, a novel method that weights training
 samples based on their energy. WEAT relies on &lt;strong&gt;Energy-Based Models
@@ -343,7 +662,8 @@ causing overfitting. Therefore, WEAT weights them differently:&lt;/p&gt;
   class=&#34;full-width&#34;
 /&gt;
 
-{width=&amp;ldquo;70%&amp;rdquo;}&lt;/p&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Figure 7:&lt;/strong&gt; Weighting Visualization.&lt;/p&gt;
 &lt;h2 id=&#34;weat-in-details&#34;&gt;WEAT in details&lt;/h2&gt;
 &lt;p&gt;The core formula of WEAT is an improvement of TRADES by introducing a
 &lt;strong&gt;dynamic weighting weight$(x)$&lt;/strong&gt; based on the energy $E_\theta(x)$.
@@ -360,17 +680,18 @@ becomes &amp;quot;lower&amp;quot; than $E_{\boldsymbol{\theta}}(\mathbf{x})$.&lt
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;KL divergence&lt;/strong&gt;: Controls the gap between predictions on natural
-data $p(y|x)$ and adversarial data $p(y|x^&lt;em&gt;)$ with the marginal term
-$E_{\boldsymbol{\theta}}(\mathbf{x}) - E_{\boldsymbol{\theta}}(\mathbf{x}^&lt;/em&gt;)$.
+data $p(y|x)$ and adversarial data $p(y|x^\ast)$ with the marginal term
+$E_{\boldsymbol{\theta}}(\mathbf{x}) - E_{\boldsymbol{\theta}}(\mathbf{x}^\ast)$.
 By minimizing this gap, the model smooths the energy landscape and
 flattens out disturbed areas.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;WEAT formula&lt;/strong&gt;:&lt;/p&gt;
-&lt;p&gt;$$\mathcal{L}&lt;em&gt;{\text{WEAT}} = \underbrace{\text{weight}(x)}&lt;/em&gt;{\text{\color{blue}Weighting}} \cdot \left[
-\underbrace{\mathcal{L}&lt;em&gt;{\text{CE}}(x, y)}&lt;/em&gt;{\text{\color{blue}Standard Loss}} +
-\beta \cdot \underbrace{\text{KL}(p(y|x) || p(y|x^*))}_{\text{\color{blue}Robust Regularization}}
-\right]$$&lt;/p&gt;
+&lt;p&gt;$$L_{\text{WEAT}} = \underset{\text{Weighting}}{\boxed{\text{weight}(x)}} \cdot \left[
+\underset{\text{Standard Loss}}{\boxed{L_{\text{CE}}(x, y)}} +
+\beta \cdot \underset{\text{Robust Regularization}}{\boxed{\text{KL}(p(y|x) || p(y|x^\ast))}}
+\right]
+$$&lt;/p&gt;
 &lt;p&gt;&lt;img
   src=&#34;./images/Robust_Classifiers_EBM/valley1.png&#34;
   alt=&#34;Diagram of WEAT dynamics&#34;
@@ -379,8 +700,7 @@ flattens out disturbed areas.&lt;/p&gt;
   class=&#34;full-width&#34;
 /&gt;
 
-{#fig:global
-width=&amp;quot;\linewidth&amp;quot;}&lt;/p&gt;
+&lt;/p&gt;
 &lt;p&gt;&lt;img
   src=&#34;./images/Robust_Classifiers_EBM/valley2.png&#34;
   alt=&#34;Diagram of WEAT dynamics&#34;
@@ -389,8 +709,7 @@ width=&amp;quot;\linewidth&amp;quot;}&lt;/p&gt;
   class=&#34;full-width&#34;
 /&gt;
 
-{#fig:global
-width=&amp;quot;\linewidth&amp;quot;}&lt;/p&gt;
+&lt;/p&gt;
 &lt;p&gt;&lt;img
   src=&#34;./images/Robust_Classifiers_EBM/valley3.png&#34;
   alt=&#34;Diagram of WEAT dynamics&#34;
@@ -399,8 +718,8 @@ width=&amp;quot;\linewidth&amp;quot;}&lt;/p&gt;
   class=&#34;full-width&#34;
 /&gt;
 
-{#fig:global
-width=&amp;quot;\linewidth&amp;quot;}&lt;/p&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Figure 8&lt;/strong&gt;: Diagram of WEAT dynamics&lt;/p&gt;
 &lt;p&gt;The figure above highlights the trade-off with the $\beta$ coefficient
 for regularization to maintain a smooth energy landscape despite
 adversarial attacks.&lt;/p&gt;
@@ -410,7 +729,8 @@ through its integration with Stochastic Gradient Langevin Dynamics
 (SGLD). On standard benchmarks like CIFAR-10, WEAT matches the
 performance of hybrid models such as JEM while offering superior
 robustness (see Table 2c in the paper).&lt;/p&gt;
-&lt;h1 id=&#34;conclusion-a-new-era-for-robust-ai&#34;&gt;Conclusion: A New Era for Robust AI&lt;/h1&gt;
+&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Conclusion: A New Era for Robust AI &lt;/h1&gt;
+===============================================
 &lt;h2 id=&#34;why-this-matters&#34;&gt;Why This Matters&lt;/h2&gt;
 &lt;p&gt;This research isn&amp;rsquo;t just about making AI models more robust. It&amp;rsquo;s about
 fundamentally understanding how these models work and how we can improve
@@ -430,11 +750,7 @@ techniques, to reconstruct or approximate the original training data. If
 sensitive information (e.g., personal data, proprietary content, or
 other confidential details) is exposed, it could lead to significant
 privacy breaches with broader societal implications.&lt;/p&gt;
-&lt;h1 id=&#34;call-to-action&#34;&gt;Call to Action&lt;/h1&gt;
-&lt;p&gt;What do you think about the future of robust AI? Could energy-based
-models be the key to solving other challenges in AI? Share your thoughts
-in the comments below!&lt;/p&gt;
-&lt;p&gt;9&lt;/p&gt;
+&lt;h1 id=&#34;references&#34;&gt;References&lt;/h1&gt;
 &lt;p&gt;Sik-Ho Tsang. &lt;em&gt;Review: Virtual Adversarial Training (VAT)&lt;/em&gt;. Apr 21,
 2022. Available at:
 &lt;a href=&#34;https://sh-tsang.medium.com/review-virtual-adversarial-training-vat-4b3d8b7b2e92&#34;&gt;https://sh-tsang.medium.com/review-virtual-adversarial-training-vat-4b3d8b7b2e92&lt;/a&gt;.&lt;/p&gt;
@@ -445,8 +761,7 @@ December 2, 2023. Available at:
 Masi. &lt;em&gt;Shedding More Light on Robust Classifiers under the lens of
 Energy-based Models&lt;/em&gt;. 2025. Available at:
 &lt;a href=&#34;https://arxiv.org/abs/2407.06315&#34;&gt;https://arxiv.org/abs/2407.06315&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
-&lt;/style&gt;&lt;/p&gt;
+&lt;p&gt;&lt;/style&gt;&lt;/p&gt;
 &lt;script type=&#34;text/x-mathjax-config&#34;&gt;
 MathJax.Hub.Config({
     tex2jax: {
@@ -463,13 +778,13 @@ MathJax.Hub.Queue(function() {
 &lt;/script&gt;
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;</description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/robust-classifiers-energy-based-models/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/robust-classifiers-energy-based-models/</guid>
       <pubDate>Thu, 27 Mar 2025 18:53:17 +0100</pubDate>
     </item>
     
     <item>
       <title>Fairness in Social Influence Maximization via Optimal Transport</title>
-      <link>http://localhost:1313/posts/fairness-in-social-influence-maximization-via-optimal-transport/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/fairness-in-social-influence-maximization-via-optimal-transport/</link>
       <description>&lt;h3 id=&#34;authors-guillaume-marin-bertin--jaishan-burton-elmo&#34;&gt;Authors: Guillaume MARIN-BERTIN &amp;amp; Jaishan BURTON ELMO&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -718,13 +1033,13 @@ Without S3D, certain communities miss job postings entirely in some scenarios.&l
 &lt;/ol&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/fairness-in-social-influence-maximization-via-optimal-transport/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/fairness-in-social-influence-maximization-via-optimal-transport/</guid>
       <pubDate>Sat, 15 Mar 2025 17:27:56 +0100</pubDate>
     </item>
     
     <item>
       <title>Knowledge Distillation:  Boosting Interpretability in Deep Learning Models</title>
-      <link>http://localhost:1313/posts/impact-knowledge-distillation-model-interpretability/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/impact-knowledge-distillation-model-interpretability/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
    code.has-jax {font:inherit;
                   font-size:100%;
@@ -1153,13 +1468,13 @@ To reproduce the results, you could use a virtual environment (e.g. &lt;a href=&
 &lt;/ul&gt;
 &lt;/html&gt;</description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/impact-knowledge-distillation-model-interpretability/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/impact-knowledge-distillation-model-interpretability/</guid>
       <pubDate>Sat, 15 Mar 2025 12:16:21 +0100</pubDate>
     </item>
     
     <item>
       <title>Understanding Visual Feature Reliance Through the Lens of Complexity</title>
-      <link>http://localhost:1313/posts/understanding_visual_feature_reliance_through_the_lens_of_complexity/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/understanding_visual_feature_reliance_through_the_lens_of_complexity/</link>
       <description>&lt;hr&gt;&lt;/hr&gt;
 &lt;style TYPE=&#34;text/css&#34;&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
@@ -1375,13 +1690,385 @@ $$&lt;/p&gt;
 &lt;p&gt;Overall, our experiments support the paper’s conclusions: deep networks tend to favor simple, robust features while complex ones play a secondary, less stable role in the decision process.&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/understanding_visual_feature_reliance_through_the_lens_of_complexity/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/understanding_visual_feature_reliance_through_the_lens_of_complexity/</guid>
       <pubDate>Wed, 12 Mar 2025 16:28:12 +0100</pubDate>
     </item>
     
     <item>
+      <title>When Fairness Meets Privacy</title>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/when_fairness_meets_privacy/</link>
+      <description>&lt;style TYPE=&#34;text/css&#34;&gt;
+ code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+ &lt;/style&gt;
+ &lt;script type=&#34;text/x-mathjax-config&#34;&gt;
+ MathJax.Hub.Config({
+     tex2jax: {
+         inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]],
+         displayMath: [[&#39;$$&#39;,&#39;$$&#39;], [&#39;\\[&#39;,&#39;\\]&#39;]],
+         skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] // removed &#39;code&#39; entry
+     }
+ });
+ MathJax.Hub.Queue(function() {
+     var all = MathJax.Hub.getAllJax(), i;
+     for(i = 0; i &lt; all.length; i += 1) {
+         all[i].SourceElement().parentNode.className += &#39; has-jax&#39;;
+     }
+ });
+ &lt;/script&gt;
+ &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
+&lt;h1 style=&#34;font-size: 36px;&#34;&gt;When Fairness Meets Privacy: A Double-Edged Sword in Machine Learning&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;This blog is based on and aims to present the key insights from the paper: &lt;strong&gt;When Fairness Meets Privacy: Exploring Privacy Threats in Fair Binary Classifiers via Membership Inference Attacks&lt;/strong&gt; by Tian et al. (2023) &lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;. The study investigates how fairness-aware models can introduce new privacy risks, specifically through membership inference attacks. By summarizing the main findings and implications, this blog provides an accessible overview of the paper’s contributions and their significance for machine learning security and ethical AI development. For full details, refer to the original publication &lt;a href=&#34;https://arxiv.org/pdf/2311.03865&#34;&gt;here&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Authors: Lagarde Vincent, Boyenval Thibaut, Leurquin Daniel&lt;/h1&gt;
+&lt;div style=&#34;text-align: center;&#34;&gt;
+  &lt;img src=&#34;./images/image_fairness_privacy/figure2.webp&#34; alt=&#34;FD-MIA: Prediction Difference Distribution&#34; style=&#34;width:80%; display:block; margin:auto;&#34;&gt;
+    &lt;p style=&#34;font-style: italic; font-size: 14px;&#34;&gt;This image was generated using artificial intelligence.&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;#1-introduction-fairness-or-privacy-pick-your-poison&#34;&gt;Introduction: Fairness or Privacy—Pick Your Poison?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#2-algorithmic-fairness-a-noble-goal-that-cuts-both-ways&#34;&gt;Algorithmic Fairness: A Noble Goal That Cuts Both Ways&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#3-membership-inference-attacks-the-silent-thief-of-privacy&#34;&gt;Membership Inference Attacks: The Silent Thief of Privacy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#4-the-birth-of-a-new-threat-fairness-discrepancy-membership-inference-attacks-fd-mia&#34;&gt;The Birth of a New Threat: Fairness Discrepancy Membership Inference Attacks (FD-MIA)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#5-reproducible-code-experiments-illustrating-fd-mia&#34;&gt;Reproducible Code Experiments: Illustrating FD-MIA&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#6-experimental-findings-how-fairness-opens-the-door-to-attackers&#34;&gt;Experimental Findings: How Fairness Opens the Door to Attackers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#7-the-future-of-fairness-and-privacy-can-we-have-both&#34;&gt;The Future of Fairness and Privacy: Can We Have Both?&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;1-introduction-fairness-or-privacy-pick-your-poison&#34;&gt;1. Introduction: Fairness or Privacy Pick Your Poison&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;It is double pleasure to deceive the deceiver.&lt;/em&gt; — Niccolò Machiavelli.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;This paradox of attack and defense perfectly applies to the interplay between fairness and privacy in machine learning.&lt;/p&gt;
+&lt;p&gt;Imagine stepping into a high-tech courtroom. The AI judge, designed to be perfectly fair, renders unbiased decisions. But then, a hacker in the back row smirks—because that same fairness-enhancing mechanism just leaked private data about every case it trained on.&lt;/p&gt;
+&lt;p&gt;Fairness and privacy in AI are like the two ends of a seesaw: push too hard on one side, and the other rises uncontrollably. &lt;strong&gt;Recent research reveals a disturbing paradox: making a model fairer can also make it leak more private information.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This blog explores how fairness in machine learning, despite its good intentions, can introduce &lt;strong&gt;Membership Inference Attacks (MIAs)&lt;/strong&gt;. Worse still, it uncovers a devastating new attack—&lt;strong&gt;Fairness Discrepancy Membership Inference Attack (FD-MIA)&lt;/strong&gt;—that exploits fairness interventions to &lt;strong&gt;make privacy breaches even more effective&lt;/strong&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;2-algorithmic-fairness-a-noble-goal-that-cuts-both-ways&#34;&gt;2. Algorithmic Fairness: A Noble Goal That Cuts Both Ways&lt;/h2&gt;
+&lt;p&gt;Fairness in AI is like forging a perfect sword—it must be balanced, precise, and just. Researchers have developed &lt;strong&gt;in-processing fairness interventions&lt;/strong&gt;, which modify the training process to remove biases in model predictions. These methods act like master swordsmiths, hammering out the unwanted imperfections in AI decision-making.&lt;/p&gt;
+&lt;p&gt;However, every sword has two edges. These fairness techniques do not just eliminate biases—they also alter how models respond to data. This change in behavior can create exploitable patterns that adversaries can use to infer whether a specific individual was part of the training data. In short, while fairness dulls one blade (bias), it sharpens another (privacy risk).&lt;/p&gt;
+&lt;p&gt;Mathematically, fairness interventions often involve introducing constraints into the loss function:&lt;/p&gt;
+&lt;p&gt;$$L_\text{fair} = L_\text{orig} + \lambda \cdot \mathcal{L}_{\text{fairness}}$$&lt;/p&gt;
+&lt;p&gt;where&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$\mathcal{L}_{\text{orig}}$ is the original loss function (e.g., cross-entropy loss for classification tasks).&lt;/li&gt;
+&lt;li&gt;$\mathcal{L}_{\text{fairness}}$ is a fairness penalty term, which ensures that predictions are balanced across different demographic groups.&lt;/li&gt;
+&lt;li&gt;$\lambda$ is a hyperparameter controlling the trade-off between accuracy and fairness.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Common fairness constraints include &lt;strong&gt;Equalized Odds&lt;/strong&gt;, which ensures that true positive and false positive rates are equal across groups:&lt;/p&gt;
+&lt;p&gt;$$P(\hat{Y} = 1 | Y = 1, S = s_0) = P(\hat{Y} = 1 | Y = 1, S = s_1)$$&lt;/p&gt;
+&lt;p&gt;where $S$ represents a sensitive attribute (e.g., gender or race).&lt;/p&gt;
+&lt;p&gt;The fairness penalty can be incorporated during model training by adding it to the loss function, as shown in this training function. A penalty coefficient can be specified to control the impact of the fairness term. Setting the coefficient to 0 results in no penalty being applied to the loss:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#75af00&#34;&gt;train_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;data_loader&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;optimizer&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;criterion&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fairness_weight&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;model&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;train&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;total_loss&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0.0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;X_batch&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;y_batch&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;sensitive_batch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;data_loader&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;optimizer&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;zero_grad&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;logits&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;X_batch&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;loss&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;criterion&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;logits&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;y_batch&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;# Fairness regularization: penalize different confidence (softmax probabilities)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#00a8c8&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fairness_weight&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#111&#34;&gt;probs&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;nn&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;functional&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;softmax&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;logits&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;dim&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#75715e&#34;&gt;# Compute average probability for each sensitive group&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#111&#34;&gt;group0_mask&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sensitive_batch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#111&#34;&gt;group1_mask&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sensitive_batch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#00a8c8&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;group0_mask&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sum&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;group1_mask&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sum&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;avg_prob0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;probs&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;group0_mask&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;mean&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;dim&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;avg_prob1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;probs&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;group1_mask&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;mean&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;dim&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#75715e&#34;&gt;# L2 difference between average prediction distributions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;fairness_penalty&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;norm&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;avg_prob0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;avg_prob1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;p&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;loss&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fairness_weight&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fairness_penalty&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;loss&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;backward&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;optimizer&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;step&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;total_loss&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;loss&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;item&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;total_loss&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;len&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;data_loader&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;While these interventions improve fairness, they also alter the confidence distribution of model predictions—&lt;strong&gt;a fact that attackers can exploit&lt;/strong&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;3-membership-inference-attacks-the-silent-thief-of-privacy&#34;&gt;3. Membership Inference Attacks: The Silent Thief of Privacy&lt;/h2&gt;
+&lt;p&gt;🔐 A Parallel with Cryptography
+&lt;strong&gt;Membership inference attacks (MIAs)&lt;/strong&gt; are to privacy what brute-force attacks are to passwords. Instead of guessing a password, they test thousands of combinations to see which one is good.&lt;/p&gt;
+&lt;p&gt;MIAs work the same way: they analyze a model’s outputs to determine if a given data point was part of its training set.&lt;/p&gt;
+&lt;p&gt;A traditional MIA exploits &lt;strong&gt;confidence scores&lt;/strong&gt;—the probabilities that a model assigns to different predictions. The intuition is simple: models tend to be more confident on data they have seen during training. Given a target model $T$ and a queried sample $x$, an attacker computes:&lt;/p&gt;
+&lt;p&gt;$$M(x) = 1 \text{ if } A(T(x)) &amp;gt; \tau$$&lt;/p&gt;
+&lt;p&gt;where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$A(T(x))$ is a decision function (often a threshold on the confidence score).&lt;/li&gt;
+&lt;li&gt;$\tau$ is a predefined threshold.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;why-traditional-mias-fail-on-fair-models&#34;&gt;Why Traditional MIAs Fail on Fair Models&lt;/h3&gt;
+&lt;p&gt;Fairness interventions introduce &lt;strong&gt;more uncertainty&lt;/strong&gt; into the model’s predictions. This causes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Lower confidence scores overall&lt;/strong&gt;, making it harder for attackers to distinguish between training and non-training samples.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;More uniform confidence distributions&lt;/strong&gt;, which means attackers lose their key signal.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Thus, fairness-enhanced models resist traditional MIAs. But this protection is not foolproof—&lt;strong&gt;a new, more dangerous attack lurks in the shadows&lt;/strong&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;4-the-birth-of-a-new-threat-fairness-discrepancy-membership-inference-attacks-fd-mia&#34;&gt;4. The Birth of a New Threat: Fairness Discrepancy Membership Inference Attacks (FD-MIA)&lt;/h2&gt;
+&lt;p&gt;If traditional MIAs are blunt weapons, &lt;strong&gt;FD-MIA is a scalpel.&lt;/strong&gt; It exploits the discrepancies between a biased model and a fairness-enhanced one.&lt;/p&gt;
+&lt;h3 id=&#34;how-does-fd-mia-work&#34;&gt;How does FD-MIA work?&lt;/h3&gt;
+&lt;p&gt;Fairness interventions shift model predictions differently for training and non-training data. This creates a &lt;strong&gt;gap&lt;/strong&gt; between how biased and fair models behave for the same inputs. An attacker, armed with knowledge of both models, can exploit this difference to infer membership with high accuracy.&lt;/p&gt;
+&lt;p&gt;Mathematically, FD-MIA extends membership prediction by comparing prediction shifts between biased and fair models:&lt;/p&gt;
+&lt;p&gt;$$M(x) = 1 \text{ if } |T_{\text{bias}}(x) - T_{\text{fair}}(x)| &amp;gt; \tau$$&lt;/p&gt;
+&lt;p&gt;where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$T_{\text{bias}}(x)$ and $T_{\text{fair}}(x)$ are the predictions from the biased and fair models, respectively.&lt;/li&gt;
+&lt;li&gt;$\tau$ is a threshold chosen by the attacker.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div style=&#34;text-align: center;&#34;&gt;
+  &lt;img src=&#34;./images/image_fairness_privacy/figure3.png&#34; alt=&#34;FD-MIA: Prediction Difference Distribution&#34; style=&#34;width:80%; display:block; margin:auto;&#34;&gt;
+    &lt;p style=&#34;font-style: italic; font-size: 14px;&#34;&gt;Figure 1: FD-MIA exploits the predictions from both models to achieve efficient attacks. From original paper.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The key insight is that &lt;strong&gt;fairness interventions cause systematic shifts&lt;/strong&gt; in model confidence, creating a measurable pattern that attackers can exploit.&lt;/p&gt;
+&lt;p&gt;Here is an example implementation of the FD-MIA attack using a function that compares the prediction difference between two models against a user-defined threshold:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#75af00&#34;&gt;fd_mia_attack&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sample&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;biased_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fair_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;threshold&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#d88200&#34;&gt;&amp;#34;&amp;#34;&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#d88200&#34;&gt;    Given a sample, compute the absolute difference between the
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#d88200&#34;&gt;    biased and fair model&amp;#39;s softmax outputs for the positive class.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#d88200&#34;&gt;    If the difference exceeds the threshold, predict membership.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#d88200&#34;&gt;    &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;biased_model&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;eval&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;fair_model&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;eval&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;with&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;no_grad&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;():&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;logits_b&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;biased_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sample&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;unsqueeze&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;logits_f&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fair_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sample&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;unsqueeze&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;prob_b&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;nn&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;functional&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;softmax&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;logits_b&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;dim&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)[&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;prob_f&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;nn&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;functional&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;softmax&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;logits_f&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;dim&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)[&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;diff&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;abs&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;prob_b&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;prob_f&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# In practice, the threshold can be tuned via shadow models or validation&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#00a8c8&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;diff&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;threshold&lt;/span&gt; &lt;span style=&#34;color:#00a8c8&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;diff&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;item&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;5-reproducible-code-experiments-illustrating-fd-mia&#34;&gt;5. Reproducible Code Experiments: Illustrating FD-MIA&lt;/h2&gt;
+&lt;p&gt;In this section, we reproduce the FD-MIA attack described in the original paper:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Data Generation and Splitting&lt;/strong&gt;&lt;br&gt;
+The process starts with generating a synthetic dataset where a binary sensitive attribute influences the feature distribution. The target labels are computed using a logistic function, and the dataset is then split into training (member) and testing (non-member) sets to simulate membership inference scenarios.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Classifier Architectures&lt;/strong&gt;&lt;br&gt;
+Two identical neural network architectures are defined:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A &lt;strong&gt;biased baseline model&lt;/strong&gt; trained without fairness constraints.&lt;/li&gt;
+&lt;li&gt;A &lt;strong&gt;fairness-enhanced model&lt;/strong&gt;, which incorporates a fairness penalty to balance prediction distributions across sensitive groups.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Training with Fairness Regularization&lt;/strong&gt;&lt;br&gt;
+The function &lt;code&gt;train_model&lt;/code&gt; allows the inclusion of a fairness penalty during training. For the fair model, this penalty—weighted by &lt;code&gt;fairness_weight&lt;/code&gt;—is added to the standard cross-entropy loss to encourage prediction consistency across sensitive groups.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;FD-MIA Attack Implementation&lt;/strong&gt;&lt;br&gt;
+The attack, implemented in &lt;code&gt;fd_mia_attack&lt;/code&gt;, exploits the absolute difference in predicted probabilities (for the positive class) between the biased and fair models. If this difference exceeds a given threshold, the sample is inferred as a training member. This approach leverages the core principle of FD-MIA: fairness interventions create prediction discrepancies that can be used for membership inference.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Evaluation and Visualization&lt;/strong&gt;&lt;br&gt;
+The attack is evaluated by comparing prediction differences between member and non-member data. We visualize the prediction difference distributions to highlight how fairness-driven adjustments can unintentionally expose membership information.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch.nn&lt;/span&gt; &lt;span style=&#34;color:#00a8c8&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;nn&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch.optim&lt;/span&gt; &lt;span style=&#34;color:#00a8c8&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;optim&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch.utils.data&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;Dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;DataLoader&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;random_split&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;numpy&lt;/span&gt; &lt;span style=&#34;color:#00a8c8&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span style=&#34;color:#00a8c8&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;plt&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;sklearn.metrics&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;roc_auc_score&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Set random seeds for reproducibility&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;manual_seed&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;42&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;random&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;seed&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;42&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -------------------------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 1. Create a synthetic dataset with a sensitive attribute&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -------------------------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#75af00&#34;&gt;SyntheticFairDataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;Dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;__init__&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;n_samples&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1000&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;# Features: two-dimensional points drawn from different distributions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;n_samples&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;n_samples&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;X&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;[]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;y&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;[]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sensitive&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;[]&lt;/span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# sensitive attribute: 0 or 1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#00a8c8&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;i&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;range&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;n_samples&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#75715e&#34;&gt;# Randomly assign a sensitive group (imbalance can be introduced here)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#111&#34;&gt;s&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;random&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;choice&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;([&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;],&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;p&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.7&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0.3&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#75715e&#34;&gt;# Generate features from group-dependent distributions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#00a8c8&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;s&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;x&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;random&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;normal&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;loc&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;scale&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1.0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;size&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#00a8c8&#34;&gt;else&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#111&#34;&gt;x&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;random&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;normal&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;loc&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1.5&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;scale&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1.0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;size&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#75715e&#34;&gt;# Label is determined by a linear rule (with some noise)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#111&#34;&gt;y_prob&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;exp&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;x&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;x&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0.5&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#111&#34;&gt;y_label&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;random&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;binomial&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;y_prob&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;X&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;append&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;x&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;y&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;append&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;y_label&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sensitive&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;append&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;s&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;X&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;tensor&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;X&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;dtype&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;float32&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;y&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;tensor&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;y&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;dtype&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;long&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sensitive&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;tensor&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sensitive&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;dtype&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;torch&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;long&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;__len__&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#00a8c8&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;n_samples&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;__getitem__&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;idx&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#00a8c8&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;X&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;idx&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;],&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;y&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;idx&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;],&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sensitive&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;idx&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;dataset&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;SyntheticFairDataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;n_samples&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2000&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Split into training (for model training) and attack evaluation (simulate member vs. non-member)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;train_size&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;len&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;test_size&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;len&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;train_size&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;train_dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;test_dataset&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;random_split&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;train_size&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;test_size&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;train_loader&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;DataLoader&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;train_dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;batch_size&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;64&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;shuffle&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;True&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;test_loader&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;DataLoader&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;test_dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;batch_size&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;64&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;shuffle&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;False&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -------------------------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 2. Define the classifier architectures&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -------------------------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#75af00&#34;&gt;SimpleClassifier&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;nn&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;Module&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;__init__&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;input_dim&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;hidden_dim&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;output_dim&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;SimpleClassifier&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;__init__&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;fc1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;nn&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;Linear&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;input_dim&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;hidden_dim&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;relu&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;nn&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;ReLU&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;fc2&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;nn&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;Linear&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;hidden_dim&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;output_dim&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#75af00&#34;&gt;forward&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;x&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;out&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;relu&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;fc1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;x&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#00a8c8&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;fc2&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;out&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# raw logits&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Baseline (biased) model&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;biased_model&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;SimpleClassifier&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Fairness-enhanced model: we add a fairness penalty to the loss (for demonstration)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;fair_model&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;SimpleClassifier&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -------------------------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 3. Train both models&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -------------------------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;criterion&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;nn&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;CrossEntropyLoss&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Train biased model without fairness penalty&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;optimizer_biased&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;optim&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;Adam&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;biased_model&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;parameters&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(),&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;lr&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.01&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;epoch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;range&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;loss&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;train_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;biased_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;train_loader&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;optimizer_biased&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;criterion&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fairness_weight&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Uncomment to print loss: print(f&amp;#34;Biased Model Epoch {epoch+1}: Loss {loss:.4f}&amp;#34;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Train fair model with a fairness penalty (fairness_weight &amp;gt; 0)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;optimizer_fair&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;optim&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;Adam&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;fair_model&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;parameters&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(),&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;lr&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.01&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;fairness_weight&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1.0&lt;/span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# adjust to control trade-off&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;epoch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;range&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;loss&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;train_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;fair_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;train_loader&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;optimizer_fair&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;criterion&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fairness_weight&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;fairness_weight&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Uncomment to print loss: print(f&amp;#34;Fair Model Epoch {epoch+1}: Loss {loss:.4f}&amp;#34;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -------------------------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 4. Membership Inference Attack using FD-MIA&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -------------------------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Evaluate the attack on both training (members) and test (non-members) samples&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#75af00&#34;&gt;evaluate_attack&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;biased_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fair_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;threshold&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;attack_labels&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;[]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#111&#34;&gt;attack_scores&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;[]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Assuming samples in train_dataset are members and test_dataset non-members&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;sample&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;_&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;DataLoader&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;batch_size&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;shuffle&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#00a8c8&#34;&gt;False&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;pred&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;diff&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fd_mia_attack&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;sample&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;],&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;biased_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fair_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;threshold&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;attack_labels&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;append&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;pred&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#111&#34;&gt;attack_scores&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;append&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;diff&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#00a8c8&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;array&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;attack_labels&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;),&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;np&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;array&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;attack_scores&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# For demonstration, we use the entire training set as member data and test set as non-member data.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;member_labels&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;member_diffs&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;evaluate_attack&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;train_dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;biased_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fair_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;threshold&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#111&#34;&gt;nonmember_labels&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;nonmember_diffs&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;evaluate_attack&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;test_dataset&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;biased_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;fair_model&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#111&#34;&gt;threshold&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.1&lt;/span&gt;&lt;span style=&#34;color:#111&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id=&#34;6-experimental-findings-how-fairness-opens-the-door-to-attackers&#34;&gt;&lt;strong&gt;6. Experimental Findings: How Fairness Opens the Door to Attackers&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;The study conducted extensive experiments across &lt;strong&gt;six datasets, three attack methods, and five fairness approaches&lt;/strong&gt;, testing over &lt;strong&gt;160 models&lt;/strong&gt;.
+To do this, they performed a comprehensive set of experiments involving:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Multiple datasets with different sensitive attributes (like gender or race),&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Biased vs. fair model variants,&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Three types of MIAs (including their novel FD-MIA),&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Multiple fairness interventions&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;Dataset&lt;/th&gt;
+          &lt;th&gt;Number of Fairness Settings&lt;/th&gt;
+          &lt;th&gt;Target Tasks&lt;/th&gt;
+          &lt;th&gt;FD-MIA Effectiveness&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;CelebA&lt;/td&gt;
+          &lt;td&gt;3 settings (smile, hair, makeup)&lt;/td&gt;
+          &lt;td&gt;3 binary targets × 2 sensitive attributes&lt;/td&gt;
+          &lt;td&gt;FD-MIA consistently outperformed other methods.&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;UTKFace&lt;/td&gt;
+          &lt;td&gt;2 settings (race prediction, gender prediction)&lt;/td&gt;
+          &lt;td&gt;Race or gender, sensitive to the other&lt;/td&gt;
+          &lt;td&gt;FD-MIA revealed privacy leaks even with balanced groups.&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;FairFace&lt;/td&gt;
+          &lt;td&gt;2 settings (race prediction, gender prediction)&lt;/td&gt;
+          &lt;td&gt;Same as UTKFace&lt;/td&gt;
+          &lt;td&gt;Most vulnerable dataset—biggest fairness shift = biggest privacy leak.&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The results were shocking:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Fair models were significantly harder to attack using traditional MIAs.&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;FD-MIA, however, dramatically increased attack success rates—fairness actually made models more vulnerable!&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;The greater the fairness intervention, the wider the discrepancy between biased and fair models, making FD-MIA even more effective.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Our synthetic experiment further supports these findings. The histogram below illustrates the absolute difference between the predictions of the biased and fair models for both &lt;em&gt;members&lt;/em&gt; (training data) and &lt;em&gt;non-members&lt;/em&gt; (test data).&lt;/p&gt;
+&lt;div style=&#34;text-align: center;&#34;&gt;
+    &lt;img src=&#34;./images/image_fairness_privacy/figure1.png&#34; alt=&#34;FD-MIA: Prediction Difference Distribution&#34;&gt;
+    &lt;p style=&#34;font-style: italic; font-size: 14px;&#34;&gt;Figure 2: FD-MIA: Prediction Difference Distribution.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;As expected, members exhibit a significantly higher prediction discrepancy compared to non-members. This clear separation highlights how fairness constraints alter model confidence differently for training and test samples—providing an exploitable signal for membership inference. &lt;strong&gt;In simple terms: making a model fairer may paradoxically make it leak more private information.&lt;/strong&gt; A cruel irony for those trying to do the right thing.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;7-the-future-of-fairness-and-privacy-can-we-have-both&#34;&gt;7. The Future of Fairness and Privacy: Can We Have Both?&lt;/h2&gt;
+&lt;p&gt;The million-dollar question: &lt;strong&gt;Can we balance fairness and privacy without sacrificing one for the other?&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;If you know the enemy and know yourself, you need not fear the result of a hundred battles.&lt;/em&gt; — Sun Tzu.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;A better understanding of the link between fairness and privacy, as well as the potential and new attacks introduced by unbiased models, is already a solid step toward defending against threats. By understanding the underlying mechanisms, it becomes possible to counteract them.&lt;/p&gt;
+&lt;p&gt;The researchers propose two key defenses:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Restricting Information Access&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Limiting confidence score outputs reduces the information available to attackers.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Differential Privacy (DP)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;By injecting noise into model training, DP-SGD (Differentially Private Stochastic Gradient Descent) helps obscure membership information:&lt;/p&gt;
+&lt;p&gt;$$\tilde{g}_t = g_t + \mathcal{N}(0, \sigma^2 I)$$&lt;/p&gt;
+&lt;p&gt;where $g_t$ is the original gradient and $\mathcal{N}(0, \sigma^2 I)$ is Gaussian noise added to prevent membership inference.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;While these methods help, they come with trade-offs: &lt;strong&gt;too much privacy protection can lower fairness and accuracy, while too little leaves models vulnerable.&lt;/strong&gt; The challenge ahead is designing AI systems that can balance both.&lt;/p&gt;
+&lt;p&gt;💡 Alternative approach: Fairness-Aware Differential Privacy (FADP) adapts noise levels based on protected groups, balancing privacy and fairness.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;H. Tian, G. Zhang, B. Liu, T. Zhu, M. Ding, and W. Zhou, &amp;ldquo;When Fairness Meets Privacy: Exploring Privacy Threats in Fair Binary Classifiers via Membership Inference Attacks&amp;rdquo;, &lt;em&gt;arXiv e-prints&lt;/em&gt;, Art. no. &lt;a href=&#34;https://arxiv.org/pdf/2311.03865&#34;&gt;arXiv.2311.03865&lt;/a&gt;.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+      <author>Students from M2 Data Science IP Paris</author>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/when_fairness_meets_privacy/</guid>
+      <pubDate>Mon, 10 Mar 2025 12:22:37 +0100</pubDate>
+    </item>
+    
+    <item>
       <title>Get a calibrated and efficient model with tailored data augmentation.</title>
-      <link>http://localhost:1313/posts/mixupdatacalibration/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style&gt;
@@ -1924,13 +2611,13 @@ volume 97 of Proceedings of Machine Learning Research, pages 6438–6447. PMLR.&
 &lt;/div&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/mixupdatacalibration/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</guid>
       <pubDate>Sun, 09 Mar 2025 21:03:13 +0100</pubDate>
     </item>
     
     <item>
       <title>BitFit: BIas-Term FIne-Tuning</title>
-      <link>http://localhost:1313/posts/bitfit/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</link>
       <description>&lt;style
 TYPE=&#34;text/css&#34;&gt;
 
@@ -2129,13 +2816,13 @@ Moreover, further analysis reveals that not all bias parameters are equally impo
 &lt;/ul&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/bitfit/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</guid>
       <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
     </item>
     
     <item>
       <title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title>
-      <link>http://localhost:1313/posts/axiomatic_explanations/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link>
       <description>&lt;style
 TYPE=&#34;text/css&#34;&gt;
 
@@ -2344,13 +3031,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/axiomatic_explanations/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</guid>
       <pubDate>Thu, 28 Mar 2024 05:58:39 +0100</pubDate>
     </item>
     
     <item>
       <title>Privacy Amplification by Decentralization</title>
-      <link>http://localhost:1313/posts/privacy-amplification/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Privacy Amplification by Decentralization&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 24px;&#34;&gt;Author: Sarah ABBANA BENNANI &lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -2641,13 +3328,13 @@ MathJax.Hub.Queue(function() {
 &lt;/script&gt;
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;</description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/privacy-amplification/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/</guid>
       <pubDate>Wed, 27 Mar 2024 12:05:50 +0100</pubDate>
     </item>
     
     <item>
       <title>Robust or Fair</title>
-      <link>http://localhost:1313/posts/robust-or-fair/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/robust-or-fair/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;To be Robust or to be Fair: Towards Fairness in Adversarial Training&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 24px;&#34;&gt;Authors: Maryem Hajji &amp; Cément Teulier&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -2804,13 +3491,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/robust-or-fair/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/robust-or-fair/</guid>
       <pubDate>Wed, 27 Mar 2024 11:37:03 +0100</pubDate>
     </item>
     
     <item>
       <title>XCM, an explainable CNN for MTS classficiation</title>
-      <link>http://localhost:1313/posts/xcm/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/xcm/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style&gt;
@@ -3443,13 +4130,13 @@ Conference on Artificial Intelligence, New York, NY, USA, 7–12 February 2020.&
 &lt;/ol&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/xcm/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/xcm/</guid>
       <pubDate>Tue, 26 Mar 2024 00:55:40 +0100</pubDate>
     </item>
     
     <item>
       <title>RobustAI_RegMixup</title>
-      <link>http://localhost:1313/posts/robustai_regmixup/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/robustai_regmixup/</link>
       <description>&lt;style
 TYPE=&#34;text/css&#34;&gt;
 
@@ -3790,13 +4477,13 @@ $$&lt;/p&gt;
 &lt;p&gt;As a conclusion, we have seen that RegMixup is a powerful method to regularize deep neural networks. Despite being very simple and cost-effective, it is important to specify that the paper does not provide a theoretical explanation of the method. These experimental grounds are very promising but it appears important to stay cautious while utilizing RegMixup.&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/robustai_regmixup/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/robustai_regmixup/</guid>
       <pubDate>Sun, 24 Mar 2024 12:38:16 +0100</pubDate>
     </item>
     
     <item>
       <title>Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints</title>
-      <link>http://localhost:1313/posts/lambert-davy/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/lambert-davy/</link>
       <description>&lt;h1 style=&#34;font-size: 24px;&#34;&gt;Learning Fair Scoring Functions: Bipartite Ranking under ROC-based Fairness Constraints&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 18px;&#34;&gt;Authors: Godefroy LAMBERT and Louise DAVY&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -3963,13 +4650,13 @@ MathJax.Hub.Queue(function() {
 &lt;/script&gt;
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;</description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/lambert-davy/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/lambert-davy/</guid>
       <pubDate>Sat, 23 Mar 2024 19:39:13 +0100</pubDate>
     </item>
     
     <item>
       <title>Label-Free Explainability</title>
-      <link>http://localhost:1313/posts/label-free-explainability/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/label-free-explainability/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Label-Free Explainability for Unsupervised Models&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 18px;&#34;&gt;Authors: &lt;a href=&#34;https://github.com/Valentinahxu&#34;&gt;Valentina Hu &lt;/a&gt; and  &lt;a href=&#34;https://github.com/selmazrg&#34;&gt; Selma Zarga&lt;/a&gt;&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -4193,13 +4880,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/label-free-explainability/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/label-free-explainability/</guid>
       <pubDate>Sun, 17 Mar 2024 15:31:34 +0100</pubDate>
     </item>
     
     <item>
       <title>Adversarially Reweighted Learning</title>
-      <link>http://localhost:1313/posts/adversarially_reweighted_learning/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/adversarially_reweighted_learning/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Fairness without Demographics through Adversarially Reweighted Learning&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 24px;&#34;&gt;Authors: Pierre Fihey &amp; Guerlain Messin&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -4314,13 +5001,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/adversarially_reweighted_learning/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/adversarially_reweighted_learning/</guid>
       <pubDate>Mon, 04 Mar 2024 18:35:12 +0100</pubDate>
     </item>
     
     <item>
       <title>Packed Ensembles</title>
-      <link>http://localhost:1313/posts/packed-ensembles/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/packed-ensembles/</link>
       <description>&lt;script
 type=&#34;text/x-mathjax-config&#34;&gt;
 
@@ -4593,13 +5280,13 @@ $$&lt;/p&gt;
 &lt;p&gt;A significant limitation of the tutorial is the lack of guidance on evaluating the model&amp;rsquo;s performance. Without a defined evaluation metric (e.g., accuracy, precision, recall), it&amp;rsquo;s challenging to determine the overall effectiveness of the trained Packed-Ensemble. While the provided test results show inconsistencies between ground truth labels and predictions, a quantitative evaluation metric is necessary to draw more concrete conclusions.&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/packed-ensembles/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/packed-ensembles/</guid>
       <pubDate>Tue, 27 Feb 2024 15:05:20 +0100</pubDate>
     </item>
     
     <item>
       <title>A Framework to Learn with Interpretation</title>
-      <link>http://localhost:1313/posts/a-framework-to-learn-with-interpretation/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/a-framework-to-learn-with-interpretation/</link>
       <description>&lt;hr&gt;&lt;/hr&gt;
 &lt;style
 TYPE=&#34;text/css&#34;&gt;
@@ -4789,13 +5476,13 @@ Where $g(x)=h(\Phi(\hat{f_I} (x)))$ for a given set of $I$ hidden layers and an 
 &lt;p&gt;In conclusion, FLINT offers a robust framework for enhancing the interpretability of machine learning models, particularly deep neural networks, in critical domains like healthcare, law, and defense. By jointly learning predictor and interpreter models, FLINT addresses the challenge of providing both global and local interpretations of model predictions. Through carefully designed loss functions, FLINT ensures fidelity to input and output, promotes concise and diverse interpretations, and facilitates the representation of intricate patterns associated with input data. Reproducing experiments on datasets such as CIFAR10 and QuickDRAW showcases FLINT&amp;rsquo;s effectiveness in providing interpretable insights into model predictions. Subjective evaluations affirm the understandability of FLINT&amp;rsquo;s learned attributes, reinforcing its potential for real-world applications. Moreover, FLINT&amp;rsquo;s adaptability for post-hoc interpretability underscores its versatility, enabling meaningful interpretations without extensive modification of the underlying classifier. Overall, FLINT emerges as a valuable tool for fostering transparency and trust in complex machine learning models, contributing to the development of interpretable AI systems across various domains.&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/a-framework-to-learn-with-interpretation/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/a-framework-to-learn-with-interpretation/</guid>
       <pubDate>Tue, 13 Feb 2024 16:56:04 +0100</pubDate>
     </item>
     
     <item>
       <title>NTK-SAP: IMPROVING NEURAL NETWORK PRUNING BY ALIGNING TRAINING DYNAMICS</title>
-      <link>http://localhost:1313/posts/ntk-sap/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/ntk-sap/</link>
       <description>&lt;p&gt;This is a blog post about the paper NTK-SAP: Improving neural network pruning by aligning training dynamics, published by Y. Wang et al. in 2023 and available &lt;a href=&#34;https://openreview.net/pdf?id=-5EWhW_4qWP&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Introduction:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;In a world increasingly driven by demand for data and computational resources, the narrative of artificial intelligence has been one of abundance: more data, more power, more precision. Yet, nestled within this grand tale, lies a quieter narrative - one that champions the concept of achieving more with less—Frugal AI.&lt;/p&gt;
@@ -5204,13 +5891,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/ntk-sap/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/ntk-sap/</guid>
       <pubDate>Wed, 07 Feb 2024 16:07:10 +0100</pubDate>
     </item>
     
     <item>
       <title>Do Perceptually Aligned Gradients imply Robustness?</title>
-      <link>http://localhost:1313/posts/robustness-and-pag-the-converse/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/robustness-and-pag-the-converse/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style&gt;
@@ -5425,13 +6112,13 @@ How can this be explained ? One should observe the decision boundaries.&lt;/p&gt
 &lt;/ol&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/robustness-and-pag-the-converse/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/robustness-and-pag-the-converse/</guid>
       <pubDate>Wed, 07 Feb 2024 16:06:43 +0100</pubDate>
     </item>
     
     <item>
       <title>To update or not to update? Neurons at equilibrium in deep models</title>
-      <link>http://localhost:1313/posts/neq/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/neq/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;To update or not to update? Neurons at equilibrium in deep models
 &lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 24px;&#34;&gt;Author: Alexis WINTER Augustin CREUSILLET&lt;/h1&gt;
@@ -5603,13 +6290,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/neq/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/neq/</guid>
       <pubDate>Wed, 07 Feb 2024 15:55:14 +0100</pubDate>
     </item>
     
     <item>
       <title>Optimal Transport Based Adversarial Patch Attacks</title>
-      <link>http://localhost:1313/posts/optimal_transport_based_adversarial_patch/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/optimal_transport_based_adversarial_patch/</link>
       <description>&lt;style TYPE=&#34;text/css&#34;&gt;
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style&gt;
@@ -5902,13 +6589,13 @@ where TV is the total variation loss discouraging high-frequency patterns.&lt;/p
 &lt;/ul&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/optimal_transport_based_adversarial_patch/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/optimal_transport_based_adversarial_patch/</guid>
       <pubDate>Sat, 03 Feb 2024 22:22:36 +0100</pubDate>
     </item>
     
     <item>
       <title>Statistical Minimax Rates Under Privacy</title>
-      <link>http://localhost:1313/posts/statistical_minimax_rates_under_privacy/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/statistical_minimax_rates_under_privacy/</link>
       <description>&lt;h1 style=&#34;font-size: 36px;&#34;&gt;Estimating Privacy in Data Science: A Comprehensive Guide&lt;/h1&gt;
 &lt;h1 style=&#34;font-size: 24px;&#34;&gt;Author: Antoine Klein &lt;a href=&#34;https://github.com/AntoineTSP&#34;&gt;Github Link&lt;/a&gt;&lt;/h1&gt;
 &lt;h1 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h1&gt;
@@ -6335,13 +7022,13 @@ MathJax.Hub.Queue(function() {
 &lt;script type=&#34;text/javascript&#34; src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full&#34;&gt;&lt;/script&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/statistical_minimax_rates_under_privacy/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/statistical_minimax_rates_under_privacy/</guid>
       <pubDate>Wed, 31 Jan 2024 17:22:02 +0100</pubDate>
     </item>
     
     <item>
       <title>Measuring the Transferability of Pre-trained Models: a link with Neural Collapse Distances on Target Datasets</title>
-      <link>http://localhost:1313/posts/transferability/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/posts/transferability/</link>
       <description>&lt;script
 type=&#34;text/x-mathjax-config&#34;&gt;
 
@@ -6576,7 +7263,7 @@ geometry. arXiv preprint arXiv:2208.05512.&lt;/p&gt;
 &lt;p&gt;Start writing here !&lt;/p&gt;
 </description>
       <author>Students from M2 Data Science IP Paris</author>
-      <guid>http://localhost:1313/posts/transferability/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/posts/transferability/</guid>
       <pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate>
     </item>
     

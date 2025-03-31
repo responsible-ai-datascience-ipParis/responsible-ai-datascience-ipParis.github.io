@@ -2,45 +2,45 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Bloggin on Responsible AI</title>
-    <link>http://localhost:1313/tags/</link>
+    <link>https://responsible-ai-datascience-ipParis.github.io/tags/</link>
     <description>Recent content in Tags on Bloggin on Responsible AI</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 19 Feb 2025 15:20:48 +0100</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/atom.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://responsible-ai-datascience-ipParis.github.io/tags/atom.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>BERT</title>
-      <link>http://localhost:1313/tags/bert/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/tags/bert/</link>
       <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
-      <guid>http://localhost:1313/tags/bert/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/tags/bert/</guid>
       <description></description>
     </item>
     <item>
       <title>BitFit</title>
-      <link>http://localhost:1313/tags/bitfit/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/tags/bitfit/</link>
       <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
-      <guid>http://localhost:1313/tags/bitfit/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/tags/bitfit/</guid>
       <description></description>
     </item>
     <item>
       <title>Fine-Tuning</title>
-      <link>http://localhost:1313/tags/fine-tuning/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/tags/fine-tuning/</link>
       <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
-      <guid>http://localhost:1313/tags/fine-tuning/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/tags/fine-tuning/</guid>
       <description></description>
     </item>
     <item>
       <title>Machine Learning</title>
-      <link>http://localhost:1313/tags/machine-learning/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/tags/machine-learning/</link>
       <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
-      <guid>http://localhost:1313/tags/machine-learning/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/tags/machine-learning/</guid>
       <description></description>
     </item>
     <item>
       <title>NLP</title>
-      <link>http://localhost:1313/tags/nlp/</link>
+      <link>https://responsible-ai-datascience-ipParis.github.io/tags/nlp/</link>
       <pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate>
-      <guid>http://localhost:1313/tags/nlp/</guid>
+      <guid>https://responsible-ai-datascience-ipParis.github.io/tags/nlp/</guid>
       <description></description>
     </item>
   </channel>
