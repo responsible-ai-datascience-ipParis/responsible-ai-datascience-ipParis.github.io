@@ -4204,7 +4204,155 @@ Moreover, further analysis reveals that not all bias parameters are equally impo
 &lt;h3 id="references">References&lt;/h3>
 &lt;ul>
 &lt;li>&lt;a id="#benzaken">&lt;/a> &lt;a href="https://aclanthology.org/2022.acl-short.1/">BitFit: Simple Parameter-efficient Fine-tuning for Transformer-based Masked Language-models&lt;/a> (Ben Zaken et al., ACL 2022)&lt;/li>
-&lt;/ul></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</guid><pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate></item><item><title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link><description>&lt;style
+&lt;/ul></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</guid><pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate></item><item><title>SelfIE: When Large Language Models Explain Their Own Thoughts</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/selfie_with_me/</link><description>&lt;p>&lt;strong>Authors&lt;/strong>: Adrian Durando, Clément Ferrere, Romain Torris&lt;/p>
+&lt;p>&lt;em>The original paper was authored by Haozhe Chen (Columbia), Carl Vondrick (Columbia), Chengzhi Mao (Mila/McGill)&lt;/em>&lt;/p>
+&lt;p>&lt;strong>Original Paper&lt;/strong>: &lt;a href="https://arxiv.org/pdf/2403.10949">arXiv:2403.10949&lt;/a>&lt;/p>
+&lt;p>-&lt;/p>
+&lt;p>Imagine asking a chef how they cooked a dish, only to receive the reply: “It’s a secret.” That’s the frustration researchers face with today’s large language models (LLMs). Despite their impressive abilities (writing code, diagnosing illnesses, or debating ethics), their decision-making remains opaque. This isn’t just an academic concern. When an LLM recommends a medical treatment or evaluates a legal contract, we need to know: &lt;em>How did it arrive at that answer?&lt;/em>&lt;/p>
+&lt;p>A team from Columbia University and Mila might have cracked this open. Their framework, &lt;strong>SelfIE&lt;/strong>, forces LLMs to do something unprecedented: &lt;em>interpret their own internal embeddings in plain English&lt;/em>. No training required, no pre-defined concepts, just the model translating its hidden states into human-readable explanations.&lt;/p>
+&lt;p>-&lt;/p>
+&lt;h3 id="table-of-contents">Table of contents&lt;/h3>
+&lt;ol>
+&lt;li>&lt;a href="#why-this-matters">Why This Matters&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#the-mechanics-of-selfie">The Mechanics of SelfIE&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#inserting-embeddings-in-interpretation-forward-pass">Inserting Embeddings in Interpretation Forward Pass&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#relevancy-score">Relevancy Score&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#supervised-control-editing-the-models-thoughts">Supervised Control: Editing the Model&amp;rsquo;s Thoughts&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#reinforcement-control-guiding-the-models-behavior">Reinforcement Control: Guiding the Model&amp;rsquo;s Behavior&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#results">Results&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#limitations">Limitations&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#conclusion">Conclusion&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#key-references">Key References&lt;/a>&lt;/li>
+&lt;/ol>
+&lt;p>-&lt;/p>
+&lt;h3 id="1-why-this-matters">1. Why This Matters&lt;/h3>
+&lt;p>Understanding the internal reasoning of LLMs is crucial for building trustworthy AI systems. SelfIE isn’t just a diagnostic tool; it reveals unsettling truths about how these models operate:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Harmful Knowledge&lt;/strong>: LLMs internally store dangerous knowledge (like building weapons) even after safety training.&lt;/li>
+&lt;li>&lt;strong>Prompt Injections&lt;/strong>: Simple prompt injections (like adding “!!!”) can hijack reasoning by exploiting embedded notions of “urgency.”&lt;/li>
+&lt;li>&lt;strong>Ethical Decisions&lt;/strong>: Ethical choices can flip based on whether the model is asked to explain itself.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img
+src="./images/ARC/fig1e.PNG"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>&lt;em>Figure 1 : Flipped choices&lt;/em>&lt;/p>
+&lt;p>For the first time, we can peer into the model’s &lt;em>chain of thought&lt;/em> as it unfolds, layer by layer. Let&amp;rsquo;s dive into how SelfIE achieves this.&lt;/p>
+&lt;h3 id="2-the-mechanics-of-selfie">2. The Mechanics of SelfIE&lt;/h3>
+&lt;p>To understand how SelfIE works, we need to explore how it leverages the LLM&amp;rsquo;s existing capabilities. SelfIE builds on the observation that LLMs can summarize or repeat information provided in context. By inserting hidden embeddings into a forward pass, SelfIE prompts the model to explain what those embeddings represent.&lt;/p>
+&lt;p>&lt;img
+src="./images/ARC/fig2e.jpg"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;em>Figure 2 : Interpretation forward pass&lt;/em>&lt;/p>
+&lt;h4 id="inserting-embeddings-in-interpretation-forward-pass">Inserting Embeddings in Interpretation Forward Pass&lt;/h4>
+&lt;p>Consider a transformer-based LLM. It processes input text through multiple layers, each transforming the input embeddings. SelfIE interprets these embeddings by extracting the embedding of interest and injecting it into a separate forward pass of the same LLM. This is called the interpretation forward pass, which uses an interpretation prompt to summarize the embedding.&lt;/p>
+&lt;p>&lt;img
+src="./images/ARC/maths5.jpg"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;h3 id="3-supervised-control-editing-the-models-thoughts">3. Supervised Control: Editing the Model&amp;rsquo;s Thoughts&lt;/h3>
+&lt;p>One of the most exciting applications of SelfIE is supervised control. This technique allows researchers to edit the model&amp;rsquo;s internal representations to align with desired outcomes. For example, if an LLM contains harmful knowledge, supervised control can rewrite the relevant embeddings to remove or neutralize that information.&lt;/p>
+&lt;p>The process involves minimizing the Mean Squared Error (MSE) between the current embedding and a target embedding that represents the desired outcome. This is done through gradient descent, a common optimization technique in machine learning.&lt;/p>
+&lt;p>The loss function for supervised control is:&lt;/p>
+&lt;p>&lt;img
+src="./images/ARC/maths2.PNG"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;h3 id="4-reinforcement-control-guiding-the-models-behavior">4. Reinforcement Control: Guiding the Model&amp;rsquo;s Behavior&lt;/h3>
+&lt;p>Reinforcement control extends the principles of reinforcement learning to the level of embeddings. Instead of training the model on external rewards, reinforcement control uses internal embeddings to guide behavior.&lt;/p>
+&lt;p>&lt;img
+src="./images/ARC/maths4.PNG"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>By using reinforcement control, we can steer the model&amp;rsquo;s behavior without needing explicit supervision, making it a powerful tool for aligning AI with human values.&lt;/p>
+&lt;h3 id="5-results">5. Results&lt;/h3>
+&lt;p>The results obtained with SelfIE are both promising and insightful, demonstrating the framework&amp;rsquo;s effectiveness in interpreting and controlling the internal reasoning of LLMs. Here are the key findings:&lt;/p>
+&lt;h4 id="eliciting-implicit-world-states">Eliciting Implicit World States&lt;/h4>
+&lt;p>SelfIE successfully recovered 60%-80% of the information about entity states in the TextWorld dataset, matching the performance of a 100-shot supervised classification model. This indicates that SelfIE can faithfully interpret the information represented in embeddings without extensive training.&lt;/p>
+&lt;p>&lt;img
+src="./images/ARC/fig6.PNG"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>&lt;em>Figure 3: Classification accuracy on TextWorld dataset compared with Linear Probing and random guess.&lt;/em>&lt;/p>
+&lt;p>The TextWorld Dataset provides a platform for generating synthetic worlds for text-based games, used to test reinforcement learning agents. The red line represents the zero-shot SelfIE method, while gray lines show k-shot supervised models (k ranging from 1 to 100). The dashed line indicates supervised learning results on the entire dataset. For these results, for each sample, we pass through the context of the original direct pass and extract the embedding of the last mention of the entity on different layers, which we interpret with SelfIE.&lt;/p>
+&lt;h4 id="detecting-harmful-knowledge">Detecting Harmful Knowledge&lt;/h4>
+&lt;p>SelfIE revealed that LLMs can internally store harmful knowledge, even after safety alignment. By applying reinforcement control, the framework significantly reduced the presence of harmful knowledge, decreasing the success rate of prompt injections eliciting harmful responses by 84.66%.&lt;/p>
+&lt;p>&lt;img
+src="./images/ARC/fig7.PNG"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>&lt;em>Figure 4: Detecting harmful knowledge in LLM. (a) LLM contains harmful knowledge despite safety alignment. (b) Harmful knowledge is mostly removed after Reinforcement Control.&lt;/em>&lt;/p>
+&lt;p>These results underscore the potential of SelfIE to enhance the transparency and controllability of LLMs, paving the way for more trustworthy AI systems.&lt;/p>
+&lt;h3 id="6-limitations">6. Limitations&lt;/h3>
+&lt;p>While SelfIE represents a significant advancement in interpreting and controlling LLMs, it is not without limitations:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Complexity&lt;/strong>: The method requires a deep understanding of the model&amp;rsquo;s architecture and embeddings, which may be challenging for non-experts. Implementing SelfIE effectively necessitates familiarity with the intricacies of transformer models and how embeddings are manipulated within them.&lt;/li>
+&lt;li>&lt;strong>Scalability&lt;/strong>: Applying SelfIE to very large models or real-time applications may face computational constraints. The process of inserting and interpreting embeddings across multiple layers can be resource-intensive, potentially limiting its use in scenarios where rapid processing is essential.&lt;/li>
+&lt;li>&lt;strong>Generalization&lt;/strong>: Although SelfIE can interpret a wide range of concepts, it may struggle with extremely abstract or nuanced ideas that are difficult to encode in embeddings. Certain complex or highly context-dependent thoughts might not be fully captured by the embeddings, limiting the framework&amp;rsquo;s ability to provide comprehensive interpretations in such cases.&lt;/li>
+&lt;/ul>
+&lt;h3 id="7-conclusion">7. Conclusion&lt;/h3>
+&lt;p>SelfIE represents a groundbreaking advancement in the field of large language models, offering insights into their internal reasoning processes. By enabling LLMs to interpret their own embeddings, SelfIE provides a window into the decision-making mechanisms of these complex systems, allowing researchers and developers to understand how these models arrive at specific conclusions. This capability not only enhances the transparency of AI systems but also paves the way for more accountable and trustworthy applications, particularly in critical domains such as healthcare, law, and education.&lt;/p>
+&lt;p>By identifying and mitigating harmful knowledge and ensuring that ethical considerations are embedded in the reasoning process, SelfIE addresses some of the most pressing concerns surrounding AI deployment. As AI continues to integrate more deeply into society, tools like SelfIE will be instrumental in building systems that are not only powerful but also responsible and aligned with our collective values.&lt;/p>
+&lt;h3 id="8-key-references">8. Key References&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>Locating and Editing Factual Associations in GPT&lt;/strong>&lt;br>
+Meng et al. (2022)&lt;br>
+&lt;em>The foundational work on model editing that SelfIE builds upon, introducing causal tracing for knowledge localization.&lt;/em>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Implicit Representations of Meaning in Neural Language Models&lt;/strong>&lt;br>
+Li et al. (2021)&lt;br>
+&lt;em>Demonstrates how LLMs encode world states in embeddings, directly informing SelfIE&amp;rsquo;s TextWorld experiments.&lt;/em>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>A Mathematical Framework for Transformer Circuits&lt;/strong>&lt;br>
+Elhage et al. (2021)&lt;br>
+&lt;em>Provides the theoretical basis for SelfIE&amp;rsquo;s layer-wise embedding interpretation via transformer residual streams.&lt;/em>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Training Language Models to Follow Instructions with Human Feedback&lt;/strong>&lt;br>
+Ouyang et al. (2022)&lt;br>
+&lt;em>The RLHF methodology that SelfIE extends to embedding-level control.&lt;/em>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Patchscopes: A Unifying Framework for Inspecting Hidden Representations&lt;/strong>&lt;br>
+Ghandeharioun et al. (2024)&lt;br>
+&lt;em>Concurrent work on LLM self-interpretation, offering complementary approaches to embedding analysis.&lt;/em>&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/selfie_with_me/</guid><pubDate>Wed, 05 Feb 2025 14:08:30 +0100</pubDate></item><item><title>Axiomatic Explanations for Visual Search, Retrieval and Similarity Learning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</link><description>&lt;style
 TYPE="text/css">
 code.has-jax {font:
 inherit;
