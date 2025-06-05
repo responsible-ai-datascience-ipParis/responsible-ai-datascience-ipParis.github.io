@@ -4024,7 +4024,199 @@ Salakhutdinov, R., editors, Proceedings of the 36th International Conference on 
 volume 97 of Proceedings of Machine Learning Research, pages 6438–6447. PMLR.&amp;#160;&lt;a href="#fnref:10" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
 &lt;/li>
 &lt;/ol>
-&lt;/div></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</guid><pubDate>Sun, 09 Mar 2025 21:03:13 +0100</pubDate></item><item><title>BitFit: BIas-Term FIne-Tuning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</link><description>&lt;style
+&lt;/div></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/mixupdatacalibration/</guid><pubDate>Sun, 09 Mar 2025 21:03:13 +0100</pubDate></item><item><title>A Groupe Fairness</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/a-groupe-fairness/</link><description>&lt;h1 id="no-retraining-no-problem-frappés-bold-approach-to-ai-fairness">No Retraining? No Problem! FRAPPÉ’s Bold Approach to AI Fairness&lt;/h1>
+&lt;p>&lt;strong>Authors of the blogpost:&lt;/strong> Arij Hajji , Rouaa Blel&lt;/p>
+&lt;h2 id="table-of-contents">Table of Contents&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="#introduction">Introduction&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#why-fairness-in-ai-matters">Why Fairness in AI Matters&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#when-fairness-in-ai-went-wrong-the-amazon-hiring-scandal">When Fairness in AI Went Wrong: The Amazon Hiring Scandal&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#fairness-mitigation-strategies-in-ai">Fairness Mitigation Strategies in AI&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#how-frapp%C3%A9-works">How FRAPPÉ Works&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#mathematical-formulation-of-frapp%C3%A9">Mathematical Formulation of FRAPPÉ&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#theoretical-justification">Theoretical Justification&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#frapp%C3%A9-vs-traditional-fairness-methods">FRAPPÉ vs. Traditional Fairness Methods&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#why-frapp%C3%A9-is-important">Why FRAPPÉ is Important&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#efficiency">Efficiency&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#flexibility">Flexibility&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#privacy">Privacy&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#real-world-example">Real-World Example&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#experimenting">Experimenting&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#reproducibility-and-potential-difficulties">Reproducibility and Potential Difficulties &lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#final-thoughts">Final Thoughts&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#what-do-you-think-about-frapp%C3%A9">What Do You Think About FRAPPÉ?&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#references">References&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#about-the-authors">About the Authors&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>&lt;img
+src="./images/Arij_Roua/aiandjob.jpg"
+alt="Job_Application"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+Imagine being confident in your abilities and expertise when you apply for your ideal job, only to have your application denied—not due to your qualifications, but rather to biases an AI system learned from past data. It&amp;rsquo;s infuriating, unjust, and regrettably becoming a bigger issue as AI-driven choices in criminal justice, lending, and employment become more prevalent.&lt;/p>
+&lt;p>Correcting biased AI models can be a difficult task. Traditional methods often involve re-training the entire model, which can be costly, time-consuming and sometimes impossible . But can&amp;rsquo;t we find a simpler way?&lt;/p>
+&lt;p>Presenting FRAPPÉ, a methodology that eliminates bias in AI without requiring retraining. A novel method called FRAPPÉ (Fairness Framework for Post-Processing Everything) transforms our understanding of fairness in machine learning.
+Rather than modifying the entire model, it provides a more efficient solution by adjusting the output to ensure fairness. We will examine the main ideas, contributions, and practical applications of this ground-breaking study in this blog., you can check out the original paper, FRAPPÉ: A Group Fairness Framework for Post-Processing Everything, by Alexandru Ţifrea, Preethi Lahoti, Ben Packer, Yoni Halpern, Ahmad Beirami, and Flavien Prost.&lt;/p>
+&lt;h2 id="why-fairness-in-ai-matters">Why Fairness in AI Matters&lt;/h2>
+&lt;p>Important choices including bank approvals, employment recruiting, and medical diagnosis are increasingly being made using AI algorithms. These mechanisms can, however, perpetuate current disparities and disproportionately impact particular populations when they reflect biases.&lt;/p>
+&lt;p>Ensuring group fairness—the notion that demographic groupings like age, gender, and ethnicity are treated fairly and equally—is one of the primary ethical concerns in AI research. Fairness is far from easy to achieve, though. Equal opportunity, statistical parity, and equalized odds are only a few of the many ways that fairness can be interpreted, and each one has its own trade-offs between predictability and justice.&lt;/p>
+&lt;h3 id="when-fairness-in-ai-went-wrong-the-amazon-hiring-scandal">When Fairness in AI Went Wrong: The Amazon Hiring Scandal&lt;/h3>
+&lt;p>When we think about a good exemple of AI bias we can think about when Amazon created a tool to assess job appplications.
+With the tech sector generally employing more men, the model was trained on previous employment data and discovered trends favoring male applicants. As a result, resumes containing terms such as “feminine” (e.g. “women&amp;rsquo;s chess club”) and indicating a preference for environments with a higher proportion of men were devalued by AI. Amazon in 2018 put an end to the usage of this method, showing what biases could do to our society and especially in job selection. This case highlights the need for robust bias mitigation techniques and the importance of fairness in AI.&lt;/p>
+&lt;h3 id="fairness-mitigation-strategies-in-ai">Fairness Mitigation Strategies in AI&lt;/h3>
+&lt;p>To address these biases, AI fairness strategies typically fall into three main categories:&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>In-Processing&lt;/strong>: This strategy involves modifying the model during its training phase to directly integrate fairness constraints. While effective, it can be computationally expensive and often requires retraining the entire model, which may not be practical in all situations.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Post-Processing&lt;/strong>: These methods apply adjustments to the model&amp;rsquo;s outputs after predictions have been made. It offers greater flexibility since it doesn’t require altering the original model. However, these methods are often limited to specific fairness criteria and may not apply universally.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Pre-Processing&lt;/strong>: This approach involves adjusting the training data before it’s used to train the model. By altering the data to reduce bias before training, pre-processing aims to create a fairer dataset. However, this approach can also introduce challenges, such as data distortions or loss of valuable information.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img
+src="./images/Arij_Roua/threetypes.png"
+alt="types"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;h2 id="how-frappé-works-">How FRAPPÉ works ?&lt;/h2>
+&lt;p>Instead of relying on explicit group-dependent transformations that depend directly on sensitive attributes (e.g., gender, race), FRAPPÉ applies an additive correction based on all covariates ( x ). This ensures fairness while maintaining predictive accuracy.&lt;/p>
+&lt;h3 id="mathematical-formulation-of-frappé">Mathematical Formulation of FRAPPÉ&lt;/h3>
+&lt;p>At its core, FRAPPÉ modifies a base model’s prediction fbase(x) by applying a fairness correction term TP P (x), leading to:&lt;/p>
+&lt;p>ffair (x) = fbase(x) + TP P (x)&lt;/p>
+&lt;p>where:&lt;/p>
+&lt;ul>
+&lt;li>fbase(x) represents the original model output.&lt;/li>
+&lt;li>TPP (x) is an additive term learned through post-processing to correct fairness discrepancies.&lt;/li>
+&lt;/ul>
+&lt;p>This transformation enables FRAPPÉ to achieve fairness objectives without modifying the model’s internal structure.&lt;/p>
+&lt;h3 id="theoretical-justification">Theoretical Justification&lt;/h3>
+&lt;p>To establish the validity of this approach, we consider generalized linear models (GLMs), where predictions take the form:&lt;/p>
+&lt;p>&lt;img
+src="./images/Arij_Roua/eq1.png"
+alt="types"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>for model parameters θ and a link function ψ (like identity function for linear regression, sigmoid for logistic regression). In fairness-constrained optimization, we often minimize:&lt;/p>
+&lt;p>&lt;img
+src="./images/Arij_Roua/eq2.png"
+alt="types"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>where:&lt;/p>
+&lt;ul>
+&lt;li>Lpred is the predictive loss (like mean squared error, logistic loss).&lt;/li>
+&lt;li>Lfair is a fairness penalty.&lt;/li>
+&lt;li>λ controls the fairness-accuracy trade-off.&lt;/li>
+&lt;/ul>
+&lt;p>FRAPPÉ recasts this as a bi-level optimization problem:&lt;/p>
+&lt;p>&lt;img
+src="./images/Arij_Roua/eq3.png"
+alt="types"
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>where:&lt;/p>
+&lt;ul>
+&lt;li>θbase is the solution to the unconstrained prediction problem.&lt;/li>
+&lt;li>DF(θ, θbase) is a Bregman divergence term ensuring predictions remain close to the original model.&lt;/li>
+&lt;/ul>
+&lt;p>The key insight is that minimizing OPTIP and OPTPP leads to identical fairness-error trade-offs, proving that FRAPPÉ&amp;rsquo;s post-processing approach is theoretically equivalent to traditional in-processing fairness methods.&lt;/p>
+&lt;h2 id="frappé-vs-traditional-fairness-methods">FRAPPÉ vs. Traditional Fairness Methods&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Feature&lt;/strong>&lt;/th>
+&lt;th>&lt;strong>FRAPPÉ&lt;/strong>&lt;/th>
+&lt;th>&lt;strong>Traditional Fairness Techniques&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Model Agnosticism&lt;/strong>&lt;/td>
+&lt;td>Works with any machine learning model, whether black-box or interpretable.&lt;/td>
+&lt;td>Typically tied to specific model architectures or requires model modifications.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Fairness Flexibility&lt;/strong>&lt;/td>
+&lt;td>Can adapt to various fairness criteria (equal opportunity, statistical parity, etc.).&lt;/td>
+&lt;td>Often focuses on a single fairness definition, limiting flexibility.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Sensitive Data Usage&lt;/strong>&lt;/td>
+&lt;td>Does not require sensitive data (e.g., race, gender) during prediction.&lt;/td>
+&lt;td>Many methods rely on sensitive data during prediction, which can raise ethical concerns.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Efficiency&lt;/strong>&lt;/td>
+&lt;td>Post-processing adjustment makes it faster and less resource-intensive.&lt;/td>
+&lt;td>Often requires full model retraining, which is computationally expensive.&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="why-frappé-is-important">Why FRAPPÉ is important&lt;/h2>
+&lt;h3 id="efficiency">Efficiency:&lt;/h3>
+&lt;p>Using FRAPPÉ the training cost can be reduced upto &lt;strong>90%&lt;/strong> compared to in-processing approaches, since FRAPPÉ only learns a small layer of correction instead of the entire model.&lt;/p>
+&lt;p>-&lt;strong>Flexibility:&lt;/strong>
+In the case where &lt;strong>statistical parity&lt;/strong> is mandatoryr instead of &lt;strong>equal opportunity&lt;/strong> FRAPPÉ is the solution.&lt;/p>
+&lt;p>-&lt;strong>Privacy:&lt;/strong>
+For FRAPPÉ the storage or extraction of sensitive demographic data is not crucial or obigatory, as it works without group labels at the time of prediction.&lt;/p>
+&lt;h2 id="real-world-example">Real-World Example&lt;/h2>
+&lt;p>Let&amp;rsquo;s take in mind a hiring algorithm ,it basically scores applicants based on their resumes. An exemple of historical bias means female applicants womm receive lower scores on average. Traditionally, we’d need to retrain the whole model to correct this.&lt;/p>
+&lt;p>Using FRAPPÉ, the original model can remain untouched — we just add a &lt;strong>fairness correction layer&lt;/strong> that adapts scores to ensure fairness across genders. This is faster, cheaper, and works even if we didn’t train the original model.&lt;/p>
+&lt;h2 id="experimenting">Experimenting&lt;/h2>
+&lt;p>&lt;a href="./assets/a_groupe_fairness.html">View the notebook&lt;/a>&lt;/p>
+&lt;h3 id="reproducibility-and-potential-difficulties">Reproducibility and Potential Difficulties&lt;/h3>
+&lt;p>Careful consideration of model setup, hyperparameter selection, and dataset preprocessing are necessary to replicate these findings. Potential bias is indicated by the baseline model&amp;rsquo;s notable differences in classification accuracy and error rates between Sex1 (likely male) and Sex0 (likely female). By equating false positive and false negative rates across groups, the fairness-aware model effectively reduces these discrepancies utilizing the FRAPPÉ framework. However, ensuring consistent replication of these findings poses challenges.&lt;/p>
+&lt;h2 id="final-thoughts">Final Thoughts&lt;/h2>
+&lt;p>When retraining a model isn&amp;rsquo;t feasible, &lt;strong>FRAPPÉ&lt;/strong> offers a practical, adaptable, and efficient solution to ensure fairness in AI systems. By &lt;strong>decoupling model learning from fairness adjustments&lt;/strong>, it makes it easier to incorporate fairness without overhauling existing models.&lt;/p>
+&lt;p>For anyone working in &lt;strong>ethical AI&lt;/strong>, &lt;strong>data science&lt;/strong>, or &lt;strong>policy-making&lt;/strong>, FRAPPÉ stands out as a powerful tool. It allows for the development of fairer technologies that are not only &lt;strong>faster&lt;/strong> but also &lt;strong>more scalable&lt;/strong>.&lt;/p>
+&lt;h2 id="what-do-you-think-about-frappé">What Do You Think About FRAPPÉ?&lt;/h2>
+&lt;p>Could this innovative framework be the key to making fairness mitigation in AI more &lt;strong>practical&lt;/strong> and &lt;strong>scalable&lt;/strong>? We’d love to hear your thoughts—feel free to share your opinions!&lt;/p>
+&lt;h2 id="references">References&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>Alexandru Țifrea, Preethi Lahoti, Ben Packer, Yoni Halpern, Ahmad Beirami, Flavien Prost. &lt;em>FRAPPÉ: A Group Fairness Framework for Post-Processing Everything&lt;/em>. ICML 2024. &lt;a href="https://arxiv.org/abs/2312.02592">arXiv Link&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://responsible-ai-datascience-ipparis.github.io/tutorial/">Responsible AI Blog Guidelines - Télécom Paris&lt;/a>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="about-the-authors">About the Authors&lt;/h2>
+&lt;p>&lt;strong>Arij Hajji&lt;/strong>&lt;/p>
+&lt;p>&lt;em>M2 Data Science, Institut Polytechnique de Paris&lt;/em>&lt;br>
+&lt;em>&lt;a href="mailto:arij.hajji@telecom-paris.fr">arij.hajji@telecom-paris.fr&lt;/a>&lt;/em>&lt;/p>
+&lt;p>&lt;strong>Rouaa Blel&lt;/strong>&lt;/p>
+&lt;p>&lt;em>M2 Data Science, Institut Polytechnique de Paris&lt;/em>&lt;br>
+&lt;em>&lt;a href="mailto:rouaa.blel@ensae.fr">rouaa.blel@ensae.fr&lt;/a>&lt;/em>&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/a-groupe-fairness/</guid><pubDate>Sat, 01 Mar 2025 22:29:01 +0100</pubDate></item><item><title>BitFit: BIas-Term FIne-Tuning</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</link><description>&lt;style
 TYPE="text/css">
 code.has-jax {font:
 inherit;
@@ -4439,7 +4631,116 @@ Now, let’s say that the musicians have been trained to perform classical music
 &lt;p>Hu, Edward J., Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. LoRA: Low-Rank Adaptation of Large Language Models. (2021)&lt;/p>
 &lt;p>Song, Zheshu, Jianheng Zhuo, Yifan Yang, Ziyang Ma, Shixiong Zhang, and Xie Chen. LoRA-Whisper: Parameter-Efficient and Extensible Multilingual ASR.(2024)&lt;/p>
 &lt;p>Meta website : &lt;a href="https://www.llama.com/docs/how-to-guides/fine-tuning/">https://www.llama.com/docs/how-to-guides/fine-tuning/&lt;/a>&lt;/p>
-&lt;p>Solulab website : &lt;a href="https://www.solulab.com/fine-tuning-a-model-for-a-specific-task/">https://www.solulab.com/fine-tuning-a-model-for-a-specific-task/&lt;/a>&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/blog-lora/</guid><pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate></item><item><title>SelfIE: When Large Language Models Explain Their Own Thoughts</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/selfie_with_me/</link><description>&lt;p>&lt;strong>Authors&lt;/strong>: Adrian Durando, Clément Ferrere, Romain Torris&lt;/p>
+&lt;p>Solulab website : &lt;a href="https://www.solulab.com/fine-tuning-a-model-for-a-specific-task/">https://www.solulab.com/fine-tuning-a-model-for-a-specific-task/&lt;/a>&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/blog-lora/</guid><pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate></item><item><title>Privacy Amplification: How Decentralization Enhances Data Protection</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/</link><description>&lt;p>&lt;strong>Alexia Avakian, Kenza Erraji, and Constantin Guillaume&lt;/strong>&lt;br>
+&lt;em>M2DS - 2024 2025&lt;/em>&lt;/p>
+&lt;h2 id="1-introduction-rethinking-privacy-in-the-digital-age">1. Introduction: Rethinking Privacy in the Digital Age&lt;/h2>
+&lt;p>Imagine a world where AI models learn from data without ever seeing it. Your personal information remains private while still contributing to medical research, smart city planning, and financial security. Traditional privacy techniques often rely on trusted third parties, creating potential security risks.&lt;/p>
+&lt;p>The research paper &lt;em>Privacy Amplification by Decentralization&lt;/em> presents a new approach called Network Differential Privacy (Network DP), which enhances privacy through decentralization. Instead of relying on a central entity to enforce privacy guarantees, this method leverages the structure of decentralized networks to naturally amplify privacy.&lt;/p>
+&lt;p>This blog post explores the key insights from the paper, progressing from fundamental concepts to advanced applications.&lt;/p>
+&lt;h2 id="2-why-privacy-matters-in-machine-learning">2. Why Privacy Matters in Machine Learning&lt;/h2>
+&lt;p>Machine learning algorithms often require access to vast amounts of data, making privacy a critical concern. This data must be protected from unauthorized access and inference, while still allowing legitimate users to communicate and share information.&lt;/p>
+&lt;p>A widely used privacy-preserving technique is Differential Privacy (DP), which ensures that an individual&amp;rsquo;s data cannot be inferred, even if an attacker has access to the dataset. This is achieved by adding controlled noise before sharing the data.&lt;/p>
+&lt;p>&lt;img
+src="./images/privacy/dp_guard.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;p>As shown in the image, a privacy guard acts as an intermediary, ensuring that the output remains privacy-preserving. The guard assesses the privacy impact of the query and injects noise to mask individual contributions before responding.&lt;/p>
+&lt;p>However, applying DP in decentralized systems presents challenges:&lt;/p>
+&lt;ul>
+&lt;li>Local DP forces users to add noise to their data before sharing, which enhances privacy but significantly reduces accuracy.&lt;/li>
+&lt;li>Other privacy models rely on a trusted entity to collect and aggregate data while ensuring privacy. If this entity is compromised, all data security is lost.&lt;/li>
+&lt;/ul>
+&lt;p>This trade-off has led researchers to explore Network DP, which naturally amplifies privacy in decentralized architectures.&lt;/p>
+&lt;h2 id="3-privacy-models-from-simple-to-advanced">3. Privacy Models: From Simple to Advanced&lt;/h2>
+&lt;p>Before diving into Network DP, let&amp;rsquo;s compare two differential privacy models to understand their strengths and weaknesses.&lt;/p>
+&lt;h3 id="31-local-differential-privacy-ldp">3.1. Local Differential Privacy (LDP)&lt;/h3>
+&lt;p>In Local Differential Privacy, every user aims to protect their own shared data to prevent any potential adversary from detecting it. This model ensures privacy by applying strong noise locally to the data before it leaves the user&amp;rsquo;s device. This way, the data is protected from any non-legitimate user trying to access it, as the noise hinders its accuracy.&lt;/p>
+&lt;p>While this guarantees strong privacy protection, the downside of this excessive randomness is that data utility is significantly degraded as the number of users increases. Indeed, the data is made less useful for everyone, even for legitimate users.&lt;/p>
+&lt;h3 id="32-intermediate-trust-models">3.2. Intermediate Trust Models&lt;/h3>
+&lt;p>To prevent the limitations of LDP regarding data utility, other solutions have been developed, such as Intermediate Trust Models. These are models that are initially based on LDP in order to protect privacy, but reduce the amount of noise used to ensure a higher accuracy. Two main approaches have been developed:&lt;/p>
+&lt;ul>
+&lt;li>Using cryptography to aggregate the contribution of the users. In this solution, users encrypt their local data and only the final result of their contributions is decrypted. Because only this final result can be viewed, this method needs less noise to ensure privacy.&lt;/li>
+&lt;li>Shuffling the set of user messages. In this solution, less noise is applied to the data since the link between users and contributions has been randomized and their origin cannot be determined anymore.&lt;/li>
+&lt;/ul>
+&lt;p>The downside of these Intermediate Trust Models is that they have a higher computational cost.&lt;/p>
+&lt;h3 id="33-network-differential-privacy-network-dp">3.3. Network Differential Privacy (Network DP)&lt;/h3>
+&lt;p>Network DP introduces a fully decentralized approach where privacy is amplified by limiting each user&amp;rsquo;s visibility to only their direct neighbors in a communication network. Instead of introducing excessive noise to data, the privacy guarantee is achieved through restricted information flow, making it harder for any participant to reconstruct the original dataset.&lt;/p>
+&lt;p>&lt;img
+src="./images/privacy/privacy_models.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;h2 id="4-how-does-network-dp-work">4. How Does Network DP Work?&lt;/h2>
+&lt;p>Unlike classic LDP, where each user shares noisy updates with a central server, Network DP operates in a fully decentralized manner to limit the exposure of private data. Each user communicates only with their direct neighbors in a network graph, meaning that no single entity has full visibility over the data.&lt;/p>
+&lt;p>One of the key ideas in Network DP is that the way data flows in the network impacts privacy guarantees. Sparse networks provide stronger privacy guarantees compared to fully connected graphs, as data is shared in smaller isolated fragments. The paper explores different network topologies and demonstrates how privacy naturally improves in decentralized systems.&lt;/p>
+&lt;p>A useful analogy is a group of people whispering secrets in a crowded room. If each person only hears fragments of the conversation, it becomes nearly impossible to reconstruct the full message. Network DP works the same way: users only see local fragments of data, preventing attackers from accessing complete information.&lt;/p>
+&lt;p>Another important mechanism in Network DP is the use of random walks for data propagation. Instead of sending information directly to a central aggregator, data is passed along a sequence of random nodes, effectively masking its origin and making it increasingly difficult to track individual contributions. The longer the random walk, the more difficult it becomes for an adversary to trace back individual data points, enhancing privacy. This diffusion-based approach reduces the need for excessive noise injection while preserving utility in decentralized computations.&lt;/p>
+&lt;p>The authors propose a token-based decentralized computation model, where a &amp;ldquo;token&amp;rdquo; moves across the network. Each user who receives the token updates it based on their local data and then passes it along. Since no one sees the full dataset, privacy is naturally strengthened.&lt;/p>
+&lt;p>&lt;img
+src="./images/privacy/network_dp_equation.png"
+alt=""
+loading="lazy"
+decoding="async"
+class="full-width"
+/>
+&lt;/p>
+&lt;h2 id="5-network-topology-and-privacy-amplification">5. Network Topology and Privacy Amplification&lt;/h2>
+&lt;p>The effectiveness of Network DP depends not only on decentralized communication but also on the underlying structure of the network graph. Sparse networks, such as ring or expander graphs, provide stronger privacy guarantees, as users only exchange data with a few immediate neighbors. This prevents any single entity from accumulating enough data to breach privacy.&lt;/p>
+&lt;p>In contrast, highly connected graphs may weaken privacy since more participants gain visibility into the data exchange process. The paper explores how varying topologies affect privacy amplification, highlighting that well designed network topologies can amplify privacy without requiring additional noise injection, making Network DP a compelling alternative to traditional differential privacy techniques.&lt;/p>
+&lt;h2 id="6-technical-insights-how-effective-is-network-dp">6. Technical Insights: How Effective is Network DP?&lt;/h2>
+&lt;p>One of the key contributions of the paper is proving mathematically that Network DP improves privacy guarantees through decentralization. In simpler terms, just by having users communicate only with their neighbors in a network (without needing to add extra noise), the system becomes more privacy-preserving.&lt;/p>
+&lt;p>These results are supported by theoretical proofs based on information leakage analysis. The main idea is to model how much private information an adversary can infer based on what each user sees in the network. Because users only observe local information from their neighbors, the overall visibility, and therefore the potential for leakage, is significantly reduced. The theorems formalize this by bounding the adversary&amp;rsquo;s knowledge and showing how these bounds shrink as the network grows.&lt;/p>
+&lt;p>This said, privacy amplification in Network DP follows an O(1 / √n) improvement compared to LDP O(√n), meaning that as the number of users increases, privacy naturally improves.&lt;/p>
+&lt;p>For decentralized stochastic gradient descent (SGD), the privacy amplification effect is even stronger, scaling as O(ln n / √n).&lt;/p>
+&lt;h2 id="7-experimental-results-network-dp-in-action">7. Experimental Results: Network DP in Action&lt;/h2>
+&lt;p>The paper evaluates Network DP against existing DP models through several experiments, particularly in machine learning tasks such as classification and decentralized stochastic gradient descent (SGD). The key findings include:&lt;/p>
+&lt;ul>
+&lt;li>Network DP maintains a privacy-utility trade-off similar to Centralized DP but without requiring a central authority, making it viable for fully distributed systems.&lt;/li>
+&lt;li>Compared to Local DP, Network DP achieves better accuracy by reducing the need for excessive noise.&lt;/li>
+&lt;li>Network DP scales efficiently with an increasing number of users, making it practical for large scale decentralized networks, such as federated learning (each user keeps their own data local and contributes only with the results of local computations).&lt;/li>
+&lt;/ul>
+&lt;h2 id="8-security-considerations-potential-attacks-and-collusion">8. Security Considerations: Potential Attacks and Collusion&lt;/h2>
+&lt;p>While Network DP provides strong privacy guarantees, it is not entirely immune to security threats and attacks. One of the primary concerns is collusion, where multiple participants in the network work together to reconstruct hidden data. If a group of malicious nodes strategically shares their observed data fragments, they might be able to infer sensitive information, breaking the privacy guarantees provided by the system. This risk is particularly relevant in decentralized environments where there is no central authority to monitor or regulate data sharing.&lt;/p>
+&lt;p>To counter these risks, researchers have proposed several mitigation strategies. One approach is to design network topologies that limit information overlap, ensuring that no small subset of users has enough visibility to infer private data. In fact, if the network is sparsely connected, collusion becomes harder because no small subset of users can reconstruct a significant portion of the data.&lt;/p>
+&lt;p>Additionally, random walks can be introduced for information propagation, ensuring that information moves randomly across the network which helps to prevent any single group of nodes from reconstructing a user&amp;rsquo;s data.&lt;/p>
+&lt;p>These defenses make Network DP more resilient to malicious behavior, ensuring that privacy amplification remains effective even in the presence of coordinated attacks. However, as decentralized networks continue to grow in scale and complexity, ongoing research is required to strengthen privacy mechanisms against more sophisticated adversaries.&lt;/p>
+&lt;h2 id="9-applications-where-can-network-dp-be-used">9. Applications: Where Can Network DP Be Used?&lt;/h2>
+&lt;p>Network DP is particularly useful in decentralized applications where privacy is a concern. One of the key areas explored in the paper is federated learning, where models are trained across distributed users without sharing raw data. Network DP enhances privacy in federated learning by reducing reliance on a central server while maintaining accuracy.&lt;/p>
+&lt;h2 id="10-how-network-dp-compares-to-ldp">10. How Network DP Compares to LDP&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Privacy Model&lt;/th>
+&lt;th>Centralized?&lt;/th>
+&lt;th>Privacy Amplification&lt;/th>
+&lt;th>Utility Impact&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>Local DP&lt;/td>
+&lt;td>No&lt;/td>
+&lt;td>None&lt;/td>
+&lt;td>High noise, low accuracy&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Network DP&lt;/td>
+&lt;td>No&lt;/td>
+&lt;td>Strong (from decentralization)&lt;/td>
+&lt;td>Low noise, high accuracy&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="11-conclusion-the-future-of-privacy-preserving-ai">11. Conclusion: The Future of Privacy-Preserving AI&lt;/h2>
+&lt;p>Network DP represents a significant advancement in privacy-preserving AI by removing the need for centralized trust and reducing the dependency on excessive noise injection. By leveraging decentralized communication, it naturally amplifies privacy without compromising accuracy, offering a scalable alternative to traditional privacy-preserving mechanisms like Local DP.&lt;/p>
+&lt;p>As AI regulations become stricter and the demand for secure data processing grows, Network DP has the potential to serve as a key framework for privacy-preserving decentralized systems. Its ability to balance strong privacy guarantees with high utility makes it particularly relevant for federated learning, decentralized AI training, and other distributed computing applications. However, challenges remain, particularly in optimizing privacy amplification across different network topologies and mitigating adversarial threats such as collusion.&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/</guid><pubDate>Wed, 05 Feb 2025 14:18:43 +0100</pubDate></item><item><title>SelfIE: When Large Language Models Explain Their Own Thoughts</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/selfie_with_me/</link><description>&lt;p>&lt;strong>Authors&lt;/strong>: Adrian Durando, Clément Ferrere, Romain Torris&lt;/p>
 &lt;p>&lt;em>The original paper was authored by Haozhe Chen (Columbia), Carl Vondrick (Columbia), Chengzhi Mao (Mila/McGill)&lt;/em>&lt;/p>
 &lt;p>&lt;strong>Original Paper&lt;/strong>: &lt;a href="https://arxiv.org/pdf/2403.10949">arXiv:2403.10949&lt;/a>&lt;/p>
 &lt;p>-&lt;/p>
@@ -4777,286 +5078,7 @@ all[i].SourceElement().parentNode.className += ' has-jax';
 }
 });
 &lt;/script>
-&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</guid><pubDate>Thu, 28 Mar 2024 05:58:39 +0100</pubDate></item><item><title>Privacy Amplification by Decentralization</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/</link><description>&lt;h1 style="font-size: 36px;">Privacy Amplification by Decentralization&lt;/h1>
-&lt;h1 style="font-size: 24px;">Author: Sarah ABBANA BENNANI &lt;/h1>
-&lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
-&lt;ul>
-&lt;li>&lt;a href="#section-1">Introduction - the challenge of data privacy&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#section-2">Theoretical Aspects on Differential Privacy&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#section-3">First Case: walk on a ring&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#section-4">Generalisation: walk on a complete graph&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#section-5">Experiments&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#section-6">Perspectives&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;br />
-&lt;p>This is a blogpost about the paper Privacy Amplification by Decentralization, published by E. Cyffers et al. in 2022 and available &lt;a href="https://proceedings.mlr.press/v151/cyffers22a/cyffers22a.pdf">here&lt;/a>.&lt;/p>
-&lt;h1 id="section-1">&lt;h1 style="font-size: 20px;">Introduction - the challenge of data privacy&lt;/h1>&lt;/h1>
-&lt;p>In recent years, the concept of privacy has gained significant attention due to the proliferation of data collection practices and the need to safeguard individuals&amp;rsquo; personal information. &lt;br>
-There has been a notable shift towards implementing regulations to govern the gathering of data from individuals, underscoring the pressing demand for privacy measures that are not only effective and robust against potential attacks but also transparent and firmly grounded in logic and mathematics.&lt;/p>
-&lt;p>&lt;strong>A current way to define privacy in the context of data sharing is the promess of the dataholder (the person or entity managing the data) towards the users, that there will be no consequences (positive or negative) induced by their consent to sharing their data.&lt;/strong>&lt;/p>
-&lt;br />
-&lt;p>&lt;em>Let us take a small example to illustrate and to understand the underlying complexity of this notion: we consider an entity that desires to conduct a study on the correlation between smoking and cancer risks. &lt;br>
-Should a smoker participate, and the study concludes that smoking indeed increases the likelihood of cancer, the repercussions for the smoker could vary.&lt;/em>&lt;/p>
-&lt;ul>
-&lt;li>
-&lt;p>&lt;em>Some negative impacts: insurance premiums could increase&lt;/em>&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>&lt;em>Some positive impacts: motivation to quit smoking&lt;/em>&lt;/p>
-&lt;/li>
-&lt;/ul>
-&lt;p>&lt;em>We could therefore think that privacy in this case is broken for the participant, however there is a subtility which is one of the keys to capture the nuance between the privacy of an individiual and that of a group. In this case, crucially, we cannot say privacy is breached, as the participation of the smoker should not alter the study&amp;rsquo;s outcome, i.e. from a probabilistic standpoint, whether or not the individual participates in the study will not significantly change the likelihood of the conclusion of the study. &lt;br>
-Formally, and to introduce some probabilities, which we will delve into further later on:&lt;/em>&lt;/p>
-&lt;h1 style="font-size: 13px;">$\mathbb{P}(result=smoking\ bad | individual\ participates) \approx \mathbb{P}(result=smoking\ bad | individual\ does\ not\ participate) $&lt;/h1>
-&lt;br />
-&lt;p>Privacy has become a real challenge for all parties, as &lt;strong>it is necesssary to find a balance between the utility of the data and the privacy guarantees of the users&lt;/strong>.&lt;/p>
-&lt;ul>
-&lt;li>For the dataholder, the aim is to retain the wealth of data to derive useful insights. They must be able to analyse enough of the data to learn about the population without revealing any individual-specific information.&lt;/li>
-&lt;li>For the users, they must believe that their data will be protected and that they will not be hurt by giving them. This trust in the dataholder is important to incite the users to give their data.&lt;/li>
-&lt;/ul>
-&lt;br />
-&lt;p>In this paper, the aim of the authors, E. Cyffers and A. Bellet, was to show some algorithms and methods that allow to improve the privacy-utility trade-offs and therefore reinforce privacy around the data, while keeping scalability.&lt;/p>
-&lt;p>The proposed algorithms are based on &lt;strong>full decentralization&lt;/strong>, and &lt;strong>newtork differential privacy (DP)&lt;/strong>, two notions that we will explain right below.&lt;/p>
-&lt;br />
-&lt;h1 id="section-2">&lt;h1 style="font-size: 20px;">Theoretical Aspects on Differential Privacy&lt;/h1>&lt;/h1>
-&lt;h2 id="mathematical-context">&lt;h1 style="font-size: 18px;">Mathematical context&lt;/h1>&lt;/h2>
-&lt;p>We must introduce some key mathematical definitions to understand the problem we want to tackle.&lt;/p>
-&lt;h2 id="users-space">Users space&lt;/h2>
-&lt;p>We consider a set of $n$ users (e.g. a population responding to a survey), each holding a private dataset that we note $D_u$ (e.g. their answer to the questions of the survey).&lt;/p>
-&lt;p>&lt;img
-src="./images/Sarah_Abbana/users-space.png"
-alt=""
-loading="lazy"
-decoding="async"
-class="full-width"
-/>
-&lt;/p>
-&lt;h2 id="neighboring-relation">Neighboring relation&lt;/h2>
-&lt;p>We write $D=D_1 \cup \cdots \cup D_n$ the union of all users datasets.&lt;/p>
-&lt;p>We can define a &lt;strong>neighboring relation&lt;/strong> over these datasets, that we call user-level Differential Privacy: &lt;br>
-For two datasets $D$ and $D&amp;rsquo;$ of the same size, we denote by $D \sim_u D^{\prime}$ the fact that $D$ and $D&amp;rsquo;$ are neighbors, in the sense that they only differ on user $u$&amp;rsquo;s data.&lt;/p>
-&lt;p>&lt;em>For example, $D$ and $D&amp;rsquo;$ could be two datasets corresponding to the answers of a survey from 10 users. For nine of these users the answers are the same for the two datasets. But for one user $u$, the answers are different (e.g. in $D$ user $u$ smokes, in $D&amp;rsquo;$ he doesn&amp;rsquo;t smoke).&lt;/em>&lt;/p>
-&lt;p>The inuition between this definition relatively to privacy is that compared to traditional differential privacy, which considers changes in individual data points, user-level DP provides stronger privacy guarantees. By hiding the influence of an entire user&amp;rsquo;s dataset, rather than just a single data point, it ensures that individual user contributions are not discernible, thus enhancing overall privacy protection.&lt;/p>
-&lt;h2 id="decentralization">Decentralization&lt;/h2>
-&lt;p>We will set ourselves in a fully decentralized system. In this configuration, each user only communicates with a small number of other users at each step, and there is no central coordinator processing all the data. The aim of this setting is to limit the concentration of sensitive information in one place, reducing the risk of data breaches and unauthorized access.&lt;/p>
-&lt;p>The users and their communications are represented by a network (directed or undirected) graph $G = (V, E)$, where $V$ is the users ensemble defined above, and $E$ is the set of edges: $(u, v) \in E$ indicates that user $u$ can send messages to user $v$.&lt;/p>
-&lt;br />
-&lt;p>In this case, a randomised decentralized algorithm is defined as a mapping that from a dataset, returns that transcript of all messages exchanges between the users over the network. In formal terms, $A: D \longmapsto {(u, m, v): u \text{ sent message with content } m \text{ to } v }$.&lt;/p>
-&lt;br />
-&lt;p>The aim of decentralization in this representation, is to give users the fewer information possible, i.e. only the messages they are involved in, and not the full transcript $A(D)$.&lt;/p>
-&lt;p>We introduce this view of a user $u$: $\mathcal{O}_u(\mathcal{A}(D))=\left(\left(v, m, v^{\prime}\right) \in \mathcal{A}(D): v=u \text { or } v^{\prime}=u\right)$&lt;/p>
-&lt;br />
-&lt;h2 id="differential-privacy">&lt;h1 style="font-size: 18px;">Differential Privacy&lt;/h1>&lt;/h2>
-&lt;p>We will take a step back on this representation to introduce in a more global way the mathematical notion of Differential Privacy (DP).&lt;/p>
-&lt;p>Let us consider a randomised algorithm $M$. $M$ is said to be &amp;ldquo;$\alpha$-differentially private&amp;rdquo; if, for any event $A$:&lt;/p>
-&lt;p>$$\mathbb{P}[M(D)\in A]\leq e^{\alpha} \cdot \mathbb{P}[M(D&amp;rsquo;)\in A]$$&lt;/p>
-&lt;p>where $D$ and $D&amp;rsquo;$ are two datasets differing on a single element.&lt;/p>
-&lt;br />
-&lt;p>To make this more intuitive, a randomized algorithm is an algorithm that employs a degree of randomness as part of its logic. The algorithm must treat the data so that the output is not overly depend on the data of any one individual.&lt;/p>
-&lt;p>Let&amp;rsquo;s consider the event &amp;ldquo;Smoking is correlated to cancer&amp;rdquo;, and $D$ and $D&amp;rsquo;$ differing on the user $u$&amp;rsquo;s data, whether or not that individual that has cancer smokes or not.&lt;/p>
-&lt;p>We can rewrite the definition as: $\frac{\mathbb{P}\left[M\left(D\right) \in A\right]}{\mathbb{P}\left[M\left(D&amp;rsquo;\right) \in A\right]} \leq e^{\alpha}$&lt;/p>
-&lt;p>We can see that $\alpha$, the privacy factor, represents the lost of privacy:&lt;/p>
-&lt;ul>
-&lt;li>
-&lt;p>When $\alpha \rightarrow 0$: the two probabilities are equal, meaning that whether user $u$ participates or not to the survey, the result is the same, i.e. privacy is at its maximum, but the statistical utility is null.&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>When $\alpha \rightarrow+\infty$: there are no constraints on the probabilities and therefore no constraints on privacy.&lt;/p>
-&lt;/li>
-&lt;/ul>
-&lt;p>Thus it is the intermediate case for $\alpha$ that is the most interesting and that can allow a good trade-off between privacy and utility.&lt;/p>
-&lt;br />
-&lt;h2 id="network-differential-privacy">Network Differential Privacy&lt;/h2>
-&lt;p>In this paper, the definition used for Differential Privacy is a bit different, actually relaxed as the algorithm is decentralized.&lt;/p>
-&lt;p>An algorithm $A$ is said to be $(\varepsilon, \delta)$-network Differentially Private if for all pairs of distinct user $u, v \in V$ and all pairs of neighboring datasets $D \sim_u D^{\prime}$, we have:&lt;/p>
-&lt;p>$$ \mathbb{P}\left(\mathcal{O}_v(\mathcal{A}(D))\right) \leq e^{\varepsilon} \mathbb{P}\left(\mathcal{O}_v\left(\mathcal{A}\left(D^{\prime}\right)\right)\right)+\delta $$&lt;/p>
-&lt;p>We can interpret this as the need that the information gathered by $v$ during the execution of $A$ must not depend too much on $u$&amp;rsquo;s data.&lt;/p>
-&lt;br />
-&lt;p>Furthermore, the definition can be extended in the case of collusion between the users, i.e. if multiple individuals collaborate or conspire to exploit or manipulate a system or process for their collective benefit.&lt;/p>
-&lt;p>An algorithm $A$ is $(c, \varepsilon, \delta)$-network DP if for each user $u$, all subsets $W \subset V$ such that $\left|W\right| \leq c$, and all pairs of neighboring datasets $D \sim_u D^{\prime}$, we have:&lt;/p>
-&lt;p>$$ \mathbb{P}\left(\mathcal{O}_W(\mathcal{A}(D))\right) \leq e^{\varepsilon} \mathbb{P}\left(\mathcal{O}_W\left(\mathcal{A}\left(D^{\prime}\right)\right)\right)+\delta $$&lt;/p>
-&lt;p>Here $\mathcal{O}_W$ represents the aggregated information of the collusion: $\mathcal{O}_W = \cup _{w \in W} \mathcal{O}_w$.&lt;/p>
-&lt;br />
-&lt;h2 id="decentralized-computation-model">Decentralized computation model&lt;/h2>
-&lt;p>The algorithms studied in this paper are meant to perform computations by using a token that will walk through the nodes of the network graph. The purpose of the token is to facilitate sequential updates across the nodes in the network. As it traverses through the nodes following the edges of the graph, it carries information and updates its states based on local computations performed at each node from the values obtainable from the corresponding user.&lt;/p>
-&lt;p>If the token $\tau$ resides at some node $u$, it will be:&lt;/p>
-&lt;ol>
-&lt;li>
-&lt;p>Updated by: $\tau \leftarrow \tau+x_u^k, \quad$ with $x_u^k=g^k\left(\tau ; D_u\right)$&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>Sent to another user $v$ with $(u, v) \in E$&lt;/p>
-&lt;/li>
-&lt;/ol>
-&lt;p>Here, $x_u^k$ denotes the contribution of user $u$ to the computation. It depends both on the current value of $\tau$ and on the number of times $k$ that the token visited $u$ so far.&lt;/p>
-&lt;p>This model of computation allows to optimize the combination of local costs within the network, which is useful for tasks like training machine learning models. The token holds the model&amp;rsquo;s parameters and is updated based on the local information at each point it visits. This decentralized approach can also be used to calculate summaries of data contributed by users, such as finding totals or averages.&lt;/p>
-&lt;br />
-&lt;p>&lt;em>The idea of the following parts is to study different graph achitectures and computation protocols, based on the formalization explained above, to achieve good utility-privacy trade-offs&lt;/em>&lt;/p>
-&lt;br />
-&lt;h1 id="section-3">&lt;h1 style="font-size: 20px;">First case: walk on a ring&lt;/h1>&lt;/h1>
-&lt;p>We consider here a graph architecture of a directed ring, i.e. $E = {(u, u+1)}_{u=1}^{n-1} \cup{(n, 1)}$, meaning that the token, starting from the first user, will travel around the ring multiple times, and more precisely go through every user $K$ times.&lt;/p>
-&lt;p>&lt;img
-src="./images/Sarah_Abbana/walk-on-ring.png"
-alt=""
-loading="lazy"
-decoding="async"
-class="full-width"
-/>
-&lt;/p>
-&lt;p>This is a simple case that is meant to show how we can achieve suitable results without relying on a centralised agregator.&lt;/p>
-&lt;p>We are going to explain how this architecture can perform for privacy guarantees on the task of &lt;em>Real Summation&lt;/em>, and then on &lt;em>Discrete Histogram Computation&lt;/em>.&lt;/p>
-&lt;br />
-&lt;h2 id="real-summation">Real Summation&lt;/h2>
-&lt;p>Each user will contribute a value during each round of the token&amp;rsquo;s journey. The task of &lt;em>real summation&lt;/em> aims to estimate the sum of all contributions made by users.&lt;/p>
-&lt;p>&lt;em>For example, we can imagine a scenario where users of a health monitoring app report their daily step counts. The app&amp;rsquo;s goal is to calculate the total number of steps taken by all users, without revealing individual step counts. Each user&amp;rsquo;s daily step count is considered a contribution, and the app needs to aggregate these contributions while preserving user privacy.&lt;/em>&lt;/p>
-&lt;p>Indeed to preserve privacy in this case, a common method is to add random noise, an abstract perturbation mechanism, which usually consist in a standard Gaussian or Laplace deviation to the contribution. We won&amp;rsquo;t go into further details on the perturbation, but we assume that it satisfies traditional local differntial privacy (LDP).&lt;/p>
-&lt;p>Furthermore, here the decentralized protocol proposes to add this noise only once every few hops of the token, and in fact every $n-1$ hops of the token as shown in the algorithm below:&lt;/p>
-&lt;p>&lt;img
-src="./images/Sarah_Abbana/algo1.png"
-alt=""
-loading="lazy"
-decoding="async"
-class="full-width"
-/>
-&lt;/p>
-&lt;p>They prove the following theorem:&lt;/p>
-&lt;p>&lt;strong>Theorem:&lt;/strong> Let $\varepsilon, \delta&amp;gt;0$. Algorithm 1 outputs an unbiased estimate of $\bar{x}$ with standard deviation $\sqrt{\left\lfloor \frac{Kn}{n - 1} \right\rfloor} \sigma_{\text{loc}}$, and is $\sqrt{2K \ln\left(\frac{1}{\delta&amp;rsquo;}\right)\varepsilon}$ $+ K\epsilon(e^\varepsilon - 1), K\delta + \delta&amp;rsquo;$-network DP for any $\delta&amp;rsquo; &amp;gt; 0$&lt;/p>
-&lt;p>The Algorithm 1 proposed actually provides a gain on the error of $O\left(\frac{1}{\sqrt{n}}\right)$ compared to a LDP achieving the same privacy guarantees. This means it achieves a similar balance between privacy and utility as a centralized aggregator would, if they itratively aggregated user contributions then perturb the results before sending it to the users, buy here without the need for this centralized party.&lt;/p>
-&lt;br />
-&lt;h2 id="discrete-histogram-computation">Discrete Histogram Computation&lt;/h2>
-&lt;p>Here we focus on another task that is computing histograms over a discrete domain.&lt;/p>
-&lt;p>&lt;em>With the same example as above, it could be such as counting the frequency of steps in different ranges for a health monitoring app.&lt;/em>&lt;/p>
-&lt;p>Traditional local differential privacy (LDP) methods use L-ary randomized response, where each user submits their true value with probability $1-\gamma$ and a random value with probability $\gamma$. However, in the decentralized approach with a ring network, they propose Algorithm 2. This algorithm randomizes each user&amp;rsquo;s contribution using L-ary randomized response before adding it to the token, which maintains a partial histogram representing the shuffled contributions, thus enhancing privacy through shuffling, as demonstrated in previous studies.&lt;/p>
-&lt;p>&lt;img
-src="./images/Sarah_Abbana/algo2.png"
-alt=""
-loading="lazy"
-decoding="async"
-class="full-width"
-/>
-&lt;/p>
-&lt;p>As for the case of real summation, a theorem proves that to achieve the same privacy in LDP, it would need $\sqrt n$ times more random responses, and when achieving the same utility (meaning to fix $\gamma$), Algorithm 2 provides a gain of privacy of $O\left(\frac{1}{\sqrt{n}}\right)$.&lt;/p>
-&lt;br />
-&lt;p>We see that decentralized computation over a ring enables comparable utility to a trusted aggregator by sequentially hiding previous users&amp;rsquo; contributions, without relying on a central server or requiring costly multi-party computation protocols.&lt;/p>
-&lt;p>However this simple topology presents limitations including vulnerability to collusions, which compromises differential privacy guarantees, and inadequacy for extensions to gradient descent due to the lack of privacy amplification between users with fixed positions in the ring.&lt;/p>
-&lt;p>This is why we shall now consider random walks over a complete graph.&lt;/p>
-&lt;br/>
-&lt;h1 id="section-4">&lt;h1 style="font-size: 20px;">Generalisation: walk on a complete graph&lt;/h1>&lt;/h1>
-&lt;p>Random walk on a complete graph assumes the token is randommly sent to a user at each step. The walk consists of fixed-length random walks, ensuring that each user&amp;rsquo;s contributions are random, and their path is concealed, allowing only the messages sent and received to be known by a user.&lt;/p>
-&lt;br />
-&lt;h2 id="real-summation-1">Real Summation&lt;/h2>
-&lt;p>Algorithm 3 shows the protocol, naturally extended from the ring topology, where each user updates the token with its contribution and a perturbation. The secrecy of the path taken by the token and the aggregations of the contributions between two visits of the token guarantee the network DP property.&lt;/p>
-&lt;p>&lt;img
-src="./images/Sarah_Abbana/algo3.png"
-alt=""
-loading="lazy"
-decoding="async"
-class="full-width"
-/>
-&lt;/p>
-&lt;p>Again, a theorem proves that asymptotically, network DP offers a privacy amplification of $O\left(\frac{1}{\sqrt{n}}\right)$ over LDP for the same conditions, which aligns with the privacy-utility trade-off of a trusted aggregtor.&lt;/p>
-&lt;br />
-&lt;p>The same analysis can be done for the discrete histogram computation case.&lt;/p>
-&lt;br />
-&lt;h2 id="stochastic-gradient-descent">Stochastic Gradient Descent&lt;/h2>
-&lt;p>In this section, we address the challenge of private convex optimization using stochastic gradient descent (SGD). We consider a convex set $(W \subseteq \mathbb{R}^d)$ and a collection of convex functions $(f(\cdot; D_1), \ldots, f(\cdot; D_n))$, each associated with a user, being L-Lipschitz and $(\beta)$-smooth over $(W)$. Our goal is to privately solve the optimization problem to find $(w^*)$ minimizing the average of these functions over $(W)$:&lt;/p>
-&lt;p>$$w^* \in \arg \min_{w \in \mathcal{W}} \left( F(w):=\frac{1}{n} \sum_{u=1}^n f\left(w ; D_u\right) \right)$$&lt;/p>
-&lt;p>This equation encapsulates various machine learning tasks, such as ridge and logistic regression, and others. This is significant because it addresses the need for private optimization in machine learning, ensuring that sensitive data remains protected while training models on distributed datasets.&lt;/p>
-&lt;p>The algorithm below proposes a method to privately approximate $w^*$, where the token represents the current iterate. At each step, the user $u$ holding the token performs a projected noisy gradient step and sends the updated token to a random user. The variance in the Gaussian mechanism of line 4 is deduced from the Lipschitz property of the functions.&lt;/p>
-&lt;p>&lt;img
-src="./images/Sarah_Abbana/algo4.png"
-alt=""
-loading="lazy"
-decoding="async"
-class="full-width"
-/>
-&lt;/p>
-&lt;p>A theorem based on the evolution of the privacy loss proves the differential privacy guarantees, and again the results are satisfactory. Compared to traditional local differential privacy methods, we obtain a privacy amplification of $O\left(\frac{\ln n}{\sqrt{n}}\right)$ for a specific number of iterations, with the same level of privacy-utility trade-off.&lt;/p>
-&lt;p>With a fixed privacy budget and a large number of iteration, the expected error of this algorithm is smaller with this network DP than with LDP.&lt;/p>
-&lt;br />
-&lt;p>Compared to the ring case, this random walk approach has better robustness to collusion, as colluding users can be treated as a single node with adjusted transition probabilities, leading to equivalent privacy guarantees as for non-colluding users.&lt;/p>
-&lt;br/>
-&lt;h1 id="section-5">&lt;h1 style="font-size: 20px;">Experiments&lt;/h1>&lt;/h1>
-&lt;p>To show the efficiency of the privacy amplification methods explained in this article, some experiments have been made on the complete graph, first for the Real Summation task, and then for Machine Learning with Stochastic Gradient Descent (SGD).&lt;/p>
-&lt;p>The code is available here: &lt;a href="https://github.com/totilas/privacy-amplification-by-decentralization/tree/main">Github Link&lt;/a>&lt;/h1>&lt;/p>
-&lt;br />
-&lt;h2 id="real-summation-2">Real Summation&lt;/h2>
-&lt;p>We reproduced the first experiment from the paper, comparing th analytical bounds of LDP and NDP on the real summation task.&lt;/p>
-&lt;p>To do so, we only need to run the &lt;em>main_a.py&lt;/em> and &lt;em>main_b.py&lt;/em> files with python from the &lt;em>fig1&lt;/em> folder to display the corresponding figures (a) and (b). It works, for instance, with Python version 3.8, with the prerequisite of having installed the packages &lt;em>numpy&lt;/em> and &lt;em>matplotlib&lt;/em>, only taking a few seconds to execute.&lt;/p>
-&lt;p>It gives the following results:&lt;/p>
-&lt;p>&lt;img
-src="./images/Sarah_Abbana/results1.png"
-alt=""
-loading="lazy"
-decoding="async"
-class="full-width"
-/>
-&lt;/p>
-&lt;p>As we may see from the theoretical bounds, privacy is amplified with network differential privacy over LDP when the numer of users $n$ is greater or equal to 20, with increaingly substancial improvements as $n$ grows.&lt;/p>
-&lt;p>In practice by making some simulations, the gains are even more significant and even for a smaller number of users, as we see in figure (b).&lt;/p>
-&lt;br/>
-&lt;h2 id="machine-learning-with-sgd">Machine Learning with SGD&lt;/h2>
-&lt;p>For this second experiment, the task is to train a logistic regression model in this decentralized context.&lt;/p>
-&lt;p>The setting of the experiment is:&lt;/p>
-&lt;ul>
-&lt;li>UCI Housing dataset (binarized version)&lt;/li>
-&lt;li>Standardized features and normalized data point (to have unit L2 norm and Lipschitz property of the logistic loss)&lt;/li>
-&lt;li>Train/test split of 80% uniformly at random&lt;/li>
-&lt;li>Training set split between $n = 2000$ users (each user has a local dataset of size $8$)&lt;/li>
-&lt;/ul>
-&lt;p>The experiment compares three settings for Stochastic Gradient Descent with perturbation:&lt;/p>
-&lt;ul>
-&lt;li>Centralized DP-SGD, requiring a trusted curator&lt;/li>
-&lt;li>Local DP-SGD, corresponding to Algorithm 4 with LDP method&lt;/li>
-&lt;li>Network DP-SGD, corresponding to Algorithm 4 with Network DP method, the one of interest&lt;/li>
-&lt;/ul>
-&lt;br/>
-&lt;p>We must run the &lt;em>main.py&lt;/em> file of folder &lt;em>fig2&lt;/em> with Python to display the results.&lt;/p>
-&lt;p>It is possible to use the command &lt;em>python main.py &amp;ndash;help&lt;/em> to show the list of parameters that can be tuned to modify the context of the experiment (the default ones are for $\varepsilon = 10$ and $\varepsilon = 1$):&lt;/p>
-&lt;p>&lt;img
-src="./images/Sarah_Abbana/options.png"
-alt=""
-loading="lazy"
-decoding="async"
-class="full-width"
-/>
-&lt;/p>
-&lt;p>I had some issues to run this program with my settings (same as for the first experiment).&lt;/p>
-&lt;ol>
-&lt;li>The &lt;em>typer&lt;/em> module was missing therefore I had to install it : &lt;em>pip install typer&lt;/em>&lt;/li>
-&lt;li>The &lt;em>_intercept_dot&lt;/em> function from &lt;em>sklearn.linear_model._logistic&lt;/em> couldn&amp;rsquo;t be found either. By checking the &lt;em>sklearn.linear_model.LogisticRegression&lt;/em> (which is the public class corresponding to the import here), this function doesn&amp;rsquo;t appear. I wanted to change it with the &lt;em>intercept_&lt;/em> attribute but it didn&amp;rsquo;t fit either. Then by checking the usage of this function in the case, it seemed that it computes a dot product between the model parameters and the input data, taking into account whether an intercept term is included. Therefore I tried to manually code this functionality but unfortunately it didn&amp;rsquo;t give coherent results compared to the paper.&lt;/li>
-&lt;/ol>
-&lt;p>Here are the original results from the paper:&lt;/p>
-&lt;p>&lt;img
-src="./images/Sarah_Abbana/results2.png"
-alt=""
-loading="lazy"
-decoding="async"
-class="full-width"
-/>
-&lt;/p>
-&lt;p>Here, although the number of contributions per user doesn&amp;rsquo;t align with the optimal regime for network DP, the observed privacy amplification surpasses theoretical expectations. By numerically determining the minimum noise level required for theoretical proofs, they demonstrated that Network DP-SGD achieves a privacy-utility trade-off comparable to Centralized DP-SGD across various privacy levels, showcasing significant privacy amplification benefits over Local DP-SGD, especially in scenarios with fewer iterations than typically recommended.&lt;/p>
-&lt;br/>
-&lt;h1 id="section-6">&lt;h1 style="font-size: 20px;">Perspectives&lt;/h1>&lt;/h1>
-&lt;p>The work presented suggests numerous avenues for exploration. Generalizations to diverse graph structures, incorporating dynamic topologies to reinforce resilience against collusion, and investigating decentralized models beyond our current scope are key directions. Exploring the potential of multiple tokens traversing the graph simultaneously and delving into randomized gossip algorithms offer promising avenues for advancing privacy-preserving techniques. Finally, probing the theoretical limits of network DP and exploring scenarios where users trust nearby peers more could provide insights into refining privacy mechanisms.&lt;/p>
-&lt;style TYPE="text/css">
-code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
-&lt;/style>
-&lt;script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-tex2jax: {
-inlineMath: [['$','$'], ['\\(','\\)']],
-skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
-}
-});
-MathJax.Hub.Queue(function() {
-var all = MathJax.Hub.getAllJax(), i;
-for(i = 0; i &lt; all.length; i += 1) {
-all[i].SourceElement().parentNode.className += ' has-jax';
-}
-});
-&lt;/script>
-&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/privacy-amplification/</guid><pubDate>Wed, 27 Mar 2024 12:05:50 +0100</pubDate></item><item><title>Robust or Fair</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/robust-or-fair/</link><description>&lt;h1 style="font-size: 36px;">To be Robust or to be Fair: Towards Fairness in Adversarial Training&lt;/h1>
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML-full">&lt;/script></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/axiomatic_explanations/</guid><pubDate>Thu, 28 Mar 2024 05:58:39 +0100</pubDate></item><item><title>Robust or Fair</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/robust-or-fair/</link><description>&lt;h1 style="font-size: 36px;">To be Robust or to be Fair: Towards Fairness in Adversarial Training&lt;/h1>
 &lt;h1 style="font-size: 24px;">Authors: Maryem Hajji &amp; Cément Teulier&lt;/h1>
 &lt;h1 id="table-of-contents">Table of Contents&lt;/h1>
 &lt;ul>
