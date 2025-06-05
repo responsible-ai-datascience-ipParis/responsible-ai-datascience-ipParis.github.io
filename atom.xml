@@ -4204,7 +4204,243 @@ Moreover, further analysis reveals that not all bias parameters are equally impo
 &lt;h3 id="references">References&lt;/h3>
 &lt;ul>
 &lt;li>&lt;a id="#benzaken">&lt;/a> &lt;a href="https://aclanthology.org/2022.acl-short.1/">BitFit: Simple Parameter-efficient Fine-tuning for Transformer-based Masked Language-models&lt;/a> (Ben Zaken et al., ACL 2022)&lt;/li>
-&lt;/ul></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</guid><pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate></item><item><title>SelfIE: When Large Language Models Explain Their Own Thoughts</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/selfie_with_me/</link><description>&lt;p>&lt;strong>Authors&lt;/strong>: Adrian Durando, Clément Ferrere, Romain Torris&lt;/p>
+&lt;/ul></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/bitfit/</guid><pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate></item><item><title>LoRA: Low-Rank Adaptation of Large Language Models</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/blog-lora/</link><description>&lt;h1 id="lora-low-rank-adaptation-of-large-language-models">&lt;strong>LoRA: Low-Rank Adaptation of Large Language Models&lt;/strong>&lt;/h1>
+&lt;h3 id="authors--morgane-brossard-guillaume-pradel">Authors : Morgane Brossard, Guillaume Pradel&lt;/h3>
+&lt;h2 id="1-impact-and-necessity-of-efficient-fine-tuning-for-llm-models">&lt;strong>1) Impact and necessity of efficient fine-tuning for LLM models&lt;/strong>&lt;/h2>
+&lt;p>Imagine that you are a conductor, and that your &lt;strong>large language model is an orchestra&lt;/strong>. All the parameters of the model are elements of the orchestra: Instruments, playing style and music knowledge of every player…
+Now, let’s say that the musicians have been trained to perform classical music for years, and especially to play in Bethoven’s style. However, you want to introduce some Mozart to the repertoire.&lt;/p>
+&lt;p>&lt;strong>Re-training the model from scratch&lt;/strong> would be like you deciding to re-teach music from the beginning to the musicians : Long and unnecessary !&lt;/p>
+&lt;p>&lt;strong>Traditional fine-tuning&lt;/strong> would be to start from the current state of the orchestra, but adapting every aspect of it to the new Mozart style: Re-explaining all the players how to handle violin bow, how to blow in a flute, how to play each note, each rhythm, all in the style of Mozart. But while the rhythm might be relevant to adapt to Mozart style, how to blow in the flute isn’t : Still not effective enough !&lt;/p>
+&lt;p>Now, what if you simply provided the musicians with notes on certain parts of their partition necessitating instructions specific to Mozart style ? They only need to adapt a few style elements to switch from Bethoven’s style to Mozart !&lt;/p>
+&lt;p>This is what &lt;strong>LoRA (Low-Rank Adaptation of Large Language Models)&lt;/strong> is about: instead of re-training the entire model, it &lt;strong>freezes the main weights&lt;/strong> and &lt;strong>injects small, trainable matrices&lt;/strong> to adapt the model efficiently.&lt;/p>
+&lt;p align="center">
+&lt;img src="https://www.solulab.com/wp-content/uploads/2024/12/Fine-Tuning-a-Model-for-a-Specific-Task-1024x569.jpg" alt="LoRA architecture" width="500">
+&lt;/p>
+&lt;h2 id="2-the-challenge-of-fine-tuning-large-neural-networks">&lt;strong>2) The Challenge of Fine-Tuning Large Neural Networks&lt;/strong>&lt;/h2>
+&lt;h4 id="how-does-fine-tuning-usually-work">&lt;strong>How Does Fine-Tuning Usually Work?&lt;/strong>&lt;/h4>
+&lt;p>Fine-tuning is a common method for adapting pre-trained neural networks to specific tasks. It involves &lt;strong>adjusting the model’s weights&lt;/strong> to minimize a task-specific loss function.&lt;/p>
+&lt;p>$$\Theta^* = \arg\min_{\Theta} \sum_{(x_i, y_i) \in D} L(f_{\Theta}(x_i), y_i)$$&lt;/p>
+&lt;p>However, for large models like &lt;strong>GPT-3 (175B parameters)&lt;/strong>, full fine-tuning has major drawbacks:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Storage&lt;/strong>: Each fine-tuned model requires as much space as the original model.&lt;/li>
+&lt;li>&lt;strong>Memory&lt;/strong>: The training process demands enormous GPU memory, making fine-tuning inaccessible to many users.&lt;/li>
+&lt;li>&lt;strong>Inference Latency&lt;/strong>: Some methods introduce additional processing layers, slowing down real-time applications.&lt;/li>
+&lt;/ul>
+&lt;h2 id="3-the-lora-approach-a-more-efficient-solution">&lt;strong>3) The LoRA Approach: A More Efficient Solution&lt;/strong>&lt;/h2>
+&lt;p>LoRA is a method created by Hu. et al (team of researchers from Microsoft) in 2021 in the paper LoRA: Low Rank Adaptation of Large Language Models.&lt;/p>
+&lt;p>LoRA addresses the fine-tuning challenge with a simple but powerful idea: don’t modify the &lt;strong>original model weights&lt;/strong>, but instead &lt;strong>inject trainable low-rank matrices&lt;/strong> into each Transformer layer, making fine-tuning both &lt;strong>memory-efficient and computationally affordable&lt;/strong>by tuning only those matrices’ parameters.&lt;/p>
+&lt;h3 id="a-how-lora-works-the-key-innovation">&lt;strong>A) How LoRA Works: The Key Innovation&lt;/strong>&lt;/h3>
+&lt;p>Instead of modifying the full weight matrix $W$ during fine-tuning, LoRA &lt;strong>replaces the weight update with a low-rank decomposition&lt;/strong> :&lt;/p>
+&lt;p>$$\Delta W = B A$$&lt;/p>
+&lt;p>where:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>A&lt;/strong> is a small trainable matrix of size &lt;strong>r × d&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>B&lt;/strong> is another small trainable matrix of size &lt;strong>d × r&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>r&lt;/strong> (rank) is much smaller than d, making the update computationally cheap.&lt;/li>
+&lt;/ul>
+&lt;p>This means we &lt;strong>freeze&lt;/strong> the pre-trained model’s weights and only train the new low-rank matrices. The total number of trainable parameters is drastically reduced compared to a full fine-tuning.&lt;/p>
+&lt;h6 id="mathematical-formulation">&lt;strong>Mathematical Formulation&lt;/strong>&lt;/h6>
+&lt;p>For a given input $x$, a neural network layer applies a weight matrix $W$ :&lt;/p>
+&lt;p>$$h = Wx$$&lt;/p>
+&lt;p>During fine-tuning, the full update would be:&lt;/p>
+&lt;p>$$W&amp;rsquo; = W + \Delta W$$&lt;/p>
+&lt;p>In LoRA, we approximate delta W using &lt;strong>two low-rank matrices&lt;/strong>:&lt;/p>
+&lt;p>$$W&amp;rsquo; x = W x + \frac{\alpha}{r} B A x$$&lt;/p>
+&lt;p>where alpha is a scaling factor that controls the magnitude of the adaptation.&lt;/p>
+&lt;p>These equations can also be shown in this way :&lt;/p>
+&lt;p align="center">
+&lt;img src="https://heidloff.net/assets/img/2023/08/lora.png" alt="LoRA architecture" width="500">
+&lt;/p>
+&lt;h3 id="b-lora-applied-to-transformer-layers">&lt;strong>B) LoRA Applied to Transformer Layers&lt;/strong>&lt;/h3>
+&lt;p>Transformers are the backbone of modern NLP models, enabling them to process and generate human-like text. At the heart of a Transformer is the &lt;strong>self-attention mechanism&lt;/strong>, which allows the model to weigh different words in a sequence based on their relevance to each other. Each Transformer layer consists of multiple self-attention heads and feedforward layers, making it highly expressive but also computationally expensive. Self-attention is computed using three key matrices &lt;strong>—query (Q), key (K), and value (V)—&lt;/strong> which determine how tokens interact within a given input sequence. Fine-tuning these large matrices for every new task can be impractical, which is where LoRA provides an efficient alternative.&lt;/p>
+&lt;p>In Transformer-based architectures, LoRA is typically applied within &lt;strong>self-attention layers&lt;/strong>. In a Transformer, the query (Q), key (K), and value (V) matrices are learned using standard weight matrices $W_q$, $W_k$, $W_v$:&lt;/p>
+&lt;p>$$Q = W_q X, \quad K = W_k X, \quad V = W_v X$$&lt;/p>
+&lt;p>Instead of updating directly, LoRA replaces the weight updates with its low-rank approximation:&lt;/p>
+&lt;p>$$W_q&amp;rsquo; = W_q + B_q A_q, \quad W_v&amp;rsquo; = W_v + B_v A_v$$&lt;/p>
+&lt;p>Applying LoRA only to the &lt;strong>query and value projections&lt;/strong> has been found to be &lt;strong>sufficient for effective adaptation&lt;/strong>, reducing computation while maintaining performance.&lt;/p>
+&lt;p>In our orchestra analogy, the low-rank matrices are the little notes given to the players to adapt their playing to Mozart’s style !!&lt;/p>
+&lt;h3 id="c-benefits-of-lora">&lt;strong>C) Benefits of LoRA&lt;/strong>&lt;/h3>
+&lt;p>✅ &lt;strong>Massive Reduction in Trainable Parameters&lt;/strong>: LoRA can reduce the trainable parameters by up to 10,000× compared to full fine-tuning.&lt;/p>
+&lt;p>✅ &lt;strong>Lower GPU Memory Usage&lt;/strong>: Requires only 1/3 the memory compared to fine-tuning with Adam.&lt;/p>
+&lt;p>✅ &lt;strong>No Additional Inference Latency&lt;/strong>: LoRA updates can be merged back into the model, eliminating extra computation at inference time.&lt;/p>
+&lt;p>✅ &lt;strong>Faster Fine-Tuning&lt;/strong>: LoRA achieves 25% higher training throughput on large models&lt;/p>
+&lt;h2 id="4-implementing-lora-in-practice">&lt;strong>4) Implementing LoRA in Practice&lt;/strong>&lt;/h2>
+&lt;h4 id="loading-the-model-and-first-test">&lt;strong>Loading the model and first test&lt;/strong>&lt;/h4>
+&lt;p>The first step before using LoRA is to download a model. Here, we download LLama-3 with 4-bit quantization, which reduces memory usage and speeds up inference. We also load a tokenizer that splits the input text.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">MODEL_NAME&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#d88200">&amp;#34;unsloth/Llama-3.2-1B&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">bnb_config&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">BitsAndBytesConfig&lt;/span>&lt;span style="color:#111">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">load_in_4bit&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">bnb_4bit_use_double_quant&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">bnb_4bit_quant_type&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#39;nf4&amp;#39;&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">bnb_4bit_compute_dtype&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">bfloat16&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">model&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">AutoModelForCausalLM&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">from_pretrained&lt;/span>&lt;span style="color:#111">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">MODEL_NAME&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">device_map&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;auto&amp;#34;&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">trust_remote_code&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">quantization_config&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">bnb_config&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">tokenizer&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">AutoTokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">from_pretrained&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">MODEL_NAME&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">pad_token&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">eos_token&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can the define the prompt to pass to the llm : &amp;lsquo;What equipment do I need for rock climbing ?&amp;rsquo;&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">prompt&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#d88200">&amp;#39;&amp;lt;human&amp;gt;: What equipment do I need for rock climbing? &lt;/span>&lt;span style="color:#8045ff">\n&lt;/span>&lt;span style="color:#d88200"> &amp;lt;assistant&amp;gt;: &amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">model&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">generation_config&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">max_new_tokens&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">200&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">temperature&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">top_p&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0.7&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">num_return_sequences&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">pad_token_id&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">eos_token_id&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">eos_token_id&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">eos_token_id&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">device&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#d88200">&amp;#34;cuda:0&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">encoding&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">prompt&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">return_tensors&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;pt&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">to&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">device&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#00a8c8">with&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">inference_mode&lt;/span>&lt;span style="color:#111">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">outputs&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">model&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">generate&lt;/span>&lt;span style="color:#111">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">input_ids&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">encoding&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">input_ids&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">attention_mask&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">encoding&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">attention_mask&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">print&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">decode&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">outputs&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#111">],&lt;/span> &lt;span style="color:#111">skip_special_tokens&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">))&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The LLM&amp;rsquo;s response before fine-tuning with LoRA is:&lt;/p>
+&lt;p>&lt;em>1. A harness with a carabiner. 2. A rope. 3. A helmet. 4. A harness with a carabiner.&lt;/em>&lt;/p>
+&lt;p>We can already notice some redundancy due to the low temperature (the temperature will increase or decrease the level of confidence of the model). Moreover the response is not well-structured—it consists only of bullet points.&lt;/p>
+&lt;h4 id="fine-tuning-with-lora">&lt;strong>Fine-tuning with LoRA&lt;/strong>&lt;/h4>
+&lt;p>Now, we will load a question-and-answer dataset to fine-tune with LoRA. We will use the Hugging Face library, which is perfect for this.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">data&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">load_dataset&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#d88200">&amp;#34;HuggingFaceH4/helpful-instructions&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">pd&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">DataFrame&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">data&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#d88200">&amp;#34;train&amp;#34;&lt;/span>&lt;span style="color:#111">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#00a8c8">def&lt;/span> &lt;span style="color:#75af00">generate_prompt&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">data_point&lt;/span>&lt;span style="color:#111">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">instruction&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">data_point&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#d88200">&amp;#39;instruction&amp;#39;&lt;/span>&lt;span style="color:#111">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">demonstration&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">data_point&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#d88200">&amp;#39;demonstration&amp;#39;&lt;/span>&lt;span style="color:#111">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">return&lt;/span> &lt;span style="color:#d88200">&amp;#34;&amp;lt;human&amp;gt;: &amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#111">instruction&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#d88200">&amp;#34; &lt;/span>&lt;span style="color:#8045ff">\n&lt;/span>&lt;span style="color:#d88200"> &amp;lt;assistant&amp;gt;: &amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#111">demonstration&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#00a8c8">def&lt;/span> &lt;span style="color:#75af00">generate_and_tokenize_prompt&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">data_point&lt;/span>&lt;span style="color:#111">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">full_prompt&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">generate_prompt&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">data_point&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">tokenized_full_prompt&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">full_prompt&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">padding&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">truncation&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">return&lt;/span> &lt;span style="color:#111">tokenized_full_prompt&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">data&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">data&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#d88200">&amp;#34;train&amp;#34;&lt;/span>&lt;span style="color:#111">]&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">shuffle&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">seed&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">42&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">map&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">generate_and_tokenize_prompt&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">OUTPUT_DIR&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#d88200">&amp;#34;experiments&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">training_args&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">transformers&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">TrainingArguments&lt;/span>&lt;span style="color:#111">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">per_device_train_batch_size&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">gradient_accumulation_steps&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">4&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">num_train_epochs&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">learning_rate&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">2e-4&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">fp16&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">save_total_limit&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">3&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">logging_steps&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">output_dir&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">OUTPUT_DIR&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">max_steps&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">200&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">optim&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;paged_adamw_8bit&amp;#34;&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">lr_scheduler_type&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;cosine&amp;#34;&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">warmup_ratio&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0.05&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">report_to&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;tensorboard&amp;#34;&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">trainer&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">transformers&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Trainer&lt;/span>&lt;span style="color:#111">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">model&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">model&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">train_dataset&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">data&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">args&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">training_args&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">data_collator&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">transformers&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">DataCollatorForLanguageModeling&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">mlm&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">False&lt;/span>&lt;span style="color:#111">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">model&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">use_cache&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#00a8c8">False&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">trainer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">train&lt;/span>&lt;span style="color:#111">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Training is also very easy with Hugging Face. You just need to define the training arguments using .TrainingArguments and set up the trainer with .Trainer. This showcases how simple it is to use LoRA for fine-tuning !&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">device&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#d88200">&amp;#34;cuda:0&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">encoding&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">prompt&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">return_tensors&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;pt&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">to&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">device&lt;/span>&lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#00a8c8">with&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">inference_mode&lt;/span>&lt;span style="color:#111">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">outputs&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">model&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">generate&lt;/span>&lt;span style="color:#111">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">input_ids&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">encoding&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">input_ids&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">attention_mask&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">encoding&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">attention_mask&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#111">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">print&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">decode&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">outputs&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#111">],&lt;/span> &lt;span style="color:#111">skip_special_tokens&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">))&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We then get the response to the same question after fine-tuning:&lt;/p>
+&lt;p>&lt;em>Rock climbing is a very physically demanding sport. You will need a good pair of climbing shoes, a good pair of climbing gloves, a good pair of climbing socks, a good pair of climbing harness.&lt;/em>&lt;/p>
+&lt;p>We still notice a lot of redundancy with &amp;ldquo;a good pair,&amp;rdquo; which is due to the low temperature. However, the response is much better structured and is no longer just bullet points. The LLM has become almost &amp;ldquo;human&amp;rdquo;! And this only required about ten minutes of training on a mid-range GPU.&lt;/p>
+&lt;h2 id="5-experimental-results-lora-vs-other-methods">&lt;strong>5) Experimental Results: LoRA vs. Other Methods&lt;/strong>&lt;/h2>
+&lt;p>The authors tested LoRA on tasks such as &lt;strong>GLUE (NLP benchmarks)&lt;/strong>, &lt;strong>WikiSQL (Text-to-SQL)&lt;/strong>, and &lt;strong>SAMSum (Summarization)&lt;/strong>. The results showed:&lt;/p>
+&lt;ul>
+&lt;li>Performance on par or better than full fine-tuning.&lt;/li>
+&lt;li>GPU memory usage reduced by 3×.&lt;/li>
+&lt;li>Inference speed unchanged (unlike adapters which introduce latency).&lt;/li>
+&lt;/ul>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Model&lt;/th>
+&lt;th>Fine-Tuning Type&lt;/th>
+&lt;th>Trainable Params&lt;/th>
+&lt;th>Memory Usage&lt;/th>
+&lt;th>Inference Latency&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>GPT-3 (175B)&lt;/td>
+&lt;td>Full Fine-Tuning&lt;/td>
+&lt;td>175B&lt;/td>
+&lt;td>1.2TB&lt;/td>
+&lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>GPT-3 (175B)&lt;/td>
+&lt;td>LoRA (r=4)&lt;/td>
+&lt;td>4.7M&lt;/td>
+&lt;td>350GB&lt;/td>
+&lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>GPT-3 (175B)&lt;/td>
+&lt;td>Adapter Layers&lt;/td>
+&lt;td>40M&lt;/td>
+&lt;td>450GB&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="6-lora-popularity-and-applications">&lt;strong>6) LoRA popularity and applications&lt;/strong>&lt;/h2>
+&lt;p>LoRA has become a major breakthrough in the world of LLMs and has been &lt;strong>recognized by key AI players&lt;/strong> like Meta, which even published a guide on how to fine-tune their model, LLaMA, using LoRA (&lt;a href="https://www.llama.com/docs/how-to-guides/fine-tuning/)">https://www.llama.com/docs/how-to-guides/fine-tuning/)&lt;/a>. This method has become one of the most widely used for fine-tuning due to its ability to be highly resource-efficient. Its popularity is also driven by its &lt;strong>ease of access—fine-tuning a model&lt;/strong> with LoRA is straightforward thanks to libraries like Hugging Face, which already provide built-in support for it.&lt;/p>
+&lt;p>LoRA is now used in complex tasks and has been widely adopted by researchers. The original research paper has even been cited &lt;strong>over 12,000 times !&lt;/strong> One notable example is LoRA-Whisper: Parameter-Efficient and Extensible Multilingual ASR, where OpenAI’s Whisper (a speech recognition model) was fine-tuned with LoRA to improve its performance for specific languages and accents.&lt;/p>
+&lt;p>Another example is Phi-2 LoRA fine-tuning, where Microsoft’s Phi-2 model, a small yet highly capable language model, was adapted using LoRA to perform well on domain-specific tasks such as Text-to-SQL while maintaining very low computational costs.&lt;/p>
+&lt;p>Thus, since the article was published in 2021, LoRA has established itself as an essential method for fine-tuning and is now widely adopted in both research and industry for its efficiency in adapting large models with efficient resource usage.&lt;/p>
+&lt;h2 id="7-conclusion">&lt;strong>7) Conclusion&lt;/strong>&lt;/h2>
+&lt;p>LoRA &lt;strong>revolutionizes fine-tuning by reducing storage, compute, and inference overhead, making LLMs accessible&lt;/strong> to more researchers and developers. By implementing LoRA, we can adapt powerful models efficiently, unlocking their potential for a wide range of applications without the heavy costs of full fine-tuning. Future research may combine LoRA with other parameter-efficient methods like prefix tuning or explore rank-selection techniques to optimize adaptation further.&lt;/p>
+&lt;h2 id="test-your-understanding-">&lt;strong>Test Your Understanding !&lt;/strong>&lt;/h2>
+&lt;p>Take this quiz to check your knowledge:&lt;/p>
+&lt;p>&lt;strong>Why is full fine-tuning inefficient for large models?&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>A. It updates too few parameters&lt;/li>
+&lt;li>B. It requires excessive memory and storage&lt;/li>
+&lt;li>C. It slows down inference&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>What does LoRA modify in the Transformer architecture?&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>A. It adds low-rank transformer blocks&lt;/li>
+&lt;li>B. It injects low-rank matrices into self-attention layers&lt;/li>
+&lt;li>C. It compresses the transformer weights before training&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Why does LoRA have no additional inference latency?&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>A. Because the low-rank updates are merged into the original model before inference&lt;/li>
+&lt;li>B. Because it skips backpropagation&lt;/li>
+&lt;li>C. Because it uses an optimized inference engine&lt;/li>
+&lt;/ul>
+&lt;p>Are you ready to implement LoRA on your next NLP project? Check out this HuggingFace tutorial to get you started ! &lt;a href="https://huggingface.co/docs/peft/main/conceptual_guides/lora">https://huggingface.co/docs/peft/main/conceptual_guides/lora&lt;/a>&lt;/p>
+&lt;p>&lt;em>Answer to the quizz : B, B, A&lt;/em>&lt;/p>
+&lt;h3 id="references">&lt;strong>References&lt;/strong>&lt;/h3>
+&lt;p>Hu, Edward J., Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. LoRA: Low-Rank Adaptation of Large Language Models. (2021)&lt;/p>
+&lt;p>Song, Zheshu, Jianheng Zhuo, Yifan Yang, Ziyang Ma, Shixiong Zhang, and Xie Chen. LoRA-Whisper: Parameter-Efficient and Extensible Multilingual ASR.(2024)&lt;/p>
+&lt;p>Meta website : &lt;a href="https://www.llama.com/docs/how-to-guides/fine-tuning/">https://www.llama.com/docs/how-to-guides/fine-tuning/&lt;/a>&lt;/p>
+&lt;p>Solulab website : &lt;a href="https://www.solulab.com/fine-tuning-a-model-for-a-specific-task/">https://www.solulab.com/fine-tuning-a-model-for-a-specific-task/&lt;/a>&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/blog-lora/</guid><pubDate>Wed, 19 Feb 2025 15:20:48 +0100</pubDate></item><item><title>SelfIE: When Large Language Models Explain Their Own Thoughts</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/selfie_with_me/</link><description>&lt;p>&lt;strong>Authors&lt;/strong>: Adrian Durando, Clément Ferrere, Romain Torris&lt;/p>
 &lt;p>&lt;em>The original paper was authored by Haozhe Chen (Columbia), Carl Vondrick (Columbia), Chengzhi Mao (Mila/McGill)&lt;/em>&lt;/p>
 &lt;p>&lt;strong>Original Paper&lt;/strong>: &lt;a href="https://arxiv.org/pdf/2403.10949">arXiv:2403.10949&lt;/a>&lt;/p>
 &lt;p>-&lt;/p>
@@ -8503,240 +8739,4 @@ Moreover, the current implementation and validation of NCTI are confined to imag
 geometry. arXiv preprint arXiv:2208.05512.&lt;/p>
 &lt;p>&lt;a id="ref7">&lt;/a>7. Yuhe Ding, Bo Jiang, Lijun Sheng, Aihua Zheng, Jian Liang. (2023). Unleashing the power of neural collapse for transferability estimation. arXiv preprint arXiv:2310.05754v1.&lt;/p>
 &lt;hr>&lt;/hr>
-&lt;p>Start writing here !&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/transferability/</guid><pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate></item><item><title/><link>https://responsible-ai-datascience-ipParis.github.io/posts/blog-lora/</link><description>&lt;h1 id="lora-low-rank-adaptation-of-large-language-models">&lt;strong>LoRA: Low-Rank Adaptation of Large Language Models&lt;/strong>&lt;/h1>
-&lt;h3 id="authors--morgane-brossard-guillaume-pradel">Authors : Morgane Brossard, Guillaume Pradel&lt;/h3>
-&lt;h2 id="1-impact-and-necessity-of-efficient-fine-tuning-for-llm-models">&lt;strong>1) Impact and necessity of efficient fine-tuning for LLM models&lt;/strong>&lt;/h2>
-&lt;p>Imagine that you are a conductor, and that your &lt;strong>large language model is an orchestra&lt;/strong>. All the parameters of the model are elements of the orchestra: Instruments, playing style and music knowledge of every player…
-Now, let’s say that the musicians have been trained to perform classical music for years, and especially to play in Bethoven’s style. However, you want to introduce some Mozart to the repertoire.&lt;/p>
-&lt;p>&lt;strong>Re-training the model from scratch&lt;/strong> would be like you deciding to re-teach music from the beginning to the musicians : Long and unnecessary !&lt;/p>
-&lt;p>&lt;strong>Traditional fine-tuning&lt;/strong> would be to start from the current state of the orchestra, but adapting every aspect of it to the new Mozart style: Re-explaining all the players how to handle violin bow, how to blow in a flute, how to play each note, each rhythm, all in the style of Mozart. But while the rhythm might be relevant to adapt to Mozart style, how to blow in the flute isn’t : Still not effective enough !&lt;/p>
-&lt;p>Now, what if you simply provided the musicians with notes on certain parts of their partition necessitating instructions specific to Mozart style ? They only need to adapt a few style elements to switch from Bethoven’s style to Mozart !&lt;/p>
-&lt;p>This is what &lt;strong>LoRA (Low-Rank Adaptation of Large Language Models)&lt;/strong> is about: instead of re-training the entire model, it &lt;strong>freezes the main weights&lt;/strong> and &lt;strong>injects small, trainable matrices&lt;/strong> to adapt the model efficiently.&lt;/p>
-&lt;p align="center">
-&lt;img src="https://www.solulab.com/wp-content/uploads/2024/12/Fine-Tuning-a-Model-for-a-Specific-Task-1024x569.jpg" alt="LoRA architecture" width="500">
-&lt;/p>
-&lt;h2 id="2-the-challenge-of-fine-tuning-large-neural-networks">&lt;strong>2) The Challenge of Fine-Tuning Large Neural Networks&lt;/strong>&lt;/h2>
-&lt;h4 id="how-does-fine-tuning-usually-work">&lt;strong>How Does Fine-Tuning Usually Work?&lt;/strong>&lt;/h4>
-&lt;p>Fine-tuning is a common method for adapting pre-trained neural networks to specific tasks. It involves &lt;strong>adjusting the model’s weights&lt;/strong> to minimize a task-specific loss function.&lt;/p>
-&lt;p>$$\Theta^* = \arg\min_{\Theta} \sum_{(x_i, y_i) \in D} L(f_{\Theta}(x_i), y_i)$$&lt;/p>
-&lt;p>However, for large models like &lt;strong>GPT-3 (175B parameters)&lt;/strong>, full fine-tuning has major drawbacks:&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>Storage&lt;/strong>: Each fine-tuned model requires as much space as the original model.&lt;/li>
-&lt;li>&lt;strong>Memory&lt;/strong>: The training process demands enormous GPU memory, making fine-tuning inaccessible to many users.&lt;/li>
-&lt;li>&lt;strong>Inference Latency&lt;/strong>: Some methods introduce additional processing layers, slowing down real-time applications.&lt;/li>
-&lt;/ul>
-&lt;h2 id="3-the-lora-approach-a-more-efficient-solution">&lt;strong>3) The LoRA Approach: A More Efficient Solution&lt;/strong>&lt;/h2>
-&lt;p>LoRA is a method created by Hu. et al (team of researchers from Microsoft) in 2021 in the paper LoRA: Low Rank Adaptation of Large Language Models.&lt;/p>
-&lt;p>LoRA addresses the fine-tuning challenge with a simple but powerful idea: don’t modify the &lt;strong>original model weights&lt;/strong>, but instead &lt;strong>inject trainable low-rank matrices&lt;/strong> into each Transformer layer, making fine-tuning both &lt;strong>memory-efficient and computationally affordable&lt;/strong>by tuning only those matrices’ parameters.&lt;/p>
-&lt;h3 id="a-how-lora-works-the-key-innovation">&lt;strong>A) How LoRA Works: The Key Innovation&lt;/strong>&lt;/h3>
-&lt;p>Instead of modifying the full weight matrix $W$ during fine-tuning, LoRA &lt;strong>replaces the weight update with a low-rank decomposition&lt;/strong> :&lt;/p>
-&lt;p>$$\Delta W = B A$$&lt;/p>
-&lt;p>where:&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>A&lt;/strong> is a small trainable matrix of size &lt;strong>r × d&lt;/strong>&lt;/li>
-&lt;li>&lt;strong>B&lt;/strong> is another small trainable matrix of size &lt;strong>d × r&lt;/strong>&lt;/li>
-&lt;li>&lt;strong>r&lt;/strong> (rank) is much smaller than d, making the update computationally cheap.&lt;/li>
-&lt;/ul>
-&lt;p>This means we &lt;strong>freeze&lt;/strong> the pre-trained model’s weights and only train the new low-rank matrices. The total number of trainable parameters is drastically reduced compared to a full fine-tuning.&lt;/p>
-&lt;h6 id="mathematical-formulation">&lt;strong>Mathematical Formulation&lt;/strong>&lt;/h6>
-&lt;p>For a given input $x$, a neural network layer applies a weight matrix $W$ :&lt;/p>
-&lt;p>$$h = Wx$$&lt;/p>
-&lt;p>During fine-tuning, the full update would be:&lt;/p>
-&lt;p>$$W&amp;rsquo; = W + \Delta W$$&lt;/p>
-&lt;p>In LoRA, we approximate delta W using &lt;strong>two low-rank matrices&lt;/strong>:&lt;/p>
-&lt;p>$$W&amp;rsquo; x = W x + \frac{\alpha}{r} B A x$$&lt;/p>
-&lt;p>where alpha is a scaling factor that controls the magnitude of the adaptation.&lt;/p>
-&lt;p>These equations can also be shown in this way :&lt;/p>
-&lt;p align="center">
-&lt;img src="https://heidloff.net/assets/img/2023/08/lora.png" alt="LoRA architecture" width="500">
-&lt;/p>
-&lt;h3 id="b-lora-applied-to-transformer-layers">&lt;strong>B) LoRA Applied to Transformer Layers&lt;/strong>&lt;/h3>
-&lt;p>Transformers are the backbone of modern NLP models, enabling them to process and generate human-like text. At the heart of a Transformer is the &lt;strong>self-attention mechanism&lt;/strong>, which allows the model to weigh different words in a sequence based on their relevance to each other. Each Transformer layer consists of multiple self-attention heads and feedforward layers, making it highly expressive but also computationally expensive. Self-attention is computed using three key matrices &lt;strong>—query (Q), key (K), and value (V)—&lt;/strong> which determine how tokens interact within a given input sequence. Fine-tuning these large matrices for every new task can be impractical, which is where LoRA provides an efficient alternative.&lt;/p>
-&lt;p>In Transformer-based architectures, LoRA is typically applied within &lt;strong>self-attention layers&lt;/strong>. In a Transformer, the query (Q), key (K), and value (V) matrices are learned using standard weight matrices $W_q$, $W_k$, $W_v$:&lt;/p>
-&lt;p>$$Q = W_q X, \quad K = W_k X, \quad V = W_v X$$&lt;/p>
-&lt;p>Instead of updating directly, LoRA replaces the weight updates with its low-rank approximation:&lt;/p>
-&lt;p>$$W_q&amp;rsquo; = W_q + B_q A_q, \quad W_v&amp;rsquo; = W_v + B_v A_v$$&lt;/p>
-&lt;p>Applying LoRA only to the &lt;strong>query and value projections&lt;/strong> has been found to be &lt;strong>sufficient for effective adaptation&lt;/strong>, reducing computation while maintaining performance.&lt;/p>
-&lt;p>In our orchestra analogy, the low-rank matrices are the little notes given to the players to adapt their playing to Mozart’s style !!&lt;/p>
-&lt;h3 id="c-benefits-of-lora">&lt;strong>C) Benefits of LoRA&lt;/strong>&lt;/h3>
-&lt;p>✅ &lt;strong>Massive Reduction in Trainable Parameters&lt;/strong>: LoRA can reduce the trainable parameters by up to 10,000× compared to full fine-tuning.&lt;/p>
-&lt;p>✅ &lt;strong>Lower GPU Memory Usage&lt;/strong>: Requires only 1/3 the memory compared to fine-tuning with Adam.&lt;/p>
-&lt;p>✅ &lt;strong>No Additional Inference Latency&lt;/strong>: LoRA updates can be merged back into the model, eliminating extra computation at inference time.&lt;/p>
-&lt;p>✅ &lt;strong>Faster Fine-Tuning&lt;/strong>: LoRA achieves 25% higher training throughput on large models&lt;/p>
-&lt;h2 id="4-implementing-lora-in-practice">&lt;strong>4) Implementing LoRA in Practice&lt;/strong>&lt;/h2>
-&lt;h4 id="loading-the-model-and-first-test">&lt;strong>Loading the model and first test&lt;/strong>&lt;/h4>
-&lt;p>The first step before using LoRA is to download a model. Here, we download LLama-3 with 4-bit quantization, which reduces memory usage and speeds up inference. We also load a tokenizer that splits the input text.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">MODEL_NAME&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#d88200">&amp;#34;unsloth/Llama-3.2-1B&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">bnb_config&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">BitsAndBytesConfig&lt;/span>&lt;span style="color:#111">(&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">load_in_4bit&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">bnb_4bit_use_double_quant&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">bnb_4bit_quant_type&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#39;nf4&amp;#39;&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">bnb_4bit_compute_dtype&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">bfloat16&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">model&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">AutoModelForCausalLM&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">from_pretrained&lt;/span>&lt;span style="color:#111">(&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">MODEL_NAME&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">device_map&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;auto&amp;#34;&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">trust_remote_code&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">quantization_config&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">bnb_config&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">tokenizer&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">AutoTokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">from_pretrained&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">MODEL_NAME&lt;/span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">pad_token&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">eos_token&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can the define the prompt to pass to the llm : &amp;lsquo;What equipment do I need for rock climbing ?&amp;rsquo;&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">prompt&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#d88200">&amp;#39;&amp;lt;human&amp;gt;: What equipment do I need for rock climbing? &lt;/span>&lt;span style="color:#8045ff">\n&lt;/span>&lt;span style="color:#d88200"> &amp;lt;assistant&amp;gt;: &amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">model&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">generation_config&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">max_new_tokens&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">200&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">temperature&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">top_p&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0.7&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">num_return_sequences&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">pad_token_id&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">eos_token_id&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">eos_token_id&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">eos_token_id&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">device&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#d88200">&amp;#34;cuda:0&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">encoding&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">prompt&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">return_tensors&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;pt&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">to&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">device&lt;/span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#00a8c8">with&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">inference_mode&lt;/span>&lt;span style="color:#111">():&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">outputs&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">model&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">generate&lt;/span>&lt;span style="color:#111">(&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">input_ids&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">encoding&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">input_ids&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">attention_mask&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">encoding&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">attention_mask&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">print&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">decode&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">outputs&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#111">],&lt;/span> &lt;span style="color:#111">skip_special_tokens&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">))&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The LLM&amp;rsquo;s response before fine-tuning with LoRA is:&lt;/p>
-&lt;p>&lt;em>1. A harness with a carabiner. 2. A rope. 3. A helmet. 4. A harness with a carabiner.&lt;/em>&lt;/p>
-&lt;p>We can already notice some redundancy due to the low temperature (the temperature will increase or decrease the level of confidence of the model). Moreover the response is not well-structured—it consists only of bullet points.&lt;/p>
-&lt;h4 id="fine-tuning-with-lora">&lt;strong>Fine-tuning with LoRA&lt;/strong>&lt;/h4>
-&lt;p>Now, we will load a question-and-answer dataset to fine-tune with LoRA. We will use the Hugging Face library, which is perfect for this.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">data&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">load_dataset&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#d88200">&amp;#34;HuggingFaceH4/helpful-instructions&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">pd&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">DataFrame&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">data&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#d88200">&amp;#34;train&amp;#34;&lt;/span>&lt;span style="color:#111">])&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#00a8c8">def&lt;/span> &lt;span style="color:#75af00">generate_prompt&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">data_point&lt;/span>&lt;span style="color:#111">):&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">instruction&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">data_point&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#d88200">&amp;#39;instruction&amp;#39;&lt;/span>&lt;span style="color:#111">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">demonstration&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">data_point&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#d88200">&amp;#39;demonstration&amp;#39;&lt;/span>&lt;span style="color:#111">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">return&lt;/span> &lt;span style="color:#d88200">&amp;#34;&amp;lt;human&amp;gt;: &amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#111">instruction&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#d88200">&amp;#34; &lt;/span>&lt;span style="color:#8045ff">\n&lt;/span>&lt;span style="color:#d88200"> &amp;lt;assistant&amp;gt;: &amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#111">demonstration&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#00a8c8">def&lt;/span> &lt;span style="color:#75af00">generate_and_tokenize_prompt&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">data_point&lt;/span>&lt;span style="color:#111">):&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">full_prompt&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">generate_prompt&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">data_point&lt;/span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">tokenized_full_prompt&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">full_prompt&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">padding&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">truncation&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#00a8c8">return&lt;/span> &lt;span style="color:#111">tokenized_full_prompt&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">data&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">data&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#d88200">&amp;#34;train&amp;#34;&lt;/span>&lt;span style="color:#111">]&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">shuffle&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">seed&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">42&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">map&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">generate_and_tokenize_prompt&lt;/span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">OUTPUT_DIR&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#d88200">&amp;#34;experiments&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">training_args&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">transformers&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">TrainingArguments&lt;/span>&lt;span style="color:#111">(&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">per_device_train_batch_size&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">gradient_accumulation_steps&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">4&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">num_train_epochs&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">learning_rate&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">2e-4&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">fp16&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">save_total_limit&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">3&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">logging_steps&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">output_dir&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">OUTPUT_DIR&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">max_steps&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">200&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">optim&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;paged_adamw_8bit&amp;#34;&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">lr_scheduler_type&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;cosine&amp;#34;&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">warmup_ratio&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0.05&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">report_to&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;tensorboard&amp;#34;&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">trainer&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">transformers&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">Trainer&lt;/span>&lt;span style="color:#111">(&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">model&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">model&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">train_dataset&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">data&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">args&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">training_args&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">data_collator&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">transformers&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">DataCollatorForLanguageModeling&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">mlm&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">False&lt;/span>&lt;span style="color:#111">),&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">model&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">config&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">use_cache&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#00a8c8">False&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">trainer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">train&lt;/span>&lt;span style="color:#111">()&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Training is also very easy with Hugging Face. You just need to define the training arguments using .TrainingArguments and set up the trainer with .Trainer. This showcases how simple it is to use LoRA for fine-tuning !&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">device&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#d88200">&amp;#34;cuda:0&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">encoding&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">prompt&lt;/span>&lt;span style="color:#111">,&lt;/span> &lt;span style="color:#111">return_tensors&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#d88200">&amp;#34;pt&amp;#34;&lt;/span>&lt;span style="color:#111">)&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">to&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">device&lt;/span>&lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#00a8c8">with&lt;/span> &lt;span style="color:#111">torch&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">inference_mode&lt;/span>&lt;span style="color:#111">():&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">outputs&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#111">model&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">generate&lt;/span>&lt;span style="color:#111">(&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">input_ids&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">encoding&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">input_ids&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">attention_mask&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">encoding&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">attention_mask&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#111">generation_config&lt;/span>&lt;span style="color:#111">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#111">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#111">print&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">tokenizer&lt;/span>&lt;span style="color:#f92672">.&lt;/span>&lt;span style="color:#111">decode&lt;/span>&lt;span style="color:#111">(&lt;/span>&lt;span style="color:#111">outputs&lt;/span>&lt;span style="color:#111">[&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>&lt;span style="color:#111">],&lt;/span> &lt;span style="color:#111">skip_special_tokens&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#00a8c8">True&lt;/span>&lt;span style="color:#111">))&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We then get the response to the same question after fine-tuning:&lt;/p>
-&lt;p>&lt;em>Rock climbing is a very physically demanding sport. You will need a good pair of climbing shoes, a good pair of climbing gloves, a good pair of climbing socks, a good pair of climbing harness.&lt;/em>&lt;/p>
-&lt;p>We still notice a lot of redundancy with &amp;ldquo;a good pair,&amp;rdquo; which is due to the low temperature. However, the response is much better structured and is no longer just bullet points. The LLM has become almost &amp;ldquo;human&amp;rdquo;! And this only required about ten minutes of training on a mid-range GPU.&lt;/p>
-&lt;h2 id="5-experimental-results-lora-vs-other-methods">&lt;strong>5) Experimental Results: LoRA vs. Other Methods&lt;/strong>&lt;/h2>
-&lt;p>The authors tested LoRA on tasks such as &lt;strong>GLUE (NLP benchmarks)&lt;/strong>, &lt;strong>WikiSQL (Text-to-SQL)&lt;/strong>, and &lt;strong>SAMSum (Summarization)&lt;/strong>. The results showed:&lt;/p>
-&lt;ul>
-&lt;li>Performance on par or better than full fine-tuning.&lt;/li>
-&lt;li>GPU memory usage reduced by 3×.&lt;/li>
-&lt;li>Inference speed unchanged (unlike adapters which introduce latency).&lt;/li>
-&lt;/ul>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Model&lt;/th>
-&lt;th>Fine-Tuning Type&lt;/th>
-&lt;th>Trainable Params&lt;/th>
-&lt;th>Memory Usage&lt;/th>
-&lt;th>Inference Latency&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>GPT-3 (175B)&lt;/td>
-&lt;td>Full Fine-Tuning&lt;/td>
-&lt;td>175B&lt;/td>
-&lt;td>1.2TB&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>GPT-3 (175B)&lt;/td>
-&lt;td>LoRA (r=4)&lt;/td>
-&lt;td>4.7M&lt;/td>
-&lt;td>350GB&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>GPT-3 (175B)&lt;/td>
-&lt;td>Adapter Layers&lt;/td>
-&lt;td>40M&lt;/td>
-&lt;td>450GB&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="6-lora-popularity-and-applications">&lt;strong>6) LoRA popularity and applications&lt;/strong>&lt;/h2>
-&lt;p>LoRA has become a major breakthrough in the world of LLMs and has been &lt;strong>recognized by key AI players&lt;/strong> like Meta, which even published a guide on how to fine-tune their model, LLaMA, using LoRA (&lt;a href="https://www.llama.com/docs/how-to-guides/fine-tuning/)">https://www.llama.com/docs/how-to-guides/fine-tuning/)&lt;/a>. This method has become one of the most widely used for fine-tuning due to its ability to be highly resource-efficient. Its popularity is also driven by its &lt;strong>ease of access—fine-tuning a model&lt;/strong> with LoRA is straightforward thanks to libraries like Hugging Face, which already provide built-in support for it.&lt;/p>
-&lt;p>LoRA is now used in complex tasks and has been widely adopted by researchers. The original research paper has even been cited &lt;strong>over 12,000 times !&lt;/strong> One notable example is LoRA-Whisper: Parameter-Efficient and Extensible Multilingual ASR, where OpenAI’s Whisper (a speech recognition model) was fine-tuned with LoRA to improve its performance for specific languages and accents.&lt;/p>
-&lt;p>Another example is Phi-2 LoRA fine-tuning, where Microsoft’s Phi-2 model, a small yet highly capable language model, was adapted using LoRA to perform well on domain-specific tasks such as Text-to-SQL while maintaining very low computational costs.&lt;/p>
-&lt;p>Thus, since the article was published in 2021, LoRA has established itself as an essential method for fine-tuning and is now widely adopted in both research and industry for its efficiency in adapting large models with efficient resource usage.&lt;/p>
-&lt;h2 id="7-conclusion">&lt;strong>7) Conclusion&lt;/strong>&lt;/h2>
-&lt;p>LoRA &lt;strong>revolutionizes fine-tuning by reducing storage, compute, and inference overhead, making LLMs accessible&lt;/strong> to more researchers and developers. By implementing LoRA, we can adapt powerful models efficiently, unlocking their potential for a wide range of applications without the heavy costs of full fine-tuning. Future research may combine LoRA with other parameter-efficient methods like prefix tuning or explore rank-selection techniques to optimize adaptation further.&lt;/p>
-&lt;h2 id="test-your-understanding-">&lt;strong>Test Your Understanding !&lt;/strong>&lt;/h2>
-&lt;p>Take this quiz to check your knowledge:&lt;/p>
-&lt;p>&lt;strong>Why is full fine-tuning inefficient for large models?&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>A. It updates too few parameters&lt;/li>
-&lt;li>B. It requires excessive memory and storage&lt;/li>
-&lt;li>C. It slows down inference&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>What does LoRA modify in the Transformer architecture?&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>A. It adds low-rank transformer blocks&lt;/li>
-&lt;li>B. It injects low-rank matrices into self-attention layers&lt;/li>
-&lt;li>C. It compresses the transformer weights before training&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Why does LoRA have no additional inference latency?&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>A. Because the low-rank updates are merged into the original model before inference&lt;/li>
-&lt;li>B. Because it skips backpropagation&lt;/li>
-&lt;li>C. Because it uses an optimized inference engine&lt;/li>
-&lt;/ul>
-&lt;p>Are you ready to implement LoRA on your next NLP project? Check out this HuggingFace tutorial to get you started ! &lt;a href="https://huggingface.co/docs/peft/main/conceptual_guides/lora">https://huggingface.co/docs/peft/main/conceptual_guides/lora&lt;/a>&lt;/p>
-&lt;p>&lt;em>Answer to the quizz : B, B, A&lt;/em>&lt;/p>
-&lt;h3 id="references">&lt;strong>References&lt;/strong>&lt;/h3>
-&lt;p>Hu, Edward J., Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. LoRA: Low-Rank Adaptation of Large Language Models. (2021)&lt;/p>
-&lt;p>Song, Zheshu, Jianheng Zhuo, Yifan Yang, Ziyang Ma, Shixiong Zhang, and Xie Chen. LoRA-Whisper: Parameter-Efficient and Extensible Multilingual ASR.(2024)&lt;/p>
-&lt;p>Meta website : &lt;a href="https://www.llama.com/docs/how-to-guides/fine-tuning/">https://www.llama.com/docs/how-to-guides/fine-tuning/&lt;/a>&lt;/p>
-&lt;p>Solulab website : &lt;a href="https://www.solulab.com/fine-tuning-a-model-for-a-specific-task/">https://www.solulab.com/fine-tuning-a-model-for-a-specific-task/&lt;/a>&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/blog-lora/</guid><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate></item></channel></rss>
+&lt;p>Start writing here !&lt;/p></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/transferability/</guid><pubDate>Mon, 08 Jan 2024 11:26:03 +0100</pubDate></item></channel></rss>
