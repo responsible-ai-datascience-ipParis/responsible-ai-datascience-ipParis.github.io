@@ -1,12 +1,19 @@
++++
+title = 'LoRA: Low-Rank Adaptation of Large Language Models'
+date = 2025-02-19T15:20:48+01:00
+draft = false
++++
+
+
 # **LoRA: Low-Rank Adaptation of Large Language Models**
 
 ### Authors : Morgane Brossard, Guillaume Pradel
 
-  
+
 ## **1) Impact and necessity of efficient fine-tuning for LLM models**
 
-Imagine that you are a conductor, and that your **large language model is an orchestra**. All the parameters of the model are elements of the orchestra: Instruments, playing style and music knowledge of every player… 
-Now, let’s say that the musicians have been trained to perform classical music for years, and especially to play in Bethoven’s style. However, you want to introduce some Mozart to the repertoire. 
+Imagine that you are a conductor, and that your **large language model is an orchestra**. All the parameters of the model are elements of the orchestra: Instruments, playing style and music knowledge of every player…
+Now, let’s say that the musicians have been trained to perform classical music for years, and especially to play in Bethoven’s style. However, you want to introduce some Mozart to the repertoire.
 
 **Re-training the model from scratch** would be like you deciding to re-teach music from the beginning to the musicians : Long and unnecessary !
 
@@ -100,11 +107,11 @@ In our orchestra analogy, the low-rank matrices are the little notes given to th
 
 ### **C) Benefits of LoRA**
 
-✅ **Massive Reduction in Trainable Parameters**: LoRA can reduce the trainable parameters by up to 10,000× compared to full fine-tuning. 
+✅ **Massive Reduction in Trainable Parameters**: LoRA can reduce the trainable parameters by up to 10,000× compared to full fine-tuning.
 
 ✅ **Lower GPU Memory Usage**: Requires only 1/3 the memory compared to fine-tuning with Adam.
 
-✅ **No Additional Inference Latency**: LoRA updates can be merged back into the model, eliminating extra computation at inference time. 
+✅ **No Additional Inference Latency**: LoRA updates can be merged back into the model, eliminating extra computation at inference time.
 
 ✅ **Faster Fine-Tuning**: LoRA achieves 25% higher training throughput on large models
 
@@ -281,7 +288,7 @@ Take this quiz to check your knowledge:
 - A. It updates too few parameters
 - B. It requires excessive memory and storage
 - C. It slows down inference
-  
+
 **What does LoRA modify in the Transformer architecture?**
 
 - A. It adds low-rank transformer blocks
@@ -294,7 +301,7 @@ Take this quiz to check your knowledge:
 - B. Because it skips backpropagation
 - C. Because it uses an optimized inference engine
 
-Are you ready to implement LoRA on your next NLP project? Check out this HuggingFace tutorial to get you started ! https://huggingface.co/docs/peft/main/conceptual_guides/lora 
+Are you ready to implement LoRA on your next NLP project? Check out this HuggingFace tutorial to get you started ! https://huggingface.co/docs/peft/main/conceptual_guides/lora
 
 
 *Answer to the quizz : B, B, A*
