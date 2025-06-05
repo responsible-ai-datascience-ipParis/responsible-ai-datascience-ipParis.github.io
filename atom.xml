@@ -1,4 +1,500 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2025, Calvin Tran</copyright><lastBuildDate>Thu, 27 Mar 2025 21:10:41 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>Neural Networks Forget to Forget: Fixing the Memory Problem With Tensor Decomposition</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/activation_compression/</link><description>&lt;style>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bloggin on Responsible AI</title><description>Bloggin on Responsible AI</description><link>https://responsible-ai-datascience-ipParis.github.io/</link><language>en</language><copyright>Copyright 2025, Calvin Tran</copyright><lastBuildDate>Fri, 28 Mar 2025 16:37:43 +0100</lastBuildDate><generator>Hugo - gohugo.io</generator><docs>http://cyber.harvard.edu/rss/rss.html</docs><atom:link href="https://responsible-ai-datascience-ipParis.github.io//atom.xml" rel="self" type="application/atom+xml"/><item><title>XAI_transformers</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/xai_transformers/</link><description>&lt;!DOCTYPE html>
+&lt;html lang="fr">
+&lt;head>
+&lt;meta charset="UTF-8">
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0">
+&lt;title>XAI for Transformers&lt;/title>
+&lt;style>
+body {
+font-family: Arial, sans-serif;
+line-height: 1.6;
+margin: 40px;
+background-color: #fff;
+color: #111;
+}
+h1 {
+font-size: 28px;
+text-align: center;
+margin-bottom: 5px;
+}
+.author-section {
+display: flex;
+gap: 20px;
+margin-top: 20px;
+margin-bottom: 20px;
+}
+.author-box {
+display: flex;
+align-items: center;
+}
+.author-box img {
+width: 40px;
+height: 40px;
+border-radius: 50%;
+margin-right: 10px;
+}
+.toc {
+background-color: #f0f0f0;
+padding: 15px;
+border-radius: 8px;
+margin-top: 30px;
+margin-bottom: 30px;
+}
+.toc ul {
+padding-left: 20px;
+margin: 0;
+}
+.toc li {
+margin-bottom: 6px;
+}
+blockquote {
+font-style: italic;
+color: #555;
+border-left: 4px solid #ccc;
+padding-left: 15px;
+margin: 20px 0;
+}
+img.centered {
+display: block;
+margin: 20px auto;
+max-width: 60%;
+}
+h3, h4 {
+margin-top: 30px;
+}
+&lt;/style>
+&lt;/head>
+&lt;body>
+&lt;h1>XAI for Transformers: Better explanations through conservative propagation&lt;/h1>
+&lt;p style="text-align:center;">Published March 28, 2025&lt;/p>
+&lt;div class="author-section">
+&lt;div class="author-box">
+&lt;img src="./images/illustrations_XAI/audrey.png" alt="Audrey Airaud">
+&lt;div>
+&lt;a href="https://github.com/odd2022">odd2022&lt;/a>&lt;br>
+&lt;span>Audrey Airaud&lt;/span>
+&lt;/div>
+&lt;/div>
+&lt;div class="author-box">
+&lt;img src="./images/illustrations_XAI/foucauld.png" alt="Foucauld Estignard">
+&lt;div>
+&lt;a href="https://github.com/FoucauldE">FoucauldE&lt;/a>&lt;br>
+&lt;span>Foucauld Estignard&lt;/span>
+&lt;/div>
+&lt;/div>
+&lt;div class="author-box">
+&lt;img src="./images/illustrations_XAI/nathan.png" alt="Nathan Toumi">
+&lt;div>
+&lt;a href="https://github.com/N22Toumi">N22Toumi&lt;/a>&lt;br>
+&lt;span>Nathan Toumi&lt;/span>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>This is a blog post about the article “XAI for Transformers: Better Explanations through Conservative Propagation” published by Ameen Ali et al. in 2022 and available &lt;a href="https://arxiv.org/pdf/2202.07304">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;blockquote>
+Sure, here is a new version of your article on XAI for Transformers with a more adapted tone:
+&lt;/blockquote>
+&lt;p>You’ve probably encountered similar sentences before — they are characteristic of recent language models. These models are built on a specific architecture known as the Transformer, which has extended far beyond Natural Language Processing (NLP) to fields like computer vision, graph analysis, and audio signal processing.
+&lt;p>While models relying on Transformers have shown impressive performance, their behavior remains hard to explain, raising questions about their use in sensitive domains like healthcare &lt;a href="#health1">[1]&lt;/a>&lt;a href="#health2">[2]&lt;/a>, cybersecurity &lt;a href="#cyber1">[3]&lt;/a>&lt;a href="#cyber2">[4]&lt;/a>, recruitment &lt;a href="#recr">[5]&lt;/a> or education &lt;a href="#edu">[6]&lt;/a>. Understanding their decisions therefore becomes a major challenge, to ensure that they do not discriminate on unwanted features (eg. gender, ethnicity). &lt;/p>&lt;/p>
+&lt;p align="center">
+&lt;img src="./images/illustrations_XAI/illustration_intro.png" alt="illustration_intro">
+&lt;/p>
+&lt;!-- TABLE OF CONTENTS -->
+&lt;!-- TABLE OF CONTENTS -->
+&lt;div class="toc">
+&lt;strong>Table of Contents&lt;/strong>
+&lt;ul>
+&lt;li>&lt;a href="#attribution-methods">1. Attribution methods: how to identify important features?&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#why-conservation">2. Why conservation is crucial to build XAI?&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#LRP">3. Layer-wise Relevance Propagation (LRP) method&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#conservation-breaks">3.1 How can we detect where the conservation breaks?&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#apply-transformers">3.2 Apply directly to transformer architectures?&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#fixing-breaks">4. Fixing conservation breaks: a simple but effective trick&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#Attention-Heads">4.1 Locally linear expansion for Attention Heads&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#LayerNorm">4.2 Locally linear expansion for LayerNorm&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#implementation">4.3 Implementation made easy&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#experiments">5. Confirmation with Experiments&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#quantitative-results">5.1 Quantitative Results&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#qualitative-results">5.2 Qualitative Comparison&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#conclusion">6. Key Takeaway&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#references">References&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/div>
+&lt;!-- ARTICLE CONTINUES AS-IS -->
+&lt;h3 id="attribution-methods">1. Attribution methods: how to identify important features?&lt;/h3>
+&lt;p>
+In order to make deep learning models more interpretable, especially in critical applications, it is crucial to understand which input features contribute the most to a model’s prediction. This has given rise to a class of techniques known as &lt;strong>attribution methods&lt;/strong>, whose goal is to assign relevance scores to input features based on their influence on the model’s output.
+&lt;/p>
+&lt;p>
+Formally, consider a function $F: \mathbb{R}^n \rightarrow [0, 1]$ representing a deep network, and an input $x = (x_1, \dots, x_n) \in \mathbb{R}^n$. An &lt;strong>attribution&lt;/strong> of the prediction at input $x$ relative to a baseline input $x'$ is a vector:
+$A_F(x, x') = (a_1, \dots, a_n) \in \mathbb{R}^n$,
+where each $a_i$ represents the contribution of feature $x_i$ to the prediction $F(x)$.
+&lt;/p>
+&lt;p>
+Numerous attribution techniques have been proposed, each relying on different strategies to assess feature importance. These methods generally fall into three categories &lt;a href="#integrated-gradients">[7]&lt;/a>:
+&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Gradient-based methods&lt;/strong>: estimate importance using local gradients (e.g., Gradient × Input &lt;a href="#gradient-input">[8]&lt;/a>).&lt;/li>
+&lt;li>&lt;strong>Perturbation-based methods&lt;/strong>: assess how the prediction changes when individual input features are modified (e.g., SHAP &lt;a href="#shapley-values">[9]&lt;/a>).&lt;/li>
+&lt;li>&lt;strong>Attention-based methods&lt;/strong>: use attention weights to trace how information flows through the model (e.g., Attention Rollout &lt;a href="#attention-rolout">[10]&lt;/a>).&lt;/li>
+&lt;/ul>
+&lt;p>
+While attention-based techniques may appear particularly suitable for Transformers, research has shown that attention weights are not always reliable indicators of feature importance &lt;a href="#att1">[11]&lt;/a>&lt;a href="#att2">[12]&lt;/a>. As a result, gradient-based techniques remain among the most widely used approaches, largely due to their computational efficiency compared to perturbation-based techniques. Yet, it's worth noting that these methods were originally designed for simpler architectures, and may not be fully adequate when applied to Transformers.
+&lt;/p>
+&lt;p>
+This brings up a fundamental question: &lt;strong>Are existing attribution methods truly suitable for interpreting Transformer models?&lt;/strong>
+&lt;p>A crucial property that any reliable attribution technique should uphold is &lt;strong>conservation&lt;/strong> (also known as &lt;em>completeness&lt;/em>) — the principle that the sum of all attributions should match the difference in the model’s output between the actual input and a chosen baseline (a neutral or uninformative input, used as a reference point to isolate the effect of each input feature, such as a black image in image classification tasks).&lt;/p>
+&lt;/p>
+&lt;h3 id="why-conservation">2. Why conservation is crucial to build XAI?&lt;/h3>
+&lt;p>
+&lt;p>Without enforcing conservation, attribution-based explanations can become misleading — either by missing important input contributions or by exaggerating the relevance of unimportant ones. This issue is especially critical for complex architectures like Transformers, where components such as attention mechanisms and layer normalization are known to distort the flow of relevance through the network. Rather than proposing a new attribution score, the paper focuses on how to propagate existing attributions through the model in a way that strictly preserves conservation. In other words, the authors study how to ensure that, at each layer of the Transformer, the total relevance is neither lost and not artificially created.&lt;/p>
+&lt;p>The diagram below shows how different students contributed to a group blog project across three main tasks: content creation, writing, and coding. To evaluate each student&amp;rsquo;s contribution to the final product, we work backward, tracing the completed blog back to the individual tasks based on their importance, and further attributing each task to the students who contributed. Doing so, we observe that the final result can mainly be attributed to Student 3, while Student 1 and 2 played smaller roles. This backward step-by-step attribution ensures that every contribution is accounted for without any distortion, preventing effort from being lost or exaggerated along the way. This is the idea behind Layer-wise Relevance Propagation (LRP), described in the following part.&lt;/p>
+&lt;/p>
+&lt;img src="./images/illustrations_XAI/uneven_blog_sankey.png" alt="Sankey Diagram of Student Contributions" width="100%" style="max-width:800px;">
+&lt;h3 id="LRP">3. Layer-wise Relevance Propagation (LRP) method&lt;/h3>
+&lt;p>Layer-wise Relevance Propagation (LRP) is a method developed to explain the predictions of neural networks by attributing relevance scores to input features. It works by propagating the model’s output backward through the network, redistributing the prediction layer by layer until the input is reached. One of its main advantages is that it satisfies the conservation principle: the total relevance remains constant at each step of the propagation. Originally developed for standard deep neural networks, LRP must be adapted to handle the specific challenges posed by Transformers, such as attention mechanisms. Before addressing these adaptations, let’s first review how the basic version of LRP works.
+&lt;/p>
+&lt;h4 id="conservation-breaks">3.1 Understanding how relevance is propagated and where conservation fails&lt;/h4>
+&lt;p>
+&lt;p>
+To understand whether a model satisfies conservation, we must analyze how relevance flows through each layer. The process begins by assigning all the output relevance to the predicted class only. Formally, we define the relevance vector at the final layer $L$, denoted $r_i^{(L)}$, such that:
+&lt;/p>
+&lt;p>$$
+r_i^{(L)} =
+\begin{cases}
+F_i(x) &amp;amp; \text{if } i \text{ is the predicted class}, \\
+0 &amp;amp; \text{otherwise}
+\end{cases}
+$$&lt;/p>
+&lt;p>
+From there, the relevance is redistributed backward through the network, following specific propagation rules (e.g., LRP-γ, LRP-ε, or LRP-0). One possible rule is the &lt;strong>Gradient × Input&lt;/strong> method, which attributes relevance based on the gradient of the output with respect to each input, scaled by the input itself:
+&lt;/p>
+&lt;p>$$
+R(x_i) = x_i \frac{\partial f}{\partial x_i}, \quad R(y_j) = y_j \frac{\partial f}{\partial y_j}
+$$&lt;/p>
+&lt;p>
+By applying the chain rule, this becomes:
+&lt;/p>
+&lt;p>$$
+R(x_i) = \sum_{j} y_j \frac{\partial y_j}{\partial x_i} R(y_j)
+$$&lt;/p>
+&lt;p>
+This formulation allows us to analyze the propagation of relevance and check whether conservation holds at each layer. Specifically, we say that a propagation rule is &lt;strong>locally conservative&lt;/strong> if the sum of relevance scores remains constant from one layer to the next:
+&lt;/p>
+&lt;p>$$
+\sum_i R(x_i) = \sum_j R(y_j)
+$$&lt;/p>
+&lt;p>
+If this equality is maintained throughout the entire network — from the output all the way back to the input — then the method is said to be &lt;strong>globally conservative&lt;/strong>. When the rule fails to preserve this equality at any layer, we say that conservation breaks, and the explanation becomes less trustworthy.
+&lt;/p>
+&lt;h4 id="apply-transformers">3.2 Apply directly to transformer architectures?&lt;/h4>
+&lt;p>
+When applying relevance propagation to Transformer architectures, the conservation principle is not always preserved. The paper identifies two key components where conservation systematically fails and where standard propagation rules require adaptation: Attention Heads and Layer Normalization.
+&lt;/p>
+&lt;!-- Attention Heads -->
+&lt;p>&lt;strong>Propagation through Attention Heads:&lt;/strong>&lt;/p>
+&lt;p>
+The figure below illustrates a standard attention head, where relevance \( \mathcal{R}(y) \) is propagated backward through the attention mechanism. This includes a bilinear transformation followed by a softmax over the key-query scores. The authors demonstrate that conservation typically breaks in this setting: some attention heads receive too much relevance, while others are undervalued. This leads to distorted explanations that do not faithfully reflect the model’s true internal computations.
+&lt;/p>
+&lt;p align="center">
+&lt;img src="./images/illustrations_XAI/attention_heads.png" alt="Attention head propagation">
+&lt;/p>
+&lt;!-- LayerNorm -->
+&lt;p>&lt;strong>Propagation through Layer Normalization:&lt;/strong>&lt;/p>
+&lt;p>
+In the case of Layer Normalization, the focus is on the centering and scaling operations applied to the inputs. These include subtracting the mean and dividing by the norm of the input — operations that inherently distort the distribution of relevance. The authors show that, regardless of the propagation rule used, conservation is systematically violated when passing through this layer. In other words, relevance is either lost or created during normalization, which undermines the reliability of the explanation.
+&lt;/p>
+&lt;p align="center">
+&lt;img src="./images/illustrations_XAI/layer_norm.png" alt="LayerNorm propagation">
+&lt;/p>
+&lt;p>
+These findings show that classical LRP rules cannot be directly applied to Transformers without modification. Addressing these structural issues is necessary for building explanation methods that preserve conservation and provide trustworthy insights into model behavior.
+&lt;/p>
+&lt;h3 id="fixing-breaks">4. Fixing conservation breaks: a simple but effective trick&lt;/h3>
+&lt;p>
+To restore conservation in Transformers, the authors propose a solution: instead of redesigning a new attribution method from scratch, they adjust how existing methods are applied by introducing a &lt;strong>locally linear approximation&lt;/strong> of the attention heads and LayerNorm layers. This trick allows them to reuse the rules from LRP while preserving theoretical soundness.
+&lt;/p>
+&lt;h4 id="Attention-Heads">4.1 Locally linear expansion for Attention Heads&lt;/h4>
+&lt;p>
+During explanation time, the attention mechanism
+$$ y_j = \sum_i x_i \, p_{ij} $$
+is approximated by treating the attention weights \( p_{ij} \) as fixed constants (they normally depend on the input). This means we "freeze" them so that no gradient is propagated through the softmax. The attention head is then seen as a simple linear layer with fixed coefficients, and the relevance can be propagated using the following LRP rule:
+&lt;/p>
+&lt;p>$$
+\mathcal{R}(x_i) = \sum_j \frac{x_i , p_{ij}}{\sum_{i&amp;rsquo;} x_{i&amp;rsquo;} , p_{i&amp;rsquo;j}} , \mathcal{R}(y_j) \quad \text{(AH-rule)}
+$$&lt;/p>
+&lt;p>
+This linearization not only restores conservation but also simplifies the computation, as no gradients need to flow through the attention scores.
+&lt;/p>
+&lt;h4 id="LayerNorm">4.2 Locally linear expansion for LayerNorm&lt;/h4>
+&lt;p>
+LayerNorm applies a normalization step that shifts and scales the input:
+&lt;/p>
+&lt;p>$$
+y_i = \frac{x_i - \mathbb{E}[x]}{\sqrt{\varepsilon + \mathrm{Var}[x]}}
+$$&lt;/p>
+&lt;p>
+Here too, the trick is to &lt;strong>freeze the normalization factor&lt;/strong> \( \alpha = \frac{1}{\sqrt{\varepsilon + \mathrm{Var}[x]}} \). Once this is done, the transformation becomes linear again, and can be expressed as:
+&lt;/p>
+&lt;p>$$
+y = \alpha Cx, \quad \text{where} \quad C = I - \frac{1}{N} \mathbf{1}\mathbf{1}^\top
+$$&lt;/p>
+&lt;p>
+The corresponding relevance rule (&lt;strong>LN-rule&lt;/strong>) is then:
+&lt;/p>
+&lt;p>$$
+\mathcal{R}(x_i) = \sum_j \frac{x_i , C_{ij}}{\sum_{i&amp;rsquo;} x_{i&amp;rsquo;} , C_{i&amp;rsquo;j}} , \mathcal{R}(y_j) \quad \text{(LN-rule)}
+$$&lt;/p>
+&lt;p>
+Freezing these components essentially allows the explanation to bypass their non-linearities, making the relevance propagation both tractable and faithful to the model's internal behavior.
+&lt;/p>
+&lt;h4 id="implementation">4.3 Implementation made easy&lt;/h4>
+&lt;p>
+The best part about this method ? This strategy is remarkably simple to implement. In practice, you don’t need to rewrite custom backward rules. All you need to do is freeze the components during the forward pass using the &lt;code>.detach()&lt;/code> function in PyTorch. For example:
+&lt;/p>
+&lt;ul>
+&lt;li>Replace \( p_{ij} \) with &lt;code>p_{ij}.detach()&lt;/code> inside attention layers&lt;/li>
+&lt;li>Freeze \( \sqrt{\varepsilon + \mathrm{Var}[x]} \) in LayerNorm by detaching it&lt;/li>
+&lt;/ul>
+&lt;p>
+Then, you can run your usual &lt;em>Gradient × Input&lt;/em> attribution as usual, except that now, the relevance propagation respects conservation and produces more trustworthy explanations. As a bonus, computation is faster since gradients no longer need to be computed through these detached components.
+&lt;/p>
+&lt;p>
+This implementation trick, though minimal, has a major impact: it transforms Gradient × Input from a noisy, non-conservative method into a principled, conservation-respecting explanation technique for Transformers.
+&lt;/p>
+&lt;h3 id="experiments">5. Confirmation with Experiments&lt;/h3>
+&lt;p>
+So, does this new way of propagating relevance through Transformers actually work better? The authors ran a bunch of experiments to find out — and the short answer is: &lt;strong>yes, absolutely&lt;/strong>.
+&lt;/p>
+&lt;p>
+The method (&lt;strong>LRP (AH+LN)&lt;/strong>) was tested against several well-known explanation techniques across a variety of tasks. We're talking about:
+&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Text classification&lt;/strong> : movie reviews (IMDB), sentiment tweets, and SST-2&lt;/li>
+&lt;li>&lt;strong>Image recognition&lt;/strong> : handwritten digits with MNIST&lt;/li>
+&lt;li>&lt;strong>Molecular prediction&lt;/strong> : predicting biochemical properties from molecule data (BACE)&lt;/li>
+&lt;/ul>
+&lt;p>
+To evaluate how good the explanations were, they looked at two key aspects:
+&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Quantitative metrics&lt;/strong>: How well does the explanation match the model’s actual reasoning?&lt;/li>
+&lt;li>&lt;strong>Qualitative impressions&lt;/strong>: Are the explanations clear, focused, and free from noise?&lt;/li>
+&lt;/ul>
+&lt;h4 id="quantitative-results">5.1 Quantitative Results&lt;/h4>
+&lt;p>
+For the quantitative evaluation, the authors use &lt;strong>AUAC&lt;/strong> (Area Under the Activation Curve), that measures how well an explanation highlights the most relevant parts of the input, according to the model’s own internal behavior. The AUAC metric is computed from evaluation setups where only the most (or least) relevant parts of the input are kept, to test how well explanations reflect the model's decision-making. In this context, a higher AUAC indicates a more faithful and precise explanation.
+&lt;/p>
+&lt;style>
+table.auac-table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 1em;
+}
+table.auac-table th,
+table.auac-table td {
+border: 1px solid #ddd;
+padding: 10px 16px;
+text-align: center;
+}
+table.auac-table th {
+background-color: #f2f2f2;
+}
+table.auac-table td:first-child {
+text-align: left;
+}
+table.auac-table tr:last-child {
+background-color: #fdf5e6;
+font-weight: bold;
+}
+&lt;/style>
+&lt;table class="auac-table">
+&lt;thead>
+&lt;tr>
+&lt;th>Method&lt;/th>
+&lt;th>IMDB&lt;/th>
+&lt;th>SST-2&lt;/th>
+&lt;th>BACE&lt;/th>
+&lt;th>MNIST&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>Random&lt;/td>
+&lt;td>0.673&lt;/td>
+&lt;td>0.664&lt;/td>
+&lt;td>0.624&lt;/td>
+&lt;td>0.324&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Attention (last)&lt;/td>
+&lt;td>0.708&lt;/td>
+&lt;td>0.712&lt;/td>
+&lt;td>0.620&lt;/td>
+&lt;td>0.862&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Rollout&lt;/td>
+&lt;td>0.738&lt;/td>
+&lt;td>0.713&lt;/td>
+&lt;td>0.653&lt;/td>
+&lt;td>0.358&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>GAE&lt;/td>
+&lt;td>0.872&lt;/td>
+&lt;td>0.821&lt;/td>
+&lt;td>0.675&lt;/td>
+&lt;td>0.426&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>GI (Gradient × Input)&lt;/td>
+&lt;td>0.920&lt;/td>
+&lt;td>0.847&lt;/td>
+&lt;td>0.646&lt;/td>
+&lt;td>0.942&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>LRP (AH+LN)&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>0.939&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>0.908&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>0.707&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>0.948&lt;/strong>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>
+These results show that &lt;strong>LRP (AH+LN)&lt;/strong> not only preserves theoretical properties like conservation, but also translates into superior empirical performance across tasks ranging from sentiment analysis to molecular prediction.
+&lt;/p>
+&lt;h4 id="qualitative-results">5.2 Qualitative Comparison&lt;/h4>
+&lt;p>
+Beyond metrics like AUAC, the authors also examine how different explanation methods behave in practice — both on language (SST-2) and vision (MNIST) tasks. In particular, they visualize how each method highlights relevant input features, and compare their interpretability and focus.
+&lt;/p>
+&lt;p>
+On the SST-2 dataset, all methods correctly assign relevance to the words “best” and “virtues” in a positively labeled sentence. However, &lt;strong>A-Last&lt;/strong> overly emphasizes the word “eastwood”, suggesting an undesirable bias toward named entities. In contrast, &lt;strong>LRP (AH)&lt;/strong> and &lt;strong>LRP (AH+LN)&lt;/strong> assign lower relevance such entity tokens and focus more on sentiment-related words — resulting in more robust and generalizable explanations.
+&lt;/p>
+&lt;p>
+On MNIST (Graphormer model), the same pattern holds: &lt;strong>LRP (AH+LN)&lt;/strong> better localizes the relevance onto the digit-containing superpixels, while attention-based methods like &lt;strong>Rollout&lt;/strong> tend to spread relevance into the background. This confirms that the proposed method yields more precise and informative visualizations.
+&lt;/p>
+&lt;style>
+table.qualitative-results {
+width: 100%;
+border-collapse: collapse;
+margin-top: 1em;
+font-size: 15px;
+}
+table.qualitative-results th,
+table.qualitative-results td {
+border: 1px solid #ddd;
+padding: 12px 18px;
+text-align: center;
+}
+table.qualitative-results th {
+background-color: #f9f9f9;
+font-weight: bold;
+}
+table.qualitative-results td:first-child {
+text-align: left;
+}
+table.qualitative-results tr.highlight {
+background-color: #fff8dc;
+font-weight: bold;
+}
+&lt;/style>
+&lt;table class="qualitative-results">
+&lt;thead>
+&lt;tr>
+&lt;th>Method&lt;/th>
+&lt;th>Interpretability&lt;/th>
+&lt;th>Focus on Relevant Inputs&lt;/th>
+&lt;th>Entity/Background Bias&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>A-Last&lt;/td>
+&lt;td>Moderate&lt;/td>
+&lt;td>Moderate&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Rollout&lt;/td>
+&lt;td>Moderate&lt;/td>
+&lt;td>Low–Moderate&lt;/td>
+&lt;td>Moderate&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>GI (Gradient × Input)&lt;/td>
+&lt;td>High&lt;/td>
+&lt;td>High&lt;/td>
+&lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>LRP (AH)&lt;/td>
+&lt;td>High&lt;/td>
+&lt;td>High&lt;/td>
+&lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;tr class="highlight">
+&lt;td>&lt;strong>LRP (AH+LN)&lt;/strong> &lt;br>&lt;em>(proposed)&lt;/em>&lt;/td>
+&lt;td>&lt;strong>Very High&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>Very High&lt;/strong>&lt;/td>
+&lt;td>&lt;strong>Very Low&lt;/strong>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>
+These qualitative results support the idea that conservation-aware relevance propagation leads to sharper, more focused explanations, and avoids biases toward irrelevant tokens or background noise.
+&lt;/p>
+&lt;h3 id="conclusion">6. Key Takeaway&lt;/h3>
+&lt;p>
+Interpreting Transformer models is not straightforward — standard attribution methods often fail to accurately trace relevance through components like Attention Heads and LayerNorm. In this blog post, we explored a targeted solution introduced by Ali et al., which consists in approximating these components as locally linear during explanation.
+&lt;/p>
+&lt;p>
+This small conceptual shift restores the conservation of relevance and significantly improves the quality of explanations. The results speak for themselves: more precise, less noisy, and more interpretable relevance maps across a wide range of tasks.
+&lt;/p>
+&lt;h3 id="references">References&lt;/h3>
+&lt;p id="health1">[1] Hörst et al. (2023). CellViT: Vision Transformers for Precise Cell Segmentation and Classification.
+Available &lt;a href="https://arxiv.org/abs/2306.15350">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p id="health2">[2] Boulanger et al. (2024). Using Structured Health Information for Controlled Generation of Clinical Cases in French.
+Available &lt;a href="https://aclanthology.org/2024.clinicalnlp-1.14.pdf">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p id="cyber1">[3] Seneviratne et al. (2022). Self-Supervised Vision Transformers for Malware Detection.
+Available &lt;a href="https://arxiv.org/abs/2208.07049">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p id="cyber2">[4] Omar and Shiaeles. (2024). VulDetect: A Novel Technique for Detecting Software Vulnerabilities Using Language Models.
+Available &lt;a href="https://pure.port.ac.uk/ws/portalfiles/portal/80445773/VulDetect_A_novel_technique_for_detecting_software_vulnerabilities_using_Language_Models.pdf">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p id="recr">[5] Aleisa, Monirah Ali; Beloff, Natalia; White, Martin (2023). Implementing AIRM: A new AI recruiting model for the Saudi Arabia labour market, Journal of Innovation and Entrepreneurship. Available &lt;a href="https://www.econstor.eu/bitstream/10419/290242/1/1884179207.pdf">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>&lt;/p>
+&lt;p id="edu">[6] Guo, K., Wang, D. (2024) To resist it or to embrace it? Examining ChatGPT’s potential to support teacher feedback in EFL writing. Available &lt;a href="https://link.springer.com/article/10.1007/s10639-023-12146-0">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p id="integrated-gradients">[7] Mukund Sundararajan and Ankur Taly and Qiqi Yan (2017) Axiomatic Attribution for Deep Networks. Available &lt;a href="https://arxiv.org/pdf/1703.01365">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p id="gradient-input">[8] Avanti Shrikumar and Peyton Greenside and Anna Shcherbina and Anshul Kundaje (2017) Not Just a Black Box: Learning Important Features Through Propagating Activation Differences. Available &lt;a href="https://arxiv.org/pdf/1605.01713">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p id="shapley-values">[9] Scott Lundberg and Su-In Lee (2017) A Unified Approach to Interpreting Model Predictions. Available &lt;a href="https://arxiv.org/pdf/1705.07874">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p id="attention-rolout">[10] Samira Abnar and Willem Zuidema (2020) Quantifying Attention Flow in Transformers. Available &lt;a href="https://arxiv.org/pdf/2005.00928">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p id="att1">[11] Sarthak Jain and Byron C. Wallace (2019) Attention is not Explanation. Available &lt;a href="https://aclanthology.org/N19-1357.pdf">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;p id="att2">[12] Sofia Serrano and Noah A. Smith (2019) Is Attention Interpretable? Available &lt;a href="https://arxiv.org/pdf/1906.03731">&lt;strong>here&lt;/strong>&lt;/a>.&lt;/p>
+&lt;script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+inlineMath: [['$', '$'], ['\\(', '\\)']],
+displayMath: [['$$','$$']],
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+},
+"HTML-CSS": { linebreaks: { automatic: true } }
+});
+&lt;/script>
+&lt;script type="text/javascript"
+async
+src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS_HTML-full">
+&lt;/script>
+&lt;/body>
+&lt;/html></description><author>Students from M2 Data Science IP Paris</author><guid>https://responsible-ai-datascience-ipParis.github.io/posts/xai_transformers/</guid><pubDate>Fri, 28 Mar 2025 16:37:43 +0100</pubDate></item><item><title>Neural Networks Forget to Forget: Fixing the Memory Problem With Tensor Decomposition</title><link>https://responsible-ai-datascience-ipParis.github.io/posts/activation_compression/</link><description>&lt;style>
 code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 &lt;/style>
 &lt;script type="text/x-mathjax-config">
