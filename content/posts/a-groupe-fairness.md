@@ -1,8 +1,8 @@
----
++++
 title: "A Groupe Fairness"
 date: 2025-03-01T22:29:01+01:00
 draft: false
----
++++
 
 # No Retraining? No Problem! FRAPPÉ’s Bold Approach to AI Fairness
 
@@ -38,7 +38,7 @@ Imagine being confident in your abilities and expertise when you apply for your 
 
 Correcting biased AI models can be a difficult task. Traditional methods often involve re-training the entire model, which can be costly, time-consuming and sometimes impossible . But can't we find a simpler way?
 
-Presenting FRAPPÉ, a methodology that eliminates bias in AI without requiring retraining. A novel method called FRAPPÉ (Fairness Framework for Post-Processing Everything) transforms our understanding of fairness in machine learning. 
+Presenting FRAPPÉ, a methodology that eliminates bias in AI without requiring retraining. A novel method called FRAPPÉ (Fairness Framework for Post-Processing Everything) transforms our understanding of fairness in machine learning.
 Rather than modifying the entire model, it provides a more efficient solution by adjusting the output to ensure fairness. We will examine the main ideas, contributions, and practical applications of this ground-breaking study in this blog., you can check out the original paper, FRAPPÉ: A Group Fairness Framework for Post-Processing Everything, by Alexandru Ţifrea, Preethi Lahoti, Ben Packer, Yoni Halpern, Ahmad Beirami, and Flavien Prost.
 
 
@@ -129,13 +129,13 @@ The key insight is that minimizing OPTIP and OPTPP leads to identical fairness-e
 
 ## Why FRAPPÉ is important
 
-### Efficiency: 
+### Efficiency:
 Using FRAPPÉ the training cost can be reduced upto **90%** compared to in-processing approaches, since FRAPPÉ only learns a small layer of correction instead of the entire model.
 
  -**Flexibility:**
  In the case where **statistical parity** is mandatoryr instead of **equal opportunity** FRAPPÉ is the solution.
 
- -**Privacy:** 
+ -**Privacy:**
  For FRAPPÉ the storage or extraction of sensitive demographic data is not crucial or obigatory, as it works without group labels at the time of prediction.
 
 
@@ -150,7 +150,7 @@ Using FRAPPÉ, the original model can remain untouched — we just add a **fairn
 [View the notebook](/assets/a_groupe_fairness.html)
 
 
-### Reproducibility and Potential Difficulties 
+### Reproducibility and Potential Difficulties
 
 Careful consideration of model setup, hyperparameter selection, and dataset preprocessing are necessary to replicate these findings. Potential bias is indicated by the baseline model's notable differences in classification accuracy and error rates between Sex1 (likely male) and Sex0 (likely female). By equating false positive and false negative rates across groups, the fairness-aware model effectively reduces these discrepancies utilizing the FRAPPÉ framework. However, ensuring consistent replication of these findings poses challenges.
 
@@ -177,12 +177,12 @@ Could this innovative framework be the key to making fairness mitigation in AI m
 
 ## About the Authors
 
-**Arij Hajji** 
+**Arij Hajji**
 
 *M2 Data Science, Institut Polytechnique de Paris*  
 *arij.hajji@telecom-paris.fr*
 
-**Rouaa Blel** 
+**Rouaa Blel**
 
 *M2 Data Science, Institut Polytechnique de Paris*  
 *rouaa.blel@ensae.fr*
