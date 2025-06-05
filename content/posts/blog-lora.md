@@ -5,8 +5,6 @@ draft = false
 +++
 
 
-# **LoRA: Low-Rank Adaptation of Large Language Models**
-
 ### Authors : Morgane Brossard, Guillaume Pradel
 
 
