@@ -3,7 +3,7 @@ title = 'MaNo'
 date = 2025-03-10T12:22:37+01:00
 draft = false
 toc = true
-math = true
+math = false
 +++
 
 <!-- Custom CSS for MathJax and Tables -->
