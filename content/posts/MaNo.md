@@ -1,9 +1,7 @@
 +++
-title = "MaNo: A Smarter Way to Estimate Model Accuracy to Face Distribution Shifts Biais"
-date = 2025-03-28
+title = 'MaNo: A Smarter Way to Estimate Model Accuracy to Face Distribution Shifts Biais'
+date = 2025-03-10T12:22:37+01:00
 draft = false
-authors = ["Alice Devilder", "Sibylle Degos"]
-affiliations = ["IP Paris, Responsible AI"]
 toc = true
 math = true
 +++
