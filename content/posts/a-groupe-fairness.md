@@ -1,7 +1,7 @@
 +++
-title: "A Groupe Fairness"
-date: 2025-03-01T22:29:01+01:00
-draft: false
+title= "A Groupe Fairness"
+date= 2025-03-01T22:29:01+01:00
+draft:=false
 +++
 
 # No Retraining? No Problem! FRAPPÉ’s Bold Approach to AI Fairness
