@@ -135,7 +135,7 @@ To address this challenge, the paper introduces **MANO**, a novel method that le
 ## **Introducing MANO: A Two-Step Approach** {#section-1}
 MANO addresses these challenges through a two-step process: **Normalization with Softrun** and **Aggregation using Matrix Norms**. Here is a scheme so you can visualize the process :
 
-![Mano schema](/images/Mano/Mano_schema.png)
+![Mano schema](/content/images/Mano/Mano_schema.png)
 
 ### **1. Normalization with Softrun** {#section-1.1}
 As explained before, Softmax is a very common activation function to transform logits into probabilities. But its exponential nature exaggerates differences between logits, making the model appear more confident than it actually is.
@@ -161,7 +161,7 @@ Thanks to $\Phi(\mathcal{D}_{test})$, it will determine whether to apply a Taylo
 When the model’s predictions are unreliable, Softrun applies a Taylor approximation rather than the softmax. The Taylor approximation smooths out the effect of large logits, preventing the model from being overly confident in any particular prediction. By contrast, when the dataset is well-calibrated, the function behaves like softmax, preserving probability distributions where confidence is warranted.
 
 <figure id="my-fig" class="numbered" style="float: left; margin-left: 10px; width: 50%;">
-    <img src="/images/Mano/Lp_norm_schema.png" class="align-center" style="width: 100%; height: auto;">
+    <img src="/content/images/Mano/Lp_norm_schema.png" class="align-center" style="width: 100%; height: auto;">
     <p style="text-align: center;"></p>
 </figure>
 
@@ -179,7 +179,7 @@ Besides, the output of this first step is scaled logits: $Q_i = \sigma(q_i) \in 
 After normalization, MANO **aggregates** the logits using the **Lp norm** of the matrix $Q$, defined as:
 
 <figure id="my-fig" class="numbered" >
-    <img src="/images/Mano/equation_s.png" class="align-center">
+    <img src="/content/images/Mano/equation_s.png" class="align-center">
     <p style="text-align: center;"></p>
 </figure>
 
@@ -199,7 +199,7 @@ One of the main advantages of the Lp​ norm over the Nuclear Norm is its **comp
 **Effect of p on Aggregation Sensitivity**
 
 <figure id="my-fig" class="numbered" style="float: right; margin-right: 10px; width: 45%;">
-    <img src="/images/Mano/impact_Lp_norm.png" class="align-center" style="width: 100%; height: auto;">
+    <img src="/content/images/Mano/impact_Lp_norm.png" class="align-center" style="width: 100%; height: auto;">
     <p style="text-align: center;"></p>
 </figure>
 
@@ -217,7 +217,7 @@ Let's see now how to implement MANO in practice!
 
 Before diving into implementation, it’s important to understand the logic behind the MANO algorithm for unsupervised accuracy estimation. 
 
-![Algorithm 1: MANO Pseudocode](/images/Mano/algorithm_mano.png)
+![Algorithm 1: MANO Pseudocode](/content//images/Mano/algorithm_mano.png)
 
 The pseudocode above outlines the core procedure: given a model and an unlabeled test set, the method first determines the best way to normalize the model's logits, either using softmax or the novel alternative softrun on an entropy-based criterion (see [Section 1.1](#section-1.1)). Then, it iterates over each sample in the test set, collects the normalized predictions into a matrix, and finally computes an estimation score using the matrix’s normalized L_p norm (see [Section 1.2](#section-1.2)). This score correlates with the model's true accuracy, even without access to ground truth labels.
 
@@ -271,7 +271,7 @@ MANO has been evaluated against **11 baseline methods**, including Rotation Pred
 In this comprehensive evaluation, the authors have considered 3 types of distribution shifts: **synthetic shifts**, where models were tested against artificially corrupted images; **natural shifts**, which involved datasets collected from different distributions than the training data; and **subpopulation shifts**, where certain classes or groups were underrepresented in the training data. To evaluate Mano under synthetic shifts, the authors have used CIFAR-10C, CIFAR-100C, ImageNet-C, and TinyImageNet-C, covering various corruption types and severity levels. For natural shifts, they tested on OOD datasets from PACS, Office-Home, DomainNet, and RR1 WILDS. To assess subpopulation shifts, they used the BREEDS benchmark, including Living-17, Nonliving-26, Entity-13, and Entity-30 from ImageNet-C. 
 
 <figure id="my-fig" class="numbered" style="float: left; margin-left: 10px; width: 45%;">
-    <img src="/images/Mano/R2_scores.png" class="align-center" style="width: 100%; height: auto;">
+    <img src="/content/images/Mano/R2_scores.png" class="align-center" style="width: 100%; height: auto;">
     <!-- <p style="text-align: center;">$R^2$ distribution ResNet18 on all distribution shifts </p> -->
 </figure>
 
@@ -280,7 +280,7 @@ On the left, we can see a box plot of $R^2$ distribution showing the estimation 
 Additionally, in the figure below, we can see a scatter plot illustrating the outperforming results of Mano on natural shift compared to Dispersion Score and ProjNorm on Entity-18 using ResNet-18.
 
 <figure id="my-fig" class="numbered">
-    <img src="/images/Mano/results_plot.png" class="align-center" style="width: 100%; height: auto;">
+    <img src="/content/images/Mano/results_plot.png" class="align-center" style="width: 100%; height: auto;">
     <p style="text-align: center;"></p>
 </figure>
 
