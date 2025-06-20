@@ -3223,7 +3223,7 @@ margin: 10px 0;
 Mathematically, softmax is defined as:
 &lt;/p>
 &lt;figure id="my-fig" class="numbered" style="display: inline-block; vertical-align: middle; margin-left: 10px;">
-&lt;img src="./content/images/Mano/softmax_img.png" class="align-center" style="width: 250px; height: auto;">
+&lt;img src="./images/Mano/softmax_img.png" class="align-center" style="width: 250px; height: auto;">
 &lt;/figure>
 &lt;p>However, this approach has a major issue: it is &lt;strong>sensitive to prediction bias&lt;/strong> and can lead to &lt;strong>overconfidence&lt;/strong>. In other words, if a model generates very high logits for a class (indicating strong confidence in its prediction), but that prediction is incorrect, it can skew the results. This phenomenon is largely due to the &lt;strong>exponential function&lt;/strong> in the softmax formula, which amplifies the differences between logits. This can lead to significant errors, especially when the model is overly confident without being accurate.&lt;/p>
 &lt;p>This overconfidence bias is a critical issue when evaluating a model’s performance.
@@ -3231,7 +3231,7 @@ To address this challenge, the paper introduces &lt;strong>MANO&lt;/strong>, a n
 &lt;h2 id="section-1">&lt;strong>Introducing MANO: A Two-Step Approach&lt;/strong>&lt;/h2>
 &lt;p>MANO addresses these challenges through a two-step process: &lt;strong>Normalization with Softrun&lt;/strong> and &lt;strong>Aggregation using Matrix Norms&lt;/strong>. Here is a scheme so you can visualize the process :&lt;/p>
 &lt;p>&lt;img
-src="./content/images/Mano/Mano_schema.png"
+src="./images/Mano/Mano_schema.png"
 alt="Mano schema"
 loading="lazy"
 decoding="async"
@@ -3247,12 +3247,12 @@ class="full-width"
 &lt;p>$$ \sigma(q_i) = \frac{v(q_i)}{\sum_{k=1}^{K} v(q_i)_k} \in \Delta_K$$&lt;/p>
 &lt;p>Thanks to $\Phi(\mathcal{D}_{test})$, it will determine whether to apply a Taylor or softmax normalization term. The function $v(q)$ is defined as:&lt;/p>
 &lt;figure id="my-fig_eq_v" class="numbered" >
-&lt;img src="./content//images/Mano/equation_v.png" class="align-center">
+&lt;img src="./images/Mano/equation_v.png" class="align-center">
 &lt;p style="text-align: center;">&lt;/p>
 &lt;/figure>
 &lt;p>When the model’s predictions are unreliable, Softrun applies a Taylor approximation rather than the softmax. The Taylor approximation smooths out the effect of large logits, preventing the model from being overly confident in any particular prediction. By contrast, when the dataset is well-calibrated, the function behaves like softmax, preserving probability distributions where confidence is warranted.&lt;/p>
 &lt;figure id="my-fig" class="numbered" style="float: left; margin-left: 10px; width: 50%;">
-&lt;img src="./content/images/Mano/Lp_norm_schema.png" class="align-center" style="width: 100%; height: auto;">
+&lt;img src="./images/Mano/Lp_norm_schema.png" class="align-center" style="width: 100%; height: auto;">
 &lt;p style="text-align: center;">&lt;/p>
 &lt;/figure>
 &lt;p>To recapitulate, there are 3 studied cases :&lt;/p>
@@ -3263,7 +3263,7 @@ class="full-width"
 &lt;h3 id="section-1.2">&lt;strong>2. Aggregation Using Matrix Norms&lt;/strong>&lt;/h3>
 &lt;p>After normalization, MANO &lt;strong>aggregates&lt;/strong> the logits using the &lt;strong>Lp norm&lt;/strong> of the matrix $Q$, defined as:&lt;/p>
 &lt;figure id="my-fig" class="numbered" >
-&lt;img src="./content/images/Mano/equation_s.png" class="align-center">
+&lt;img src="./images/Mano/equation_s.png" class="align-center">
 &lt;p style="text-align: center;">&lt;/p>
 &lt;/figure>
 &lt;p>where:&lt;/p>
@@ -3279,7 +3279,7 @@ class="full-width"
 One of the main advantages of the Lp​ norm over the Nuclear Norm is its &lt;strong>computational efficiency&lt;/strong>. The Lp​ norm is straightforward to compute, requiring only element-wise operations and summations. In contrast, nuclear norm-based methods involve Singular Value Decomposition (SVD), which is computationally expensive and less scalable for large datasets.&lt;/p>
 &lt;p>&lt;strong>Effect of p on Aggregation Sensitivity&lt;/strong>&lt;/p>
 &lt;figure id="my-fig" class="numbered" style="float: right; margin-right: 10px; width: 45%;">
-&lt;img src="./content/images/Mano/impact_Lp_norm.png" class="align-center" style="width: 100%; height: auto;">
+&lt;img src="./images/Mano/impact_Lp_norm.png" class="align-center" style="width: 100%; height: auto;">
 &lt;p style="text-align: center;">&lt;/p>
 &lt;/figure>
 &lt;p>In the formula, the parameter p controls the sensitivity of the metric to high-confidence predictions:&lt;/p>
@@ -3293,7 +3293,7 @@ One of the main advantages of the Lp​ norm over the Nuclear Norm is its &lt;st
 &lt;h2 id="section-2">&lt;strong>Pseudo-Code of MANO and its implementation&lt;/strong>&lt;/h2>
 &lt;p>Before diving into implementation, it’s important to understand the logic behind the MANO algorithm for unsupervised accuracy estimation.&lt;/p>
 &lt;p>&lt;img
-src="./content//images/Mano/algorithm_mano.png"
+src="./images/Mano/algorithm_mano.png"
 alt="Algorithm 1: MANO Pseudocode"
 loading="lazy"
 decoding="async"
@@ -3343,13 +3343,13 @@ The &lt;code>scaling_method&lt;/code> function is where the normalization takes 
 &lt;p>MANO has been evaluated against &lt;strong>11 baseline methods&lt;/strong>, including Rotation Prediction (Rotation) &lt;a href="#rotation">[2]&lt;/a>, Averaged Confidence (ConfS core) &lt;a href="#confscore">[3]&lt;/a> and Entropy &lt;a href="#entropy">[4]&lt;/a> amongst others. To show the versatility of Mano across different architectures, it has been evaluated across 3 different neural network architectures: ResNet18, ResNet50 &lt;a href="#resnet50">[5]&lt;/a>, and WRN-50-2. The experiments were conducted on a range of classification tasks, including image recognition benchmarks such as CIFAR-10, CIFAR-100, TinyImageNet, and ImageNet, as well as domain adaptation datasets like PACS and Office-Home.&lt;/p>
 &lt;p>In this comprehensive evaluation, the authors have considered 3 types of distribution shifts: &lt;strong>synthetic shifts&lt;/strong>, where models were tested against artificially corrupted images; &lt;strong>natural shifts&lt;/strong>, which involved datasets collected from different distributions than the training data; and &lt;strong>subpopulation shifts&lt;/strong>, where certain classes or groups were underrepresented in the training data. To evaluate Mano under synthetic shifts, the authors have used CIFAR-10C, CIFAR-100C, ImageNet-C, and TinyImageNet-C, covering various corruption types and severity levels. For natural shifts, they tested on OOD datasets from PACS, Office-Home, DomainNet, and RR1 WILDS. To assess subpopulation shifts, they used the BREEDS benchmark, including Living-17, Nonliving-26, Entity-13, and Entity-30 from ImageNet-C.&lt;/p>
 &lt;figure id="my-fig" class="numbered" style="float: left; margin-left: 10px; width: 45%;">
-&lt;img src="./content/images/Mano/R2_scores.png" class="align-center" style="width: 100%; height: auto;">
+&lt;img src="./images/Mano/R2_scores.png" class="align-center" style="width: 100%; height: auto;">
 &lt;!-- &lt;p style="text-align: center;">$R^2$ distribution ResNet18 on all distribution shifts &lt;/p> -->
 &lt;/figure>
 &lt;p>On the left, we can see a box plot of $R^2$ distribution showing the estimation robustness across different shifts on all datasets except ImageNet, using ResNet18. We observe that MANO consistently outperformed existing methods in all three scenarios (achieving the highest median estimation performance), demonstrating its robustness to varying degrees of domain shifts. For more details, you can find numerical results for the different shifts in the paper. For instance, MANO achieves $R^2 &amp;gt; 0.960$ and $ρ &amp;gt; 0.990$ under subpopulation shift, where as the performance of other baselines does not reach such consistently high levels.&lt;/p>
 &lt;p>Additionally, in the figure below, we can see a scatter plot illustrating the outperforming results of Mano on natural shift compared to Dispersion Score and ProjNorm on Entity-18 using ResNet-18.&lt;/p>
 &lt;figure id="my-fig" class="numbered">
-&lt;img src="./content/images/Mano/results_plot.png" class="align-center" style="width: 100%; height: auto;">
+&lt;img src="./images/Mano/results_plot.png" class="align-center" style="width: 100%; height: auto;">
 &lt;p style="text-align: center;">&lt;/p>
 &lt;/figure>
 &lt;p>We can observe that MANO scores demonstrate a robust linear relationship with ground-truth OOD errors, whereas other state-of-the-art baselines tend to produce biased estimations, particularly for high test errors. Therefore, MANO significantly boosts performance under the natural shift.&lt;/p>
