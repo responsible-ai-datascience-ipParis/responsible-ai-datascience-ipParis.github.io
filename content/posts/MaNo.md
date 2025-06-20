@@ -154,7 +154,7 @@ $$ \sigma(q_i) = \frac{v(q_i)}{\sum_{k=1}^{K} v(q_i)_k} \in \Delta_K$$
 Thanks to $\Phi(\mathcal{D}_{test})$, it will determine whether to apply a Taylor or softmax normalization term. The function $v(q)$ is defined as:
 
 <figure id="my-fig_eq_v" class="numbered" >
-    <img src="/images/Mano/equation_v.png" class="align-center">
+    <img src="/content//images/Mano/equation_v.png" class="align-center">
     <p style="text-align: center;"></p>
 </figure>
 
