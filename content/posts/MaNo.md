@@ -1,5 +1,5 @@
 +++
-title = 'MaNo: A Smarter Way to Estimate Model Accuracy to Face Distribution Shifts Biais'
+title = 'MaNo'
 date = 2025-03-10T12:22:37+01:00
 draft = false
 toc = true
