@@ -123,7 +123,7 @@ Now you understand that logits are very important for generalisation performance
     Mathematically, softmax is defined as:
 </p>
 <figure id="my-fig" class="numbered" style="display: inline-block; vertical-align: middle; margin-left: 10px;">
-    <img src="/images/Mano/softmax_img.png" class="align-center" style="width: 250px; height: auto;">
+    <img src="/content/images/Mano/softmax_img.png" class="align-center" style="width: 250px; height: auto;">
 </figure>
 
 However, this approach has a major issue: it is **sensitive to prediction bias** and can lead to **overconfidence**. In other words, if a model generates very high logits for a class (indicating strong confidence in its prediction), but that prediction is incorrect, it can skew the results. This phenomenon is largely due to the **exponential function** in the softmax formula, which amplifies the differences between logits. This can lead to significant errors, especially when the model is overly confident without being accurate.
